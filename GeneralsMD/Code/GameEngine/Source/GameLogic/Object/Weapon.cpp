@@ -205,7 +205,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ContinuousFireTwo",				INI::parseInt,													nullptr,							offsetof(WeaponTemplate, m_continuousFireTwoShotsNeeded) },
 	{ "ContinuousFireCoast",			INI::parseDurationUnsignedInt,					nullptr,							offsetof(WeaponTemplate, m_continuousFireCoastFrames) },
  	{ "AutoReloadWhenIdle",				INI::parseDurationUnsignedInt,					nullptr,							offsetof(WeaponTemplate, m_autoReloadWhenIdleFrames) },
-	{ "ClipReloadTime",						INI::parseDurationUnsignedInt,					nullptr,							offsetof(WeaponTemplate, m_clipReloadTime) },
+	{ "ClipReloadTime",						WeaponTemplate::parseClipReloadTime,		nullptr,							0 },
 	{ "DelayBetweenShots",				WeaponTemplate::parseShotDelay,					nullptr,							0 },
 	{ "ShotsPerBarrel",						INI::parseInt,													nullptr,							offsetof(WeaponTemplate, m_shotsPerBarrel) },
 	{ "DamageDealtAtSelfPosition",INI::parseBool,													nullptr,							offsetof(WeaponTemplate, m_damageDealtAtSelfPosition) },
@@ -299,6 +299,7 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
 	m_continuousFireCoastFrames			= 0;
  	m_autoReloadWhenIdleFrames			= 0;
 	m_clipReloadTime								= 0;
+	m_maxClipReloadTime							= 0;
 	m_minDelayBetweenShots					= 0;
 	m_maxDelayBetweenShots					= 0;
 	m_fireSoundLoopTime							= 0;
@@ -368,6 +369,26 @@ void WeaponTemplate::reset()
 }
 
 //-------------------------------------------------------------------------------------------------
+/** bfme-native: RotWK 0x006c9e7a - same Min:/Max: syntax as DelayBetweenShots, msec -> frames */
+/*static*/ void WeaponTemplate::parseClipReloadTime( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+{
+	WeaponTemplate* self = (WeaponTemplate*)instance;
+	const char* token = ini->getNextToken(ini->getSepsColon());
+	Int minMs, maxMs;
+	if (stricmp(token, "Min") == 0)
+	{
+		minMs = INI::scanInt(ini->getNextToken(ini->getSepsColon()));
+		token = ini->getNextTokenOrNull(ini->getSepsColon());
+		maxMs = (token && stricmp(token, "Max") == 0) ? INI::scanInt(ini->getNextToken(ini->getSepsColon())) : minMs;
+	}
+	else
+	{
+		minMs = maxMs = INI::scanInt(token);
+	}
+	self->m_clipReloadTime = ceilf(ConvertDurationFromMsecsToFrames((Real)minMs));
+	self->m_maxClipReloadTime = ceilf(ConvertDurationFromMsecsToFrames((Real)maxMs));
+}
+
 /*static*/ void WeaponTemplate::parseShotDelay( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	// This smart parser allows both a single number for traditional delay, and a labeled pair of numbers for a delay range
@@ -521,7 +542,10 @@ Int WeaponTemplate::getClipReloadTime(const WeaponBonus& bonus) const
 {
 	// yes, divide, not multiply; the larger the rate-of-fire bonus, the shorter
 	// we want the reload time to be.
-	return REAL_TO_INT_FLOOR(m_clipReloadTime / bonus.getField(WeaponBonus::RATE_OF_FIRE));
+	Int frames = m_clipReloadTime;
+	if (m_maxClipReloadTime > m_clipReloadTime)
+		frames = GameLogicRandomValue(m_clipReloadTime, m_maxClipReloadTime);	// bfme-native: RotWK range
+	return REAL_TO_INT_FLOOR(frames / bonus.getField(WeaponBonus::RATE_OF_FIRE));
 }
 
 //-------------------------------------------------------------------------------------------------
