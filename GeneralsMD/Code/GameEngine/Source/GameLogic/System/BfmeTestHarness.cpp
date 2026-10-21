@@ -15,6 +15,7 @@
 #include "PreRTS.h"
 
 #include "Common/GameEngine.h"
+#include "Common/Money.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/PlayerTemplate.h"
@@ -305,6 +306,16 @@ void run(const TestCmd& c)
 			else
 				m->doSpecialPower(0);
 			printf("[BFMETEST] power: #%u used %s on #%u\n", o->getID(), c.args[3].c_str(), best ? best->getID() : 0);
+		}
+	}
+	else if (op == "money")
+	{
+		for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+		{
+			Player* pl = ThePlayerList->getNthPlayer(i);
+			AsciiString n = TheNameKeyGenerator->keyToName(pl->getPlayerNameKey());
+			if (n.isNotEmpty())
+				printf("[BFMETEST] money frame=%u %s %u\n", TheGameLogic->getFrame(), n.str(), pl->getMoney()->countMoney());
 		}
 	}
 	else if (op == "players")

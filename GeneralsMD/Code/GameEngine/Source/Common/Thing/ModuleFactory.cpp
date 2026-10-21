@@ -508,6 +508,7 @@ void ModuleFactory::init()
 	addModule( LargeGroupBonusUpdate );	// bfme-native
 	addModule( HordeMemberCollide );	// bfme-native
 	addModule( GettingBuiltBehavior );	// bfme-native
+	addModule( TerrainResourceBehavior );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );

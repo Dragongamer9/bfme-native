@@ -377,3 +377,120 @@ UpdateSleepTime GettingBuiltBehavior::update()
 
 //=================================================================================================
 BFME_TRIVIAL_SNAPSHOT(BfmeInertBehavior, BehaviorModule)
+
+//=================================================================================================
+// TerrainResourceBehavior
+//=================================================================================================
+void TerrainResourceBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "MaxIncome",						INI::parseInt,											nullptr, offsetof( TerrainResourceBehaviorModuleData, m_maxIncome ) },
+		{ "IncomeInterval",				INI::parseDurationUnsignedInt,			nullptr, offsetof( TerrainResourceBehaviorModuleData, m_incomeInterval ) },
+		{ "Radius",								INI::parseReal,											nullptr, offsetof( TerrainResourceBehaviorModuleData, m_radius ) },
+		{ "Visible",							INI::parseBool,											nullptr, offsetof( TerrainResourceBehaviorModuleData, m_visible ) },
+		{ "HighPriority",					INI::parseBool,											nullptr, offsetof( TerrainResourceBehaviorModuleData, m_highPriority ) },
+		{ "Upgrade",							INI::parseAsciiStringVectorAppend,	nullptr, offsetof( TerrainResourceBehaviorModuleData, m_upgrades ) },
+		{ "UpgradeBonusPercent",	INI::parsePercentToReal,						nullptr, offsetof( TerrainResourceBehaviorModuleData, m_upgradeBonusPercent ) },
+		{ "UpgradeMustBePresent",	ObjectFilter::parseFromINI,					nullptr, offsetof( TerrainResourceBehaviorModuleData, m_upgradeMustBePresent ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+TerrainResourceBehavior::TerrainResourceBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(max(1u, getTerrainResourceBehaviorModuleData()->m_incomeInterval)));
+}
+BFME_TRIVIAL_SNAPSHOT(TerrainResourceBehavior, UpdateModule)
+
+static TerrainResourceBehavior* findTerrainResource(const Object* o)
+{
+	for (BehaviorModule** m = const_cast<Object*>(o)->getBehaviorModules(); *m; ++m)
+	{
+		TerrainResourceBehavior* t = dynamic_cast<TerrainResourceBehavior*>(*m);
+		if (t)
+			return t;
+	}
+	return nullptr;
+}
+
+Real TerrainResourceBehavior::computeLandShare() const
+{
+	const Real radius = getTerrainResourceBehaviorModuleData()->m_radius;
+	if (radius <= 0.0f)
+		return 1.0f;
+	const Object* me = getObject();
+	const Real cell = 20.0f;	// GameData TerrainResourceCellSize
+
+	// the other resource buildings that can overlap us
+	std::vector<std::pair<Coord3D, Real> > others;
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, radius * 2.0f, FROM_CENTER_2D);
+	MemoryPoolObjectHolder hold(iter);
+	for (Object* o = iter->first(); o; o = iter->next())
+	{
+		if (o == me || o->isEffectivelyDead() || o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			continue;
+		TerrainResourceBehavior* t = findTerrainResource(o);
+		if (t && t->getRadius() > 0.0f)
+			others.push_back(std::make_pair(*o->getPosition(), t->getRadius()));
+	}
+
+	Real share = 0.0f;
+	Int cells = 0;
+	const Coord3D* c = me->getPosition();
+	for (Real dx = -radius; dx <= radius; dx += cell)
+	{
+		for (Real dy = -radius; dy <= radius; dy += cell)
+		{
+			if (dx * dx + dy * dy > radius * radius)
+				continue;
+			++cells;
+			Int claimants = 1;
+			for (size_t i = 0; i < others.size(); ++i)
+			{
+				const Real ox = c->x + dx - others[i].first.x, oy = c->y + dy - others[i].first.y;
+				if (ox * ox + oy * oy <= others[i].second * others[i].second)
+					++claimants;
+			}
+			share += 1.0f / (Real)claimants;
+		}
+	}
+	return cells ? share / (Real)cells : 1.0f;
+}
+
+UpdateSleepTime TerrainResourceBehavior::update()
+{
+	const TerrainResourceBehaviorModuleData* d = getTerrainResourceBehaviorModuleData();
+	const UnsignedInt interval = max(1u, d->m_incomeInterval);
+	Object* me = getObject();
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	if (me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) || d->m_maxIncome <= 0)
+		return UPDATE_SLEEP(interval);
+	Player* p = me->getControllingPlayer();
+	if (p == nullptr)
+		return UPDATE_SLEEP(interval);
+
+	Real amount = (Real)d->m_maxIncome * computeLandShare();
+	Bool haveUpgrade = FALSE;
+	for (size_t i = 0; i < d->m_upgrades.size(); ++i)
+		if (objOrPlayerHasUpgrade(me, d->m_upgrades[i]))
+			haveUpgrade = TRUE;
+	if (haveUpgrade && !d->m_upgradeMustBePresent.isEmpty())
+	{
+		Bool found = FALSE;
+		for (Object* o = TheGameLogic->getFirstObject(); o && !found; o = o->getNextObject())
+			if (o->getControllingPlayer() == p && !o->isEffectivelyDead() && d->m_upgradeMustBePresent.matches(o, me))
+				found = TRUE;
+		haveUpgrade = found;
+	}
+	if (haveUpgrade)
+		amount *= (1.0f + d->m_upgradeBonusPercent);
+
+	const UnsignedInt cash = (UnsignedInt)floorf(amount + 0.5f);
+	if (cash > 0)
+		p->getMoney()->deposit(cash);
+	return UPDATE_SLEEP(interval);
+}
