@@ -513,6 +513,7 @@ private:
 	Real m_scatterTargetScalar;							///< Radius of area covered by the coordinates in the scatterTarget table
 	std::vector<Coord2D> m_scatterTargets;	///< instead of pure randomness, this is the list of places I will randomly choose from to attack
 	DamageType m_damageType;								///< damage type enum
+	DamageFXType m_damageFXType;						///< bfme-native: RotWK visual hit class
 	DeathType m_deathType;									///< death type enum
 	Real m_weaponSpeed;											///< speed of damage travel, in dist/frame
 	Real m_minWeaponSpeed;									///< speed of damage travel, in dist/frame

@@ -285,6 +285,53 @@ inline DeathTypeFlags clearDeathTypeFlag(DeathTypeFlags flags, DeathType dt)
 //-------------------------------------------------------------------------------------------------
 /** Damage info inputs */
 //-------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------
+/** bfme-native: RotWK DamageFXType -- the visual class of a hit (weapon field DamageFXType),
+	used as the key of DamageFX entries. Order matches RotWK's table. */
+enum DamageFXType CPP_11(: Int)
+{
+	DAMAGEFX_SWORD_SLASH,
+	DAMAGEFX_WITCH_KING_MORGUL_BLADE,
+	DAMAGEFX_REFLECTED,
+	DAMAGEFX_GOOD_ARROW_PIERCE,
+	DAMAGEFX_EVIL_ARROW_PIERCE,
+	DAMAGEFX_SMALL_ROCK,
+	DAMAGEFX_BIG_ROCK,
+	DAMAGEFX_CLUBBING,
+	DAMAGEFX_FLAME,
+	DAMAGEFX_MAGIC,
+	DAMAGEFX_BALROG_SWORD,
+	DAMAGEFX_BALROG_WHIP,
+	DAMAGEFX_ELECTRIC,
+	DAMAGEFX_GIMLI_LEAP,
+	DAMAGEFX_STRUCTURAL,
+	DAMAGEFX_FLOOD_HORSE,
+	DAMAGEFX_BOLT,
+	DAMAGEFX_BOLT2,
+	DAMAGEFX_MAGIC2,
+	DAMAGEFX_MAGIC3,
+	DAMAGEFX_FIRE1,
+	DAMAGEFX_FIRE2,
+	DAMAGEFX_FIRE3,
+	DAMAGEFX_SPARKS1,
+	DAMAGEFX_SPARKS2,
+	DAMAGEFX_EARTH1,
+	DAMAGEFX_EARTH2,
+	DAMAGEFX_POISON,
+	DAMAGEFX_TORNADO,
+	DAMAGEFX_UNDEFINED,
+	DAMAGEFX_NECRO1,
+	DAMAGEFX_NECRO2,
+	DAMAGEFX_NECRO3,
+	DAMAGEFX_NECRO4,
+	DAMAGEFX_NECRO5,
+	DAMAGEFX_NECRO6,
+
+	DAMAGEFX_NUM_TYPES
+};
+extern const char *const TheDamageFXTypeNames[];
+
 class DamageInfoInput : public Snapshot
 {
 
@@ -298,6 +345,7 @@ public:
 		m_damageType = DAMAGE_EXPLOSION;
 		m_damageStatusType = OBJECT_STATUS_NONE;
 		m_damageFXOverride = DAMAGE_UNRESISTABLE;
+		m_damageFXType = DAMAGEFX_UNDEFINED;
 		m_deathType = DEATH_NORMAL;
 		m_amount = 0;
 		m_kill = FALSE;
@@ -313,6 +361,7 @@ public:
 	PlayerMaskType m_sourcePlayerMask;			///< Player mask of m_sourceID.
 	DamageType		 m_damageType;						///< type of damage
 	ObjectStatusTypes m_damageStatusType;		///< If status damage, what type
+	DamageFXType	 m_damageFXType;					///< bfme-native: RotWK visual hit class (selects the DamageFX entry)
 	DamageType		 m_damageFXOverride;			///< If not marked as the default of Unresistable, the damage type to use in doDamageFX instead of the real damage type
 	DeathType			 m_deathType;						///< if this kills us, death type to be used
 	Real					 m_amount;								///< # value of how much damage to inflict

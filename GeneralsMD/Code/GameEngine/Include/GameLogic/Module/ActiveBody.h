@@ -151,7 +151,7 @@ private:
 
 	BodyDamageType				m_curDamageState;				///< last known damage state
 	UnsignedInt						m_nextDamageFXTime;
-	DamageType						m_lastDamageFXDone;
+	DamageFXType					m_lastDamageFXDone;
 	DamageInfo						m_lastDamageInfo;				///< store the last DamageInfo object that we received
 	UnsignedInt						m_lastDamageTimestamp; 	///< frame of last damage dealt
 	UnsignedInt						m_lastHealingTimestamp; ///< frame of last healing dealt

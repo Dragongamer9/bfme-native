@@ -166,7 +166,7 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_lastHealingTimestamp(InvalidBodyTimestamp),// So we don't think we just got healed on the first frame
 	m_curDamageState(BODY_PRISTINE),
 	m_nextDamageFXTime(0),
-	m_lastDamageFXDone((DamageType)-1),
+	m_lastDamageFXDone((DamageFXType)-1),
 	m_lastDamageCleared(false),
 	m_particleSystems(nullptr),
 	m_currentSubdualDamage(0),
@@ -317,13 +317,8 @@ Real ActiveBody::estimateDamage( DamageInfoInput& damageInfo ) const
 //-------------------------------------------------------------------------------------------------
 void ActiveBody::doDamageFX( const DamageInfo *damageInfo )
 {
-	DamageType damageTypeToUse = damageInfo->in.m_damageType;
-	if (damageInfo->in.m_damageFXOverride != DAMAGE_UNRESISTABLE )
-	{
-		// Just the visual aspect of damage can be overridden in some cases.
-		// Unresistable is the default to mean no override, as we are out of bits.
-		damageTypeToUse = damageInfo->in.m_damageFXOverride;
-	}
+	// bfme-native: RotWK picks the DamageFX entry by the hit's DamageFXType, not its DamageType
+	DamageFXType damageTypeToUse = damageInfo->in.m_damageFXType;
 
 	if (m_curDamageFX)
 	{
@@ -1608,7 +1603,7 @@ void ActiveBody::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_nextDamageFXTime );
 
 	// last damage fx done
-	xfer->xferUser( &m_lastDamageFXDone, sizeof( DamageType ) );
+	xfer->xferUser( &m_lastDamageFXDone, sizeof( DamageFXType ) );
 
 	// last damage info
 	xfer->xferSnapshot( &m_lastDamageInfo );

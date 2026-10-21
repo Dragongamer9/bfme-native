@@ -48,6 +48,7 @@ enum StructureCollapsePhaseType CPP_11(: Int)
 	SCPHASE_INITIAL = 0,
 	SCPHASE_DELAY,
 	SCPHASE_BURST,
+	SCPHASE_ALMOST_FINAL,	// bfme-native: RotWK
 	SCPHASE_FINAL,
 
 	SC_PHASE_COUNT
