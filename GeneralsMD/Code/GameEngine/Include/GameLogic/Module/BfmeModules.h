@@ -6,6 +6,7 @@
 
 #include "GameLogic/Module/CollideModule.h"
 #include "GameLogic/Module/CreateModule.h"
+#include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 #include "GameLogic/ObjectFilter.h"
@@ -334,6 +335,104 @@ public:
 	virtual void onCreate() override;
 	virtual void onBuildComplete() override {}
 	virtual Bool shouldDoOnBuildComplete() const override { return FALSE; }
+};
+
+//-------------------------------------------------------------------------------------------------
+/** InheritUpgradeCreate: a new object gets Upgrade if one of its player's objects matching ObjectFilter
+	within Radius already has it (fortress upgrades reaching new buildings). */
+class InheritUpgradeCreateModuleData : public BehaviorModuleData
+{
+public:
+	InheritUpgradeCreateModuleData() : m_radius(0.0f) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Real m_radius;
+	std::vector<AsciiString> m_upgrades;
+	ObjectFilter m_filter;
+};
+
+class InheritUpgradeCreate : public BehaviorModule, public CreateModuleInterface
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( InheritUpgradeCreate, "InheritUpgradeCreate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( InheritUpgradeCreate, InheritUpgradeCreateModuleData )
+public:
+	InheritUpgradeCreate( Thing *thing, const ModuleData* moduleData );
+	static Int getInterfaceMask() { return MODULEINTERFACE_CREATE; }
+	virtual CreateModuleInterface* getCreate() override { return this; }
+	virtual void onCreate() override {}
+	virtual void onBuildComplete() override;
+	virtual Bool shouldDoOnBuildComplete() const override { return TRUE; }
+};
+
+//-------------------------------------------------------------------------------------------------
+/** RefundDie: when the object dies, its owner gets RefundPercent of its cost back, if the player has
+	UpgradeRequired and a building matching BuildingRequired. */
+class RefundDieModuleData : public DieModuleData
+{
+public:
+	RefundDieModuleData() : m_refundPercent(0.0f) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Real m_refundPercent;
+	AsciiString m_upgradeRequired;
+	ObjectFilter m_buildingRequired;
+};
+
+class RefundDie : public DieModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RefundDie, "RefundDie" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RefundDie, RefundDieModuleData )
+public:
+	RefundDie( Thing *thing, const ModuleData* moduleData );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
+};
+
+//-------------------------------------------------------------------------------------------------
+/** AttachUpdate: the object attaches itself to the nearest object matching ObjectFilter within
+	ScanRange and rides along on it (on top when AnchorToTopOfGeometry); it goes when its parent does. */
+class AttachUpdateModuleData : public UpdateModuleData
+{
+public:
+	AttachUpdateModuleData() : m_scanRange(50.0f), m_alwaysTeleport(FALSE), m_anchorToTop(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	ObjectFilter m_filter;
+	Real m_scanRange;
+	Bool m_alwaysTeleport;
+	Bool m_anchorToTop;
+	AsciiString m_unusedString;
+};
+
+class AttachUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AttachUpdate, "AttachUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AttachUpdate, AttachUpdateModuleData )
+public:
+	AttachUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+	ObjectID getParentID() const { return m_parent; }
+private:
+	ObjectID m_parent;
+	Bool m_searched;
+};
+
+//-------------------------------------------------------------------------------------------------
+/** DualWeaponBehavior: archers switch to their CLOSE_RANGE weapon set (which holds the melee weapon)
+	while the target is within SwitchWeaponOnCloseRangeDistance. */
+class DualWeaponBehaviorModuleData : public UpdateModuleData
+{
+public:
+	DualWeaponBehaviorModuleData() : m_closeRange(0.0f) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Real m_closeRange;
+};
+
+class DualWeaponBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DualWeaponBehavior, "DualWeaponBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DualWeaponBehavior, DualWeaponBehaviorModuleData )
+public:
+	DualWeaponBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+private:
+	Bool m_close;
 };
 
 //-------------------------------------------------------------------------------------------------

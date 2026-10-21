@@ -199,6 +199,7 @@ void WeaponTemplateSet::clear()
 		m_template[i] = nullptr;
 		m_autoChooseMask[i] = 0xffffffff;					// by default, allow autochoosing from any CommandSource
 		CLEAR_KINDOFMASK(m_preferredAgainst[i]);	// by default, weapon isn't preferred against anything in particular
+		CLEAR_KINDOFMASK(m_onlyAgainst[i]);
 	}
 }
 
@@ -238,6 +239,15 @@ void WeaponTemplateSet::parsePreferredAgainst(INI* ini, void *instance, void * /
 }
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: "OnlyAgainst = PRIMARY STRUCTURE" -- the slot is only used against those kinds
+void WeaponTemplateSet::parseOnlyAgainst(INI* ini, void *instance, void * /*store*/, const void* userData)
+{
+	WeaponTemplateSet* self = (WeaponTemplateSet*)instance;
+	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
+	KindOfMaskType::parseFromINI(ini, instance, &self->m_onlyAgainst[wslot], nullptr);
+}
+
+//-------------------------------------------------------------------------------------------------
 void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* tt )
 {
 	static const FieldParse myFieldParse[] =
@@ -246,6 +256,7 @@ void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* t
 		{ "Weapon",	WeaponTemplateSet::parseWeapon,	nullptr, 0 },
 		{ "AutoChooseSources",	WeaponTemplateSet::parseAutoChoose, nullptr, 0 },
 		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, nullptr, 0 },
+		{ "OnlyAgainst", WeaponTemplateSet::parseOnlyAgainst, nullptr, 0 },	// bfme-native
 		{ "ShareWeaponReloadTime", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
 		{ "WeaponLockSharedAcrossSets", INI::parseBool, nullptr, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
 		{ nullptr, nullptr, nullptr, 0 }
@@ -1009,6 +1020,11 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 
 		// weapon not allowed to target this kind of thing.
 		if (!(weapon->getAntiMask() & getVictimAntiMask(victim)))
+			continue;
+
+		// bfme-native: OnlyAgainst
+		const KindOfMaskType& onlyAgainst = m_curWeaponTemplateSet->getNthOnlyAgainstMask((WeaponSlotType)i);
+		if (KINDOFMASK_ANY_SET(onlyAgainst) && !victim->getTemplate()->getKindOfMask().anyIntersectionWith(onlyAgainst))
 			continue;
 
 		if (!weapon->isWithinTargetPitch(obj, victim))
