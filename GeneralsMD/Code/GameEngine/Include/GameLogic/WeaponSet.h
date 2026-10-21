@@ -225,12 +225,14 @@ private:
 	const WeaponTemplate*		m_template[WEAPONSLOT_COUNT];
 	UnsignedInt							m_autoChooseMask[WEAPONSLOT_COUNT];
 	KindOfMaskType					m_preferredAgainst[WEAPONSLOT_COUNT];
+	KindOfMaskType					m_onlyAgainst[WEAPONSLOT_COUNT];	///< bfme-native: slot only used against these kinds
 	Bool										m_isReloadTimeShared;
 	Bool										m_isWeaponLockSharedAcrossSets; ///< A weapon set so similar that it is safe to hold locks across
 
 	static void parseWeapon(INI* ini, void *instance, void *store, const void* userData);
 	static void parseAutoChoose(INI* ini, void *instance, void *store, const void* userData);
 	static void parsePreferredAgainst(INI* ini, void *instance, void *store, const void* userData);
+	static void parseOnlyAgainst(INI* ini, void *instance, void *store, const void* userData);
 
 public:
 	inline WeaponTemplateSet()
@@ -251,6 +253,7 @@ public:
 	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; }
 	inline UnsignedInt getNthCommandSourceMask(WeaponSlotType n) const { return m_autoChooseMask[n]; }
 	inline const KindOfMaskType& getNthPreferredAgainstMask(WeaponSlotType n) const { return m_preferredAgainst[n]; }
+	inline const KindOfMaskType& getNthOnlyAgainstMask(WeaponSlotType n) const { return m_onlyAgainst[n]; }
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }

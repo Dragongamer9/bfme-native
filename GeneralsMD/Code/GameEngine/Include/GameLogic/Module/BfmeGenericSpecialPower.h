@@ -3,6 +3,10 @@
 #pragma once
 
 #include "GameLogic/Module/SpecialPowerModule.h"
+#include "Common/KindOf.h"
+
+class FXList;
+class ObjectCreationList;
 
 class BfmeGenericSpecialPower : public SpecialPowerModule
 {
@@ -35,5 +39,50 @@ class WeaponModeSpecialPower : public SpecialPowerModule
 
 public:
 	WeaponModeSpecialPower( Thing *thing, const ModuleData* moduleData );
+	virtual void bfmeOnTrigger( const Coord3D *location ) override;
+};
+
+//-------------------------------------------------------------------------------------------------
+/** PlayerHealSpecialPower: spellbook heal -- heals the player's units of HealAffects kinds within
+	HealRadius of the target point (HealAmount: fraction of max health with HealAsPercent). */
+class PlayerHealSpecialPowerModuleData : public SpecialPowerModuleData
+{
+public:
+	PlayerHealSpecialPowerModuleData() : m_healAmount(0.0f), m_healRadius(0.0f), m_healAsPercent(FALSE), m_healFX(nullptr), m_healOCL(nullptr) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	KindOfMaskType m_healAffects;
+	Real m_healAmount;
+	Real m_healRadius;
+	Bool m_healAsPercent;
+	const FXList* m_healFX;
+	const ObjectCreationList* m_healOCL;
+};
+
+class PlayerHealSpecialPower : public SpecialPowerModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PlayerHealSpecialPower, "PlayerHealSpecialPower" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PlayerHealSpecialPower, PlayerHealSpecialPowerModuleData )
+public:
+	PlayerHealSpecialPower( Thing *thing, const ModuleData* moduleData );
+	virtual void bfmeOnTrigger( const Coord3D *location ) override;
+};
+
+//-------------------------------------------------------------------------------------------------
+/** PlayerUpgradeSpecialPower: spellbook power that grants the player an upgrade. */
+class PlayerUpgradeSpecialPowerModuleData : public SpecialPowerModuleData
+{
+public:
+	PlayerUpgradeSpecialPowerModuleData() : m_affectAllies(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_upgradeName;
+	Bool m_affectAllies;
+};
+
+class PlayerUpgradeSpecialPower : public SpecialPowerModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PlayerUpgradeSpecialPower, "PlayerUpgradeSpecialPower" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PlayerUpgradeSpecialPower, PlayerUpgradeSpecialPowerModuleData )
+public:
+	PlayerUpgradeSpecialPower( Thing *thing, const ModuleData* moduleData );
 	virtual void bfmeOnTrigger( const Coord3D *location ) override;
 };

@@ -518,6 +518,12 @@ void ModuleFactory::init()
 	addModule( DoCommandUpgrade );	// bfme-native
 	addModule( RespawnUpdate );	// bfme-native
 	addModule( ExperienceLevelCreate );	// bfme-native
+	addModule( InheritUpgradeCreate );	// bfme-native
+	addModule( RefundDie );	// bfme-native
+	addModule( AttachUpdate );	// bfme-native
+	addModule( DualWeaponBehavior );	// bfme-native
+	addModule( PlayerHealSpecialPower );	// bfme-native
+	addModule( PlayerUpgradeSpecialPower );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );

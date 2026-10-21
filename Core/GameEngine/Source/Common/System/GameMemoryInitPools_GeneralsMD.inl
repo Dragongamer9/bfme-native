@@ -203,6 +203,12 @@ static PoolSizeRec PoolSizes[] =
 	{ "DoCommandUpgrade", 1024, 256 },	// bfme-native
 	{ "RespawnUpdate", 512, 128 },	// bfme-native
 	{ "ExperienceLevelCreate", 512, 128 },	// bfme-native
+	{ "InheritUpgradeCreate", 256, 64 },	// bfme-native
+	{ "RefundDie", 256, 64 },	// bfme-native
+	{ "AttachUpdate", 256, 64 },	// bfme-native
+	{ "DualWeaponBehavior", 512, 128 },	// bfme-native
+	{ "PlayerHealSpecialPower", 128, 32 },	// bfme-native
+	{ "PlayerUpgradeSpecialPower", 128, 32 },	// bfme-native
 	{ "BfmeInertBehavior", 8192, 2048 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },

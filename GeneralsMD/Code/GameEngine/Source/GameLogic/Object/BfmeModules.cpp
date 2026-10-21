@@ -985,3 +985,224 @@ void ExperienceLevelCreate::onCreate()
 	if (xp && l && xp->getCurrentExperience() < l->m_requiredExperience)
 		xp->setExperienceAndLevel(l->m_requiredExperience, FALSE);
 }
+
+//=================================================================================================
+// InheritUpgradeCreate
+//=================================================================================================
+void InheritUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	BehaviorModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "Radius",				INI::parseReal,											nullptr, offsetof( InheritUpgradeCreateModuleData, m_radius ) },
+		{ "Upgrade",			INI::parseAsciiStringVectorAppend,	nullptr, offsetof( InheritUpgradeCreateModuleData, m_upgrades ) },
+		{ "ObjectFilter",	ObjectFilter::parseFromINI,					nullptr, offsetof( InheritUpgradeCreateModuleData, m_filter ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+InheritUpgradeCreate::InheritUpgradeCreate( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) {}
+BFME_TRIVIAL_SNAPSHOT(InheritUpgradeCreate, BehaviorModule)
+
+void InheritUpgradeCreate::onBuildComplete()
+{
+	const InheritUpgradeCreateModuleData* d = getInheritUpgradeCreateModuleData();
+	Object* me = getObject();
+	for (size_t u = 0; u < d->m_upgrades.size(); ++u)
+	{
+		const UpgradeTemplate* ut = TheUpgradeCenter->findUpgrade(d->m_upgrades[u]);
+		if (ut == nullptr || me->hasUpgrade(ut))
+			continue;
+		SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, d->m_radius, FROM_CENTER_2D);
+		MemoryPoolObjectHolder hold(iter);
+		for (Object* o = iter->first(); o; o = iter->next())
+		{
+			if (o != me && o->getControllingPlayer() == me->getControllingPlayer() && o->hasUpgrade(ut) && d->m_filter.matches(o, me))
+			{
+				me->giveUpgrade(ut);
+				break;
+			}
+		}
+	}
+}
+
+//=================================================================================================
+// RefundDie
+//=================================================================================================
+void RefundDieModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	DieModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "RefundPercent",		INI::parsePercentToReal,		nullptr, offsetof( RefundDieModuleData, m_refundPercent ) },
+		{ "UpgradeRequired",	INI::parseAsciiString,			nullptr, offsetof( RefundDieModuleData, m_upgradeRequired ) },
+		{ "BuildingRequired",	ObjectFilter::parseFromINI,	nullptr, offsetof( RefundDieModuleData, m_buildingRequired ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+RefundDie::RefundDie( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData ) {}
+void RefundDie::crc( Xfer *xfer ) { DieModule::crc( xfer ); }
+void RefundDie::xfer( Xfer *xfer ) { XferVersion cv = 1; XferVersion v = cv; xfer->xferVersion( &v, cv ); DieModule::xfer( xfer ); }
+void RefundDie::loadPostProcess() { DieModule::loadPostProcess(); }
+RefundDie::~RefundDie() {}
+
+void RefundDie::onDie( const DamageInfo *damageInfo )
+{
+	if (!isDieApplicable(damageInfo))
+		return;
+	const RefundDieModuleData* d = getRefundDieModuleData();
+	Object* me = getObject();
+	Player* p = me->getControllingPlayer();
+	if (p == nullptr || d->m_refundPercent <= 0.0f)
+		return;
+	if (d->m_upgradeRequired.isNotEmpty() && !objOrPlayerHasUpgrade(me, d->m_upgradeRequired))
+		return;
+	if (!d->m_buildingRequired.isEmpty())
+	{
+		Bool found = FALSE;
+		for (Object* o = TheGameLogic->getFirstObject(); o && !found; o = o->getNextObject())
+			if (o != me && o->getControllingPlayer() == p && !o->isEffectivelyDead() && d->m_buildingRequired.matches(o, me))
+				found = TRUE;
+		if (!found)
+			return;
+	}
+	const Int cost = me->getTemplate()->calcCostToBuild(p);
+	if (cost > 0)
+		p->getMoney()->deposit((UnsignedInt)(cost * d->m_refundPercent));
+}
+
+//=================================================================================================
+// AttachUpdate
+//=================================================================================================
+void AttachUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "ObjectFilter",									ObjectFilter::parseFromINI,	nullptr, offsetof( AttachUpdateModuleData, m_filter ) },
+		{ "ScanRange",										INI::parseReal,							nullptr, offsetof( AttachUpdateModuleData, m_scanRange ) },
+		{ "AlwaysTeleport",								INI::parseBool,							nullptr, offsetof( AttachUpdateModuleData, m_alwaysTeleport ) },
+		{ "AnchorToTopOfGeometry",				INI::parseBool,							nullptr, offsetof( AttachUpdateModuleData, m_anchorToTop ) },
+		{ "ParentStatus",									INI::parseAsciiString,			nullptr, offsetof( AttachUpdateModuleData, m_unusedString ) },
+		{ "ParentOwnerAttachmentEvaEvent",	INI::parseAsciiString,			nullptr, offsetof( AttachUpdateModuleData, m_unusedString ) },
+		{ "ParentEnemyAttachmentEvaEvent",	INI::parseAsciiString,			nullptr, offsetof( AttachUpdateModuleData, m_unusedString ) },
+		{ "ParentOwnerDiedEvaEvent",			INI::parseAsciiString,			nullptr, offsetof( AttachUpdateModuleData, m_unusedString ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+AttachUpdate::AttachUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
+	m_parent(INVALID_ID), m_searched(FALSE)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+}
+
+void AttachUpdate::crc( Xfer *xfer ) { UpdateModule::crc( xfer ); }
+void AttachUpdate::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	UpdateModule::xfer( xfer );
+	xfer->xferObjectID(&m_parent);
+	xfer->xferBool(&m_searched);
+}
+void AttachUpdate::loadPostProcess() { UpdateModule::loadPostProcess(); }
+AttachUpdate::~AttachUpdate() {}
+
+UpdateSleepTime AttachUpdate::update()
+{
+	const AttachUpdateModuleData* d = getAttachUpdateModuleData();
+	Object* me = getObject();
+	if (!m_searched)
+	{
+		m_searched = TRUE;
+		Object* best = nullptr;
+		Real bestD = 0.0f;
+		SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, d->m_scanRange, FROM_CENTER_2D);
+		MemoryPoolObjectHolder hold(iter);
+		for (Object* o = iter->first(); o; o = iter->next())
+		{
+			if (o == me || o->isEffectivelyDead() || o->isKindOf(KINDOF_HORDE) || !d->m_filter.matches(o, me))
+				continue;
+			const Real dist = ThePartitionManager->getDistanceSquared(me, o, FROM_CENTER_2D);
+			if (best == nullptr || dist < bestD)
+			{
+				best = o;
+				bestD = dist;
+			}
+		}
+		if (best == nullptr)
+		{
+			TheGameLogic->destroyObject(me);
+			return UPDATE_SLEEP_FOREVER;
+		}
+		m_parent = best->getID();
+	}
+	Object* parent = TheGameLogic->findObjectByID(m_parent);
+	if (parent == nullptr || parent->isEffectivelyDead())
+	{
+		TheGameLogic->destroyObject(me);
+		return UPDATE_SLEEP_FOREVER;
+	}
+	Coord3D pos = *parent->getPosition();
+	if (d->m_anchorToTop)
+		pos.z += parent->getGeometryInfo().getMaxHeightAbovePosition();
+	me->setPosition(&pos);
+	return UPDATE_SLEEP_NONE;
+}
+
+//=================================================================================================
+// DualWeaponBehavior
+//=================================================================================================
+void DualWeaponBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "SwitchWeaponOnCloseRangeDistance",	INI::parseReal,	nullptr, offsetof( DualWeaponBehaviorModuleData, m_closeRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+DualWeaponBehavior::DualWeaponBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_close(FALSE)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 3));
+}
+BFME_TRIVIAL_SNAPSHOT(DualWeaponBehavior, UpdateModule)
+
+UpdateSleepTime DualWeaponBehavior::update()
+{
+	Object* me = getObject();
+	const UpdateSleepTime later = UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 3);
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	AIUpdateInterface* ai = me->getAI();
+	Object* victim = ai ? ai->getCurrentVictim() : nullptr;
+	if (victim == nullptr)
+	{
+		if (m_close)
+		{
+			me->clearWeaponSetFlag(WEAPONSET_BFME_CLOSE_RANGE);
+			m_close = FALSE;
+		}
+		return later;
+	}
+	const Real r = getDualWeaponBehaviorModuleData()->m_closeRange;
+	const Bool close = ThePartitionManager->getDistanceSquared(me, victim, FROM_BOUNDINGSPHERE_2D) <= r * r;
+	if (close != m_close)
+	{
+		// the CLOSE_RANGE weapon set holds the melee weapon
+		if (close)
+			me->setWeaponSetFlag(WEAPONSET_BFME_CLOSE_RANGE);
+		else
+			me->clearWeaponSetFlag(WEAPONSET_BFME_CLOSE_RANGE);
+		m_close = close;
+	}
+	return later;
+}

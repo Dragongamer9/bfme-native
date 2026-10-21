@@ -6,6 +6,14 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Module/BfmeGenericSpecialPower.h"
 #include "GameLogic/AttributeModifier.h"
+#include "Common/Player.h"
+#include "Common/ThingTemplate.h"
+#include "Common/PlayerList.h"
+#include "Common/Upgrade.h"
+#include "GameClient/FXList.h"
+#include "GameLogic/ObjectCreationList.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/WeaponSet.h"
@@ -120,4 +128,100 @@ void WeaponModeSpecialPower::xfer( Xfer *xfer )
 void WeaponModeSpecialPower::loadPostProcess()
 {
 	SpecialPowerModule::loadPostProcess();
+}
+
+#define BFME_SP_SNAPSHOT(Cls) \
+	Cls::~Cls() {} \
+	void Cls::crc( Xfer *xfer ) { SpecialPowerModule::crc( xfer ); } \
+	void Cls::xfer( Xfer *xfer ) { XferVersion cv = 1; XferVersion v = cv; xfer->xferVersion( &v, cv ); SpecialPowerModule::xfer( xfer ); } \
+	void Cls::loadPostProcess() { SpecialPowerModule::loadPostProcess(); }
+
+//=================================================================================================
+// PlayerHealSpecialPower
+//=================================================================================================
+void PlayerHealSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	SpecialPowerModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "HealAffects",		KindOfMaskType::parseFromINI,			nullptr, offsetof( PlayerHealSpecialPowerModuleData, m_healAffects ) },
+		{ "HealAmount",			INI::parseReal,										nullptr, offsetof( PlayerHealSpecialPowerModuleData, m_healAmount ) },
+		{ "HealRadius",			INI::parseReal,										nullptr, offsetof( PlayerHealSpecialPowerModuleData, m_healRadius ) },
+		{ "HealAsPercent",	INI::parseBool,										nullptr, offsetof( PlayerHealSpecialPowerModuleData, m_healAsPercent ) },
+		{ "HealFX",					INI::parseFXList,									nullptr, offsetof( PlayerHealSpecialPowerModuleData, m_healFX ) },
+		{ "HealOCL",				INI::parseObjectCreationList,			nullptr, offsetof( PlayerHealSpecialPowerModuleData, m_healOCL ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+PlayerHealSpecialPower::PlayerHealSpecialPower( Thing *thing, const ModuleData* moduleData ) : SpecialPowerModule( thing, moduleData ) {}
+BFME_SP_SNAPSHOT(PlayerHealSpecialPower)
+
+void PlayerHealSpecialPower::bfmeOnTrigger( const Coord3D *location )
+{
+	SpecialPowerModule::bfmeOnTrigger(location);
+	const PlayerHealSpecialPowerModuleData* d = getPlayerHealSpecialPowerModuleData();
+	Object* me = getObject();
+	Player* p = me->getControllingPlayer();
+	const Coord3D* at = location ? location : me->getPosition();
+	if (p == nullptr)
+		return;
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(at, d->m_healRadius, FROM_CENTER_2D);
+	MemoryPoolObjectHolder hold(iter);
+	for (Object* o = iter->first(); o; o = iter->next())
+	{
+		if (o->isEffectivelyDead() || o->getControllingPlayer() != p)
+			continue;
+		if (d->m_healAffects.any() && !o->getTemplate()->getKindOfMask().anyIntersectionWith(d->m_healAffects))
+			continue;
+		BodyModuleInterface* body = o->getBodyModule();
+		if (body == nullptr)
+			continue;
+		const Real amount = d->m_healAsPercent || d->m_healAmount <= 1.0f ? body->getMaxHealth() * d->m_healAmount : d->m_healAmount;
+		body->internalChangeHealth(min(amount, body->getMaxHealth() - body->getHealth()));
+		if (d->m_healFX)
+			FXList::doFXObj(d->m_healFX, o);
+	}
+	if (d->m_healOCL)
+		ObjectCreationList::create(d->m_healOCL, me, at, at, (Bool)FALSE);
+}
+
+//=================================================================================================
+// PlayerUpgradeSpecialPower
+//=================================================================================================
+void PlayerUpgradeSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	SpecialPowerModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "UpgradeName",	INI::parseAsciiString,	nullptr, offsetof( PlayerUpgradeSpecialPowerModuleData, m_upgradeName ) },
+		{ "AffectAllies",	INI::parseBool,					nullptr, offsetof( PlayerUpgradeSpecialPowerModuleData, m_affectAllies ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+PlayerUpgradeSpecialPower::PlayerUpgradeSpecialPower( Thing *thing, const ModuleData* moduleData ) : SpecialPowerModule( thing, moduleData ) {}
+BFME_SP_SNAPSHOT(PlayerUpgradeSpecialPower)
+
+void PlayerUpgradeSpecialPower::bfmeOnTrigger( const Coord3D *location )
+{
+	SpecialPowerModule::bfmeOnTrigger(location);
+	const PlayerUpgradeSpecialPowerModuleData* d = getPlayerUpgradeSpecialPowerModuleData();
+	const UpgradeTemplate* ut = d->m_upgradeName.isNotEmpty() ? TheUpgradeCenter->findUpgrade(d->m_upgradeName) : nullptr;
+	Player* p = getObject()->getControllingPlayer();
+	if (ut == nullptr || p == nullptr)
+		return;
+	if (!p->hasUpgradeComplete(ut))
+		p->addUpgrade(ut, UPGRADE_STATUS_COMPLETE);
+	if (d->m_affectAllies)
+	{
+		for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+		{
+			Player* other = ThePlayerList->getNthPlayer(i);
+			if (other && other != p && p->getRelationship(other->getDefaultTeam()) == ALLIES && !other->hasUpgradeComplete(ut))
+				other->addUpgrade(ut, UPGRADE_STATUS_COMPLETE);
+		}
+	}
 }
