@@ -1,0 +1,8 @@
+# A Gondor barracks trains a soldier horde (cost, build time, horde members, rally out of the door)
+1    build GondorBarracks player1 900 1100
+1510 money
+1511 produce player1 GondorBarracks GondorFighterHorde
+1512 money
+3200 summary
+3200 money
+3201 quit
