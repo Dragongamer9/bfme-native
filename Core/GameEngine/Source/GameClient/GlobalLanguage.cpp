@@ -157,7 +157,13 @@ void GlobalLanguage::init()
 		fname.format("Data\\%s\\Language", registryLanguage.str());
 
 		INI ini;
-		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
+		AsciiString fnameIni = fname;
+		fnameIni.concat(".ini");
+		// bfme-native: BFME2/RotWK ship Language.ini at the root of lang\<language>.big
+		if (!TheFileSystem->doesFileExist(fnameIni.str()) && TheFileSystem->doesFileExist("Language.ini"))
+			ini.load("Language.ini", INI_LOAD_OVERWRITE, nullptr);
+		else
+			ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
 
 		// GeneralsX @bugfix fbraz 04/06/2026 Only fall back to stock English if the primary language
 		// did not set UnicodeFontName. This protects two scenarios:
