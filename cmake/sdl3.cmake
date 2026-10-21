@@ -47,8 +47,14 @@ if(SAGE_USE_SDL3)
         set(SDL_VIDEO ON CACHE BOOL "Enable video subsystem" FORCE)
         
         # Platform support
-        set(SDL_WAYLAND ON CACHE BOOL "Enable Wayland support (Linux)" FORCE)
-        set(SDL_X11 ON CACHE BOOL "Enable X11 support (Linux)" FORCE)
+        # bfme-native: BFME_HEADLESS_DEPS builds SDL without X11/Wayland (CI / containers without dev headers)
+        if(BFME_HEADLESS_DEPS)
+            set(SDL_WAYLAND OFF CACHE BOOL "" FORCE)
+            set(SDL_X11 OFF CACHE BOOL "" FORCE)
+        else()
+            set(SDL_WAYLAND ON CACHE BOOL "Enable Wayland support (Linux)" FORCE)
+            set(SDL_X11 ON CACHE BOOL "Enable X11 support (Linux)" FORCE)
+        endif()
         set(SDL_CAMERA OFF CACHE BOOL "Disable camera (unused)" FORCE)
         set(SDL_QSPI OFF CACHE BOOL "Disable QSPI (unused)" FORCE)
         

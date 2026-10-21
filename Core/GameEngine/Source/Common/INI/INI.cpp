@@ -34,6 +34,7 @@
 #include "WWMath/wwmath.h"
 #include "Common/INI.h"
 #include "Common/INIException.h"
+#include "Common/INIPreprocessor.h"
 
 #include "Common/DamageFX.h"
 #include "Common/file.h"
@@ -339,6 +340,15 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	m_readBufferUsed = file->size();
 	m_readBuffer = file->readEntireAndClose();
 
+	// bfme-native: BFME2/RotWK INI preprocessing (#include, #define, macro substitution)
+	{
+		unsigned expandedLen = 0;
+		char* expanded = INIPreprocessor::expand(filename, m_readBuffer, m_readBufferUsed, expandedLen);
+		delete[] m_readBuffer;
+		m_readBuffer = expanded;
+		m_readBufferUsed = expandedLen;
+	}
+
 	// save our filename
 	m_filename = filename;
 
@@ -540,7 +550,7 @@ void INI::readLine()
 				break;
 			}
 
-			DEBUG_ASSERTCRASH(*p != '\t', ("tab characters are not allowed in INI files (%s). please check your editor settings. Line Number %d", m_filename.str(), getLineNum()));
+			// bfme-native: BFME data uses tabs freely; they are folded to spaces below
 
 			// if this is a semicolon, that represents the start of a comment
 			if (*p == ';')
@@ -1819,6 +1829,10 @@ Type scanType(const char* tokenString)
 //-------------------------------------------------------------------------------------------------
 /*static*/ Int INI::scanInt(const char* token)
 {
+	// bfme-native: #ADD( / #SUBTRACT( / #MULTIPLY( / #DIVIDE( macro arithmetic
+	if (token && token[0] == '#' && INIPreprocessor::isMathToken(token))
+		return INIPreprocessor::evalInt(token);
+
 #if USE_STD_FROM_CHARS_PARSING == 1
 	return scanType<Int>(token);
 #else
@@ -1838,6 +1852,10 @@ Type scanType(const char* tokenString)
 //-------------------------------------------------------------------------------------------------
 /*static*/ UnsignedInt INI::scanUnsignedInt(const char* token)
 {
+	// bfme-native: #ADD( / #SUBTRACT( / #MULTIPLY( / #DIVIDE( macro arithmetic
+	if (token && token[0] == '#' && INIPreprocessor::isMathToken(token))
+		return INIPreprocessor::evalUnsignedInt(token);
+
 #if USE_STD_FROM_CHARS_PARSING == 1
 	return scanType<UnsignedInt>(token);
 #else
@@ -1857,6 +1875,10 @@ Type scanType(const char* tokenString)
 //-------------------------------------------------------------------------------------------------
 /*static*/ Real INI::scanReal(const char* token)
 {
+	// bfme-native: #ADD( / #SUBTRACT( / #MULTIPLY( / #DIVIDE( macro arithmetic
+	if (token && token[0] == '#' && INIPreprocessor::isMathToken(token))
+		return INIPreprocessor::evalReal(token);
+
 #if USE_STD_FROM_CHARS_PARSING == 1
 	return scanType<Real>(token);
 #else
