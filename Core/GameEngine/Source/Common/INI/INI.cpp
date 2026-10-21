@@ -326,6 +326,19 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 
 	}
 
+	// bfme-native: deferred block replay - parse text held in memory, already preprocessed
+	if (s_bfmeMemoryText && strncmp(filename.str(), "<mem>", 5) == 0)
+	{
+		m_readBufferNext = 0;
+		m_readBufferUsed = (unsigned)s_bfmeMemoryText->size();
+		m_readBuffer = new char[m_readBufferUsed + 1];
+		memcpy(m_readBuffer, s_bfmeMemoryText->data(), m_readBufferUsed);
+		m_readBuffer[m_readBufferUsed] = 0;
+		m_filename = filename;
+		m_loadType = loadType;
+		return;
+	}
+
 	// open the file
 	File* file = TheFileSystem->openFile(filename.str(), File::READ);
 	if( file == nullptr )
@@ -518,6 +531,62 @@ static void bfmeRecordSkip(const char* kind, const char* block, const char* name
 }
 
 static AsciiString s_bfmeCurrentBlock;
+
+struct BfmeDeferredBlock { std::string type, file, text; };
+static std::vector<BfmeDeferredBlock>& bfmeDeferred()
+{
+	static std::vector<BfmeDeferredBlock> v;
+	return v;
+}
+static const std::string* s_bfmeMemoryText = nullptr;	// consumed by prepFile for "<mem>" loads
+
+void INI::bfmeDeferBlock(const char* blockType, const char* headerLine)
+{
+	BfmeDeferredBlock b;
+	b.type = blockType;
+	b.file = m_filename.str();
+	b.text = headerLine;
+	b.text += "\n";
+	Int depth = 1;
+	while (depth > 0 && !m_endOfFile)
+	{
+		readLine();
+		b.text += m_buffer;
+		b.text += "\n";
+		char tmp[INI_MAX_CHARS_PER_LINE + 1];
+		strncpy(tmp, m_buffer, sizeof(tmp) - 1); tmp[sizeof(tmp) - 1] = 0;
+		char* save = nullptr;
+		const char* t = strtok_r(tmp, " \n\r\t=", &save);
+		if (!t)
+			continue;
+		const Bool singleToken = !m_bfmeLineHasEquals && strtok_r(nullptr, " \n\r\t", &save) == nullptr;
+		if (stricmp(t, "End") == 0)
+			--depth;
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals) || singleToken)
+			++depth;
+	}
+	bfmeDeferred().push_back(b);
+}
+
+/*static*/ void INI::bfmeReplayDeferred(const char* blockType)
+{
+	std::vector<BfmeDeferredBlock> mine;
+	std::vector<BfmeDeferredBlock>& all = bfmeDeferred();
+	for (size_t i = 0; i < all.size(); )
+	{
+		if (all[i].type == blockType) { mine.push_back(all[i]); all.erase(all.begin() + i); }
+		else ++i;
+	}
+	for (const BfmeDeferredBlock& b : mine)
+	{
+		INI ini;
+		s_bfmeMemoryText = &b.text;
+		AsciiString name;
+		name.format("<mem>%s", b.file.c_str());
+		ini.load(name, INI_LOAD_OVERWRITE, nullptr);
+		s_bfmeMemoryText = nullptr;
+	}
+}
 
 /// Skip lines up to the End that closes a block whose opening line was just read.
 void INI::bfmeSkipBlock()
