@@ -162,6 +162,7 @@ void DamageInfoInput::xfer( Xfer *xfer )
 	// damage FX Override
 	if( version >= 2 )
 		xfer->xferUser( &m_damageFXOverride, sizeof( DamageType ) );
+	// bfme-native: not saved yet (save format will be redefined for RotWK)
 
 	// death type
 	xfer->xferUser( &m_deathType, sizeof( DeathType ) );
@@ -217,3 +218,46 @@ void DamageInfoOutput::xfer( Xfer *xfer )
 
 }
 
+
+// bfme-native
+const char *const TheDamageFXTypeNames[] =
+{
+	"SWORD_SLASH",
+	"WITCH_KING_MORGUL_BLADE",
+	"REFLECTED",
+	"GOOD_ARROW_PIERCE",
+	"EVIL_ARROW_PIERCE",
+	"SMALL_ROCK",
+	"BIG_ROCK",
+	"CLUBBING",
+	"FLAME",
+	"MAGIC",
+	"BALROG_SWORD",
+	"BALROG_WHIP",
+	"ELECTRIC",
+	"GIMLI_LEAP",
+	"STRUCTURAL",
+	"FLOOD_HORSE",
+	"BOLT",
+	"BOLT2",
+	"MAGIC2",
+	"MAGIC3",
+	"FIRE1",
+	"FIRE2",
+	"FIRE3",
+	"SPARKS1",
+	"SPARKS2",
+	"EARTH1",
+	"EARTH2",
+	"POISON",
+	"TORNADO",
+	"UNDEFINED",
+	"NECRO1",
+	"NECRO2",
+	"NECRO3",
+	"NECRO4",
+	"NECRO5",
+	"NECRO6",
+	nullptr
+};
+static_assert(ARRAY_SIZE(TheDamageFXTypeNames) == DAMAGEFX_NUM_TYPES + 1, "Incorrect array size");

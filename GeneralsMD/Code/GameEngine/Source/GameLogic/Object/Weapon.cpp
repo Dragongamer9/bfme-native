@@ -178,6 +178,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ScatterTargetScalar",			INI::parseReal,													nullptr,							offsetof(WeaponTemplate, m_scatterTargetScalar) },
 	{ "ScatterRadiusVsInfantry",	INI::parseReal,													nullptr,							offsetof( WeaponTemplate, m_infantryInaccuracyDist ) },
 	{ "DamageType",								DamageTypeFlags::parseSingleBitFromINI,	nullptr,							offsetof(WeaponTemplate, m_damageType) },
+	{ "DamageFXType",							INI::parseIndexList,										TheDamageFXTypeNames,	offsetof(WeaponTemplate, m_damageFXType) },	// bfme-native
 	{ "DamageStatusType",					ObjectStatusMaskType::parseSingleBitFromINI,	nullptr,				offsetof(WeaponTemplate, m_damageStatusType) },
 	{ "DeathType",								INI::parseIndexList,										TheDeathNames,		offsetof(WeaponTemplate, m_deathType) },
 	{ "WeaponSpeed",							INI::parseVelocityReal,									nullptr,							offsetof(WeaponTemplate, m_weaponSpeed) },
@@ -267,6 +268,7 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
 	m_shockWaveRadius								= 0.0f;
 	m_shockWaveTaperOff							= 0.0f;
 	m_damageType										= DAMAGE_EXPLOSION;
+	m_damageFXType										= DAMAGEFX_UNDEFINED;	// bfme-native
 	m_deathType											= DEATH_NORMAL;
 	m_weaponSpeed										= 999999.0f;	// effectively instant
 	m_minWeaponSpeed								= 999999.0f;	// effectively instant
@@ -1426,6 +1428,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 			{
 				DamageInfo damageInfo;
 				damageInfo.in.m_damageType = damageType;
+				damageInfo.in.m_damageFXType = m_damageFXType;
 				damageInfo.in.m_deathType = deathType;
 				damageInfo.in.m_sourceID = sourceID;
 				damageInfo.in.m_sourcePlayerMask = 0;
@@ -1506,6 +1509,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = damageType;
+			damageInfo.in.m_damageFXType = m_damageFXType;
 			damageInfo.in.m_deathType = deathType;
 			damageInfo.in.m_sourceID = sourceID;
 			damageInfo.in.m_sourcePlayerMask = 0;

@@ -171,6 +171,8 @@ enum WeaponSlotType CPP_11(: Int)
 	PRIMARY_WEAPON = 0,
 	SECONDARY_WEAPON,
 	TERTIARY_WEAPON,
+	QUATERNARY_WEAPON,	// bfme-native: RotWK has five slots
+	QUINARY_WEAPON,
 
 	WEAPONSLOT_COUNT
 };

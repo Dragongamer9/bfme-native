@@ -81,15 +81,15 @@ public:
 		a/v fx used for a specific damage type, call this method. (It is OK for source and/or
 		victim to be null, but you should pass them when available.)
 	*/
-	void doDamageFX(DamageType t, Real damageAmount, const Object* source, const Object* victim) const;
+	void doDamageFX(DamageFXType t, Real damageAmount, const Object* source, const Object* victim) const;
 
-	UnsignedInt getDamageFXThrottleTime(DamageType t, const Object* source) const;
+	UnsignedInt getDamageFXThrottleTime(DamageFXType t, const Object* source) const;
 
 	const FieldParse* getFieldParse() const;
 
 private:
 
-	ConstFXListPtr getDamageFXList(DamageType t, Real damageAmount, const Object* source) const;
+	ConstFXListPtr getDamageFXList(DamageFXType t, Real damageAmount, const Object* source) const;
 
 	static void parseAmount( INI* ini, void *instance, void*, const void* );
 	static void parseMajorFXList( INI* ini, void *instance, void*, const void* );
@@ -122,7 +122,7 @@ private:
 		}
 	};
 
-	DFX m_dfx[DAMAGE_NUM_TYPES][LEVEL_COUNT];
+	DFX m_dfx[DAMAGEFX_NUM_TYPES][LEVEL_COUNT];	// bfme-native: keyed by RotWK DamageFXType
 };
 
 //-------------------------------------------------------------------------------------------------

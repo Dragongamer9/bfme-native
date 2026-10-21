@@ -55,6 +55,7 @@ static const char *const TheStructureCollapsePhaseNames[] =
 	"INITIAL",
 	"DELAY",
 	"BURST",
+	"ALMOST_FINAL",
 	"FINAL",
 
 	nullptr
@@ -239,6 +240,7 @@ UpdateSleepTime StructureCollapseUpdate::update()
 		if ((m_currentHeight + building->getTemplate()->getTemplateGeometryInfo().getMaxHeightAbovePosition()) <= 0)
 		{
 			m_collapseState = COLLAPSESTATE_DONE;
+			doPhaseStuff(SCPHASE_ALMOST_FINAL, building->getPosition());	// bfme-native: TODO exact RotWK timing
 			doPhaseStuff(SCPHASE_FINAL, building->getPosition());
 			Drawable *drawable = building->getDrawable();
 

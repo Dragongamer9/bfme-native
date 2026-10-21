@@ -72,7 +72,7 @@ DamageFX::DamageFX()
 //-------------------------------------------------------------------------------------------------
 void DamageFX::clear()
 {
-	for (Int dt = 0; dt < DAMAGE_NUM_TYPES; ++dt)
+	for (Int dt = 0; dt < DAMAGEFX_NUM_TYPES; ++dt)
 	{
 		for (Int v = LEVEL_FIRST; v <= LEVEL_LAST; ++v)
 		{
@@ -82,13 +82,13 @@ void DamageFX::clear()
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt DamageFX::getDamageFXThrottleTime(DamageType t, const Object* source) const
+UnsignedInt DamageFX::getDamageFXThrottleTime(DamageFXType t, const Object* source) const
 {
 	return m_dfx[t][source ? source->getVeterancyLevel() : LEVEL_REGULAR].m_damageFXThrottleTime;
 }
 
 //-------------------------------------------------------------------------------------------------
-void DamageFX::doDamageFX(DamageType t, Real damageAmount, const Object* source, const Object* victim) const
+void DamageFX::doDamageFX(DamageFXType t, Real damageAmount, const Object* source, const Object* victim) const
 {
 	ConstFXListPtr fx = getDamageFXList(t, damageAmount, source);
 	// since the victim is receiving the damage, it's the "primary" object.
@@ -98,7 +98,7 @@ void DamageFX::doDamageFX(DamageType t, Real damageAmount, const Object* source,
 }
 
 //-------------------------------------------------------------------------------------------------
-ConstFXListPtr DamageFX::getDamageFXList(DamageType t, Real damageAmount, const Object* source) const
+ConstFXListPtr DamageFX::getDamageFXList(DamageFXType t, Real damageAmount, const Object* source) const
 {
 	/*
 		if damage is zero, never do damage fx. this is by design, since "zero" damage can happen
@@ -141,8 +141,8 @@ static void parseCommonStuff(
 	ConstCharPtrArray names,
 	VeterancyLevel& vetFirst,
 	VeterancyLevel& vetLast,
-	DamageType& damageFirst,
-	DamageType& damageLast
+	DamageFXType& damageFirst,
+	DamageFXType& damageLast
 )
 {
 	if (names)
@@ -159,12 +159,12 @@ static void parseCommonStuff(
 	const char* damageName = ini->getNextToken();
 	if (stricmp(damageName, "Default") == 0)
 	{
-		damageFirst = (DamageType)0;
-		damageLast = (DamageType)(DAMAGE_NUM_TYPES - 1);
+		damageFirst = (DamageFXType)0;
+		damageLast = (DamageFXType)(DAMAGEFX_NUM_TYPES - 1);
 	}
 	else
 	{
-		damageFirst = (DamageType)INI::scanIndexList(damageName, DamageTypeFlags::getBitNames());
+		damageFirst = (DamageFXType)INI::scanIndexList(damageName, TheDamageFXTypeNames);
 		damageLast = damageFirst;
 	}
 }
@@ -176,7 +176,7 @@ static void parseCommonStuff(
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
 
 	VeterancyLevel vetFirst, vetLast;
-	DamageType damageFirst, damageLast;
+	DamageFXType damageFirst, damageLast;
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	Real amt = INI::scanReal(ini->getNextToken());
@@ -197,7 +197,7 @@ static void parseCommonStuff(
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
 
 	VeterancyLevel vetFirst, vetLast;
-	DamageType damageFirst, damageLast;
+	DamageFXType damageFirst, damageLast;
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	ConstFXListPtr fx;
@@ -219,7 +219,7 @@ static void parseCommonStuff(
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
 
 	VeterancyLevel vetFirst, vetLast;
-	DamageType damageFirst, damageLast;
+	DamageFXType damageFirst, damageLast;
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	ConstFXListPtr fx;
@@ -241,7 +241,7 @@ static void parseCommonStuff(
 	ConstCharPtrArray names = (ConstCharPtrArray)userData;
 
 	VeterancyLevel vetFirst, vetLast;
-	DamageType damageFirst, damageLast;
+	DamageFXType damageFirst, damageLast;
 	parseCommonStuff(ini, names, vetFirst, vetLast, damageFirst, damageLast);
 
 	UnsignedInt t;
