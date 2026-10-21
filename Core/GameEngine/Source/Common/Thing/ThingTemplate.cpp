@@ -151,6 +151,10 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "ExperienceValue",			ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_experienceValues ) },
 	{ "ExperienceRequired",		ThingTemplate::parseIntList,					(void*)LEVEL_COUNT,		offsetof( ThingTemplate, m_experienceRequired ) },
 	{ "IsTrainable",					INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_isTrainable ) },
+	{ "CommandPoints",				INI::parseInt,												nullptr,									offsetof( ThingTemplate, m_bfmeCommandPoints ) },	// bfme-native
+	{ "CommandPointBonus",		INI::parseInt,												nullptr,									offsetof( ThingTemplate, m_bfmeCommandPointBonus ) },	// bfme-native
+	{ "BountyValue",					INI::parseInt,												nullptr,									offsetof( ThingTemplate, m_bfmeBountyValue ) },	// bfme-native
+	{ "GiveNoXP",							INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_bfmeGiveNoXP ) },	// bfme-native
 	{ "EnterGuard",						INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_enterGuard ) }, // Added in Zero Hour
 	{ "HijackGuard",					INI::parseBool,												nullptr,									offsetof( ThingTemplate, m_hijackGuard ) }, // Added in Zero Hour
 
@@ -1108,6 +1112,10 @@ ThingTemplate::ThingTemplate() :
 		m_skillPointValues[levelIndex] = USE_EXP_VALUE_FOR_SKILL_VALUE;
 	}
 	m_isTrainable = TRUE;	// bfme-native: RotWK units are trainable unless IsTrainable = No
+	m_bfmeCommandPoints = 0;
+	m_bfmeCommandPointBonus = 0;
+	m_bfmeBountyValue = 0;
+	m_bfmeGiveNoXP = FALSE;
 	m_enterGuard = FALSE;
 	m_hijackGuard = FALSE;
 

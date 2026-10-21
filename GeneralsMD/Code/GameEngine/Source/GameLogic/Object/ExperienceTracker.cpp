@@ -63,6 +63,8 @@ Int ExperienceTracker::getExperienceValue( const Object* killer ) const
 		return 0;
 
 	// bfme-native: RotWK awards by rank
+	if (m_parent->getTemplate()->bfmeGivesNoXP())
+		return 0;
 	if (m_bfmeRank > 0 && TheExperienceLevelStore)
 	{
 		const ExperienceLevel* l = TheExperienceLevelStore->getLevel(m_parent->getTemplate(), m_bfmeRank);

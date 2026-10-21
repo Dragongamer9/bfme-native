@@ -526,6 +526,9 @@ void ModuleFactory::init()
 	addModule( PlayerUpgradeSpecialPower );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("NotifyTargetsOfImminentProbableCrushingUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HordeNotifyTargetsOfImminentProbableCrushingUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("AudioLoopUpgrade"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("BuildingBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("StancesBehavior"), BfmeInertBehavior::getInterfaceMask() );

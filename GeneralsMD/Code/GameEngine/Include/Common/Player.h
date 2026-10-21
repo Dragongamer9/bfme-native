@@ -273,6 +273,8 @@ public:
 
   // Check MaxSimultaneousOfType
   Bool canBuildMoreOfType( const ThingTemplate *whatToBuild ) const;
+	Int bfmeCommandPointsUsed() const;		///< bfme-native: RotWK command points taken by our units
+	Int bfmeCommandPointLimit() const;		///< bfme-native: 0 = unlimited
 
 	/// Difficulty level for this player.
 	GameDifficulty getPlayerDifficulty() const;

@@ -382,7 +382,8 @@ void run(const TestCmd& c)
 			Player* pl = ThePlayerList->getNthPlayer(i);
 			AsciiString n = TheNameKeyGenerator->keyToName(pl->getPlayerNameKey());
 			if (n.isNotEmpty())
-				printf("[BFMETEST] money frame=%u %s %u\n", TheGameLogic->getFrame(), n.str(), pl->getMoney()->countMoney());
+				printf("[BFMETEST] money frame=%u %s %u commandpoints=%d/%d\n", TheGameLogic->getFrame(), n.str(), pl->getMoney()->countMoney(),
+					pl->bfmeCommandPointsUsed(), pl->bfmeCommandPointLimit());
 		}
 	}
 	else if (op == "players")
