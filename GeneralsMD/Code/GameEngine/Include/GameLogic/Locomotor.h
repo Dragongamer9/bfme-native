@@ -461,6 +461,7 @@ private:
 	Real				m_brakingFactor;
 	Real				m_maxLift;
 	Real				m_maxSpeed;
+	Real										m_bfmeSpeedMult;					///< bfme-native: SPEED attribute modifiers of the owner
 	Real				m_maxAccel;
 	Real				m_maxBraking;
 	Real				m_maxTurnRate;

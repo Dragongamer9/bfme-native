@@ -46,6 +46,10 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/DeletionUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/AttributeModifier.h"	// bfme-native
+#include "GameLogic/PartitionManager.h"	// bfme-native
+#include "GameLogic/ExperienceTracker.h"	// bfme-native
+#include "GameClient/FXList.h"	// bfme-native
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ScriptEngine.h"
@@ -67,6 +71,31 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	m_startsReady = FALSE;
 	m_scriptedSpecialPowerOnly = FALSE;
 
+	// bfme-native
+	m_attributeModifierRange = 0.0f;
+	m_attributeModifierAffectsSelf = FALSE;
+	m_attributeModifierFX = nullptr;
+	m_attributeModifierWeatherBased = FALSE;
+	m_weatherDuration = 0;
+	m_targetEnemy = FALSE;
+	m_targetAllSides = FALSE;
+	m_initiateFX = nullptr;
+	m_triggerFX = nullptr;
+	m_setModelConditionTime = 0.0f;
+	m_giveLevels = 0;
+	m_disableDuringAnimDuration = FALSE;
+	m_idleWhenStartingPower = FALSE;
+	m_affectGood = TRUE;
+	m_affectEvil = TRUE;
+	m_affectAllies = TRUE;
+	m_availableAtStart = FALSE;
+	m_adjustVictim = FALSE;
+	m_useDistanceFromCommandCenter = FALSE;
+	m_distanceFromCommandCenter = 0.0f;
+	m_antiFX = nullptr;
+	m_reEnableAntiCategory = FALSE;
+	m_unusedInt = 0;
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -83,6 +112,38 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 		{ "StartsReady",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_startsReady ) },
 		{ "InitiateSound",						INI::parseAudioEventRTS,				nullptr, offsetof( SpecialPowerModuleData, m_initiateSound ) },
 		{ "ScriptedSpecialPowerOnly", INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_scriptedSpecialPowerOnly ) },
+		// bfme-native: RotWK
+		{ "AttributeModifier",				INI::parseAsciiString,					nullptr, offsetof( SpecialPowerModuleData, m_attributeModifier ) },
+		{ "AttributeModifierRange",		INI::parseReal,									nullptr, offsetof( SpecialPowerModuleData, m_attributeModifierRange ) },
+		{ "AttributeModifierAffectsSelf", INI::parseBool,							nullptr, offsetof( SpecialPowerModuleData, m_attributeModifierAffectsSelf ) },
+		{ "AttributeModifierAffects",	ObjectFilter::parseFromINI,			nullptr, offsetof( SpecialPowerModuleData, m_attributeModifierAffects ) },
+		{ "AttributeModifierFX",			INI::parseFXList,								nullptr, offsetof( SpecialPowerModuleData, m_attributeModifierFX ) },
+		{ "AttributeModifierWeatherBased", INI::parseBool,						nullptr, offsetof( SpecialPowerModuleData, m_attributeModifierWeatherBased ) },
+		{ "WeatherDuration",					INI::parseDurationUnsignedInt,	nullptr, offsetof( SpecialPowerModuleData, m_weatherDuration ) },
+		{ "RequirementsFilterMPSkirmish", ObjectFilter::parseFromINI,	nullptr, offsetof( SpecialPowerModuleData, m_requirementsFilterMPSkirmish ) },
+		{ "RequirementsFilterStrategic", ObjectFilter::parseFromINI,	nullptr, offsetof( SpecialPowerModuleData, m_requirementsFilterStrategic ) },
+		{ "TargetEnemy",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_targetEnemy ) },
+		{ "TargetAllSides",						INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_targetAllSides ) },
+		{ "InitiateFX",								INI::parseFXList,								nullptr, offsetof( SpecialPowerModuleData, m_initiateFX ) },
+		{ "TriggerFX",								INI::parseFXList,								nullptr, offsetof( SpecialPowerModuleData, m_triggerFX ) },
+		{ "SetModelCondition",				ModelConditionFlags::parseFromINI, nullptr, offsetof( SpecialPowerModuleData, m_setModelCondition ) },
+		{ "SetModelConditionTime",		INI::parseReal,									nullptr, offsetof( SpecialPowerModuleData, m_setModelConditionTime ) },
+		{ "GiveLevels",								INI::parseInt,									nullptr, offsetof( SpecialPowerModuleData, m_giveLevels ) },
+		{ "DisableDuringAnimDuration", INI::parseBool,								nullptr, offsetof( SpecialPowerModuleData, m_disableDuringAnimDuration ) },
+		{ "IdleWhenStartingPower",		INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_idleWhenStartingPower ) },
+		{ "AffectGood",								INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_affectGood ) },
+		{ "AffectEvil",								INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_affectEvil ) },
+		{ "AffectAllies",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_affectAllies ) },
+		{ "AvailableAtStart",					INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_availableAtStart ) },
+		{ "ChangeWeather",						INI::parseAsciiString,					nullptr, offsetof( SpecialPowerModuleData, m_unusedString ) },	// TODO weather
+		{ "AdjustVictim",							INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_adjustVictim ) },
+		{ "OnTriggerRechargeSpecialPower", INI::parseAsciiString,			nullptr, offsetof( SpecialPowerModuleData, m_onTriggerRechargeSpecialPower ) },
+		{ "BurnDecayModifier",				INI::parseInt,									nullptr, offsetof( SpecialPowerModuleData, m_unusedInt ) },	// TODO fire logic
+		{ "UseDistanceFromCommandCenter", INI::parseBool,							nullptr, offsetof( SpecialPowerModuleData, m_useDistanceFromCommandCenter ) },
+		{ "DistanceFromCommandCenter", INI::parseReal,								nullptr, offsetof( SpecialPowerModuleData, m_distanceFromCommandCenter ) },
+		{ "AntiCategory",							INI::parseAsciiString,					nullptr, offsetof( SpecialPowerModuleData, m_antiCategory ) },
+		{ "AntiFX",										INI::parseFXList,								nullptr, offsetof( SpecialPowerModuleData, m_antiFX ) },
+		{ "ReEnableAntiCategory",			INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_reEnableAntiCategory ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
@@ -499,6 +560,7 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 void SpecialPowerModule::triggerSpecialPower( const Coord3D *location )
 {
 	aboutToDoSpecialPower( location );	// do BEFORE recharge
+	bfmeOnTrigger( location );	// bfme-native
 
 	createViewObject(location);
 
@@ -904,4 +966,55 @@ void SpecialPowerModule::loadPostProcess()
 
 
 
+}
+
+//-------------------------------------------------------------------------------------------------
+/** bfme-native: effects every RotWK special power module has in its base class: TriggerFX,
+	a timed model condition, a ModifierList on everything around (filtered), level gains. */
+//-------------------------------------------------------------------------------------------------
+void SpecialPowerModule::bfmeOnTrigger( const Coord3D *location )
+{
+	const SpecialPowerModuleData* d = getSpecialPowerModuleData();
+	Object* me = getObject();
+
+	FXList::doFXObj(d->m_triggerFX, me);
+
+	if (d->m_setModelCondition.any() && TheAttributeModifierStore)
+	{
+		const UnsignedInt frames = (UnsignedInt)ceilf(d->m_setModelConditionTime * LOGICFRAMES_PER_SECOND);
+		TheAttributeModifierStore->applyTimedModelConditions(me, d->m_setModelCondition, frames);
+	}
+
+	if (d->m_attributeModifier.isNotEmpty() && TheAttributeModifierStore)
+	{
+		const AttributeModifierList* list = TheAttributeModifierStore->findList(d->m_attributeModifier);
+		if (list)
+		{
+			const Coord3D* center = location ? location : me->getPosition();
+			if (d->m_attributeModifierAffectsSelf)
+				TheAttributeModifierStore->apply(me, list, me->getID());
+			if (d->m_attributeModifierRange > 0.0f)
+			{
+				SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(center, d->m_attributeModifierRange, FROM_BOUNDINGSPHERE_2D);
+				MemoryPoolObjectHolder hold(iter);
+				for (Object* o = iter->first(); o; o = iter->next())
+				{
+					if (o == me || o->isEffectivelyDead())
+						continue;
+					if (!d->m_attributeModifierAffects.isEmpty() && !d->m_attributeModifierAffects.matches(o, me))
+						continue;
+					TheAttributeModifierStore->apply(o, list, me->getID());
+					FXList::doFXObj(d->m_attributeModifierFX, o);
+				}
+			}
+		}
+	}
+
+	if (d->m_giveLevels > 0)
+	{
+		ExperienceTracker* xp = me->getExperienceTracker();
+		if (xp)
+			for (Int i = 0; i < d->m_giveLevels && xp->isTrainable(); ++i)
+				xp->gainExpForLevel(1, TRUE);
+	}
 }

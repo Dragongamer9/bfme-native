@@ -102,6 +102,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
+#include "GameLogic/AttributeModifier.h"	// bfme-native
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/PolygonTrigger.h"
@@ -612,6 +613,8 @@ void Object::initObject()
 //-------------------------------------------------------------------------------------------------
 Object::~Object()
 {
+	if (TheAttributeModifierStore)	// bfme-native
+		TheAttributeModifierStore->onObjectDestroyed(getID());
 
 	// tell the AI the building is gone
 	/// @todo Generalize the notion of objects entering and leaving the world, so we don't have to special case this

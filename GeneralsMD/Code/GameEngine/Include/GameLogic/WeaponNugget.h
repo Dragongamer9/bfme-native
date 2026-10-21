@@ -212,5 +212,26 @@ protected:
 };
 
 //-------------------------------------------------------------------------------------------------
+class AttributeModifierList;
+class AttributeModifierNugget : public WeaponNugget
+{
+public:
+	AttributeModifierNugget();
+	virtual void trigger(const WeaponTemplate* wt, Object* source, Object* victim, const Coord3D* pos,
+		const WeaponBonus& bonus) const;
+	virtual void buildFieldParse(MultiIniFieldParse& p) const;
+	virtual void postProcessLoad();
+protected:
+	AsciiString m_attributeModifierName;
+	const AttributeModifierList* m_list;
+	DamageFXType m_damageFXType;
+	Real m_radius;
+	Real m_damageArc;
+	const FXList* m_antiFX;
+	Bool m_affectHordeMembers;
+	static const FieldParse s_fieldParse[];
+};
+
+//-------------------------------------------------------------------------------------------------
 /// Factory: returns a new nugget for an INI token such as "DamageNugget", or null if unsupported.
 WeaponNugget* newWeaponNugget(const char* token);

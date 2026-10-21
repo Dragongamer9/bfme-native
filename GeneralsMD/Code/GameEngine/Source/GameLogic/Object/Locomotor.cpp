@@ -39,6 +39,7 @@
 #include "Common/INI.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/PartitionManager.h"
+#include "GameLogic/AttributeModifier.h"	// bfme-native
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/AI.h"
@@ -732,6 +733,7 @@ LocomotorTemplate *LocomotorStore::newOverride( LocomotorTemplate *locoTemplate 
 //-------------------------------------------------------------------------------------------------
 Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 {
+	m_bfmeSpeedMult = 1.0f;
 	m_template = tmpl;
 	m_brakingFactor = 1.0f;
 	m_maxLift = BIGNUM;
@@ -757,6 +759,7 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 //-------------------------------------------------------------------------------------------------
 Locomotor::Locomotor(const Locomotor& that)
 {
+	m_bfmeSpeedMult = that.m_bfmeSpeedMult;
 	m_angleOffset = 0.0f;
 	m_maintainPos.zero();
 	m_template = that.m_template;
@@ -782,6 +785,7 @@ Locomotor& Locomotor::operator=(const Locomotor& that)
 {
 	if (this != &that)
 	{
+		m_bfmeSpeedMult = that.m_bfmeSpeedMult;
 		m_template = that.m_template;
 		m_brakingFactor = that.m_brakingFactor;
 		m_maxLift = that.m_maxLift;
@@ -877,7 +881,7 @@ Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition) const
 	if (speed > maxSpeed)
 		speed = maxSpeed;
 
-	return speed;
+	return speed * m_bfmeSpeedMult;	// bfme-native: SPEED attribute modifiers
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1047,6 +1051,7 @@ void Locomotor::setPhysicsOptions(Object* obj)
 void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalPos,
 																							 Real onPathDistToGoal, Real desiredSpeed, Bool *blocked)
 {
+	m_bfmeSpeedMult = TheAttributeModifierStore ? TheAttributeModifierStore->getProduct(obj, ATTRIBUTE_SPEED) : 1.0f;	// bfme-native
 	setFlag(MAINTAIN_POS_IS_VALID, false);
 
 	BodyDamageType bdt = obj->getBodyModule()->getDamageState();

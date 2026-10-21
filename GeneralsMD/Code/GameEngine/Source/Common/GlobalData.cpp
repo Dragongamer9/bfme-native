@@ -438,6 +438,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "MaxLineBuildObjects",				INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxLineBuildObjects ) },
 	{ "MaxTunnelCapacity",					INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxTunnelCapacity ) },
 
+	{ "AttributeModifierArmorMaxBonus",	INI::parsePercentToReal,	nullptr,			offsetof( GlobalData, m_attributeModifierArmorMaxBonus ) },	// bfme-native
 	{ "MaxParticleCount",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxParticleCount ) },
 	{ "MaxFieldParticleCount",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxFieldParticleCount ) },
 	{ "HorizontalScrollSpeedFactor",INI::parseReal,				nullptr,			offsetof( GlobalData, m_horizontalScrollSpeedFactor ) },
@@ -897,6 +898,7 @@ GlobalData::GlobalData()
 
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
+	m_attributeModifierArmorMaxBonus = 0.75f;	// bfme-native
 	m_maxFieldParticleCount = 30;
 
 	m_debugAI = AI_DEBUG_NONE;

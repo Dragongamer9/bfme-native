@@ -158,6 +158,7 @@ static const BlockParse theTypeTable[] =
 	{ "WaterSet",                       INI::parseWaterSettingDefinition },
 	{ "WaterTransparency",              INI::parseWaterTransparencyDefinition },
 	{ "Weapon",                         INI::parseWeaponTemplateDefinition },
+	{ "ModifierList",                   INI::parseModifierListDefinition },	// bfme-native
 	{ "Weather",                        INI::parseWeatherDefinition },
 	{ "WebpageURL",                     INI::parseWebpageURLDefinition },
 	{ "WindowTransition",               INI::parseWindowTransitions },

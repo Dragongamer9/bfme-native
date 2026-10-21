@@ -100,6 +100,7 @@
 #include "GameLogic/CaveSystem.h"
 #include "GameLogic/CrateSystem.h"
 #include "GameLogic/FPUControl.h"
+#include "GameLogic/AttributeModifier.h"	// bfme-native
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/Object.h"
@@ -4120,6 +4121,7 @@ void GameLogic::update()
 	TheCommandList->reset();
 
 	TheWeaponStore->UPDATE();
+	TheAttributeModifierStore->UPDATE();	// bfme-native
 	TheLocomotorStore->UPDATE();
 	TheVictoryConditions->UPDATE();
 

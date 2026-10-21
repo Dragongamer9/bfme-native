@@ -30,6 +30,8 @@
 #pragma once
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
+#include "GameLogic/ObjectFilter.h"	// bfme-native
+#include "Common/ModelState.h"
 #include "Common/AudioEventRTS.h"
 #include "Common/Module.h"
 #include "Common/Science.h"
@@ -38,6 +40,8 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Object;
 class SpecialPowerTemplate;
+class Waypoint;
+class FXList;
 struct FieldParse;
 
 
@@ -89,6 +93,39 @@ public:
 	Bool							m_startsPaused; ///< Paused on creation, someone else will have to unpause (like upgrade module, or script)
 	Bool							m_startsReady; ///< If true, the special power will be ready immediately, otherwise it will have a reload time on creation.
 	Bool							m_scriptedSpecialPowerOnly;
+
+	// bfme-native: RotWK SpecialPowerModule fields (game.dat table 0xC64DB0)
+	AsciiString				m_attributeModifier;
+	Real							m_attributeModifierRange;
+	Bool							m_attributeModifierAffectsSelf;
+	ObjectFilter			m_attributeModifierAffects;
+	const FXList*			m_attributeModifierFX;
+	Bool							m_attributeModifierWeatherBased;
+	UnsignedInt				m_weatherDuration;
+	ObjectFilter			m_requirementsFilterMPSkirmish;
+	ObjectFilter			m_requirementsFilterStrategic;
+	Bool							m_targetEnemy;
+	Bool							m_targetAllSides;
+	const FXList*			m_initiateFX;
+	const FXList*			m_triggerFX;
+	ModelConditionFlags	m_setModelCondition;
+	Real							m_setModelConditionTime;	///< seconds
+	Int								m_giveLevels;
+	Bool							m_disableDuringAnimDuration;
+	Bool							m_idleWhenStartingPower;
+	Bool							m_affectGood;
+	Bool							m_affectEvil;
+	Bool							m_affectAllies;
+	Bool							m_availableAtStart;
+	Bool							m_adjustVictim;
+	AsciiString				m_onTriggerRechargeSpecialPower;
+	Bool							m_useDistanceFromCommandCenter;
+	Real							m_distanceFromCommandCenter;
+	AsciiString				m_antiCategory;
+	const FXList*			m_antiFX;
+	Bool							m_reEnableAntiCategory;
+	AsciiString				m_unusedString;
+	Int								m_unusedInt;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -172,6 +209,7 @@ protected:
 	void createViewObject( const Coord3D *location );
 	void resolveSpecialPower();
 	void aboutToDoSpecialPower( const Coord3D *location );
+	void bfmeOnTrigger( const Coord3D *location );	///< bfme-native: RotWK base-class trigger effects
 
 	UnsignedInt m_availableOnFrame;			///< on this frame, this special power is available
 	Int m_pausedCount;									///< Reference count of sources pausing me
