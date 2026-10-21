@@ -48,6 +48,24 @@ RotWK behaviour reimplemented on the way (decompiled from game.dat / WorldBuilde
 Test environment notes: the container has no GPU; SwiftShader lacks VK_EXT_robustness2 needed by
 DXVK, so automated boots use the engine's -headless mode. On a real GPU run without -headless.
 
+## Session 2 — gameplay data (2026-10-21, overnight, cont.)
+Zero bad INI fields left except 14 edge cases (was 2,353). Added, each from game.dat tables/decompiles:
+- W3DScriptedModelDraw: AnimationState / IdleAnimationState / TransitionState, permissive
+  ModelConditionState (RotWK rules: any order, later duplicates ignored, model inherited)
+- RotWK vocabularies: 591 model conditions, 222 KindOfs, 5 weapon slots (QUATERNARY, QUINARY),
+  RotWK GUI commands, DamageFXType (DamageFX is keyed by it), ALMOST_FINAL collapse phase
+- ObjectFilter (`ANY +INFANTRY -HERO ENEMIES`, ALL/ANY/NONE, ALLIES/ENEMIES/NEUTRAL/SAME_PLAYER,
+  EVIL/GOOD) -- used by weapons, auras, special powers
+- Weapon nuggets: DamageNugget (radius, min radius, arc, height limits, taper, DamageScalar filters,
+  force-kill filter, drain life), DOTNugget, ProjectileNugget + warhead weapons, MetaImpactNugget
+  (knockback), WeaponOCLNugget, ParalyzeNugget, AttributeModifierNugget
+- Attribute modifiers: ModifierList store, per-object timed bonuses (armor with the 75% cap,
+  damage add/mult, spell damage, speed, health, invulnerability, model conditions, FX), category
+  replacement; modules AttributeModifierUpgrade and AttributeModifierAuraUpdate
+
+Can't test in-game yet: the container only has the INI archives. Art, maps and audio archives are
+on the PC (C:\RotWK) and are needed for map loading and rendering tests.
+
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
 2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
