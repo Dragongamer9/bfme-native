@@ -59,6 +59,7 @@ public:
 	Int										m_skillPointsForTriggering;
 	UnsignedInt						m_preparationFrames;
 	UnsignedInt						m_persistentPrepFrames;
+	Bool									m_bfmeNoPersistence;	///< bfme-native: subclass ignores PersistentPrepTime
 	UnsignedInt						m_effectDuration;
 	UnsignedInt						m_maxSpecialObjects;
 	UnsignedInt						m_packTime;
@@ -90,6 +91,7 @@ public:
 		m_abilityAbortRange = SPECIAL_ABILITY_HUGE_DISTANCE;
 		m_preparationFrames = 0;
 		m_persistentPrepFrames = 0;
+		m_bfmeNoPersistence = FALSE;
 		m_packTime = 0;
 		m_unpackTime = 0;
 		m_packUnpackVariationFactor = 0.0f;
@@ -239,7 +241,7 @@ protected:
 
 	Bool isPreparationComplete() const { return !m_prepFrames; }
 	void endPreparation();
-	Bool isPersistentAbility() const { return getSpecialAbilityUpdateModuleData()->m_persistentPrepFrames > 0; }
+	Bool isPersistentAbility() const { return getSpecialAbilityUpdateModuleData()->m_persistentPrepFrames > 0 && !getSpecialAbilityUpdateModuleData()->m_bfmeNoPersistence; }
 	void resetPreparation() { m_prepFrames = getSpecialAbilityUpdateModuleData()->m_persistentPrepFrames; }
 
 	Bool isFacing();

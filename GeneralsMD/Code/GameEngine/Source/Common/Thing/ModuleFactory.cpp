@@ -217,6 +217,7 @@
 #include "GameLogic/Module/HordeContain.h"	// bfme-native
 #include "GameLogic/Module/BfmeModules.h"	// bfme-native
 #include "GameLogic/Module/WeaponFireSpecialAbilityUpdate.h"	// bfme-native
+#include "GameLogic/Module/ToggleMountedSpecialAbilityUpdate.h"	// bfme-native
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
 // create includes
@@ -502,6 +503,10 @@ void ModuleFactory::init()
 	addModule( BezierProjectileBehavior );	// bfme-native
 	addModule( LevelUpUpgrade );	// bfme-native
 	addModule( WeaponFireSpecialAbilityUpdate );	// bfme-native
+	addModule( ToggleMountedSpecialAbilityUpdate );	// bfme-native
+	addModule( HeroModeSpecialAbilityUpdate );	// bfme-native
+	addModuleInternal( WeaponModeSpecialPower::friend_newModuleInstance, WeaponModeSpecialPower::friend_newModuleData,
+		WeaponModeSpecialPower::getModuleType(), AsciiString("WeaponModeSpecialPowerUpdate"), WeaponModeSpecialPower::getInterfaceMask() );	// bfme-native
 	addModule( RemoveUpgradeUpgrade );	// bfme-native
 	addModule( ReplaceSelfUpgrade );	// bfme-native
 	addModule( PassiveAreaEffectBehavior );	// bfme-native
@@ -510,6 +515,7 @@ void ModuleFactory::init()
 	addModule( GettingBuiltBehavior );	// bfme-native
 	addModule( TerrainResourceBehavior );	// bfme-native
 	addModule( AutoAbilityBehavior );	// bfme-native
+	addModule( DoCommandUpgrade );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );

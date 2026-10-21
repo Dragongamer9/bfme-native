@@ -129,6 +129,7 @@ AttributeModifierStore::~AttributeModifierStore()
 
 void AttributeModifierStore::reset()
 {
+	m_timers.clear();
 	// keep the INI definitions, drop per-game state
 	m_active.clear();
 	m_timedConditions.clear();
@@ -379,9 +380,40 @@ void AttributeModifierStore::applyTimedModelConditions(Object* obj, const ModelC
 	m_timedConditions.push_back(t);
 }
 
+void AttributeModifierStore::schedule(Object* obj, UnsignedInt frames, const std::function<void(Object*)>& fn)
+{
+	if (obj == nullptr)
+		return;
+	Timer t;
+	t.m_id = obj->getID();
+	t.m_frame = TheGameLogic->getFrame() + frames;
+	t.m_fn = fn;
+	m_timers.push_back(t);
+}
+
 void AttributeModifierStore::update()
 {
 	const UnsignedInt now = TheGameLogic->getFrame();
+	if (!m_timers.empty())
+	{
+		std::vector<Timer> due;
+		for (size_t i = 0; i < m_timers.size(); )
+		{
+			if (m_timers[i].m_frame <= now)
+			{
+				due.push_back(m_timers[i]);
+				m_timers.erase(m_timers.begin() + i);
+			}
+			else
+				++i;
+		}
+		for (size_t i = 0; i < due.size(); ++i)
+		{
+			Object* o = TheGameLogic->findObjectByID(due[i].m_id);
+			if (o)
+				due[i].m_fn(o);
+		}
+	}
 	for (size_t i = 0; i < m_timedConditions.size(); )
 	{
 		if (m_timedConditions[i].m_expireFrame <= now)

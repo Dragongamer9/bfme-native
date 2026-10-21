@@ -187,6 +187,9 @@ static PoolSizeRec PoolSizes[] =
 	{ "BfmeGenericSpecialPower", 1024, 256 },	// bfme-native
 	{ "HordeContain", 256, 64 },	// bfme-native
 	{ "WeaponFireSpecialAbilityUpdate", 512, 128 },	// bfme-native
+	{ "ToggleMountedSpecialAbilityUpdate", 512, 128 },	// bfme-native
+	{ "HeroModeSpecialAbilityUpdate", 512, 128 },	// bfme-native
+	{ "WeaponModeSpecialPower", 512, 128 },	// bfme-native
 	{ "BezierProjectileBehavior", 4096, 1024 },	// bfme-native
 	{ "LevelUpUpgrade", 512, 128 },	// bfme-native
 	{ "RemoveUpgradeUpgrade", 64, 32 },	// bfme-native
@@ -197,6 +200,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "GettingBuiltBehavior", 1024, 256 },	// bfme-native
 	{ "TerrainResourceBehavior", 512, 128 },	// bfme-native
 	{ "AutoAbilityBehavior", 1024, 256 },	// bfme-native
+	{ "DoCommandUpgrade", 1024, 256 },	// bfme-native
 	{ "BfmeInertBehavior", 8192, 2048 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },

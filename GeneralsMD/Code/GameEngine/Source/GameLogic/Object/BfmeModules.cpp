@@ -530,7 +530,7 @@ void AutoAbilityBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "StartsActive",							INI::parseBool,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_startsActive ) },
 		{ "AdjustAttackMeleePosition",INI::parseBool,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_adjustAttackMeleePosition ) },
 		{ "IdleTimeSeconds",					parseSecondsToFrames,			nullptr, offsetof( AutoAbilityBehaviorModuleData, m_idleTime ) },
-		{ "BaseMaxRangeFromStartPos",	INI::parseReal,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_baseMaxRangeFromStartPos ) },
+		{ "BaseMaxRangeFromStartPos",	INI::parseBool,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_baseMaxRangeFromStartPos ) },
 		{ "ForbiddenStatus",					ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( AutoAbilityBehaviorModuleData, m_forbiddenStatus ) },
 		{ "Query",										AutoAbilityBehaviorModuleData::parseQuery,	nullptr, offsetof( AutoAbilityBehaviorModuleData, m_queries ) },
 		{ nullptr, nullptr, nullptr, 0 }
@@ -643,4 +643,65 @@ UpdateSleepTime AutoAbilityBehavior::update()
 		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
 	}
 	return later;
+}
+
+//=================================================================================================
+// DoCommandUpgrade
+//=================================================================================================
+void DoCommandUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpgradeModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "GetUpgradeCommandButtonName",		INI::parseAsciiString,	nullptr, offsetof( DoCommandUpgradeModuleData, m_getUpgradeCommandButtonName ) },
+		{ "RemoveUpgradeCommandButtonName",	INI::parseAsciiString,	nullptr, offsetof( DoCommandUpgradeModuleData, m_removeUpgradeCommandButtonName ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+DoCommandUpgrade::DoCommandUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData ) {}
+BFME_TRIVIAL_SNAPSHOT(DoCommandUpgrade, UpgradeModule)
+
+void DoCommandUpgrade::upgradeImplementation()
+{
+	const DoCommandUpgradeModuleData* d = getDoCommandUpgradeModuleData();
+	Object* me = getObject();
+	const CommandButton* b = TheControlBar ? TheControlBar->findCommandButton(d->m_getUpgradeCommandButtonName) : nullptr;
+	if (b == nullptr || me->isEffectivelyDead())
+		return;
+	switch (b->getCommandType())
+	{
+		case GUI_COMMAND_OBJECT_UPGRADE:
+		case GUI_COMMAND_PLAYER_UPGRADE:
+		{
+			const UpgradeTemplate* ut = b->getUpgradeTemplate();
+			if (ut == nullptr)
+				break;
+			Player* p = me->getControllingPlayer();
+			if (ut->getUpgradeType() == UPGRADE_TYPE_PLAYER)
+			{
+				if (p && !p->hasUpgradeComplete(ut))
+					p->addUpgrade(ut, UPGRADE_STATUS_COMPLETE);
+			}
+			else if (!me->hasUpgrade(ut))
+				me->giveUpgrade(ut);
+			break;
+		}
+		case GUI_COMMAND_SPECIAL_POWER:
+		case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
+		case GUI_COMMAND_BFME_SPECIAL_POWER_TOGGLE:
+		{
+			const SpecialPowerTemplate* sp = b->getSpecialPowerTemplate();
+			SpecialPowerModuleInterface* m = sp ? me->getSpecialPowerModule(sp) : nullptr;
+			if (m)
+			{
+				m->setReadyFrame(TheGameLogic->getFrame());
+				m->doSpecialPower(COMMAND_FIRED_BY_SCRIPT);
+			}
+			break;
+		}
+		default:
+			break;
+	}
 }

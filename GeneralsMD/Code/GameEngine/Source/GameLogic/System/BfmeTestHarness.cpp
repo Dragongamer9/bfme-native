@@ -218,8 +218,20 @@ void run(const TestCmd& c)
 	{
 		Player* a = findPlayer(c.args[1]);
 		const UpgradeTemplate* ut = TheUpgradeCenter->findUpgrade(c.args[2].c_str());
-		if (a && ut)
+		if (a && ut && ut->getUpgradeType() == UPGRADE_TYPE_PLAYER)
 			a->addUpgrade(ut, UPGRADE_STATUS_COMPLETE);
+		else if (a && ut)
+		{
+			// object upgrade: give it to the player's objects (of template args[3] if given)
+			std::vector<Object*> v;
+			for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+				if (o->getControllingPlayer() == a && !o->isEffectivelyDead() && !o->hasUpgrade(ut) &&
+						(c.args.size() < 4 || o->getTemplate()->getName().compareNoCase(c.args[3].c_str()) == 0))
+					v.push_back(o);
+			for (size_t i = 0; i < v.size(); ++i)
+				v[i]->giveUpgrade(ut);
+			printf("[BFMETEST] upgrade %s given to %d objects\n", c.args[2].c_str(), (int)v.size());
+		}
 	}
 	else if (op == "dump")
 	{
@@ -269,9 +281,10 @@ void run(const TestCmd& c)
 	{
 		// power PLAYER TEMPLATE SPECIALPOWER ENEMYPLAYER : use a special power on the closest enemy
 		Player* a = findPlayer(c.args[1]);
-		Player* b = findPlayer(c.args[4]);
+		const Bool noTarget = c.args[4] == "none";
+		Player* b = noTarget ? nullptr : findPlayer(c.args[4]);
 		const SpecialPowerTemplate* sp = TheSpecialPowerStore->findSpecialPowerTemplate(c.args[3].c_str());
-		if (!a || !b || !sp)
+		if (!a || (!b && !noTarget) || !sp)
 		{
 			printf("[BFMETEST] power: unknown player or power %s\n", c.args[3].c_str());
 			return;
@@ -292,7 +305,7 @@ void run(const TestCmd& c)
 			Real bestD = 0.0f;
 			for (Object* t = TheGameLogic->getFirstObject(); t; t = t->getNextObject())
 			{
-				if (t->getControllingPlayer() != b || t->isEffectivelyDead() || t->isKindOf(KINDOF_HORDE))
+				if (b == nullptr || t->getControllingPlayer() != b || t->isEffectivelyDead() || t->isKindOf(KINDOF_HORDE))
 					continue;
 				Real dx = t->getPosition()->x - o->getPosition()->x, dy = t->getPosition()->y - o->getPosition()->y;
 				if (best == nullptr || dx * dx + dy * dy < bestD)

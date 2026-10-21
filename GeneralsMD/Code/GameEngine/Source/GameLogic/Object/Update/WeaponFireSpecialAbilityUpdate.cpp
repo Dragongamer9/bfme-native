@@ -76,3 +76,64 @@ void WeaponFireSpecialAbilityUpdate::loadPostProcess()
 {
 	SpecialAbilityUpdate::loadPostProcess();
 }
+
+//=================================================================================================
+// HeroModeSpecialAbilityUpdate
+//=================================================================================================
+void HeroModeSpecialAbilityUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	SpecialAbilityUpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "HeroAttributeModifier",					INI::parseAsciiString,					nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_heroAttributeModifier ) },
+		{ "HeroEffectDuration",							INI::parseDurationUnsignedInt,	nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_heroEffectDuration ) },
+		{ "TriggerModelCondition",					ModelConditionFlags::parseFromINI,	nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_triggerModelCondition ) },
+		{ "TriggerModelConditionDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_triggerModelConditionDuration ) },
+		{ "StopUnitBeforeActivating",				INI::parseBool,									nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_stopUnitBeforeActivating ) },
+		{ "UnpackingVariation",							INI::parseAsciiString,					nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_unusedString ) },
+		{ "RequiredConditions",							INI::parseAsciiString,					nullptr, offsetof( HeroModeSpecialAbilityUpdateModuleData, m_unusedString ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+HeroModeSpecialAbilityUpdate::HeroModeSpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialAbilityUpdate( thing, moduleData )
+{
+}
+
+HeroModeSpecialAbilityUpdate::~HeroModeSpecialAbilityUpdate()
+{
+}
+
+Bool HeroModeSpecialAbilityUpdate::bfmeTriggerOverride()
+{
+	const HeroModeSpecialAbilityUpdateModuleData* d = getHeroModeSpecialAbilityUpdateModuleData();
+	Object* me = getObject();
+	const AttributeModifierList* list = d->m_heroAttributeModifier.isNotEmpty() ? TheAttributeModifierStore->findList(d->m_heroAttributeModifier) : nullptr;
+	if (list)
+		TheAttributeModifierStore->apply(me, list, me->getID(), d->m_heroEffectDuration);
+	if (d->m_triggerModelCondition.any())
+		TheAttributeModifierStore->applyTimedModelConditions(me, d->m_triggerModelCondition,
+			d->m_triggerModelConditionDuration ? d->m_triggerModelConditionDuration : d->m_heroEffectDuration);
+	if (getenv("BFME_DEBUG_ABILITY"))
+		printf("[ability] #%u hero mode %s for %u frames\n", me->getID(), d->m_heroAttributeModifier.str(), d->m_heroEffectDuration);
+	return TRUE;
+}
+
+void HeroModeSpecialAbilityUpdate::crc( Xfer *xfer )
+{
+	SpecialAbilityUpdate::crc( xfer );
+}
+
+void HeroModeSpecialAbilityUpdate::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	SpecialAbilityUpdate::xfer( xfer );
+}
+
+void HeroModeSpecialAbilityUpdate::loadPostProcess()
+{
+	SpecialAbilityUpdate::loadPostProcess();
+}
