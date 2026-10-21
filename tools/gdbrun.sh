@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Like logictest.sh but under gdb; prints the backtrace of the first crash.
-#   tools/gdbrun.sh <data dir> <script>
+#   tools/gdbrun.sh <data dir> <script>      (BFME_MAP=Maps/X.map to use another map)
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DATA="$(cd "$1" && pwd)"
@@ -13,4 +13,4 @@ export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA" BFME_TEST="$SCRIPT
 export SDL_VIDEODRIVER=offscreen SDL_AUDIODRIVER=dummy
 export LD_LIBRARY_PATH="$BUILD/_deps/dxvk-src/lib:$BUILD/_deps/sdl3-build:$BUILD/_deps/sdl3_image-build:${LD_LIBRARY_PATH:-}"
 cd "$DATA"
-timeout 900 gdb -q -batch -ex "handle SIGPIPE nostop" -ex run -ex "bt 30" --args "$EXE" -win -headless -file Maps/BfmeTest.map -noshellmap -quickstart 2>&1 | grep -aE "^#|signal|SIGSEGV|\[BFMETEST\]|\[bfme\]" | head -60
+timeout 900 gdb -q -batch -ex "handle SIGPIPE nostop" -ex run -ex "bt 30" --args "$EXE" -win -headless ${BFME_GAMEARGS:--file ${BFME_MAP:-Maps/BfmeTest.map}} -noshellmap -quickstart 2>&1 | grep -aE "^#|signal|SIGSEGV|\[BFMETEST\]|\[bfme\]" | head -60
