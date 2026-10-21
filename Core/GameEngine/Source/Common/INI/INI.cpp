@@ -35,6 +35,8 @@
 #include "Common/INI.h"
 #include "Common/INIException.h"
 #include "Common/INIPreprocessor.h"
+#include <string>
+static const std::string* s_bfmeMemoryText = nullptr;	// bfme-native: consumed by prepFile for "<mem>" loads
 
 #include "Common/DamageFX.h"
 #include "Common/file.h"
@@ -538,7 +540,6 @@ static std::vector<BfmeDeferredBlock>& bfmeDeferred()
 	static std::vector<BfmeDeferredBlock> v;
 	return v;
 }
-static const std::string* s_bfmeMemoryText = nullptr;	// consumed by prepFile for "<mem>" loads
 
 void INI::bfmeDeferBlock(const char* blockType, const char* headerLine)
 {
