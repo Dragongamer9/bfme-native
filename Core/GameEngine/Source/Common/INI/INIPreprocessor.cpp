@@ -5,7 +5,7 @@
 #include "Common/INI.h"
 #include "Common/INIException.h"
 #include "Common/FileSystem.h"
-#include "Common/File.h"
+#include "Common/file.h"
 
 #include <map>
 #include <set>
