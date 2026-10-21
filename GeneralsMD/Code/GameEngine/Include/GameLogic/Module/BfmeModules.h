@@ -154,6 +154,23 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** A RotWK module that is parsed but has no behaviour yet (audio/animation polish, or logic still to
+	be ported -- see docs/SCOPE.md "inert modules"). Registered under several names. */
+class BfmeInertBehaviorModuleData : public BehaviorModuleData
+{
+public:
+	static void buildFieldParse(MultiIniFieldParse& p) { BehaviorModuleData::buildFieldParse(p); }
+};
+
+class BfmeInertBehavior : public BehaviorModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BfmeInertBehavior, "BfmeInertBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BfmeInertBehavior, BfmeInertBehaviorModuleData )
+public:
+	BfmeInertBehavior( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) {}
+};
+
+//-------------------------------------------------------------------------------------------------
 class HordeMemberCollide : public CollideModule
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HordeMemberCollide, "HordeMemberCollide" )

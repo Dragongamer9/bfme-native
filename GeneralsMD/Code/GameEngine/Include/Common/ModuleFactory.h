@@ -80,6 +80,7 @@ public:
 	ModuleData* newModuleDataFromINI(INI* ini, const AsciiString& name, ModuleType type, const AsciiString& moduleTag);
 
 	Int findModuleInterfaceMask(const AsciiString& name, ModuleType type);
+	Bool bfmeIsKnownModule(const AsciiString& name, ModuleType type) { return findModuleTemplate(name, type) != nullptr; }	// bfme-native
 
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
