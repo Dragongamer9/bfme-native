@@ -102,6 +102,39 @@ enum CommandOption CPP_11(: Int)
 	MUST_BE_STOPPED							= 0x00800000, // Unit must be stopped in order to be able to use button.
 };
 
+/// bfme-native: RotWK command button options, kept apart from the Generals bits (CommandButton::getBfmeOptions)
+enum BfmeCommandOption CPP_11(: Int)
+{
+	BFME_OPTION_OK_FOR_MULTI_EXECUTE = 1 << 0,
+	BFME_OPTION_ALLOW_ROCK_TARGET = 1 << 1,
+	BFME_OPTION_HIDE_WHILE_DISABLED = 1 << 2,
+	BFME_OPTION_TOGGLE_IMAGE_ON_WEAPON = 1 << 3,
+	BFME_OPTION_TOGGLE_IMAGE_ON_WEAPONSET = 1 << 4,
+	BFME_OPTION_TOGGLE_IMAGE_ON_FORMATION = 1 << 5,
+	BFME_OPTION_MOUNTED_ONLY = 1 << 6,
+	BFME_OPTION_UNMOUNTED_ONLY = 1 << 7,
+	BFME_OPTION_NONPRESSABLE = 1 << 8,
+	BFME_OPTION_AUTO_ABILITY_TRIGGERED = 1 << 9,
+	BFME_OPTION_ON_GROUND_ONLY = 1 << 10,
+	BFME_OPTION_CANCELABLE = 1 << 11,
+};
+static const char *const TheBfmeCommandOptionNames[] =
+{
+	"OK_FOR_MULTI_EXECUTE",
+	"ALLOW_ROCK_TARGET",
+	"HIDE_WHILE_DISABLED",
+	"TOGGLE_IMAGE_ON_WEAPON",
+	"TOGGLE_IMAGE_ON_WEAPONSET",
+	"TOGGLE_IMAGE_ON_FORMATION",
+	"MOUNTED_ONLY",
+	"UNMOUNTED_ONLY",
+	"NONPRESSABLE",
+	"AUTO_ABILITY_TRIGGERED",
+	"ON_GROUND_ONLY",
+	"CANCELABLE",
+	nullptr
+};
+
 #ifdef DEFINE_COMMAND_OPTION_NAMES
 static const char *const TheCommandOptionNames[] =
 {
@@ -388,6 +421,8 @@ public:
 
 	GUICommandType getCommandType() const { return m_command; }
 	UnsignedInt getOptions() const { return m_options; }
+	UnsignedInt getBfmeOptions() const { return m_bfmeOptions; }	// bfme-native
+	static void parseBfmeOptions( INI* ini, void *instance, void *store, const void *userData );	// bfme-native
 	OVERRIDE<ThingTemplate> getThingTemplate() const { return m_thingTemplate; }
 	const UpgradeTemplate* getUpgradeTemplate() const { return m_upgradeTemplate; }
 	const SpecialPowerTemplate* getSpecialPowerTemplate() const { return m_specialPower; }
@@ -426,6 +461,7 @@ private:
 	GUICommandType								m_command;										///< type of command this button
 	CommandButton*								m_next;
 	UnsignedInt										m_options;										///< command options (see CommandOption enum)
+	UnsignedInt										m_bfmeOptions;								///< bfme-native: RotWK options (BfmeCommandOption)
 	const ThingTemplate*					m_thingTemplate;							///< for commands that use thing templates in command data
 	const UpgradeTemplate*				m_upgradeTemplate;						///< for commands that use upgrade templates in command data
 	const SpecialPowerTemplate*		m_specialPower;								///< actual special power template

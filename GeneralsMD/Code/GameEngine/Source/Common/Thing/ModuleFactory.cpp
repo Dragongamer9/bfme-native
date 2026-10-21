@@ -216,6 +216,7 @@
 #include "GameLogic/Module/BfmeGenericSpecialPower.h"	// bfme-native
 #include "GameLogic/Module/HordeContain.h"	// bfme-native
 #include "GameLogic/Module/BfmeModules.h"	// bfme-native
+#include "GameLogic/Module/WeaponFireSpecialAbilityUpdate.h"	// bfme-native
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
 // create includes
@@ -500,6 +501,7 @@ void ModuleFactory::init()
 	addModule( HordeContain );	// bfme-native
 	addModule( BezierProjectileBehavior );	// bfme-native
 	addModule( LevelUpUpgrade );	// bfme-native
+	addModule( WeaponFireSpecialAbilityUpdate );	// bfme-native
 	addModule( RemoveUpgradeUpgrade );	// bfme-native
 	addModule( ReplaceSelfUpgrade );	// bfme-native
 	addModule( PassiveAreaEffectBehavior );	// bfme-native

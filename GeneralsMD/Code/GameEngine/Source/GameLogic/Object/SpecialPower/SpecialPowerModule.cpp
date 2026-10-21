@@ -100,6 +100,21 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+// bfme-native: "SetModelCondition = ModelConditionState:USER_1 [...]" (the prefix is optional)
+static void parseBfmeModelConditionList(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
+{
+	ModelConditionFlags* flags = (ModelConditionFlags*)store;
+	flags->clear();
+	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	{
+		const char* colon = strchr(tok, ':');
+		const char* name = colon ? colon + 1 : tok;
+		const char* const* names = ModelConditionFlags::getBitNames();
+		for (Int i = 0; names[i]; ++i)
+			if (stricmp(names[i], name) == 0) { flags->set((ModelConditionFlagType)i); break; }
+	}
+}
+
 /* static */ void SpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	BehaviorModuleData::buildFieldParse( p );
@@ -126,7 +141,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 		{ "TargetAllSides",						INI::parseBool,									nullptr, offsetof( SpecialPowerModuleData, m_targetAllSides ) },
 		{ "InitiateFX",								INI::parseFXList,								nullptr, offsetof( SpecialPowerModuleData, m_initiateFX ) },
 		{ "TriggerFX",								INI::parseFXList,								nullptr, offsetof( SpecialPowerModuleData, m_triggerFX ) },
-		{ "SetModelCondition",				ModelConditionFlags::parseFromINI, nullptr, offsetof( SpecialPowerModuleData, m_setModelCondition ) },
+		{ "SetModelCondition",				parseBfmeModelConditionList,	nullptr, offsetof( SpecialPowerModuleData, m_setModelCondition ) },
 		{ "SetModelConditionTime",		INI::parseReal,									nullptr, offsetof( SpecialPowerModuleData, m_setModelConditionTime ) },
 		{ "GiveLevels",								INI::parseInt,									nullptr, offsetof( SpecialPowerModuleData, m_giveLevels ) },
 		{ "DisableDuringAnimDuration", INI::parseBool,								nullptr, offsetof( SpecialPowerModuleData, m_disableDuringAnimDuration ) },

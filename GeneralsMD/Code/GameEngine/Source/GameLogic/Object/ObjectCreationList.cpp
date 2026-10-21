@@ -693,7 +693,18 @@ enum DebrisDisposition CPP_11(: Int)
 	RANDOM_FORCE						= 0x00000020,
 	FLOATING								= 0x00000040,
 	INHERIT_VELOCITY				= 0x00000080,
-	WHIRLING								= 0x00000100
+	WHIRLING								= 0x00000100,
+	BFME_DISP_FORWARD_IMPACT          = 0x00000200,	// bfme-native
+	BFME_DISP_REVERSE_IMPACT          = 0x00000400,	// bfme-native
+	BFME_DISP_BUILDING_CHUNKS         = 0x00000800,	// bfme-native
+	BFME_DISP_FADE_AND_DIE_ORNAMENT   = 0x00001000,	// bfme-native
+	BFME_DISP_ANIMATED                = 0x00002000,	// bfme-native
+	BFME_DISP_ABSOLUTE_ANGLE          = 0x00004000,	// bfme-native
+	BFME_DISP_SPAWN_AROUND            = 0x00008000,	// bfme-native
+	BFME_DISP_RELATIVE_ANGLE          = 0x00010000,	// bfme-native
+	BFME_DISP_SPAWNED_MODELCONDITION_TRIGGER= 0x00020000,	// bfme-native
+	BFME_DISP_USE_WATER_SURFACE       = 0x00040000,	// bfme-native
+	BFME_DISP_USE_CLIFF               = 0x00080000,	// bfme-native
 };
 
 static const char* const DebrisDispositionNames[] =
@@ -707,6 +718,17 @@ static const char* const DebrisDispositionNames[] =
 	"FLOATING",
 	"INHERIT_VELOCITY",
 	"WHIRLING",
+	"FORWARD_IMPACT",
+	"REVERSE_IMPACT",
+	"BUILDING_CHUNKS",
+	"FADE_AND_DIE_ORNAMENT",
+	"ANIMATED",
+	"ABSOLUTE_ANGLE",
+	"SPAWN_AROUND",
+	"RELATIVE_ANGLE",
+	"SPAWNED_MODELCONDITION_TRIGGER",
+	"USE_WATER_SURFACE",
+	"USE_CLIFF",
 	nullptr
 };
 

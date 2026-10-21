@@ -18,6 +18,8 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/PlayerTemplate.h"
+#include "Common/SpecialPower.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
@@ -231,6 +233,49 @@ void run(const TestCmd& c)
 				(int)ai->isWaitingForPath(), ai->getPath() != nullptr, ai->getNumFramesBlocked(), (int)ai->isBlockedAndStuck(),
 				(int)o->isDisabled(), o->getPhysics() != nullptr, o->getPhysics() ? o->getPhysics()->getVelocityMagnitude() : 0.0f,
 				o->getPhysics() ? o->getPhysics()->getMass() : 0.0f);
+		}
+	}
+	else if (op == "power" && c.args.size() >= 5)
+	{
+		// power PLAYER TEMPLATE SPECIALPOWER ENEMYPLAYER : use a special power on the closest enemy
+		Player* a = findPlayer(c.args[1]);
+		Player* b = findPlayer(c.args[4]);
+		const SpecialPowerTemplate* sp = TheSpecialPowerStore->findSpecialPowerTemplate(c.args[3].c_str());
+		if (!a || !b || !sp)
+		{
+			printf("[BFMETEST] power: unknown player or power %s\n", c.args[3].c_str());
+			return;
+		}
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		{
+			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0)
+				continue;
+			SpecialPowerModuleInterface* m = o->getSpecialPowerModule(sp);
+			if (m == nullptr)
+			{
+				printf("[BFMETEST] power: #%u has no module for %s\n", o->getID(), c.args[3].c_str());
+				continue;
+			}
+			m->pauseCountdown(FALSE);
+			m->setReadyFrame(TheGameLogic->getFrame());
+			Object* best = nullptr;
+			Real bestD = 0.0f;
+			for (Object* t = TheGameLogic->getFirstObject(); t; t = t->getNextObject())
+			{
+				if (t->getControllingPlayer() != b || t->isEffectivelyDead() || t->isKindOf(KINDOF_HORDE))
+					continue;
+				Real dx = t->getPosition()->x - o->getPosition()->x, dy = t->getPosition()->y - o->getPosition()->y;
+				if (best == nullptr || dx * dx + dy * dy < bestD)
+				{
+					best = t;
+					bestD = dx * dx + dy * dy;
+				}
+			}
+			if (best)
+				m->doSpecialPowerAtObject(best, 0);
+			else
+				m->doSpecialPower(0);
+			printf("[BFMETEST] power: #%u used %s on #%u\n", o->getID(), c.args[3].c_str(), best ? best->getID() : 0);
 		}
 	}
 	else if (op == "players")
