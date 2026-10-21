@@ -732,7 +732,12 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 
 	GameMessage::Type t = TheMetaMap->findGameMessageMetaType(c);
 	if (t == GameMessage::MSG_INVALID)
-		throw INI_INVALID_DATA;
+	{
+		// bfme-native: RotWK commands with no Zero Hour equivalent yet - skip the mapping
+		INI::bfmeRecordUnknownModule(c);
+		ini->bfmeSkipBlock();
+		return;
+	}
 
 	MetaMapRec *map = TheMetaMap->getMetaMapRec(t);
 	if (map == nullptr)
