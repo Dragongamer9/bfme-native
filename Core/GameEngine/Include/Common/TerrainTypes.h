@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <vector>
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
@@ -190,6 +192,13 @@ public:
 	/// get the parsing table for INI
 	const FieldParse *getFieldParse() { return m_terrainTypeFieldParseTable; }
 
+	/// bfme-native: RotWK "Class = Type Grass NEXT Region The_Shire" token indices (see bfmeTerrainClassNames)
+	const std::vector<Int>& getBfmeClassList() const { return m_bfmeClassList; }
+	struct TerrainObject { AsciiString name; Real value; };
+	const std::vector<TerrainObject>& getTerrainObjects() const { return m_terrainObjects; }
+	static void parseBfmeClass(INI* ini, void* instance, void* store, const void* userData);
+	static void parseTerrainObject(INI* ini, void* instance, void* store, const void* userData);
+
 protected:
 
 	AsciiString m_name;								///< terrain entry name
@@ -198,6 +207,8 @@ protected:
 	TerrainClass m_class;							///< type classification of name
 	Bool m_restrictConstruction;			///< do not allow construction on this terrain tile
 	TerrainType *m_next;							///< next in terrain list
+	std::vector<Int> m_bfmeClassList;	///< bfme-native: RotWK class tokens
+	std::vector<TerrainObject> m_terrainObjects; ///< bfme-native: RotWK TerrainObject = <name> <real>
 
 	// for parsing from INI
 	static const FieldParse m_terrainTypeFieldParseTable[];		///< the parse table for INI definition

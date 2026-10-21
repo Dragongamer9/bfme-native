@@ -88,6 +88,17 @@ static Bool isPatchArchiveFilename(const AsciiString& archivePath)
 #endif
 }
 
+// bfme-native: BFME2/RotWK keep localized archives in <game>\lang\ (english.big, englishpatch201.big,
+// englishaudio.big). Their entries (Language.ini, lotr.str, credits) take precedence over the base
+// archives, as the original's localized lookup does (game.dat 0x00a149a2).
+static Bool isLanguageArchiveFilename(const AsciiString& archivePath)
+{
+	AsciiString lower = archivePath;
+	lower.toLower();
+	return strstr(lower.str(), "/lang/") != nullptr || strstr(lower.str(), "\\lang\\") != nullptr ||
+		strncmp(lower.str(), "lang/", 5) == 0 || strncmp(lower.str(), "lang\\", 5) == 0;
+}
+
 static Bool equalsIgnoreCase(const char* lhs, const char* rhs)
 {
 	if (lhs == nullptr || rhs == nullptr) {
@@ -721,7 +732,7 @@ Bool BIGFileSystem::loadArchiveFilesFromDirectory(AsciiString dir, AsciiString f
 		}
 #endif
 
-		if (isPatchArchiveFilename(*it)) {
+		if (isPatchArchiveFilename(*it) || isLanguageArchiveFilename(*it)) {
 			patchFilenameList.insert(*it);
 		} else if (loadOneArchiveFile(*it, overwrite)) {
 			actuallyAdded = TRUE;
