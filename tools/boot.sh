@@ -12,6 +12,11 @@ ICD="${SWIFTSHADER_ICD:-/root/deps/swiftshader/b/Linux/vk_swiftshader_icd.json}"
 
 export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA"
 export BFME_INI_REPORT="$DATA/ini_report.tsv"
+# without a test script, stop right after start-up (the engine now keeps running without music)
+if [[ -z "${BFME_TEST:-}" ]]; then
+  export BFME_TEST="$DATA/.boot_quit.txt"
+  echo "30 quit" > "$BFME_TEST"
+fi
 ARGS=(-win)
 EXTRA=(${BFME_ARGS:-})
 if [[ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
