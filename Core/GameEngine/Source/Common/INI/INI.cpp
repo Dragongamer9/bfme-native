@@ -605,8 +605,17 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 		fprintf(stderr, "[INI] load - processed total %d lines\n", lineCount);
 		fflush(stderr);
 	}
+	catch (const INIException& e)
+	{
+		fprintf(stderr, "[INI] ERROR in load('%s') line %u: %s\n  > %s\n", filename.str(), m_lineNum,
+			e.mFailureMessage ? e.mFailureMessage : "?", m_buffer);
+		fflush(stderr);
+		unPrepFile();
+		throw;
+	}
 	catch (...)
 	{
+		fprintf(stderr, "[INI] ERROR in load('%s') line %u\n  > %s\n", filename.str(), m_lineNum, m_buffer);
 		fprintf(stderr, "[INI] ERROR in load('%s') - exception caught\n", filename.str());
 		fflush(stderr);
 		unPrepFile();
