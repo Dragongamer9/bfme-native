@@ -27,6 +27,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/SubsystemInterface.h"
+#include "Common/SubsystemLegend.h"
 #include "Common/Xfer.h"
 
 
@@ -172,6 +173,13 @@ void SubsystemInterfaceList::initSubsystem(SubsystemInterface* sys, const char* 
 	sys->init();
 	fprintf(stderr, "[SUBSYS] initSubsystem('%s') - sys->init() completed\n", name.str());
 	fflush(stderr);
+
+	// bfme-native: a BFME2/RotWK subsystem legend overrides the compiled-in INI paths
+	if (const SubsystemLegend::Entry* legend = SubsystemLegend::isLoaded() ? SubsystemLegend::find(name) : nullptr) {
+		SubsystemLegend::loadEntry(*legend, pXfer);
+		m_subsystems.push_back(sys);
+		return;
+	}
 
 	INI ini;
 	if (path1) {

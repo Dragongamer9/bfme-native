@@ -695,6 +695,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/StackDump.cpp
     Source/Common/System/StreamingArchiveFile.cpp
     Source/Common/System/SubsystemInterface.cpp
+    Source/Common/System/SubsystemLegend.cpp
     Source/Common/System/UnicodeString.cpp
 #    Source/Common/System/Upgrade.cpp
     Source/Common/System/Xfer.cpp
