@@ -1,5 +1,75 @@
 [
  {
+  "va": 4376788,
+  "name": "INI::pushPendingTokens",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4378569,
+  "name": "INI::prepFile",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4379505,
+  "name": "INI::readLine",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4379824,
+  "name": "INI::initFromINI",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 4380499,
+  "name": "INI::load",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4381685,
+  "name": "INI::getNextTokenOrNull",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4381855,
+  "name": "INI::getNextToken",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4382161,
+  "name": "INIPreprocessor::evalInt",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4382625,
+  "name": "INIPreprocessor::evalUnsignedInt",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4383090,
+  "name": "INIPreprocessor::evalReal",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
   "va": 4384088,
   "name": "INI::parseBool",
   "kind": "function",
@@ -110,6 +180,13 @@
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 1.0
+ },
+ {
+  "va": 4386518,
+  "name": "INI::parseAsciiStringVector",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
  },
  {
   "va": 4386554,
@@ -581,6 +658,20 @@
   "confidence": 1.0
  },
  {
+  "va": 4951073,
+  "name": "ModelConditionFlags::parseFromINI",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4973959,
+  "name": "W3DScriptedModelDraw::adjustAnimation",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 4981923,
   "name": "W3DScriptedModelDraw::W3DScriptedModelDraw",
   "kind": "function",
@@ -593,6 +684,13 @@
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 1.0
+ },
+ {
+  "va": 5013518,
+  "name": "W3DModelDrawModuleData::parseModelConditionState",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
  },
  {
   "va": 5015616,
@@ -1211,6 +1309,13 @@
   "confidence": 0.6
  },
  {
+  "va": 5052335,
+  "name": "MeshMatDescClass::ColorArray",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 5052543,
   "name": "W3DTornadoDraw::vf62",
   "kind": "function",
@@ -1239,11 +1344,95 @@
   "confidence": 0.6
  },
  {
+  "va": 5540240,
+  "name": "INI::parseAsciiStringLowerCase",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 5615728,
+  "name": "MeshMatDescClass::MaterialArray",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5615888,
+  "name": "MeshMatDescClass::FXShaderArray",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5622992,
+  "name": "MeshMatDescClass::TextureArray",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5623232,
+  "name": "MeshMatDescClass::ShaderArray",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 5667065,
   "name": "WorkerAIUpdate::vf19",
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 5675824,
+  "name": "MeshGeometryClass::VertexTangents",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 5678096,
+  "name": "MeshGeometryClass::PlaneEq",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5805424,
+  "name": "MeshModelClass::DefMatDesc::TextureArray",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5930480,
+  "name": "ParticleBufferClass::Diffuse",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5937424,
+  "name": "ParticleBufferClass::Frame",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 5947424,
+  "name": "ParticleBufferClass::TailPosition",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 5957664,
+  "name": "ParticleBufferClass::TailDiffuse",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 5983130,
@@ -1398,6 +1587,13 @@
   "kind": "function",
   "source": "block-entry",
   "confidence": 0.5
+ },
+ {
+  "va": 6153608,
+  "name": "INI::parseEvaEventName",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
  },
  {
   "va": 6155073,
@@ -1792,6 +1988,13 @@
   "confidence": 0.95
  },
  {
+  "va": 6301169,
+  "name": "GameLODManager::getAudioLODIndex",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 6301598,
   "name": "INI::parseLODPreset",
   "kind": "function",
@@ -1867,6 +2070,13 @@
   "kind": "function",
   "source": "block-entry",
   "confidence": 0.95
+ },
+ {
+  "va": 6560017,
+  "name": "INI::parseCommandPointsList",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
  },
  {
   "va": 6570312,
@@ -6203,7 +6413,7 @@
  },
  {
   "va": 6747651,
-  "name": "INI::parseAsciiStringVector",
+  "name": "INI::parseAsciiStringVector_0066F603",
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 0.86
@@ -6214,6 +6424,13 @@
   "kind": "function",
   "source": "block-entry",
   "confidence": 0.95
+ },
+ {
+  "va": 6833607,
+  "name": "TerrainLogic::buildBeacons",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 6859900,
@@ -6321,11 +6538,25 @@
   "confidence": 1.0
  },
  {
+  "va": 7170026,
+  "name": "AptPalantir::RenderRadarViewBox",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
   "va": 7177031,
   "name": "Anim2DTemplate::parseNumImages",
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 1.0
+ },
+ {
+  "va": 7177131,
+  "name": "Anim2DTemplate::storeImage",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 7177282,
@@ -6396,6 +6627,20 @@
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 7370359,
+  "name": "DeployStyleAIUpdate::CommandResultTypes",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 7370599,
+  "name": "GameClientRandomVariable::DistributionType",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 7386932,
@@ -6538,6 +6783,13 @@
   "confidence": 1.0
  },
  {
+  "va": 7580911,
+  "name": "INI::parseVoiceAudioEventRTS",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
   "va": 7580935,
   "name": "INI::parseDynamicAudioEventRTS",
   "kind": "function",
@@ -6587,6 +6839,13 @@
   "confidence": 0.95
  },
  {
+  "va": 7582231,
+  "name": "INI::parseAudioEventRTS",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
   "va": 7582255,
   "name": "INI::parseSpecialPowerTemplate",
   "kind": "function",
@@ -6602,7 +6861,7 @@
  },
  {
   "va": 7584637,
-  "name": "INI::parseAudioEventRTS",
+  "name": "INI::parseAudioEventRTS_0073BB7D",
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 1.0
@@ -6741,6 +7000,13 @@
   "confidence": 0.6
  },
  {
+  "va": 7637430,
+  "name": "AIIdleState::onEnter",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 7719735,
   "name": "CommandButton::parseCommand",
   "kind": "function",
@@ -6795,6 +7061,20 @@
   "kind": "function",
   "source": "block-entry",
   "confidence": 0.95
+ },
+ {
+  "va": 7745145,
+  "name": "ObjectFilter::resolveNames",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 7747887,
+  "name": "ObjectFilter::parseFromINI",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
  },
  {
   "va": 7752515,
@@ -7026,6 +7306,13 @@
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 1.0
+ },
+ {
+  "va": 7876596,
+  "name": "AptGuiFX::OnInitialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 7940969,
@@ -7357,6 +7644,13 @@
   "confidence": 0.95
  },
  {
+  "va": 8298160,
+  "name": "ScriptConditions::evaluateNamedUnitRankLevel",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 8314173,
   "name": "ThreatFinderUpdate::ThreatFinderUpdate",
   "kind": "function",
@@ -7369,6 +7663,13 @@
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 8345151,
+  "name": "LivingWorldBattle::ResolutionType",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 8410642,
@@ -7413,6 +7714,20 @@
   "confidence": 0.6
  },
  {
+  "va": 8471250,
+  "name": "BinkGameWindow::Create",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 8488782,
+  "name": "AptSaveLoad::Save",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
   "va": 8529828,
   "name": "GettingBuiltBehavior::vf11",
   "kind": "function",
@@ -7420,11 +7735,53 @@
   "confidence": 0.6
  },
  {
+  "va": 8533914,
+  "name": "AptSpellStore::OnRollOverBttnSpell",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
   "va": 8546251,
   "name": "LargeGroupBonusUpdate::vf01",
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 8626802,
+  "name": "StrategicHUD::OnInitialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 8674234,
+  "name": "MpGameSetup::OnTabSelect",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 8686207,
+  "name": "LanLobby::ScenarioDescriptionLobby",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 8686653,
+  "name": "AptLanLobby::OnStartGameBttn",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 8702276,
+  "name": "LANMessage::MSG_SET_ACCEPT",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
  },
  {
   "va": 8719562,
@@ -9156,6 +9513,13 @@
   "confidence": 0.6
  },
  {
+  "va": 8807870,
+  "name": "OpenContain::removeFromContain",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 8810541,
   "name": "CaveContain::vf101",
   "kind": "function",
@@ -9878,10 +10242,10 @@
  },
  {
   "va": 8925640,
-  "name": "ShareExperienceBehavior::vf01",
+  "name": "ShareExperienceBehavior::update",
   "kind": "function",
-  "source": "vtable-slot",
-  "confidence": 0.6
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 8925936,
@@ -12080,6 +12444,13 @@
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 9018493,
+  "name": "AutoPickUpUpdateModuleData::iniParseEatObjectEntry",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 9018945,
@@ -14747,6 +15118,20 @@
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 9125221,
+  "name": "RespawnUpdate::iniParseDefaultRule",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9125746,
+  "name": "RespawnUpdate::iniParseNewRuleForLevel",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 9126815,
@@ -18557,11 +18942,193 @@
   "confidence": 1.0
  },
  {
+  "va": 9337217,
+  "name": "SplineCamera::ParseINIBlock",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9340279,
+  "name": "SplineEffect::ParseGeometryName",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9340384,
+  "name": "SplineEffect::ParseINIBlock",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9343197,
+  "name": "AptPlayerStatus::ReturnToGame",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9359958,
+  "name": "AptInGameChat::Send",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
   "va": 9376073,
   "name": "WorkerAIUpdate::vf30",
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 9440609,
+  "name": "RegionAwardDispute::DisputeType",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9477933,
+  "name": "ControlPoint::ParseINIBlock",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9478053,
+  "name": "ColorControlPoint::ParseINIBlock",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9534777,
+  "name": "Messenger::PlayersTab_1",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9536612,
+  "name": "AptMessenger::OnInitialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9539031,
+  "name": "AptCampaignReview::Continue",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9541775,
+  "name": "AptDisconnectScreen::Quit",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9545407,
+  "name": "CreateAHero::RenderPictureGuard",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9554345,
+  "name": "AptMainMenu::WarOfTheRing",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9560371,
+  "name": "AptOnline::ShellUnloadScreen",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9569732,
+  "name": "Options::VoiceVolume",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9572148,
+  "name": "AptOptions::Save",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9577138,
+  "name": "AptQuitMenu::SaveMenu",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9583311,
+  "name": "AptScoreScreen::Timeline",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9589701,
+  "name": "TimeLine::CahAwardImage",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 9594301,
+  "name": "AptTimeLine::OnInitialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9599903,
+  "name": "AptCampaignMenu::OnBttnSaveGame",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9605946,
+  "name": "Skirmish::SelectProfile",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9606981,
+  "name": "AptSkirmish::SuppressStrategicPromo",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9609987,
+  "name": "StrategicPlayerStatus::OnInitialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9636389,
+  "name": "PalantirCommandUI::OnToggleFlashUnloaded",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
  },
  {
   "va": 9680101,
@@ -18606,6 +19173,20 @@
   "confidence": 0.6
  },
  {
+  "va": 9937939,
+  "name": "OnlineLogin::TOSText",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9947161,
+  "name": "AptOnline::Login::ServiceTerms",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
   "va": 9951612,
   "name": "WorkerAIUpdate::vf31",
   "kind": "function",
@@ -18618,6 +19199,34 @@
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 9990406,
+  "name": "MpGameRules::NumComboBoxes",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9993005,
+  "name": "MpClans::Initialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9994261,
+  "name": "MpChat::Initialized",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 9996471,
+  "name": "GameSorter::OnSortStatus",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
  },
  {
   "va": 10040345,
@@ -18634,6 +19243,83 @@
   "confidence": 0.6
  },
  {
+  "va": 10155057,
+  "name": "AptOnlineCustomMatch::InitGadgets",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10214719,
+  "name": "AptMessenger::OnBttn_1",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10223847,
+  "name": "MyHero::MaxAwards",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10225605,
+  "name": "MyHero::MaxAttrib",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10235859,
+  "name": "CahPowers::Powers::InitGadgets",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 10236811,
+  "name": "CahPowers::InitGadgets",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10239284,
+  "name": "CahAppearance::Portrait",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 10240597,
+  "name": "CahAppearance::SkinColor",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10242784,
+  "name": "CahClass::NumClasses",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10243299,
+  "name": "AptCreateAHero::Class::OnMapClick",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10247844,
+  "name": "Mission::OnSortType",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
   "va": 10252554,
   "name": "CreditsManager::parseBlank",
   "kind": "function",
@@ -18648,6 +19334,34 @@
   "confidence": 1.0
  },
  {
+  "va": 10256968,
+  "name": "AptOnline::Stats::CurrentTab",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 10260259,
+  "name": "OnlineHome::NumTickerFields",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10264368,
+  "name": "AptOnline::OnlineQuickMatch::WidenSearch",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10282270,
+  "name": "AptTimeLine::StatsList",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 10303921,
   "name": "LargeGroupAudioUpdate::vf02",
   "kind": "function",
@@ -18655,11 +19369,81 @@
   "confidence": 0.6
  },
  {
+  "va": 10413820,
+  "name": "Connection::RedrawGrid",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10420544,
+  "name": "AptStats::StatsList",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 10420766,
+  "name": "Stats::OnSelectFaction",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
   "va": 10461012,
   "name": "RebuildHoleBehavior::vf03",
   "kind": "function",
   "source": "vtable-slot",
   "confidence": 0.6
+ },
+ {
+  "va": 10479666,
+  "name": "StrategicConflicResults::NumWinners",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10485674,
+  "name": "StrategicVeterancy::UnitUpgradeFlags",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.7
+ },
+ {
+  "va": 10570146,
+  "name": "FileSystem::openFile",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 10573116,
+  "name": "INIFile::parseIncludeLine",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 10574250,
+  "name": "INIFile::expandIncludes",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 10660960,
+  "name": "INIClass::Put_String",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 10663872,
+  "name": "INIClass::Load",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 11348784,
@@ -18695,6 +19479,20 @@
   "kind": "function",
   "source": "fieldparse-vote",
   "confidence": 1.0
+ },
+ {
+  "va": 11405808,
+  "name": "AptMath::ClipStackIsEmpty",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
+ },
+ {
+  "va": 11659504,
+  "name": "StringPool::GetString",
+  "kind": "function",
+  "source": "debug-string",
+  "confidence": 0.85
  },
  {
   "va": 12416664,
