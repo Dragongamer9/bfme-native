@@ -266,6 +266,8 @@ public:
 	void bfmeSkipBlock(); ///< bfme-native: skip an unknown nested block up to its matching End
 	/// bfme-native: like scanIndexList, but an unknown name is recorded and FALSE returned instead of throwing
 	static Bool scanIndexListTolerant(const char* token, ConstCharPtrArray nameList, Int& out);
+	/// bfme-native: note a module class the engine does not implement (BFME_INI_REPORT)
+	static void bfmeRecordUnknownModule(const char* moduleName);
 	static const char *getSepsPercent() { return " \n\r\t=%%"; } ///< default delimiters & percent delimiter
 	static const char *getSepsColon()   { return " \n\r\t=:"; }  ///< default delimiters & colon delimiter
 	static const char *getSepsQuote()   { return "\"\n="; }      ///< delimiters to represent a quoted ascii string

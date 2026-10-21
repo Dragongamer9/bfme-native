@@ -624,6 +624,14 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	}
 
 	ModuleData* data = TheModuleFactory->newModuleDataFromINI(ini, tokenStr, type, moduleTagStr);
+	if (data == nullptr)
+	{
+		// bfme-native: a module class this engine does not implement yet (see docs/SCOPE.md).
+		// Skip its block so the rest of the object still loads, and record it.
+		ini->bfmeRecordUnknownModule(tokenStr.str());
+		ini->bfmeSkipBlock();
+		return;
+	}
 
 	if (data->isAiModuleData())
 	{
