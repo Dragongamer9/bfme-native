@@ -62,6 +62,7 @@ public:
 	KindOfMaskType	m_garrisonHitKillKindofNot;		///< the kind(s) of units that CANNOT be collided with
 	const FXList*		m_garrisonHitKillFX;
 	Real m_flightPathAdjustDistPerFrame;
+	Bool m_bfmeWaitForLaunch;	///< bfme-native: RotWK puts this module on soldiers too (for being flung); idle until launched
 
 
 	DumbProjectileBehaviorModuleData();
@@ -78,6 +79,7 @@ class DumbProjectileBehavior : public UpdateModule, public ProjectileUpdateInter
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DumbProjectileBehavior, DumbProjectileBehaviorModuleData );
 
 public:
+	void bfmeSetIntendedVictim(ObjectID id) { if (m_victimID == INVALID_ID) m_victimID = id; }	///< bfme-native: scattered arrows still hit their stored target
 
 	DumbProjectileBehavior( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor provided by memory pool object
@@ -121,4 +123,28 @@ private:
 	void displayFlightPath();	///< Uses little debug icons in worldspace to show the path chosen when it is decided upon
 #endif
 
+
+protected:
+	Bool m_bfmeLaunched;	///< bfme-native
+
+};
+
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK BezierProjectileBehavior -- the same bezier flight as DumbProjectileBehavior,
+// but it sits idle on its object until something launches it (arrows are launched at once;
+// soldiers carry it for when they get flung).
+class BezierProjectileBehaviorModuleData : public DumbProjectileBehaviorModuleData
+{
+public:
+	BezierProjectileBehaviorModuleData() { m_bfmeWaitForLaunch = TRUE; }
+	static void buildFieldParse(MultiIniFieldParse& p) { DumbProjectileBehaviorModuleData::buildFieldParse(p); }
+};
+
+class BezierProjectileBehavior : public DumbProjectileBehavior
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BezierProjectileBehavior, "BezierProjectileBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BezierProjectileBehavior, BezierProjectileBehaviorModuleData )
+public:
+	BezierProjectileBehavior( Thing *thing, const ModuleData* moduleData ) : DumbProjectileBehavior( thing, moduleData ) {}
 };

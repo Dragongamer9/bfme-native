@@ -498,6 +498,7 @@ void ModuleFactory::init()
 	addModule( AttributeModifierUpgrade );	// bfme-native
 	addModule( AttributeModifierAuraUpdate );	// bfme-native
 	addModule( HordeContain );	// bfme-native
+	addModule( BezierProjectileBehavior );	// bfme-native
 	addModule( LevelUpUpgrade );	// bfme-native
 	addModule( RemoveUpgradeUpgrade );	// bfme-native
 	addModule( ReplaceSelfUpgrade );	// bfme-native

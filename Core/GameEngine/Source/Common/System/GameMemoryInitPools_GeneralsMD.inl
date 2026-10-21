@@ -186,6 +186,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "AttributeModifierAuraUpdate", 512, 128 },	// bfme-native
 	{ "BfmeGenericSpecialPower", 1024, 256 },	// bfme-native
 	{ "HordeContain", 256, 64 },	// bfme-native
+	{ "BezierProjectileBehavior", 4096, 1024 },	// bfme-native
 	{ "LevelUpUpgrade", 512, 128 },	// bfme-native
 	{ "RemoveUpgradeUpgrade", 64, 32 },	// bfme-native
 	{ "ReplaceSelfUpgrade", 128, 32 },	// bfme-native
