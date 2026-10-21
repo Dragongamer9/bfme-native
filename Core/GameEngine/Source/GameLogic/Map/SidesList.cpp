@@ -250,6 +250,10 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 		return false;
 
 	TheSidesList->clear();
+	// bfme-native: BFME/RotWK SidesList v6 starts with a flag; from v5 teams and scripts are
+	// top-level chunks (Teams, PlayerScriptsList) -- layout from OpenSAGE
+	if (info->version >= 6)
+		file.readByte();
 	Int count = file.readInt();
 	Int i, j;
 	TheSidesList->emptySides();
@@ -285,6 +289,11 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 			TheSidesList->getSideInfo(i)->addToBuildList(pBuildList, j);
 		}
 	}
+	if (info->version >= 5)
+	{
+		TheSidesList->validateSides();
+		return true;
+	}
 	if (info->version >= K_SIDES_DATA_VERSION_2)
 	{
 		count = file.readInt();
@@ -319,6 +328,43 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 	return true;
 }
 
+
+/// bfme-native: BFME/RotWK top-level "Teams" chunk
+Bool SidesList::ParseBfmeTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
+{
+	if (TheSidesList == nullptr)
+		return false;
+	Int count = file.readInt();
+	TheSidesList->emptyTeams();
+	for (Int i = 0; i < count; i++)
+	{
+		Dict d = file.readDict();
+		TheSidesList->addTeam(&d);
+	}
+	TheSidesList->validateSides();
+	return true;
+}
+
+/// bfme-native: BFME/RotWK top-level "PlayerScriptsList" chunk (one script list per side)
+Bool SidesList::ParseBfmePlayerScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
+{
+	if (TheSidesList == nullptr)
+		return false;
+	if (!ScriptList::ParseScriptsDataChunk(file, info, userData))
+		return false;
+	ScriptList *scripts[MAX_PLAYER_COUNT];
+	Int count = ScriptList::getReadScripts(scripts);
+	for (Int i = 0; i < count; i++) {
+		if (i < TheSidesList->getNumSides()) {
+			deleteInstance(TheSidesList->getSideInfo(i)->getScriptList());
+			TheSidesList->getSideInfo(i)->setScriptList(scripts[i]);
+		} else {
+			deleteInstance(scripts[i]);
+		}
+		scripts[i] = nullptr;
+	}
+	return true;
+}
 
 /**
 * SidesList::WriteSidesDataChunk - Writes a Sides chunk.

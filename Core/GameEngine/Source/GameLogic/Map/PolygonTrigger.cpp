@@ -165,6 +165,17 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			isRiver = file.readByte();
 			riverStart = file.readInt();
 		}
+		if (info->version >= 5) {
+			// bfme-native: BFME/RotWK water look (river/noise/alpha-edge/sparkle/bump/sky textures,
+			// additive blend, RGB colour, pad, UV scroll, alpha) -- not used by the logic yet
+			for (Int t = 0; t < 6; ++t)
+				file.readAsciiString();
+			file.readByte();
+			file.readByte(); file.readByte(); file.readByte();
+			file.readByte();
+			file.readReal(); file.readReal();
+			file.readReal();
+		}
 
 		numPoints = file.readInt();
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);
