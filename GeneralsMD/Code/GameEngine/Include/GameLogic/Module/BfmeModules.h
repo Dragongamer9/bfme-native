@@ -154,6 +154,38 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** TerrainResourceBehavior: RotWK economy. A resource building earns up to MaxIncome every
+	IncomeInterval; the land within Radius is shared with other resource buildings covering it, so
+	crowded farms earn less. */
+class TerrainResourceBehaviorModuleData : public UpdateModuleData
+{
+public:
+	TerrainResourceBehaviorModuleData() : m_maxIncome(0), m_incomeInterval(LOGICFRAMES_PER_SECOND * 10), m_radius(0.0f),
+		m_visible(TRUE), m_highPriority(FALSE), m_upgradeBonusPercent(0.0f) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Int m_maxIncome;
+	UnsignedInt m_incomeInterval;
+	Real m_radius;
+	Bool m_visible;
+	Bool m_highPriority;
+	std::vector<AsciiString> m_upgrades;
+	Real m_upgradeBonusPercent;
+	ObjectFilter m_upgradeMustBePresent;	///< the bonus needs one of the player's objects to match this
+};
+
+class TerrainResourceBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TerrainResourceBehavior, "TerrainResourceBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( TerrainResourceBehavior, TerrainResourceBehaviorModuleData )
+public:
+	TerrainResourceBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+	/// share of this building's land (0..1) -- cells it covers, split with the other resource buildings on them
+	Real computeLandShare() const;
+	Real getRadius() const { return getTerrainResourceBehaviorModuleData()->m_radius; }
+};
+
+//-------------------------------------------------------------------------------------------------
 /** A RotWK module that is parsed but has no behaviour yet (audio/animation polish, or logic still to
 	be ported -- see docs/SCOPE.md "inert modules"). Registered under several names. */
 class BfmeInertBehaviorModuleData : public BehaviorModuleData
