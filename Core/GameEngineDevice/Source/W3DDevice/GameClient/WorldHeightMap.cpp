@@ -512,6 +512,25 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 
 		throw(ERROR_CORRUPT_FILE_FORMAT);
 	}
+	// bfme-native: a map without (readable) BlendTileData -- e.g. the generated headless test
+	// maps -- gets empty tile arrays instead of crashing.
+	if (!logicalDataOnly && m_tileNdxes == nullptr && m_dataSize > 0) {
+		m_tileNdxes = MSGNEW("WorldHeightMap_bfmeDefaultTiles") Short[m_dataSize];
+		m_cliffInfoNdxes = MSGNEW("WorldHeightMap_bfmeDefaultTiles") Short[m_dataSize];
+		m_blendTileNdxes = MSGNEW("WorldHeightMap_bfmeDefaultTiles") Short[m_dataSize];
+		m_extraBlendTileNdxes = MSGNEW("WorldHeightMap_bfmeDefaultTiles") Short[m_dataSize];
+		memset(m_tileNdxes, 0, m_dataSize*sizeof(Short));
+		memset(m_cliffInfoNdxes, 0, m_dataSize*sizeof(Short));
+		memset(m_blendTileNdxes, 0, m_dataSize*sizeof(Short));
+		memset(m_extraBlendTileNdxes, 0, m_dataSize*sizeof(Short));
+		Int numBytesX = (m_width+7)/8;
+		Int numBytesY = m_height;
+		m_flipStateWidth = numBytesX;
+		m_cellFlipState = MSGNEW("WorldHeightMap_bfmeDefaultTiles") UnsignedByte[numBytesX*numBytesY];
+		m_cellCliffState = MSGNEW("WorldHeightMap_bfmeDefaultTiles") UnsignedByte[numBytesX*numBytesY];
+		memset(m_cellFlipState, 0, numBytesX*numBytesY);
+		memset(m_cellCliffState, 0, numBytesX*numBytesY);
+	}
 	// patch bad maps.
 	if (!logicalDataOnly) {
 		for(i=0; i<m_dataSize; i++) {

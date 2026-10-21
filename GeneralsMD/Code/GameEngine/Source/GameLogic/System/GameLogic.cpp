@@ -1427,6 +1427,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 	loadMapINI( TheGlobalData->m_mapName );
 
 	// load a map
+	fprintf(stderr, "[bfme] loading map '%s'\n", TheGlobalData->m_mapName.str());	// bfme-native
 	TheTerrainLogic->loadMap( TheGlobalData->m_mapName, false );
 	// anytime the world's size changes, must reset the partition mgr
 	//ThePartitionManager->init();
@@ -4122,6 +4123,7 @@ void GameLogic::update()
 
 	TheWeaponStore->UPDATE();
 	TheAttributeModifierStore->UPDATE();	// bfme-native
+	{ extern void bfmeTestHarnessUpdate(); bfmeTestHarnessUpdate(); }	// bfme-native: BFME_TEST scripts
 	TheLocomotorStore->UPDATE();
 	TheVictoryConditions->UPDATE();
 

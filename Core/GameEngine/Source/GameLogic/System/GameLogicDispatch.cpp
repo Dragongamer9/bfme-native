@@ -874,6 +874,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 bool GameLogic::onNewGame(MAYBE_UNUSED GameMessage *msg)
 {
+	fprintf(stderr, "[bfme] MSG_NEW_GAME mode=%d pending='%s' inGame=%d\n", (int)msg->getArgument(0)->integer, TheGlobalData->m_pendingFile.str(), (int)isInGame());	// bfme-native
 #if !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @fix stephanmeesters 11/03/2026
 	// Make sure we're ready to start a new game. This prevents an issue where an infinite disconnect screen
