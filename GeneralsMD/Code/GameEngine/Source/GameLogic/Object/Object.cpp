@@ -548,6 +548,10 @@ void Object::initObject()
 	// If I have a valid team assigned, I can run through my Upgrade modules with his flags
 	updateUpgradeModules();
 
+	// bfme-native: RotWK rank 1 (and its Upgrade_Level_1) from the start
+	if (m_experienceTracker)
+		m_experienceTracker->bfmeInitRank();
+
 	//If the player has battle plans (America Strategy Center), then apply those bonuses
 	//to this object if applicable. Internally it validates certain kinds of objects.
 	const Player* controller = getControllingPlayer();

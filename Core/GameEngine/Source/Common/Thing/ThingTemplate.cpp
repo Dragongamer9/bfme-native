@@ -1107,7 +1107,7 @@ ThingTemplate::ThingTemplate() :
 		// -1 means "same value as experienceValues for that level"
 		m_skillPointValues[levelIndex] = USE_EXP_VALUE_FOR_SKILL_VALUE;
 	}
-	m_isTrainable = FALSE;
+	m_isTrainable = TRUE;	// bfme-native: RotWK units are trainable unless IsTrainable = No
 	m_enterGuard = FALSE;
 	m_hijackGuard = FALSE;
 

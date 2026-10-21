@@ -16,6 +16,8 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Money.h"
+#include "GameLogic/ExperienceTracker.h"
+#include "GameLogic/ExperienceLevel.h"
 #include "GameLogic/Module/BfmeModules.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -352,6 +354,25 @@ void run(const TestCmd& c)
 			Object* n = r->revive(c.args.size() >= 5 ? &pos : nullptr);
 			printf("[BFMETEST] revived #%u as %s\n", n ? n->getID() : 0, n ? n->getTemplate()->getName().str() : "-");
 			break;
+		}
+	}
+	else if (op == "xp")
+	{
+		// xp : rank and experience of every trainable unit; xp PLAYER TEMPLATE N : give experience
+		if (c.args.size() >= 4)
+		{
+			Player* a = findPlayer(c.args[1]);
+			for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+				if (o->getControllingPlayer() == a && !o->isEffectivelyDead() && o->getExperienceTracker() &&
+						o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) == 0)
+					o->getExperienceTracker()->addExperiencePoints(atoi(c.args[3].c_str()), FALSE);
+		}
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		{
+			const ExperienceTracker* x = o->getExperienceTracker();
+			if (x && o->getAI() && !o->isEffectivelyDead())
+				printf("[BFMETEST] xp #%u %s rank=%d exp=%d award=%d hasLevel2=%d\n", o->getID(), o->getTemplate()->getName().str(), x->getBfmeRank(),
+					x->getCurrentExperience(), (TheExperienceLevelStore && TheExperienceLevelStore->getLevel(o->getTemplate(), x->getBfmeRank())) ? TheExperienceLevelStore->getLevel(o->getTemplate(), x->getBfmeRank())->m_experienceAward : -1, (int)(TheUpgradeCenter->findUpgrade("Upgrade_Level_2") && o->hasUpgrade(TheUpgradeCenter->findUpgrade("Upgrade_Level_2"))));
 		}
 	}
 	else if (op == "money")

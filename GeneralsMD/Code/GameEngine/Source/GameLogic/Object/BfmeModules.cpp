@@ -16,6 +16,7 @@
 #include "GameClient/FXList.h"
 #include "GameLogic/AttributeModifier.h"
 #include "GameLogic/ExperienceTracker.h"
+#include "GameLogic/ExperienceLevel.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BfmeModules.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -68,6 +69,15 @@ void LevelUpUpgrade::upgradeImplementation()
 	ExperienceTracker* xp = getObject()->getExperienceTracker();
 	if (xp == nullptr || !xp->isTrainable())
 		return;
+	// bfme-native: RotWK ranks
+	if (xp->getBfmeRank() > 0)
+	{
+		Int target = xp->getBfmeRank() + d->m_levelsToGain;
+		if (d->m_levelCap > 0)
+			target = min(target, d->m_levelCap);
+		xp->bfmeSetRank(target);
+		return;
+	}
 	for (Int i = 0; i < d->m_levelsToGain; ++i)
 	{
 		if (d->m_levelCap > 0 && (Int)xp->getVeterancyLevel() >= d->m_levelCap)
@@ -826,7 +836,7 @@ RespawnRule RespawnUpdate::currentRule() const
 	const RespawnUpdateModuleData* d = getRespawnUpdateModuleData();
 	RespawnRule r = d->m_rules;
 	const ExperienceTracker* xp = getObject()->getExperienceTracker();
-	const Int level = xp ? (Int)xp->getVeterancyLevel() + 1 : 1;
+	const Int level = xp ? (xp->getBfmeRank() > 0 ? xp->getBfmeRank() : (Int)xp->getVeterancyLevel() + 1) : 1;
 	for (size_t i = 0; i < d->m_entries.size(); ++i)
 	{
 		if (d->m_entries[i].m_level != level)
@@ -946,4 +956,32 @@ Object* RespawnUpdate::revive(const Coord3D* pos)
 			return bfmeReplaceObject(me, t, nullptr);
 	}
 	return me;
+}
+
+//=================================================================================================
+// ExperienceLevelCreate
+//=================================================================================================
+void ExperienceLevelCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	BehaviorModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "LevelToGrant",	INI::parseInt,	nullptr, offsetof( ExperienceLevelCreateModuleData, m_levelToGrant ) },
+		{ "MPOnly",				INI::parseBool,	nullptr, offsetof( ExperienceLevelCreateModuleData, m_mpOnly ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+ExperienceLevelCreate::ExperienceLevelCreate( Thing *thing, const ModuleData* moduleData ) : BehaviorModule( thing, moduleData ) {}
+BFME_TRIVIAL_SNAPSHOT(ExperienceLevelCreate, BehaviorModule)
+
+void ExperienceLevelCreate::onCreate()
+{
+	// onCreate runs before initObject gives rank 1, so set the experience and let the rank follow
+	ExperienceTracker* xp = getObject()->getExperienceTracker();
+	const Int want = getExperienceLevelCreateModuleData()->m_levelToGrant;
+	const ExperienceLevel* l = TheExperienceLevelStore ? TheExperienceLevelStore->getLevel(getObject()->getTemplate(), want) : nullptr;
+	if (xp && l && xp->getCurrentExperience() < l->m_requiredExperience)
+		xp->setExperienceAndLevel(l->m_requiredExperience, FALSE);
 }

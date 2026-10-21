@@ -221,8 +221,9 @@ void defineMacro(const AsciiString& file, unsigned lineNum, const char* rest)
 		v = skipWs(te);
 	}
 	if (value.empty()) {
-		BFME_INI_ERROR(("[%s:%u] Error parsing MACRO '%s' has no value", file.str(), lineNum, name.c_str()));
-		throw INI_INVALID_DATA;
+		// the original reports this but keeps loading (Edain's ExperienceLevels.ini has two)
+		DEBUG_LOG(("[%s:%u] MACRO '%s' has no value; ignored", file.str(), lineNum, name.c_str()));
+		return;
 	}
 	name = upper(name);
 	MacroMap& m = macros();
