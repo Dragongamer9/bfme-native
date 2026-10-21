@@ -62,6 +62,11 @@ void W3DModuleFactory::init()
 	addModule( W3DDefaultDraw );
 	addModule( W3DDebrisDraw );
 	addModule( W3DModelDraw );
+	// bfme-native: RotWK draw modules served by the W3DModelDraw implementation for now
+	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
+		W3DModelDraw::getModuleType(), AsciiString("W3DScriptedModelDraw"), W3DModelDraw::getInterfaceMask() );
+	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
+		W3DModelDraw::getModuleType(), AsciiString("W3DHordeModelDraw"), W3DModelDraw::getInterfaceMask() );
 	addModule( W3DLaserDraw );
 	addModule( W3DOverlordTankDraw );
 #if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)

@@ -1915,6 +1915,17 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 			{
 				done = TRUE;
 			}
+			else if( stricmp( field, "BeginScript" ) == 0 )
+			{
+				// bfme-native: embedded Lua (draw-state scripts); its "end" keywords are not INI Ends
+				while (!INI::isEOF())
+				{
+					readLine();
+					const char* t = strtok( m_buffer, INI::getSeps() );
+					if (t && stricmp(t, "EndScript") == 0)
+						break;
+				}
+			}
 			else
 			{
 				Bool found = false;
