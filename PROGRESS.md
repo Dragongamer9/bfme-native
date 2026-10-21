@@ -18,9 +18,20 @@ Done:
 
 Blocked on: the game install finishing; then folder access on the Windows PC.
 
+## Session 1 (cont.)
+Analysis of the real install (C:\RotWK: RotWK 2.01 + Edain + Völker 4.0):
+- game.dat: 330 module classes recovered (202 BFME-only), 478 INI tables, 69 INI block keywords; Ghidra project with 68,865 functions, 3,576 auto-labels applied
+- docs/SCOPE.md: Edain+Völker use 258 module classes, 81 already in Generals code, 177 to write; ranked list
+- WorldBuilder.exe carries ~2,200 Class::method strings + ~1,500 source paths -> being analysed to carry names into game.dat (tools/name_from_strings.py, tools/match_functions.py)
+
+Engine (engine/GeneralsX, branch bfme-rotwk):
+- INIPreprocessor: #include / #define / macro substitution / #ADD #SUBTRACT #MULTIPLY #DIVIDE, reimplemented from game.dat 0x00a159aa, 0x0042cfc9, 0x0042ddd1 (validated on all 1,692 mod INI: every include resolves, 12,106 macros, no conflicts)
+- BIG4 archives accepted
+- SubsystemLegend: RotWK's data-driven subsystem INI lists replace the compiled-in paths
+- Native Linux build of the base engine in progress (deps built from source: SDL3, DXVK, glm 1.0.1, gli, curl, miniaudio)
+
 ## Next
-1. Get RotWK, BFME2, Edain and Völker directories; stage the exe (`game.dat`) and the .big files
-2. Run `analyze.sh`; review the match rates and tune the scanners against the real binary
-3. Scope report: which module classes Edain uses that GeneralsX lacks, ranked by use count
-4. Fork GeneralsX into `engine/` as the RotWK target and get it booting to the point of loading RotWK `.big`, INI and W3D, with gameplay stubbed
-5. Port modules in scope order: horde (HordeContain etc.), build plots / castles, heroes, powers, then AI
+1. Finish native build; boot with RotWK data to the first INI error and work down the list
+2. Generate tolerant field tables for all 478 RotWK INI tables (unknown fields parsed and stored, not fatal)
+3. W3DModelDraw -> W3DScriptedModelDraw: Model/Animation state schemas recovered (tables at 0xBE0A78, 0xD99F60)
+4. Port modules in docs/SCOPE.md order

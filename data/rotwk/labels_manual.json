@@ -1,0 +1,156 @@
+[
+ {
+  "va": 7582231,
+  "name": "INI::parseAudioEventRTS",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 7747887,
+  "name": "ObjectFilter::parseFromINI",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4386518,
+  "name": "INI::parseAsciiStringVector",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 6153608,
+  "name": "INI::parseEvaEventName",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 7580911,
+  "name": "INI::parseVoiceAudioEventRTS",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4951073,
+  "name": "ModelConditionFlags::parseFromINI",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 6560017,
+  "name": "INI::parseCommandPointsList",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 5540240,
+  "name": "INI::parseAsciiStringLowerCase",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 5013518,
+  "name": "W3DModelDrawModuleData::parseModelConditionState",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 5015616,
+  "name": "W3DModelDrawModuleData::parseAnimationState",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4382161,
+  "name": "INIPreprocessor::evalInt",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4382625,
+  "name": "INIPreprocessor::evalUnsignedInt",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4383090,
+  "name": "INIPreprocessor::evalReal",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 10574250,
+  "name": "INIFile::expandIncludes",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 10573116,
+  "name": "INIFile::parseIncludeLine",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4378569,
+  "name": "INI::prepFile",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4381685,
+  "name": "INI::getNextTokenOrNull",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4381855,
+  "name": "INI::getNextToken",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4379505,
+  "name": "INI::readLine",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4380499,
+  "name": "INI::load",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 4376788,
+  "name": "INI::pushPendingTokens",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ },
+ {
+  "va": 10570146,
+  "name": "FileSystem::openFile",
+  "kind": "function",
+  "source": "manual",
+  "confidence": 0.9
+ }
+]
