@@ -4,6 +4,7 @@
 #define DEFINE_DEATH_NAMES
 
 #include "GameLogic/WeaponNugget.h"
+#include "GameLogic/AttributeModifier.h"
 
 #include "Common/GameUtility.h"
 #include "Common/INI.h"
@@ -255,6 +256,7 @@ Bool DamageNugget::computeDamage(const Object* source, const Object* victim, Rea
 		}
 	}
 	amount *= bonus.getField(WeaponBonus::DAMAGE);
+	amount = bfmeApplyDamageAttributes(damageCreditFor(const_cast<Object*>(source)), m_damageType, amount, m_acceptDamageAdd);
 
 	out.in.m_damageType = m_damageType;
 	out.in.m_damageFXType = m_damageFXType;
@@ -563,6 +565,54 @@ void ParalyzeNugget::trigger(const WeaponTemplate* /*wt*/, Object* source, Objec
 }
 
 //=================================================================================================
+// AttributeModifierNugget
+//=================================================================================================
+const FieldParse AttributeModifierNugget::s_fieldParse[] =
+{
+	{ "AttributeModifier",	INI::parseAsciiString,	nullptr,							offsetof(AttributeModifierNugget, m_attributeModifierName) },
+	{ "DamageFXType",				INI::parseIndexList,		TheDamageFXTypeNames,	offsetof(AttributeModifierNugget, m_damageFXType) },
+	{ "Radius",							INI::parseReal,					nullptr,							offsetof(AttributeModifierNugget, m_radius) },
+	{ "DamageArc",					INI::parseAngleReal,		nullptr,							offsetof(AttributeModifierNugget, m_damageArc) },
+	{ "AntiCategories",			INI::parseAsciiString,	nullptr,							offsetof(AttributeModifierNugget, m_unusedString) },	// TODO
+	{ "AntiFX",							INI::parseFXList,				nullptr,							offsetof(AttributeModifierNugget, m_antiFX) },
+	{ "AffectHordeMembers",	INI::parseBool,					nullptr,							offsetof(AttributeModifierNugget, m_affectHordeMembers) },
+	{ nullptr, nullptr, nullptr, 0 }
+};
+
+AttributeModifierNugget::AttributeModifierNugget() :
+	m_list(nullptr), m_damageFXType(DAMAGEFX_UNDEFINED), m_radius(0.0f), m_damageArc(0.0f), m_antiFX(nullptr), m_affectHordeMembers(FALSE)
+{
+}
+
+void AttributeModifierNugget::buildFieldParse(MultiIniFieldParse& p) const
+{
+	WeaponNugget::buildFieldParse(p);
+	p.add(s_fieldParse);
+}
+
+void AttributeModifierNugget::postProcessLoad()
+{
+	m_list = TheAttributeModifierStore ? TheAttributeModifierStore->findList(m_attributeModifierName) : nullptr;
+}
+
+void AttributeModifierNugget::trigger(const WeaponTemplate* /*wt*/, Object* source, Object* victim, const Coord3D* pos,
+	const WeaponBonus& /*bonus*/) const
+{
+	if (m_list == nullptr)
+		return;
+	const Coord3D* impact = pos ? pos : (victim ? victim->getPosition() : nullptr);
+	Object* credit = damageCreditFor(source);
+	forEachVictim(impact, victim, m_radius, FALSE, [&](Object* o, Real /*dist*/, Bool /*isArea*/)
+	{
+		if (o->isEffectivelyDead() || !passesSpecialFilter(o, credit))
+			return;
+		if (!insideArc(source, impact, o, m_damageArc, FALSE))
+			return;
+		TheAttributeModifierStore->apply(o, m_list, credit ? credit->getID() : INVALID_ID);
+	});
+}
+
+//=================================================================================================
 WeaponNugget* newWeaponNugget(const char* token)
 {
 	if (stricmp(token, "DamageNugget") == 0) return new DamageNugget;
@@ -571,5 +621,6 @@ WeaponNugget* newWeaponNugget(const char* token)
 	if (stricmp(token, "MetaImpactNugget") == 0) return new MetaImpactNugget;
 	if (stricmp(token, "WeaponOCLNugget") == 0) return new WeaponOCLNugget;
 	if (stricmp(token, "ParalyzeNugget") == 0) return new ParalyzeNugget;
+	if (stricmp(token, "AttributeModifierNugget") == 0) return new AttributeModifierNugget;
 	return nullptr;
 }

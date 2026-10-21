@@ -211,6 +211,9 @@
 #include "GameLogic/Module/WeaponSetUpgrade.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
 #include "GameLogic/Module/ExperienceScalarUpgrade.h"
+#include "GameLogic/Module/AttributeModifierUpgrade.h"	// bfme-native
+#include "GameLogic/Module/AttributeModifierAuraUpdate.h"	// bfme-native
+#include "GameLogic/Module/BfmeGenericSpecialPower.h"	// bfme-native
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
 // create includes
@@ -490,6 +493,10 @@ void ModuleFactory::init()
 	addModule( WeaponBonusUpgrade );
 	addModule( ExperienceScalarUpgrade );
 	addModule( MaxHealthUpgrade );
+	addModule( AttributeModifierUpgrade );	// bfme-native
+	addModule( AttributeModifierAuraUpdate );	// bfme-native
+	addModuleInternal( BfmeGenericSpecialPower::friend_newModuleInstance, BfmeGenericSpecialPower::friend_newModuleData,
+		BfmeGenericSpecialPower::getModuleType(), AsciiString("SpecialPowerModule"), BfmeGenericSpecialPower::getInterfaceMask() );	// bfme-native
 
 	// create modules
 	addModule( LockWeaponCreate );

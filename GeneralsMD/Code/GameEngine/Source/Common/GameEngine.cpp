@@ -40,6 +40,7 @@
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
 #include "Common/SubsystemLegend.h"
+#include "GameLogic/AttributeModifier.h"	// bfme-native
 #include "Common/INI.h"
 #include "Common/INIException.h"
 #include "Common/MessageStream.h"
@@ -702,6 +703,7 @@ void GameEngine::init()
 		initSubsystem(TheObjectCreationListStore,"TheObjectCreationListStore", MSGNEW("GameEngineSubsystem") ObjectCreationListStore(), &xferCRC, "Data\\INI\\Default\\ObjectCreationList", "Data\\INI\\ObjectCreationList");
 		initSubsystem(TheLocomotorStore,"TheLocomotorStore", MSGNEW("GameEngineSubsystem") LocomotorStore(), &xferCRC, nullptr, "Data\\INI\\Locomotor");
 		initSubsystem(TheSpecialPowerStore,"TheSpecialPowerStore", MSGNEW("GameEngineSubsystem") SpecialPowerStore(), &xferCRC, "Data\\INI\\Default\\SpecialPower", "Data\\INI\\SpecialPower");
+		initSubsystem(TheAttributeModifierStore,"TheAttributeModifierStore", MSGNEW("GameEngineSubsystem") AttributeModifierStore(), nullptr, nullptr, "Data\\INI\\AttributeModifier");	// bfme-native
 		initSubsystem(TheDamageFXStore,"TheDamageFXStore", MSGNEW("GameEngineSubsystem") DamageFXStore(), &xferCRC, nullptr, "Data\\INI\\DamageFX");
 		initSubsystem(TheArmorStore,"TheArmorStore", MSGNEW("GameEngineSubsystem") ArmorStore(), &xferCRC, nullptr, "Data\\INI\\Armor");
 		initSubsystem(TheBuildAssistant,"TheBuildAssistant", MSGNEW("GameEngineSubsystem") BuildAssistant, nullptr);

@@ -491,6 +491,10 @@ set(GAMEENGINE_SRC
     Include/GameLogic/VictoryConditions.h
     Include/GameLogic/Weapon.h
     Include/GameLogic/ObjectFilter.h
+    Include/GameLogic/AttributeModifier.h
+    Include/GameLogic/Module/AttributeModifierUpgrade.h
+    Include/GameLogic/Module/AttributeModifierAuraUpdate.h
+    Include/GameLogic/Module/BfmeGenericSpecialPower.h
     Include/GameLogic/WeaponNugget.h
     Include/GameLogic/WeaponBonusConditionFlags.h
     Include/GameLogic/WeaponSet.h
@@ -1072,6 +1076,10 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Upgrade/WeaponSetUpgrade.cpp
     Source/GameLogic/Object/Weapon.cpp
     Source/GameLogic/Object/ObjectFilter.cpp
+    Source/GameLogic/Object/AttributeModifier.cpp
+    Source/GameLogic/Object/Upgrade/AttributeModifierUpgrade.cpp
+    Source/GameLogic/Object/Update/AttributeModifierAuraUpdate.cpp
+    Source/GameLogic/Object/SpecialPower/BfmeGenericSpecialPower.cpp
     Source/GameLogic/Object/WeaponNugget.cpp
     Source/GameLogic/Object/WeaponSet.cpp
     Source/GameLogic/ScriptEngine/ScriptActions.cpp

@@ -182,6 +182,9 @@ static PoolSizeRec PoolSizes[] =
 	{ "RadiusDecalUpdate", 16, 16 },
 	{ "BattlePlanUpdate", 32, 32 },
 	{ "LifetimeUpdate", 32, 32 },
+	{ "AttributeModifierUpgrade", 1024, 256 },	// bfme-native
+	{ "AttributeModifierAuraUpdate", 512, 128 },	// bfme-native
+	{ "BfmeGenericSpecialPower", 1024, 256 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },
 	{ "AutoDepositUpdate", 256, 32 },

@@ -54,6 +54,7 @@
 #include "GameLogic/TerrainLogic.h"
 #include "GameLogic/Weapon.h"
 #include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/AttributeModifier.h"	// bfme-native
 #include "GameLogic/Module/ActiveBody.h"
 #include "GameLogic/Module/BridgeBehavior.h"
 #include "GameLogic/Module/ContainModule.h"
@@ -309,6 +310,7 @@ Real ActiveBody::estimateDamage( DamageInfoInput& damageInfo ) const
 	}
 
 	Real amount = m_curArmor.adjustDamage(damageInfo.m_damageType, damageInfo.m_amount);
+	amount = bfmeApplyArmorAttributes(getObject(), damageInfo.m_damageType, amount);	// bfme-native
 
 	return amount;
 }
@@ -365,6 +367,8 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	Bool alreadyHandled = FALSE;
 	Bool allowModifier = TRUE;
 	Real amount = m_curArmor.adjustDamage(damageInfo->in.m_damageType, damageInfo->in.m_amount);
+	if (damageInfo->in.m_damageType != DAMAGE_HEALING)
+		amount = bfmeApplyArmorAttributes(getObject(), damageInfo->in.m_damageType, amount);	// bfme-native
 
 	switch( damageInfo->in.m_damageType )
 	{

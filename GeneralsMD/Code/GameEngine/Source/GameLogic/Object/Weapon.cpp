@@ -185,6 +185,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "MetaImpactNugget",					WeaponTemplate::parseBfmeNugget,				"MetaImpactNugget",		0 },
 	{ "WeaponOCLNugget",					WeaponTemplate::parseBfmeNugget,				"WeaponOCLNugget",		0 },
 	{ "ParalyzeNugget",						WeaponTemplate::parseBfmeNugget,				"ParalyzeNugget",			0 },
+	{ "AttributeModifierNugget",	WeaponTemplate::parseBfmeNugget,				"AttributeModifierNugget",	0 },
 	{ "ClearNuggets",							WeaponTemplate::parseBfmeClearNuggets,	nullptr,							0 },
 	{ "DamageFXType",							INI::parseIndexList,										TheDamageFXTypeNames,	offsetof(WeaponTemplate, m_damageFXType) },	// bfme-native
 	{ "DamageStatusType",					ObjectStatusMaskType::parseSingleBitFromINI,	nullptr,				offsetof(WeaponTemplate, m_damageStatusType) },
