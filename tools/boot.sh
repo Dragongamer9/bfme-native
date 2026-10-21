@@ -26,6 +26,7 @@ grep -E "\[INI-PP\]|ERROR in load|^  > |FATAL|Segmentation|Assertion" boot.log |
 echo "bad fields (parse errors, skipped): $(grep -c '^\[INI\] bad field' boot.log)"
 grep '^\[INI\] bad field' boot.log | sed -E "s/ at .*//" | sort | uniq -c | sort -rn | head -15
 if [[ -s ini_report.tsv ]]; then
+  echo "unimplemented modules hit: $(grep -c $'\tmodule\t' ini_report.tsv)  (instances: $(awk -F'\t' '$2=="module"{s+=$1}END{print s+0}' ini_report.tsv))"
   echo "skipped INI items (top 15 of $(wc -l < ini_report.tsv)):"
   sort -rn ini_report.tsv | head -15
 fi
