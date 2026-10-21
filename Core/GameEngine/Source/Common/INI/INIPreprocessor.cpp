@@ -13,6 +13,19 @@
 #include <vector>
 #include <cstring>
 #include <cctype>
+#include <cstdarg>
+#include <cstdio>
+
+// errors are reported on stderr too: DEBUG_CRASH is compiled out of release builds
+#define BFME_INI_ERROR(args) do { DEBUG_CRASH(args); bfmeIniErrorf args; fputc('\n', stderr); } while (0)
+static void bfmeIniErrorf(const char* fmt, ...)
+{
+	va_list va;
+	va_start(va, fmt);
+	fputs("[INI-PP] ", stderr);
+	vfprintf(stderr, fmt, va);
+	va_end(va);
+}
 
 namespace {
 
@@ -171,11 +184,11 @@ void defineMacro(const AsciiString& file, unsigned lineNum, const char* rest)
 		++ne;
 	std::string name(p, ne - p);
 	if (name.empty()) {
-		DEBUG_CRASH(("[%s:%u] #define without a name", file.str(), lineNum));
+		BFME_INI_ERROR(("[%s:%u] #define without a name", file.str(), lineNum));
 		throw INI_INVALID_DATA;
 	}
 	if (lower(file.str()).find("map.ini") != std::string::npos && lower(file.str()).rfind("map.ini") + 7 == strlen(file.str())) {
-		DEBUG_CRASH(("[%s] MACROs not allowed in map.ini (%s)", file.str(), name.c_str()));
+		BFME_INI_ERROR(("[%s] MACROs not allowed in map.ini (%s)", file.str(), name.c_str()));
 		throw INI_INVALID_DATA;
 	}
 	for (char c : name) {
@@ -198,14 +211,14 @@ void defineMacro(const AsciiString& file, unsigned lineNum, const char* rest)
 		v = skipWs(te);
 	}
 	if (value.empty()) {
-		DEBUG_CRASH(("[%s:%u] Error parsing MACRO '%s' has no value", file.str(), lineNum, name.c_str()));
+		BFME_INI_ERROR(("[%s:%u] Error parsing MACRO '%s' has no value", file.str(), lineNum, name.c_str()));
 		throw INI_INVALID_DATA;
 	}
 	MacroMap& m = macros();
 	MacroMap::iterator it = m.find(name);
 	if (it != m.end()) {
 		if (it->second != value && !s_allowRedefine) {
-			DEBUG_CRASH(("[%s:%u] Duplicate MACRO name '%s'", file.str(), lineNum, name.c_str()));
+			BFME_INI_ERROR(("[%s:%u] Duplicate MACRO name '%s'", file.str(), lineNum, name.c_str()));
 			throw INI_INVALID_DATA;
 		}
 		it->second = value;
@@ -222,12 +235,12 @@ void expandInto(const std::string& path, const char* data, unsigned len, std::st
 	std::string key = lower(path);
 	for (const std::string& s : stack) {
 		if (s == key) {
-			DEBUG_CRASH(("ERROR: Circular include in %s (%s)", rootFile.str(), path.c_str()));
+			BFME_INI_ERROR(("ERROR: Circular include in %s (%s)", rootFile.str(), path.c_str()));
 			throw INI_INVALID_DATA;
 		}
 	}
 	if ((int)stack.size() >= MAX_INCLUDE_DEPTH) {
-		DEBUG_CRASH(("ERROR: include depth exceeded in %s", rootFile.str()));
+		BFME_INI_ERROR(("ERROR: include depth exceeded in %s", rootFile.str()));
 		throw INI_INVALID_DATA;
 	}
 	stack.push_back(key);
@@ -260,7 +273,7 @@ void expandInto(const std::string& path, const char* data, unsigned len, std::st
 				std::string inc = joinCanonical(dirOf(path), rel);
 				File* f = TheFileSystem ? TheFileSystem->openFile(inc.c_str(), File::READ) : nullptr;
 				if (!f) {
-					DEBUG_CRASH(("ERROR: Could not open include file %s (from %s line %u)", inc.c_str(), path.c_str(), lineNum));
+					BFME_INI_ERROR(("ERROR: Could not open include file %s (from %s line %u)", inc.c_str(), path.c_str(), lineNum));
 					throw INI_CANT_OPEN_FILE;
 				}
 				unsigned sz = f->size();
@@ -316,7 +329,7 @@ T evalOp(const char* opToken)
 {
 	MathOp op = opOf(opToken);
 	if (op == OP_NONE) {
-		DEBUG_CRASH(("Expected known math operation after #, got '%s'", opToken));
+		BFME_INI_ERROR(("Expected known math operation after #, got '%s'", opToken));
 		throw INI_INVALID_DATA;
 	}
 	// operands are themselves scanned, so nested #OP( ... ) and macros work
@@ -339,13 +352,13 @@ T evalOp(const char* opToken)
 			acc = (T)(acc - v);
 		else {
 			if (v == (T)0) {
-				DEBUG_CRASH(("#DIVIDE by zero"));
+				BFME_INI_ERROR(("#DIVIDE by zero"));
 				throw INI_INVALID_DATA;
 			}
 			acc = (T)(acc / v);
 		}
 		if (strcmp(INI::getNextToken(), ")") != 0) {
-			DEBUG_CRASH((op == OP_SUBTRACT ? "#SUBTRACT takes only 2 operands" : "#DIVIDE takes only 2 operands"));
+			BFME_INI_ERROR((op == OP_SUBTRACT ? "#SUBTRACT takes only 2 operands" : "#DIVIDE takes only 2 operands"));
 			throw INI_INVALID_DATA;
 		}
 		break;

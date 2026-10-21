@@ -44,6 +44,9 @@ enum ScienceType CPP_11(: Int)
 
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<ScienceType> ScienceVec;
+/// bfme-native: BFME prerequisite groups. "A OR B C" -> {{A},{B,C}}: any group may be satisfied,
+/// and a group needs all of its sciences (RotWK ScienceStore::playerHasPrereqsForScience).
+typedef std::vector<ScienceVec> ScienceVecGroups;
 
 //-------------------------------------------------------------------------------------------------
 class ScienceInfo : public Overridable
@@ -57,18 +60,22 @@ private:
 	UnicodeString					m_name;
 	UnicodeString					m_description;
 	ScienceVec						m_rootSciences;			// this is calced at runtime, NOT read from INI
-	ScienceVec						m_prereqSciences;
+	ScienceVec						m_prereqSciences;		// flattened union of all groups (used for root sciences)
+	ScienceVecGroups			m_prereqScienceGroups;	// bfme-native: OR of AND-groups
 	Int										m_sciencePurchasePointCost;
+	Int										m_sciencePurchasePointCostMP;	// bfme-native: multiplayer cost, -1 = same as single player
 	Bool									m_grantable;
 
 	ScienceInfo() :
 		m_science(SCIENCE_INVALID),
 		m_sciencePurchasePointCost(0),	// 0 means "cannot be purchased"
+		m_sciencePurchasePointCostMP(-1),
 		m_grantable(true)
 	{
 	}
 
 	void addRootSciences(ScienceVec& v) const;
+	static void parsePrerequisiteSciences(INI* ini, void* instance, void* store, const void* userData);
 };
 EMPTY_DTOR(ScienceInfo);
 

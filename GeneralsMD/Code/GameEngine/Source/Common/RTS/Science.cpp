@@ -116,6 +116,40 @@ std::vector<AsciiString> ScienceStore::friend_getScienceNames() const
 }
 
 //-----------------------------------------------------------------------------
+/** bfme-native: "PrerequisiteSciences = A OR B C" (RotWK 0x0073bcbf).
+	Sciences accumulate into the current group, "OR" starts a new one, "None" clears. */
+/*static*/ void ScienceInfo::parsePrerequisiteSciences(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+{
+	ScienceInfo* self = (ScienceInfo*)instance;
+	self->m_prereqScienceGroups.clear();
+	self->m_prereqScienceGroups.push_back(ScienceVec());
+	for (const char* token = ini->getNextTokenOrNull(); token; token = ini->getNextTokenOrNull())
+	{
+		if (stricmp(token, "None") == 0)
+		{
+			self->m_prereqScienceGroups.back().clear();
+			break;
+		}
+		if (stricmp(token, "OR") == 0)
+		{
+			if (self->m_prereqScienceGroups.back().empty())
+				break;
+			self->m_prereqScienceGroups.push_back(ScienceVec());
+			continue;
+		}
+		self->m_prereqScienceGroups.back().push_back(INI::scanScience(token));
+	}
+	if (self->m_prereqScienceGroups.back().empty())
+		self->m_prereqScienceGroups.pop_back();
+
+	self->m_prereqSciences.clear();
+	for (const ScienceVec& g : self->m_prereqScienceGroups)
+		for (ScienceType st : g)
+			if (std::find(self->m_prereqSciences.begin(), self->m_prereqSciences.end(), st) == self->m_prereqSciences.end())
+				self->m_prereqSciences.push_back(st);
+}
+
+//-----------------------------------------------------------------------------
 void ScienceInfo::addRootSciences(ScienceVec& v) const
 {
 	if (m_prereqSciences.empty())
@@ -163,8 +197,9 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 
 		static const FieldParse myFieldParse[] =
 		{
-			{ "PrerequisiteSciences", INI::parseScienceVector, nullptr, offsetof( ScienceInfo, m_prereqSciences ) },
+			{ "PrerequisiteSciences", ScienceInfo::parsePrerequisiteSciences, nullptr, 0 },
 			{ "SciencePurchasePointCost", INI::parseInt, nullptr, offsetof( ScienceInfo, m_sciencePurchasePointCost ) },
+			{ "SciencePurchasePointCostMP", INI::parseInt, nullptr, offsetof( ScienceInfo, m_sciencePurchasePointCostMP ) },
 			{ "IsGrantable", INI::parseBool, nullptr, offsetof( ScienceInfo, m_grantable ) },
 			{ "DisplayName", INI::parseAndTranslateLabel, nullptr, offsetof( ScienceInfo, m_name) },
 			{ "Description", INI::parseAndTranslateLabel, nullptr, offsetof( ScienceInfo, m_description) },
@@ -276,14 +311,24 @@ Bool ScienceStore::playerHasPrereqsForScience(const Player* player, ScienceType 
 	const ScienceInfo* si = findScienceInfo(st);
 	if (si)
 	{
-		for (ScienceVec::const_iterator it2 = si->m_prereqSciences.begin(); it2 != si->m_prereqSciences.end(); ++it2)
+		// bfme-native: satisfied if any group has all of its sciences
+		if (si->m_prereqScienceGroups.empty())
+			return true;
+		for (const ScienceVec& group : si->m_prereqScienceGroups)
 		{
-			if (!player->hasScience(*it2))
+			Bool all = true;
+			for (ScienceType req : group)
 			{
-				return false;
+				if (!player->hasScience(req))
+				{
+					all = false;
+					break;
+				}
 			}
+			if (all)
+				return true;
 		}
-		return true;
+		return false;
 	}
 	else
 	{
