@@ -186,6 +186,48 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** AutoAbilityBehavior: fires a special ability by itself when enough matching objects are in range
+	("Query = 3 ANY ENEMIES +INFANTRY"). Always on for computer players; for humans when StartsActive. */
+struct AutoAbilityQuery
+{
+	Int m_count;
+	ObjectFilter m_filter;
+};
+
+class AutoAbilityBehaviorModuleData : public UpdateModuleData
+{
+public:
+	AutoAbilityBehaviorModuleData() : m_maxScanRange(0.0f), m_minScanRange(0.0f), m_allowSelf(FALSE), m_startsActive(FALSE),
+		m_adjustAttackMeleePosition(FALSE), m_idleTime(0), m_baseMaxRangeFromStartPos(0.0f) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	static void parseQuery(INI* ini, void* instance, void* store, const void* userData);
+	AsciiString m_specialAbility;
+	Real m_maxScanRange;
+	Real m_minScanRange;
+	Bool m_allowSelf;
+	Bool m_startsActive;
+	Bool m_adjustAttackMeleePosition;
+	UnsignedInt m_idleTime;
+	Real m_baseMaxRangeFromStartPos;
+	ObjectStatusMaskType m_forbiddenStatus;
+	std::vector<AutoAbilityQuery> m_queries;
+};
+
+class AutoAbilityBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AutoAbilityBehavior, "AutoAbilityBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AutoAbilityBehavior, AutoAbilityBehaviorModuleData )
+public:
+	AutoAbilityBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+	void setActive(Bool a) { m_active = a; }
+	Bool isActive() const { return m_active; }
+private:
+	Bool m_active;
+	UnsignedInt m_idleSince;
+};
+
+//-------------------------------------------------------------------------------------------------
 /** A RotWK module that is parsed but has no behaviour yet (audio/animation polish, or logic still to
 	be ported -- see docs/SCOPE.md "inert modules"). Registered under several names. */
 class BfmeInertBehaviorModuleData : public BehaviorModuleData

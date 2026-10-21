@@ -1,4 +1,8 @@
 // bfme-native: small RotWK modules, see BfmeModules.h
+#include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
+#include "Common/SpecialPower.h"
+#include "GameClient/ControlBar.h"
 #include "PreRTS.h"
 
 #include "Common/BuildAssistant.h"
@@ -18,6 +22,8 @@
 #include "GameLogic/PartitionManager.h"
 
 // standard snapshot boilerplate for modules without own state
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
+
 #define BFME_TRIVIAL_SNAPSHOT(Cls, Base) \
 	void Cls::crc( Xfer *xfer ) { Base::crc( xfer ); } \
 	void Cls::xfer( Xfer *xfer ) { XferVersion cv = 1; XferVersion v = cv; xfer->xferVersion( &v, cv ); Base::xfer( xfer ); } \
@@ -493,4 +499,148 @@ UpdateSleepTime TerrainResourceBehavior::update()
 	if (cash > 0)
 		p->getMoney()->deposit(cash);
 	return UPDATE_SLEEP(interval);
+}
+
+//=================================================================================================
+// AutoAbilityBehavior
+//=================================================================================================
+void AutoAbilityBehaviorModuleData::parseQuery(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
+{
+	std::vector<AutoAbilityQuery>* v = (std::vector<AutoAbilityQuery>*)store;
+	AutoAbilityQuery q;
+	q.m_count = INI::scanInt(ini->getNextToken());
+	ObjectFilter::parseFromINI(ini, nullptr, &q.m_filter, nullptr);
+	v->push_back(q);
+}
+
+static void parseSecondsToFrames(INI* ini, void*, void* store, const void*)
+{
+	*(UnsignedInt*)store = (UnsignedInt)ceilf(INI::scanReal(ini->getNextToken()) * LOGICFRAMES_PER_SECOND);
+}
+
+void AutoAbilityBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "SpecialAbility",						INI::parseAsciiString,						nullptr, offsetof( AutoAbilityBehaviorModuleData, m_specialAbility ) },
+		{ "MaxScanRange",							INI::parseReal,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_maxScanRange ) },
+		{ "MinScanRange",							INI::parseReal,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_minScanRange ) },
+		{ "AllowSelf",								INI::parseBool,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_allowSelf ) },
+		{ "StartsActive",							INI::parseBool,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_startsActive ) },
+		{ "AdjustAttackMeleePosition",INI::parseBool,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_adjustAttackMeleePosition ) },
+		{ "IdleTimeSeconds",					parseSecondsToFrames,			nullptr, offsetof( AutoAbilityBehaviorModuleData, m_idleTime ) },
+		{ "BaseMaxRangeFromStartPos",	INI::parseReal,										nullptr, offsetof( AutoAbilityBehaviorModuleData, m_baseMaxRangeFromStartPos ) },
+		{ "ForbiddenStatus",					ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( AutoAbilityBehaviorModuleData, m_forbiddenStatus ) },
+		{ "Query",										AutoAbilityBehaviorModuleData::parseQuery,	nullptr, offsetof( AutoAbilityBehaviorModuleData, m_queries ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+AutoAbilityBehavior::AutoAbilityBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
+	m_active(getAutoAbilityBehaviorModuleData()->m_startsActive), m_idleSince(0)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 2 + GameLogicRandomValue(0, LOGICFRAMES_PER_SECOND / 2)));
+}
+BFME_TRIVIAL_SNAPSHOT(AutoAbilityBehavior, UpdateModule)
+
+/// how the ability is aimed, from the first command button that uses it
+static UnsignedInt autoAbilityTargeting(const SpecialPowerTemplate* sp)
+{
+	if (TheControlBar == nullptr)
+		return NEED_TARGET_ENEMY_OBJECT;
+	for (const CommandButton* b = TheControlBar->getCommandButtons(); b; b = b->getNext())
+		if (b->getSpecialPowerTemplate() == sp)
+			return b->getOptions() & (NEED_TARGET_ENEMY_OBJECT | NEED_TARGET_ALLY_OBJECT | NEED_TARGET_NEUTRAL_OBJECT | NEED_TARGET_POS);
+	return 0;
+}
+
+UpdateSleepTime AutoAbilityBehavior::update()
+{
+	const AutoAbilityBehaviorModuleData* d = getAutoAbilityBehaviorModuleData();
+	const UpdateSleepTime later = UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 2);
+	Object* me = getObject();
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	Player* p = me->getControllingPlayer();
+	const Bool computer = p && p->getPlayerType() == PLAYER_COMPUTER;
+	if (!(m_active || computer) || me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) || me->getStatusBits().testForAny(d->m_forbiddenStatus))
+		return later;
+
+	const UnsignedInt now = TheGameLogic->getFrame();
+	if (d->m_idleTime > 0)
+	{
+		AIUpdateInterface* ai = me->getAI();
+		if (ai && !ai->isIdle())
+		{
+			m_idleSince = 0;
+			return later;
+		}
+		if (m_idleSince == 0)
+			m_idleSince = now;
+		if (now - m_idleSince < d->m_idleTime)
+			return later;
+	}
+
+	const SpecialPowerTemplate* sp = TheSpecialPowerStore->findSpecialPowerTemplate(d->m_specialAbility);
+	SpecialPowerModuleInterface* spm = sp ? me->getSpecialPowerModule(sp) : nullptr;
+	if (spm == nullptr)
+		return UPDATE_SLEEP_FOREVER;
+	if (!spm->isReady())
+		return later;
+	// don't restart (or interrupt) an ability that is still running
+	for (BehaviorModule** m = me->getBehaviorModules(); *m; ++m)
+	{
+		SpecialPowerUpdateInterface* su = (*m)->getSpecialPowerUpdateInterface();
+		if (su && su->isActive())
+			return later;
+	}
+
+	const Real maxR = d->m_maxScanRange > 0.0f ? d->m_maxScanRange : 100.0f;
+	for (size_t qi = 0; qi < d->m_queries.size(); ++qi)
+	{
+		const AutoAbilityQuery& q = d->m_queries[qi];
+		Int found = 0;
+		Object* closest = nullptr;
+		Real closestD = 0.0f;
+		SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, maxR, FROM_CENTER_2D);
+		MemoryPoolObjectHolder hold(iter);
+		for (Object* o = iter->first(); o; o = iter->next())
+		{
+			if (o->isEffectivelyDead() || o->isKindOf(KINDOF_HORDE) || (o == me && !d->m_allowSelf))
+				continue;
+			if (!q.m_filter.matches(o, me))
+				continue;
+			const Real dist = ThePartitionManager->getDistanceSquared(me, o, FROM_CENTER_2D);
+			if (dist < d->m_minScanRange * d->m_minScanRange)
+				continue;
+			++found;
+			if (closest == nullptr || dist < closestD)
+			{
+				closest = o;
+				closestD = dist;
+			}
+		}
+		if (d->m_allowSelf && q.m_filter.matches(me, me) && closest == nullptr)
+		{
+			closest = me;
+			++found;
+		}
+		if (found < max(1, q.m_count) || closest == nullptr)
+			continue;
+
+		const UnsignedInt aim = autoAbilityTargeting(sp);
+		if (aim & (NEED_TARGET_ENEMY_OBJECT | NEED_TARGET_ALLY_OBJECT | NEED_TARGET_NEUTRAL_OBJECT))
+			spm->doSpecialPowerAtObject(closest, 0);
+		else if (aim & NEED_TARGET_POS)
+			spm->doSpecialPowerAtLocation(closest->getPosition(), 0.0f, 0);
+		else
+			spm->doSpecialPower(0);
+		if (getenv("BFME_DEBUG_ABILITY"))
+			printf("[ability] #%u %s auto-used %s on #%u (%d matches, query %d)\n", me->getID(), me->getTemplate()->getName().str(),
+				d->m_specialAbility.str(), closest->getID(), found, (int)qi);
+		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
+	}
+	return later;
 }
