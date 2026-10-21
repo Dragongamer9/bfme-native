@@ -490,6 +490,8 @@ set(GAMEENGINE_SRC
     Include/GameLogic/TurretAI.h
     Include/GameLogic/VictoryConditions.h
     Include/GameLogic/Weapon.h
+    Include/GameLogic/ObjectFilter.h
+    Include/GameLogic/WeaponNugget.h
     Include/GameLogic/WeaponBonusConditionFlags.h
     Include/GameLogic/WeaponSet.h
     Include/GameLogic/WeaponSetFlags.h
@@ -1069,6 +1071,8 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Upgrade/WeaponBonusUpgrade.cpp
     Source/GameLogic/Object/Upgrade/WeaponSetUpgrade.cpp
     Source/GameLogic/Object/Weapon.cpp
+    Source/GameLogic/Object/ObjectFilter.cpp
+    Source/GameLogic/Object/WeaponNugget.cpp
     Source/GameLogic/Object/WeaponSet.cpp
     Source/GameLogic/ScriptEngine/ScriptActions.cpp
     Source/GameLogic/ScriptEngine/ScriptConditions.cpp

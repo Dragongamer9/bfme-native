@@ -68,6 +68,7 @@
 	static const FieldParse TheFieldParseTable[] =
 	{
 		{ "Side",											INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_side ) },
+		{ "Evil",											INI::parseBool,																	nullptr, offsetof( PlayerTemplate, m_isEvil ) },	// bfme-native
 		{ "BaseSide",								INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_baseSide ) },
 		{ "PlayableSide",							INI::parseBool,																	nullptr, offsetof( PlayerTemplate, m_playableSide ) },
 		{ "DisplayName",							INI::parseAndTranslateLabel,										nullptr, offsetof( PlayerTemplate, m_displayName) },
@@ -193,6 +194,7 @@ PlayerTemplate::PlayerTemplate() :
 	m_nameKey(NAMEKEY_INVALID),
 	m_observer(false),
 	m_playableSide(false),
+	m_isEvil(false),
   m_oldFaction(false),
 	m_intrinsicSPP(0),
 	m_specialPowerShortcutButtonCount(0)

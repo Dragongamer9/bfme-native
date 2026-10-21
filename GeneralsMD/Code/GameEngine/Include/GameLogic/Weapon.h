@@ -30,6 +30,8 @@
 #pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+#include <memory>
+#include <vector>
 #include "Common/AudioEventRTS.h"
 #include "Common/GameCommon.h"
 
@@ -45,6 +47,7 @@ class ThingTemplate;
 class Object;
 class Weapon;
 class WeaponTemplate;
+class WeaponNugget;	// bfme-native
 class INI;
 class ParticleSystemTemplate;
 enum NameKeyType CPP_11(: Int);
@@ -473,6 +476,11 @@ public:
 
 	void postProcessLoad();
 
+	// bfme-native: RotWK nugget weapons
+	void bfmeSetProjectile(const AsciiString& projectileName, const AsciiString& warheadName);
+	Bool bfmeHasNuggets() const { return !m_bfmeNuggets.empty() || !m_bfmeWarheadName.isEmpty(); }
+	void bfmeComputeAggregates();
+
 protected:
 
 	// actually deal out the damage.
@@ -490,6 +498,13 @@ private:
 	static void parseScatterTarget( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseShotDelay( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseClipReloadTime( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );	// bfme-native
+	static void parseBfmeNugget( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );	// bfme-native
+	static void parseBfmeClearNuggets( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );	// bfme-native
+	void bfmeDealNuggets(Object* source, Object* primaryVictim, const Coord3D* pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const;
+
+	std::vector< std::shared_ptr<WeaponNugget> > m_bfmeNuggets;	///< bfme-native: RotWK nuggets (shared with overrides)
+	AsciiString m_bfmeWarheadName;						///< bfme-native: ProjectileNugget warhead
+	const WeaponTemplate* m_bfmeWarhead;			///< bfme-native
 
 	static const FieldParse TheWeaponTemplateFieldParseTable[];		///< the parse table for INI definition
 

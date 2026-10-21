@@ -69,6 +69,7 @@
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
+#include "GameLogic/WeaponNugget.h"	// bfme-native
 
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
@@ -178,6 +179,13 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ScatterTargetScalar",			INI::parseReal,													nullptr,							offsetof(WeaponTemplate, m_scatterTargetScalar) },
 	{ "ScatterRadiusVsInfantry",	INI::parseReal,													nullptr,							offsetof( WeaponTemplate, m_infantryInaccuracyDist ) },
 	{ "DamageType",								DamageTypeFlags::parseSingleBitFromINI,	nullptr,							offsetof(WeaponTemplate, m_damageType) },
+	{ "DamageNugget",							WeaponTemplate::parseBfmeNugget,				"DamageNugget",				0 },	// bfme-native
+	{ "DOTNugget",								WeaponTemplate::parseBfmeNugget,				"DOTNugget",					0 },
+	{ "ProjectileNugget",					WeaponTemplate::parseBfmeNugget,				"ProjectileNugget",		0 },
+	{ "MetaImpactNugget",					WeaponTemplate::parseBfmeNugget,				"MetaImpactNugget",		0 },
+	{ "WeaponOCLNugget",					WeaponTemplate::parseBfmeNugget,				"WeaponOCLNugget",		0 },
+	{ "ParalyzeNugget",						WeaponTemplate::parseBfmeNugget,				"ParalyzeNugget",			0 },
+	{ "ClearNuggets",							WeaponTemplate::parseBfmeClearNuggets,	nullptr,							0 },
 	{ "DamageFXType",							INI::parseIndexList,										TheDamageFXTypeNames,	offsetof(WeaponTemplate, m_damageFXType) },	// bfme-native
 	{ "DamageStatusType",					ObjectStatusMaskType::parseSingleBitFromINI,	nullptr,				offsetof(WeaponTemplate, m_damageStatusType) },
 	{ "DeathType",								INI::parseIndexList,										TheDeathNames,		offsetof(WeaponTemplate, m_deathType) },
@@ -249,7 +257,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr)
+WeaponTemplate::WeaponTemplate() : m_nextTemplate(nullptr), m_bfmeWarhead(nullptr)
 {
 
 	m_name													= "NoNameWeapon";
@@ -427,6 +435,87 @@ void WeaponTemplate::reset()
 }
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK nugget weapons
+//-------------------------------------------------------------------------------------------------
+void WeaponTemplate::parseBfmeNugget(INI* ini, void *instance, void * /*store*/, const void* userData)
+{
+	WeaponTemplate* self = (WeaponTemplate*)instance;
+	WeaponNugget* n = newWeaponNugget((const char*)userData);
+	if (n == nullptr)
+		throw INI_INVALID_DATA;
+	std::shared_ptr<WeaponNugget> holder(n);
+	MultiIniFieldParse p;
+	n->buildFieldParse(p);
+	ini->initFromINIMulti(n, p);
+	n->onParsed(self);
+	self->m_bfmeNuggets.push_back(holder);
+}
+
+void WeaponTemplate::parseBfmeClearNuggets(INI* /*ini*/, void *instance, void * /*store*/, const void* /*userData*/)
+{
+	WeaponTemplate* self = (WeaponTemplate*)instance;
+	self->m_bfmeNuggets.clear();
+	self->m_bfmeWarheadName.clear();
+	self->m_bfmeWarhead = nullptr;
+}
+
+void WeaponTemplate::bfmeSetProjectile(const AsciiString& projectileName, const AsciiString& warheadName)
+{
+	if (projectileName.isNotEmpty() && !projectileName.isNone())
+		m_projectileName = projectileName;
+	m_bfmeWarheadName = warheadName;
+}
+
+void WeaponTemplate::bfmeComputeAggregates()
+{
+	// AI target evaluation reads PrimaryDamage / PrimaryDamageRadius / DamageType; RotWK weapons
+	// only have nuggets, so summarise them (a projectile weapon takes its warhead's numbers).
+	if (m_bfmeNuggets.empty() && m_bfmeWarhead == nullptr)
+		return;
+	const WeaponTemplate* src = m_bfmeWarhead ? m_bfmeWarhead : this;
+	Real damage = 0.0f, radius = 0.0f;
+	Bool haveType = FALSE;
+	for (size_t pass = 0; pass < 2; ++pass)
+	{
+		const WeaponTemplate* wt = pass == 0 ? src : this;
+		if (pass == 1 && wt == src)
+			break;
+		for (size_t i = 0; i < wt->m_bfmeNuggets.size(); ++i)
+		{
+			const WeaponNugget* n = wt->m_bfmeNuggets[i].get();
+			damage += n->getAggregateDamage();
+			radius = max(radius, n->getAggregateRadius());
+			DamageType dt;
+			if (!haveType && n->getAggregateDamageType(dt))
+			{
+				m_damageType = dt;
+				haveType = TRUE;
+			}
+		}
+	}
+	if (m_primaryDamage == 0.0f)
+		m_primaryDamage = damage;
+	if (m_primaryDamageRadius == 0.0f)
+		m_primaryDamageRadius = radius;
+}
+
+void WeaponTemplate::bfmeDealNuggets(Object* source, Object* primaryVictim, const Coord3D* pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
+{
+	// a projectile weapon's impact is its warhead's nuggets
+	const WeaponTemplate* wt = (isProjectileDetonation && m_bfmeWarhead) ? m_bfmeWarhead : this;
+	Object* firer = source;
+	for (size_t i = 0; i < wt->m_bfmeNuggets.size(); ++i)
+	{
+		const WeaponNugget* n = wt->m_bfmeNuggets[i].get();
+		if (n->isProjectileNugget())
+			continue;
+		if (!n->isAllowed(firer))
+			continue;
+		n->trigger(wt, source, primaryVictim, pos, bonus);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 void WeaponTemplate::postProcessLoad()
 {
 	if (!TheThingFactory)
@@ -434,6 +523,11 @@ void WeaponTemplate::postProcessLoad()
 		DEBUG_CRASH(("you must call this after TheThingFactory is inited"));
 		return;
 	}
+
+	// bfme-native
+	for (size_t i = 0; i < m_bfmeNuggets.size(); ++i)
+		m_bfmeNuggets[i]->postProcessLoad();
+	m_bfmeWarhead = m_bfmeWarheadName.isEmpty() ? nullptr : TheWeaponStore->findWeaponTemplate(m_bfmeWarheadName);
 
 	if (m_projectileName.isEmpty())
 	{
@@ -1390,6 +1484,12 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 		pos = primaryVictim->getPosition();
 	}
 
+	if (bfmeHasNuggets())
+	{
+		bfmeDealNuggets(source, primaryVictim, pos, bonus, isProjectileDetonation);
+		return;
+	}
+
 	DamageType damageType = getDamageType();
 	DeathType deathType = getDeathType();
 	ObjectStatusTypes damageStatusType = getDamageStatusType();
@@ -1813,6 +1913,12 @@ void WeaponStore::postProcessLoad()
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
 			wt->postProcessLoad();
+	}
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)	// bfme-native: after all warheads are resolved
+	{
+		WeaponTemplate* wt = m_weaponTemplateVector[i];
+		if (wt)
+			wt->bfmeComputeAggregates();
 	}
 
 }
