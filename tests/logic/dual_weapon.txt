@@ -1,0 +1,9 @@
+# A Gondor archer switches to its sword when an enemy comes close (DualWeaponBehavior)
+1   spawn GondorArcher player1 800 1100 0
+1   spawn IsengardFighter player2 1000 1100 180
+10  attack player2 player1
+11  state
+100 state
+150 state
+200 state
+201 quit
