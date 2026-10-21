@@ -82,6 +82,7 @@ enum WeaponPrefireType CPP_11(: Int)
 	PREFIRE_PER_SHOT,		///< Use the prefire delay for every shot we make
 	PREFIRE_PER_ATTACK,	///< Use the prefire delay each time we attack a new target
 	PREFIRE_PER_CLIP,		///< Use the prefire attack delay for each new clip
+	PREFIRE_PER_POSITION,	// bfme-native
 
 	PREFIRE_COUNT
 };
@@ -92,6 +93,7 @@ static const char *const TheWeaponPrefireNames[] =
 	"PER_SHOT",
 	"PER_ATTACK",
 	"PER_CLIP",
+	"PER_POSITION",	// bfme-native
 	nullptr
 };
 static_assert(ARRAY_SIZE(TheWeaponPrefireNames) == PREFIRE_COUNT + 1, "Incorrect array size");
@@ -120,6 +122,9 @@ enum WeaponAffectsMaskType CPP_11(: Int)
 	WEAPON_KILLS_SELF							= 0x10,	// ensures that it's not possible to survive self damage
 	WEAPON_DOESNT_AFFECT_SIMILAR	= 0x20, // Doesn't affect others that are the same as us (like other terrorists for a terrorist bomb to prevent chain reaction)
 	WEAPON_DOESNT_AFFECT_AIRBORNE	= 0x40, // Radius damage doesn't affect airborne units, unless they are the primary target. (used for poison fields.)
+	WEAPON_AFFECTS_PROJECTILES		= 0x80,		// bfme-native: RotWK
+	WEAPON_AFFECTS_SAME_HEIGHT_ONLY	= 0x100,	// bfme-native
+	WEAPON_AFFECTS_MINES				= 0x200,	// bfme-native
 };
 
 //#ifdef DEFINE_WEAPONAFFECTSMASK_NAMES ; Removed protection so other classes can use these strings... not sure why this was protected in the 1st place
@@ -132,6 +137,9 @@ static const char *const TheWeaponAffectsMaskNames[] =
 	"SUICIDE",
 	"NOT_SIMILAR",
 	"NOT_AIRBORNE",
+	"PROJECTILES",
+	"SAME_HEIGHT_ONLY",
+	"MINES",
 	nullptr
 };
 //#endif
@@ -149,7 +157,9 @@ enum WeaponCollideMaskType CPP_11(: Int)
 	WEAPON_COLLIDE_WALLS									= 0x0020,
 	WEAPON_COLLIDE_SMALL_MISSILES					= 0x0040, //All missiles are also projectiles!
 	WEAPON_COLLIDE_BALLISTIC_MISSILES			= 0x0080, //All missiles are also projectiles!
-	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100	//this is "ONLY structures belonging to the projectile's controller".
+	WEAPON_COLLIDE_CONTROLLED_STRUCTURES	= 0x0100,	//this is "ONLY structures belonging to the projectile's controller".
+	WEAPON_COLLIDE_NEUTRAL								= 0x0200,	// bfme-native: RotWK
+	WEAPON_COLLIDE_MONSTERS								= 0x0400,	// bfme-native: RotWK
 };
 
 #ifdef DEFINE_WEAPONCOLLIDEMASK_NAMES
@@ -164,6 +174,8 @@ static const char *const TheWeaponCollideMaskNames[] =
 	"SMALL_MISSILES",			//All missiles are also projectiles!
 	"BALLISTIC_MISSILES", //All missiles are also projectiles!
 	"CONTROLLED_STRUCTURES",
+	"NEUTRAL",
+	"MONSTERS",
 	nullptr
 };
 #endif

@@ -107,7 +107,7 @@ const FieldParse CommandButton::s_commandButtonFieldParseTable[] =
 {
 
 	{ "Command",							CommandButton::parseCommand, nullptr, offsetof( CommandButton, m_command ) },
-	{ "Options",							INI::parseBitString32,		   TheCommandOptionNames, offsetof( CommandButton, m_options ) },
+	{ "Options",							CommandButton::parseBfmeOptions,	   TheCommandOptionNames, offsetof( CommandButton, m_options ) },	// bfme-native
 	{ "Object",								INI::parseThingTemplate,		 nullptr, offsetof( CommandButton, m_thingTemplate ) },
 	{ "Upgrade",							INI::parseUpgradeTemplate,	 nullptr, offsetof( CommandButton, m_upgradeTemplate ) },
 	{ "WeaponSlot",						INI::parseLookupList,				 TheWeaponSlotTypeNamesLookupList, offsetof( CommandButton, m_weaponSlot ) },
@@ -538,6 +538,28 @@ void ControlBar::updateContextPurchaseScience()
 //-------------------------------------------------------------------------------------------------
 /** parse command definition */
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+/** bfme-native: "Options = NEED_TARGET_POS CANCELABLE ..." -- Generals options go to m_options, the
+	RotWK-only ones to m_bfmeOptions. */
+//-------------------------------------------------------------------------------------------------
+void CommandButton::parseBfmeOptions( INI* ini, void *instance, void *store, const void *userData )
+{
+	CommandButton* self = (CommandButton*)instance;
+	UnsignedInt* bits = (UnsignedInt*)store;
+	*bits = 0;
+	self->m_bfmeOptions = 0;
+	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	{
+		Bool found = FALSE;
+		for (Int i = 0; TheCommandOptionNames[i]; ++i)
+			if (stricmp(TheCommandOptionNames[i], tok) == 0) { *bits |= (1u << i); found = TRUE; break; }
+		if (!found)
+			for (Int i = 0; TheBfmeCommandOptionNames[i]; ++i)
+				if (stricmp(TheBfmeCommandOptionNames[i], tok) == 0) { self->m_bfmeOptions |= (1u << i); found = TRUE; break; }
+		(void)userData;
+	}
+}
+
 void CommandButton::parseCommand( INI* ini, void *instance, void *store, const void *userData )
 {
 	const char *token = ini->getNextToken();
@@ -566,6 +588,7 @@ void CommandButton::parseCommand( INI* ini, void *instance, void *store, const v
 //-------------------------------------------------------------------------------------------------
 CommandButton::CommandButton()
 {
+	m_bfmeOptions = 0;	// bfme-native
 
 	m_command = GUI_COMMAND_NONE;
 	m_thingTemplate = nullptr;

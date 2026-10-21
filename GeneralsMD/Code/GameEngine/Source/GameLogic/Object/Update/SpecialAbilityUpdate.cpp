@@ -1288,6 +1288,9 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 
   Bool okToLoseStealth = TRUE;
 
+  if( bfmeTriggerOverride() )	// bfme-native
+    return;
+
   switch( spTemplate->getSpecialPowerType() )
   {
     case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:

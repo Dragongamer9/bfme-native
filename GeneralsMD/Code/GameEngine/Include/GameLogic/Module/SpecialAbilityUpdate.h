@@ -219,6 +219,11 @@ protected:
 	void startPreparation();		//Begins the preparation of ability -- like firing off a hacker attack, or laser tracer, etc.
 	Bool continuePreparation();	//Updates the preparation of ability -- like recalculating tracer lines.
 	void triggerAbilityEffect();	//After the preparation time has elapsed, this part actually triggers the desired effect of the special ability.
+	/// bfme-native: RotWK subclasses handle the trigger themselves (return TRUE to skip the Generals switch)
+	virtual Bool bfmeTriggerOverride() { return FALSE; }
+	ObjectID bfmeGetTargetID() const { return m_targetID; }
+	const Coord3D* bfmeGetTargetPos() const { return &m_targetPos; }
+	Bool bfmeHasTarget() const { return !m_noTargetCommand; }
 	void finishAbility();
 
 	void validateSpecialObjects();
