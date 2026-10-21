@@ -269,6 +269,8 @@ public:
 	static Bool scanIndexListTolerant(const char* token, ConstCharPtrArray nameList, Int& out);
 	/// bfme-native: note a module class the engine does not implement (BFME_INI_REPORT)
 	static void bfmeRecordUnknownModule(const char* moduleName);
+	/// bfme-native: write the skip report now (BFME_INI_REPORT)
+	static void bfmeWriteReport();
 	/// bfme-native: copy the rest of the current block (header line + body + End) for later parsing.
 	/// Used for blocks whose store does not exist yet when they are met (CommandSet inside object files).
 	void bfmeDeferBlock(const char* blockType, const char* headerLine);

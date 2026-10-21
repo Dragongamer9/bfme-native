@@ -1254,6 +1254,11 @@ static Bool bfmeTryScanIndex(const char* token, ConstCharPtrArray list, Int& out
 	return FALSE;
 }
 
+/*static*/ void INI::bfmeWriteReport()
+{
+	bfmeDumpSkipReport();
+}
+
 /*static*/ void INI::bfmeRecordUnknownModule(const char* moduleName)
 {
 	bfmeRecordSkip("module", s_bfmeCurrentBlock.str(), moduleName);

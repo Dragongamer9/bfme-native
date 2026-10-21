@@ -792,6 +792,7 @@ void GameEngine::init()
 
 		// Create the interface for sending game results
 		initSubsystem(TheGameResultsQueue,"TheGameResultsQueue", GameResultsInterface::createNewGameResultsInterface(), nullptr);
+		INI::bfmeWriteReport();	// bfme-native: everything skipped while loading data
 
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
