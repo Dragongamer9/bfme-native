@@ -194,6 +194,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "PassiveAreaEffectBehavior", 256, 64 },	// bfme-native
 	{ "LargeGroupBonusUpdate", 256, 64 },	// bfme-native
 	{ "HordeMemberCollide", 2048, 512 },	// bfme-native
+	{ "GettingBuiltBehavior", 1024, 256 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },
 	{ "AutoDepositUpdate", 256, 32 },

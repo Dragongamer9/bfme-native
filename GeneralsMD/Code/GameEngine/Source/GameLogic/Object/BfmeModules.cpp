@@ -1,6 +1,7 @@
 // bfme-native: small RotWK modules, see BfmeModules.h
 #include "PreRTS.h"
 
+#include "Common/BuildAssistant.h"
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
@@ -12,6 +13,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BfmeModules.h"
 #include "GameLogic/Module/BodyModule.h"
+#include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
@@ -298,3 +300,77 @@ UpdateSleepTime LargeGroupBonusUpdate::update()
 //=================================================================================================
 HordeMemberCollide::HordeMemberCollide( Thing *thing, const ModuleData* moduleData ) : CollideModule( thing, moduleData ) {}
 BFME_TRIVIAL_SNAPSHOT(HordeMemberCollide, CollideModule)
+
+//=================================================================================================
+// GettingBuiltBehavior
+//=================================================================================================
+void GettingBuiltBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "WorkerName",									INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_workerName ) },
+		{ "EvilWorkerName",							INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_evilWorkerName ) },
+		{ "SpawnTimer",									INI::parseDurationUnsignedInt,	nullptr, offsetof( GettingBuiltBehaviorModuleData, m_spawnTimer ) },
+		{ "RebuildTimeSeconds",					INI::parseReal,									nullptr, offsetof( GettingBuiltBehaviorModuleData, m_rebuildTimeSeconds ) },
+		{ "UseSpawnTimerWithoutWorker",	INI::parseBool,									nullptr, offsetof( GettingBuiltBehaviorModuleData, m_useSpawnTimerWithoutWorker ) },
+		{ "RebuildWhenDead",						INI::parseBool,									nullptr, offsetof( GettingBuiltBehaviorModuleData, m_rebuildWhenDead ) },
+		{ "SelfRepairFromDamageLoop",		INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_unusedString ) },
+		{ "SelfRepairFromRubbleLoop",		INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_unusedString ) },
+		{ "SelfBuildingLoop",						INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_unusedString ) },
+		{ "DisallowRebuildRange",				INI::parseReal,									nullptr, offsetof( GettingBuiltBehaviorModuleData, m_unusedReal ) },
+		{ "DisallowRebuildFilter",			INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_unusedString ) },
+		{ "TestFaction",								INI::parseAsciiString,					nullptr, offsetof( GettingBuiltBehaviorModuleData, m_unusedString ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+GettingBuiltBehavior::GettingBuiltBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(1));
+}
+BFME_TRIVIAL_SNAPSHOT(GettingBuiltBehavior, UpdateModule)
+
+UpdateSleepTime GettingBuiltBehavior::update()
+{
+	Object* me = getObject();
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	if (!me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);	// built; keep an eye out (rebuilds come back under construction)
+
+	// same bookkeeping as Zero Hour's dozer construction (DozerAIUpdate), with the structure as its own builder
+	const Int framesToBuild = max(1, me->getTemplate()->calcTimeToBuild(me->getControllingPlayer()));
+	const Real step = 100.0f / (Real)framesToBuild;
+	me->setConstructionPercent(me->getConstructionPercent() + step);
+	BodyModuleInterface* body = me->getBodyModule();
+	if (body)
+		body->internalChangeHealth(body->getMaxHealth() / (Real)framesToBuild);
+
+	if (me->getConstructionPercent() >= 100.0f)
+	{
+		me->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION));
+		me->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_RECONSTRUCTING));
+		me->clearModelConditionFlags(MAKE_MODELCONDITION_MASK3(MODELCONDITION_AWAITING_CONSTRUCTION, MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED));
+		me->setConstructionPercent(CONSTRUCTION_COMPLETE);
+		if (body)
+			body->evaluateVisualCondition();
+		Player* player = me->getControllingPlayer();
+		if (player)
+		{
+			player->onStructureConstructionComplete(me, me, FALSE);
+			for (BehaviorModule** m = me->getBehaviorModules(); *m; ++m)
+			{
+				CreateModuleInterface* create = (*m)->getCreate();
+				if (create)
+					create->onBuildComplete();
+			}
+		}
+		me->handlePartitionCellMaintenance();
+		me->updateUpgradeModules();
+		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
+	}
+	me->setModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
+	return UPDATE_SLEEP_NONE;
+}

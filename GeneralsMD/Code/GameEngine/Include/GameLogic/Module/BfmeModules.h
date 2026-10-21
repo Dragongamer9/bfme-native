@@ -126,6 +126,34 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** GettingBuiltBehavior: RotWK structures put themselves up -- no dozer drives the construction.
+	(First version: the structure builds over its BuildTime; the worker walking over is not
+	simulated yet.) */
+class GettingBuiltBehaviorModuleData : public UpdateModuleData
+{
+public:
+	GettingBuiltBehaviorModuleData() : m_spawnTimer(0), m_rebuildTimeSeconds(0.0f), m_useSpawnTimerWithoutWorker(FALSE), m_rebuildWhenDead(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_workerName;
+	AsciiString m_evilWorkerName;
+	UnsignedInt m_spawnTimer;
+	Real m_rebuildTimeSeconds;
+	Bool m_useSpawnTimerWithoutWorker;
+	Bool m_rebuildWhenDead;
+	AsciiString m_unusedString;
+	Real m_unusedReal;
+};
+
+class GettingBuiltBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( GettingBuiltBehavior, "GettingBuiltBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( GettingBuiltBehavior, GettingBuiltBehaviorModuleData )
+public:
+	GettingBuiltBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+};
+
+//-------------------------------------------------------------------------------------------------
 class HordeMemberCollide : public CollideModule
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HordeMemberCollide, "HordeMemberCollide" )
