@@ -1,0 +1,11 @@
+# Stances: an aggressive Gondor horde (+15% damage, -20% armor) against the Uruks of horde_fight
+1   spawn GondorFighterHorde player1 800 1100 0
+1   spawn IsengardFighterHorde player2 1300 1100 180
+5   stance player1 GondorFighterHorde Aggressive
+5   summary
+60  attack player1 player2
+60  attack player2 player1
+300 summary
+600 summary
+900 summary
+901 quit
