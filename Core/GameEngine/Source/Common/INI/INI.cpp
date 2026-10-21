@@ -413,6 +413,116 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 	}
 }
 
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: tolerant loading of BFME2/RotWK data.
+// Keywords that open a nested block in BFME data (learned from the full RotWK+Edain INI set).
+// An unknown field or top-level block is skipped up to its matching End instead of derailing
+// the parse, and recorded; set BFME_INI_REPORT=<file> to get the list of everything skipped.
+//-------------------------------------------------------------------------------------------------
+#include <map>
+#include <set>
+#include <string>
+
+static const char* const kBfmeSubBlockKeywords[] = {
+	"AIEconomyAssigment", "AddModule", "Animation", "AnimationState", "ArmorSet", "ArmyEntry",
+	"ArmyMemberDefinition", "ArmyToSpawn", "Attribute", "AttributeModifierNugget", "AudioEvent",
+	"AutoResolveArmor", "AutoResolveWeapon", "Behavior", "BonusForLevel", "BuffNugget",
+	"BuildingNugget", "CameraShakerVolume", "ColorIntensityControlPoint", "CombatChainDefinition",
+	"CreateAHeroBling", "CreateAHeroBlingBinder", "CreateDebris", "CreateObject", "DOTNugget",
+	"DamageNugget", "DecalTemplate", "DefaultModelConditionState", "DynamicDecal",
+	"EmotionWeaponNugget", "EnableRegion", "EvaEvent", "EyeTowerPoints", "FXList", "FXListAtBonePos",
+	"FireLogicNugget", "FireWeaponNugget", "Flammability", "FloodMember", "FormationPreviewDecal",
+	"FormationPreviewItemDecal", "FormationSelection", "FormationTemplate", "GrabNugget",
+	"IdleAnimationState", "ImagePart", "InheritableModule", "InvisibilityNugget", "LocomotorSet",
+	"LuaEventNugget", "MetaImpactNugget", "Mission", "ModelConditionState", "MoveArmy", "MoveCamera",
+	"Object", "ObjectAward", "OpenGateNugget", "OwnershipSet", "ParalyzeNugget", "ParticleSystem",
+	"Phase", "PlayerDefeatCondition", "ProductionModifier", "ProjectileNugget", "Region",
+	"ReplaceModule", "ReplaceObject", "RestrictBuildings", "Rows", "Scenario", "SelectionDecal",
+	"Session", "SetPlayerControlOfArmy", "SideInfo", "SideSound", "Sound", "SpawnAndFadeNugget",
+	"SpawnArmies", "SpawnArmy", "SpawnBuildings", "SpecialModelConditionNugget", "Stance",
+	"StartingRestriction", "Structure", "SubClass", "System", "TaskAfterAudio", "TeamDefeatCondition",
+	"TeamVictoryCondition", "TerrainScorch", "ThingStat", "ThreatBreakdown", "Threshold",
+	"TransitionState", "Trigger", "Turret", "UnitCategory", "UnitDefinition", "UnitSpecificSounds",
+	"ViewInfo", "ViewShake", "WeaponOCLNugget", "WeaponSet", "Window", "WorldText",
+	// "Key = Value" lines that open a block
+	"Alpha", "Body", "ClientBehavior", "ClientUpdate", "Color", "ConnectsTo", "Event",
+	"HistoricalScenario", "LodOptions", "Physics", "RadiusCursorTemplate", "ShowsAmmoPips",
+	"SoundState", "SoundUpgrade", "Update", "Wind", "Draw",
+};
+
+static Bool isBfmeSubBlockKeyword(const char* tok)
+{
+	static std::set<std::string> s;
+	if (s.empty())
+		for (const char* k : kBfmeSubBlockKeywords)
+			s.insert(k);
+	return tok && s.count(tok) != 0;
+}
+
+static std::map<std::string, int>& bfmeSkipReport()
+{
+	static std::map<std::string, int> r;
+	return r;
+}
+
+static void bfmeDumpSkipReport()
+{
+	const char* path = getenv("BFME_INI_REPORT");
+	if (!path || bfmeSkipReport().empty())
+		return;
+	FILE* f = fopen(path, "w");
+	if (!f)
+		return;
+	for (const auto& kv : bfmeSkipReport())
+		fprintf(f, "%d\t%s\n", kv.second, kv.first.c_str());
+	fclose(f);
+}
+
+static void bfmeRecordSkip(const char* kind, const char* block, const char* name)
+{
+	static Bool registered = FALSE;
+	if (!registered) {
+		atexit(bfmeDumpSkipReport);
+		registered = TRUE;
+	}
+	std::string key = std::string(kind) + "\t" + (block ? block : "?") + "\t" + (name ? name : "?");
+	bfmeSkipReport()[key]++;
+}
+
+static AsciiString s_bfmeCurrentBlock;
+
+/// Skip lines up to the End that closes a block whose opening line was just read.
+void INI::bfmeSkipBlock()
+{
+	Int depth = 1;
+	while (depth > 0 && !m_endOfFile) {
+		readLine();
+		char tmp[INI_MAX_CHARS_PER_LINE + 1];
+		strncpy(tmp, m_buffer, sizeof(tmp) - 1); tmp[sizeof(tmp) - 1] = 0;
+		char* save = nullptr;
+		const char* t = strtok_r(tmp, " \n\r\t=", &save);
+		if (!t)
+			continue;
+		if (stricmp(t, "BeginScript") == 0) {
+			// embedded Lua: no INI structure until EndScript
+			while (!m_endOfFile) {
+				readLine();
+				char tmp2[INI_MAX_CHARS_PER_LINE + 1];
+				strncpy(tmp2, m_buffer, sizeof(tmp2) - 1); tmp2[sizeof(tmp2) - 1] = 0;
+				char* s2 = nullptr;
+				const char* u = strtok_r(tmp2, " \n\r\t", &s2);
+				if (u && stricmp(u, "EndScript") == 0)
+					break;
+			}
+			continue;
+		}
+		if (stricmp(t, "End") == 0 || stricmp(t, "END_END") == 0)
+			--depth;
+		else if (isBfmeSubBlockKeyword(t))
+			++depth;
+	}
+}
 //-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
 //-------------------------------------------------------------------------------------------------
@@ -457,6 +567,7 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				INIBlockParse parse = findBlockParse(token);
 				if (parse)
 				{
+					s_bfmeCurrentBlock = token;
 					#ifdef DEBUG_CRASHING
 					static_assert(ARRAY_SIZE(m_curBlockStart) >= ARRAY_SIZE(m_buffer), "Incorrect array size");
 					strcpy(m_curBlockStart, m_buffer);
@@ -481,9 +592,11 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				}
 				else
 				{
-					DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Unknown block '%s'",
+					// bfme-native: skip and record instead of aborting the whole file
+					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown block '%s' (skipped)",
 														 getLineNum(), getFilename().str(), token ) );
-					throw INI_UNKNOWN_TOKEN;
+					bfmeRecordSkip("block", "-", token);
+					bfmeSkipBlock();
 				}
 
 			}
@@ -1633,8 +1746,10 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 				if (!found)
 				{
-					DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Unknown field '%s' in block '%s'",
-														 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
+					// bfme-native: record; a field that opens a nested block is skipped to its End
+					bfmeRecordSkip("field", s_bfmeCurrentBlock.str(), field);
+					if (isBfmeSubBlockKeyword(field))
+						bfmeSkipBlock();
 				}
 
 			}

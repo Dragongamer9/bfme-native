@@ -263,6 +263,7 @@ public:
 	UnsignedInt getLineNum() const { return m_lineNum; }
 	Bool isEOF() const { return m_endOfFile; }
 	static const char *getSeps()        { return " \n\r\t="; }   ///< default delimiters for strtok parsing
+	void bfmeSkipBlock(); ///< bfme-native: skip an unknown nested block up to its matching End
 	static const char *getSepsPercent() { return " \n\r\t=%%"; } ///< default delimiters & percent delimiter
 	static const char *getSepsColon()   { return " \n\r\t=:"; }  ///< default delimiters & colon delimiter
 	static const char *getSepsQuote()   { return "\"\n="; }      ///< delimiters to represent a quoted ascii string
