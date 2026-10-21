@@ -30,8 +30,26 @@ Engine (engine/GeneralsX, branch bfme-rotwk):
 - SubsystemLegend: RotWK's data-driven subsystem INI lists replace the compiled-in paths
 - Native Linux build of the base engine in progress (deps built from source: SDL3, DXVK, glm 1.0.1, gli, curl, miniaudio)
 
+## Milestone: full engine init on RotWK + Edain + Völker (2026-10-21, overnight)
+The native 64-bit Linux engine (headless) now loads all 1,339 INI files of RotWK 2.01 + Edain +
+Völker 4.0, initializes every subsystem (logic, client, UI data, audio, command maps) and reaches
+the main loop. Run it with `tools/boot.sh <dir with the .big files>`.
+
+RotWK behaviour reimplemented on the way (decompiled from game.dat / WorldBuilder):
+- INI preprocessor: #include, #define (case-insensitive), #ADD/#SUBTRACT/#MULTIPLY/#DIVIDE
+- data-driven SubsystemLegend; BIG4 archives; lang\*.big localized archives
+- science prerequisites (OR of AND groups); terrain classes; audio types/control/submix
+- damage and death types in RotWK order; ClipReloadTime Min/Max
+- ChildObject inheritance (tag-based module replacement); CommandSets inside object files
+- limits raised: upgrades 512 -> 2048
+- tolerant loading: unknown blocks, fields, values, modules are skipped and listed in a report
+  (BFME_INI_REPORT), BFME_INI_STRICT=1 restores aborting
+
+Test environment notes: the container has no GPU; SwiftShader lacks VK_EXT_robustness2 needed by
+DXVK, so automated boots use the engine's -headless mode. On a real GPU run without -headless.
+
 ## Next
-1. Finish native build; boot with RotWK data to the first INI error and work down the list
-2. Generate tolerant field tables for all 478 RotWK INI tables (unknown fields parsed and stored, not fatal)
-3. W3DModelDraw -> W3DScriptedModelDraw: Model/Animation state schemas recovered (tables at 0xBE0A78, 0xD99F60)
-4. Port modules in docs/SCOPE.md order
+1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
+2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
+3. Port gameplay modules in docs/SCOPE.md order (hordes, special powers, attribute modifiers...)
+4. Map loading for RotWK maps, then the APT (Flash) UI
