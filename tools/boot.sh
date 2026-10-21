@@ -23,6 +23,8 @@ echo "exit code: $rc"
 echo "INI files loaded: $(grep -c "\[INI\] load('.*') END" boot.log)"
 echo "last subsystem:   $(grep -oE "initSubsystem\('[^']+'\) START" boot.log | tail -1)"
 grep -E "\[INI-PP\]|ERROR in load|^  > |FATAL|Segmentation|Assertion" boot.log | head -12
+echo "bad fields (parse errors, skipped): $(grep -c '^\[INI\] bad field' boot.log)"
+grep '^\[INI\] bad field' boot.log | sed -E "s/ at .*//" | sort | uniq -c | sort -rn | head -15
 if [[ -s ini_report.tsv ]]; then
   echo "skipped INI items (top 15 of $(wc -l < ini_report.tsv)):"
   sort -rn ini_report.tsv | head -15
