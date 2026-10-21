@@ -25,61 +25,104 @@ MODULE_KEYS = {"behavior", "body", "draw", "clientupdate", "clientbehavior", "ai
 COMMENT_RE = re.compile(r"(;|//).*$")
 
 
-def iter_ini_lines(root):
+def iter_ini_files(root):
     for dp, _, fns in os.walk(root):
         for fn in fns:
-            if fn.lower().endswith(".ini") or fn.lower().endswith(".inc"):
+            if fn.lower().endswith((".ini", ".inc")):
                 path = os.path.join(dp, fn)
                 try:
                     with open(path, encoding="latin-1") as f:
-                        for ln in f:
-                            yield path, COMMENT_RE.sub("", ln).strip()
+                        raw = f.read().splitlines()
                 except OSError:
                     continue
+                lines = []
+                for ln in raw:
+                    body = COMMENT_RE.sub("", ln).rstrip()
+                    if body.strip():
+                        lines.append((len(body) - len(body.lstrip()), body.strip()))
+                yield path, lines
+
+
+def opens_block(lines, i):
+    """BFME has 'Key = Value' lines that open a block (AnimationState = IDLE ... End).
+    A '=' line opens a block when the next line is indented deeper."""
+    ind, _ = lines[i]
+    return i + 1 < len(lines) and lines[i + 1][0] > ind and lines[i + 1][1].lower() != "end"
+
+
+def learn_eq_openers(files):
+    """Keys whose 'Key = Value' lines open a block in most of their occurrences."""
+    yes, tot = collections.Counter(), collections.Counter()
+    for _, lines in files:
+        for i, (ind, ln) in enumerate(lines):
+            if ind == 0:
+                continue  # top-level lines always open blocks
+            k = ln.partition("=")[0].strip() if "=" in ln else ln.split(None, 1)[0]
+            k = ("=" if "=" in ln else "") + k
+            tot[k] += 1
+            yes[k] += opens_block(lines, i)
+    return {k for k in tot if tot[k] >= 5 and yes[k] / tot[k] >= 0.8}
 
 
 def scan(root):
+    files_l = list(iter_ini_files(root))
+    eq_open = learn_eq_openers(files_l)
     blocks = collections.Counter()
     modules = collections.Counter()
     module_fields = collections.defaultdict(collections.Counter)
     block_fields = collections.defaultdict(collections.Counter)
-    files = set()
-    stack = []  # [(kind, name)]
-    cur_path = None
-    for path, ln in iter_ini_lines(root):
-        if path != cur_path:
-            cur_path, stack = path, []
-            files.add(path)
-        if not ln or ln.startswith("#"):
-            continue
-        tok = ln.split(None, 1)
-        head = tok[0]
-        low = head.lower()
-        if low == "end" or low == "end_end":
-            if stack:
-                stack.pop()
-            continue
-        if "=" in ln:
-            key, _, val = ln.partition("=")
-            key, val = key.strip(), val.strip()
-            if key.lower() in MODULE_KEYS and stack:
-                cls = val.split()[0] if val else "?"
-                modules[cls] += 1
-                stack.append(("module", cls))
+    files = 0
+    for path, lines in files_l:
+        files += 1
+        stack = []  # [(kind, name)]
+        in_script = False
+        for i, (ind, ln) in enumerate(lines):
+            if ln.startswith("#"):
                 continue
-            if stack:
-                kind, name = stack[-1]
-                (module_fields if kind == "module" else block_fields)[name][key] += 1
-            continue
-        # a line without '=' opens a block (top-level or nested, e.g. ArmorSet, WeaponSet, Draw states)
-        if not stack:
-            blocks[head] += 1
-            stack.append(("block", head))
-        else:
-            parent = stack[-1][1]
-            block_fields[parent][head] += 1
-            stack.append(("sub", f"{parent}.{head}"))
-    return {"files": len(files), "blocks": blocks, "modules": modules,
+            if in_script:  # embedded Lua between BeginScript/EndScript has no INI structure
+                in_script = ln.split(None, 1)[0].lower() != "endscript"
+                continue
+            if ln.split(None, 1)[0].lower() == "beginscript":
+                in_script = True
+                continue
+            head = ln.split(None, 1)[0]
+            low = head.lower()
+            if low in ("end", "end_end"):
+                if stack:
+                    stack.pop()
+                continue
+            if "=" in ln:
+                key, _, val = ln.partition("=")
+                key, val = key.strip(), val.strip()
+                if key.lower() in MODULE_KEYS and stack and stack[0][1] in ("Object", "ChildObject", "ObjectReskin"):
+                    cls = val.split()[0] if val else "?"
+                    modules[cls] += 1
+                    stack.append(("module", cls))
+                    continue
+                owner = None
+                for kind, name in reversed(stack):
+                    if kind == "module":
+                        owner = ("module", name)
+                        break
+                if owner:
+                    module_fields[owner[1]][key] += 1
+                elif stack:
+                    block_fields[stack[-1][1]][key] += 1
+                if "=" + key in eq_open:
+                    stack.append(("sub", key))
+                continue
+            if not stack:
+                blocks[head] += 1
+                stack.append(("block", head))
+            else:
+                owner = next((n for k, n in reversed(stack) if k == "module"), None)
+                if owner:
+                    module_fields[owner][head] += 1
+                else:
+                    block_fields[stack[-1][1]][head] += 1
+                if head in eq_open:  # e.g. ModelConditionState / ArmorSet open; ParticleSysBone does not
+                    stack.append(("sub", head))
+    return {"files": files, "blocks": blocks, "modules": modules,
             "module_fields": module_fields, "block_fields": block_fields}
 
 
