@@ -1,0 +1,8 @@
+# A hero falls instead of dying (RespawnUpdate), stays gone, and is revived at a given spot
+1    spawn RohanTheoden_mod player1 800 1100 0
+5    kill player1 RohanTheoden_mod
+6    dump
+200  dump
+210  revive player1 RohanTheoden_mod 900 1000
+220  dump
+221  quit
