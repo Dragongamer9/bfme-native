@@ -56,6 +56,7 @@
 #include "Common/MiscAudio.h"
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
+#include "GameLogic/Module/HordeContain.h"	// bfme-native
 #include "Common/PlayerList.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/ProductionPrerequisite.h"
@@ -2466,6 +2467,9 @@ void Player::doBountyForKill(const Object* killer, const Object* victim)
 		return;
 
 	Int costToBuild = victim->getTemplate()->calcCostToBuild(victim->getControllingPlayer());
+	// bfme-native: RotWK bounties are worth BountyValue, not the build cost
+	if (victim->getTemplate()->bfmeGetBountyValue() > 0)
+		costToBuild = victim->getTemplate()->bfmeGetBountyValue();
 #if RETAIL_COMPATIBLE_CRC
 	Int bounty = REAL_TO_INT_CEIL(costToBuild * m_cashBountyPercent);
 #else
@@ -2921,8 +2925,60 @@ static void countExisting( Object *obj, void *userData )
 
 //=============================================================================
 // Make sure that building another of this unit/structure/object won't exceed MaxSimultaneousOfType()
+// bfme-native: RotWK command points ------------------------------------------------------------
+static Bool isHordeMemberObject(const Object* o)
+{
+	const Object* producer = TheGameLogic->findObjectByID(o->getProducerID());
+	return producer && producer != o && HordeContain::findOn(producer) != nullptr;
+}
+
+Int Player::bfmeCommandPointsUsed() const
+{
+	Int used = 0;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != this || o->isEffectivelyDead())
+			continue;
+		const Int cp = o->getTemplate()->bfmeGetCommandPoints();
+		if (cp > 0 && !isHordeMemberObject(o))
+			used += cp;
+	}
+	return used;
+}
+
+Int Player::bfmeCommandPointLimit() const
+{
+	if (TheGlobalData == nullptr || m_playerTemplate == nullptr)
+		return 0;
+	Int players = 0;
+	for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+	{
+		const Player* p = ThePlayerList->getNthPlayer(i);
+		if (p && p->getPlayerTemplate() && p != ThePlayerList->getNeutralPlayer() && !p->isPlayerObserver() &&
+				p->getPlayerTemplate()->getSide().isNotEmpty())
+			++players;
+	}
+	Int slot = players >= 2 ? min(players, 8) : (getPlayerType() == PLAYER_COMPUTER ? 1 : 0);
+	const Int* cp = TheGlobalData->m_bfmeCommandPoints[m_playerTemplate->isEvil() ? 1 : 0][slot];
+	if (cp[1] <= 0)
+		return 0;	// no limit configured
+	Int limit = cp[0];
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		if (o->getControllingPlayer() == this && !o->isEffectivelyDead() && !o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			limit += o->getTemplate()->bfmeGetCommandPointBonus();
+	return min(limit, cp[1]);
+}
+
 Bool Player::canBuildMoreOfType( const ThingTemplate *whatToBuild ) const
 {
+	// bfme-native: command points
+	if (whatToBuild->bfmeGetCommandPoints() > 0)
+	{
+		const Int limit = bfmeCommandPointLimit();
+		if (limit > 0 && bfmeCommandPointsUsed() + whatToBuild->bfmeGetCommandPoints() > limit)
+			return false;
+	}
+
   // make sure we're not maxed out for this type of unit.
   UnsignedInt maxSimultaneousOfType = whatToBuild->getMaxSimultaneousOfType();
   if (maxSimultaneousOfType != 0)

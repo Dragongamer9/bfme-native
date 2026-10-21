@@ -406,6 +406,9 @@ public:
 	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or SIMULATE_REPLAYS_SEQUENTIAL for sequential simulation
 
 	Real m_attributeModifierArmorMaxBonus;	///< bfme-native: cap on summed ARMOR attribute bonuses
+	/// bfme-native: command points [0 good / 1 evil][0 solo human, 1 solo AI, 2..8 multiplayer by player count][start, max]
+	Int m_bfmeCommandPoints[2][9][2];
+	Real m_bfmeTerrainResourceCellSize;
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
 	WeaponBonusSet* m_weaponBonusSet;

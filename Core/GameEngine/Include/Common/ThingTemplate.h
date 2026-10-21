@@ -464,6 +464,11 @@ public:
 	Int getExperienceValue(Int level) const { return m_experienceValues[level]; }
 	Int getExperienceRequired(Int level) const {return m_experienceRequired[level]; }
 	Bool isTrainable() const{return m_isTrainable; }
+	// bfme-native
+	Int bfmeGetCommandPoints() const { return m_bfmeCommandPoints; }
+	Int bfmeGetCommandPointBonus() const { return m_bfmeCommandPointBonus; }
+	Int bfmeGetBountyValue() const { return m_bfmeBountyValue; }
+	Bool bfmeGivesNoXP() const { return m_bfmeGiveNoXP; }
 	Bool isEnterGuard() const{return m_enterGuard; }
 	Bool isHijackGuard() const{return m_hijackGuard; }
 
@@ -785,6 +790,10 @@ private:
 	Bool					m_isBridge;										///< True if this model is a bridge.
  	Bool					m_isBuildFacility;						///< is this the build facility for something? (calculated based on other template's prereqs)
 	Bool					m_isTrainable;								///< Whether or not I can even gain experience
+	Int						m_bfmeCommandPoints;					///< bfme-native: command points this unit takes
+	Int						m_bfmeCommandPointBonus;			///< bfme-native: command points this building adds
+	Int						m_bfmeBountyValue;						///< bfme-native: money for the killer's player
+	Bool					m_bfmeGiveNoXP;								///< bfme-native
 	Bool          m_enterGuard;									///< Whether or not I can enter objects when guarding
 	Bool          m_hijackGuard;								///< Whether or not I can hijack objects when guarding
 	Bool					m_isForbidden;								///< useful when overriding in <mapfile>.ini

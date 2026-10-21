@@ -85,6 +85,17 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+// bfme-native: "GoodCommandPointsMP2 = 100 1000" -- starting value and maximum
+static void parseBfmeCommandPoints(INI* ini, void* instance, void* /*store*/, const void* userData)
+{
+	GlobalData* gd = (GlobalData*)instance;
+	const Int idx = (Int)(intptr_t)userData;
+	Int* v = gd->m_bfmeCommandPoints[idx / 9][idx % 9];
+	v[0] = INI::scanInt(ini->getNextToken());
+	const char* t = ini->getNextTokenOrNull();
+	v[1] = t ? INI::scanInt(t) : v[0];
+}
+
 /*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] =
 {
 	{ "Windowed",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_windowed ) },
@@ -439,6 +450,25 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "MaxTunnelCapacity",					INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxTunnelCapacity ) },
 
 	{ "AttributeModifierArmorMaxBonus",	INI::parsePercentToReal,	nullptr,			offsetof( GlobalData, m_attributeModifierArmorMaxBonus ) },	// bfme-native
+	{ "GoodCommandPoints",	parseBfmeCommandPoints,	(void*)0,	0 },	// bfme-native
+	{ "GoodCommandPointsAI",	parseBfmeCommandPoints,	(void*)1,	0 },	// bfme-native
+	{ "GoodCommandPointsMP2",	parseBfmeCommandPoints,	(void*)2,	0 },	// bfme-native
+	{ "GoodCommandPointsMP3",	parseBfmeCommandPoints,	(void*)3,	0 },	// bfme-native
+	{ "GoodCommandPointsMP4",	parseBfmeCommandPoints,	(void*)4,	0 },	// bfme-native
+	{ "GoodCommandPointsMP5",	parseBfmeCommandPoints,	(void*)5,	0 },	// bfme-native
+	{ "GoodCommandPointsMP6",	parseBfmeCommandPoints,	(void*)6,	0 },	// bfme-native
+	{ "GoodCommandPointsMP7",	parseBfmeCommandPoints,	(void*)7,	0 },	// bfme-native
+	{ "GoodCommandPointsMP8",	parseBfmeCommandPoints,	(void*)8,	0 },	// bfme-native
+	{ "EvilCommandPoints",	parseBfmeCommandPoints,	(void*)9,	0 },	// bfme-native
+	{ "EvilCommandPointsAI",	parseBfmeCommandPoints,	(void*)10,	0 },	// bfme-native
+	{ "EvilCommandPointsMP2",	parseBfmeCommandPoints,	(void*)11,	0 },	// bfme-native
+	{ "EvilCommandPointsMP3",	parseBfmeCommandPoints,	(void*)12,	0 },	// bfme-native
+	{ "EvilCommandPointsMP4",	parseBfmeCommandPoints,	(void*)13,	0 },	// bfme-native
+	{ "EvilCommandPointsMP5",	parseBfmeCommandPoints,	(void*)14,	0 },	// bfme-native
+	{ "EvilCommandPointsMP6",	parseBfmeCommandPoints,	(void*)15,	0 },	// bfme-native
+	{ "EvilCommandPointsMP7",	parseBfmeCommandPoints,	(void*)16,	0 },	// bfme-native
+	{ "EvilCommandPointsMP8",	parseBfmeCommandPoints,	(void*)17,	0 },	// bfme-native
+	{ "TerrainResourceCellSize",	INI::parseReal,	nullptr,	offsetof( GlobalData, m_bfmeTerrainResourceCellSize ) },	// bfme-native
 	{ "MaxParticleCount",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxParticleCount ) },
 	{ "MaxFieldParticleCount",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_maxFieldParticleCount ) },
 	{ "HorizontalScrollSpeedFactor",INI::parseReal,				nullptr,			offsetof( GlobalData, m_horizontalScrollSpeedFactor ) },
@@ -899,6 +929,13 @@ GlobalData::GlobalData()
 	m_drawEntireTerrain = FALSE;
 	m_maxParticleCount = 0;
 	m_attributeModifierArmorMaxBonus = 0.75f;	// bfme-native
+	for (Int e = 0; e < 2; ++e)
+		for (Int k = 0; k < 9; ++k)
+		{
+			m_bfmeCommandPoints[e][k][0] = 0;	// 0 = no command point limit
+			m_bfmeCommandPoints[e][k][1] = 0;
+		}
+	m_bfmeTerrainResourceCellSize = 20.0f;
 	m_maxFieldParticleCount = 30;
 
 	m_debugAI = AI_DEBUG_NONE;
