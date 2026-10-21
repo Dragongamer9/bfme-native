@@ -1158,6 +1158,9 @@ if(SAGE_USE_NGMP)
         Source/GameNetwork/GeneralsOnline/NetworkMesh.cpp
         Source/GameNetwork/GeneralsOnline/NextGenTransport.cpp
     )
+else()
+    # bfme-native: menus still reference GeneralsOnline symbols on Linux
+    list(APPEND GAMEENGINE_SRC Source/GameNetwork/GeneralsOnline/NGMPStubs.cpp)
 endif()
 
 add_library(z_gameengine STATIC)
