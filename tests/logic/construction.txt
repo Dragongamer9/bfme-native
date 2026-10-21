@@ -1,0 +1,7 @@
+# A Gondor archery range puts itself up
+1   build GondorArcherRange player1 900 1100
+2   construction
+300 construction
+900 construction
+1500 construction
+1501 quit
