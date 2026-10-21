@@ -763,6 +763,17 @@ void Player::setDefaultTeam() {
 	tname.set("team");
 	tname.concat(m_playerName);
 	Team *dt = TheTeamFactory->findTeam(tname);
+	if (dt == nullptr && this != ThePlayerList->getNeutralPlayer()) {
+		// bfme-native: RotWK skirmish players have no team in the map (Edain's AI comes from library
+		// maps, not SkirmishScripts.scb), so make their default team here
+		Dict d;
+		d.setAsciiString(TheKey_teamName, tname);
+		d.setAsciiString(TheKey_teamOwner, m_playerName);
+		d.setBool(TheKey_teamIsSingleton, true);
+		TheTeamFactory->initTeam(tname, m_playerName, TRUE, &d);
+		dt = TheTeamFactory->findTeam(tname);
+		fprintf(stderr, "[bfme] made default team %s for player %s: %s\n", tname.str(), m_playerName.str(), dt ? "ok" : "FAILED");
+	}
 	DEBUG_ASSERTCRASH(dt, ("no team"));
 	if (dt) {
 		m_defaultTeam = dt;

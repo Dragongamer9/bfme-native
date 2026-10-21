@@ -41,6 +41,7 @@
 #include "Common/GameEngine.h"
 #include "Common/SubsystemLegend.h"
 #include "GameLogic/AttributeModifier.h"	// bfme-native
+#include "GameNetwork/GameInfo.h"	// bfme-native
 #include "GameLogic/ExperienceLevel.h"	// bfme-native
 #include "GameLogic/Stances.h"	// bfme-native
 #include "Common/INI.h"
@@ -374,6 +375,57 @@ Bool GameEngine::isGameHalted()
 /** -----------------------------------------------------------------------------------------------
  * Initialize the game engine by initializing the GameLogic and GameClient.
  */
+// bfme-native: build the skirmish slots for -skirmish (slot 0 = you, slot 1 = medium computer)
+static Bool bfmeSetupSkirmish()
+{
+	if (ThePlayerTemplateStore == nullptr)
+		return FALSE;
+	Int factions[2] = { -1, -1 };
+	for (Int s = 0; s < 2; ++s)
+		for (Int i = 0; i < ThePlayerTemplateStore->getPlayerTemplateCount(); ++i)
+		{
+			const PlayerTemplate* pt = ThePlayerTemplateStore->getNthPlayerTemplate(i);
+			if (pt && (pt->getName().compareNoCase(TheGlobalData->m_bfmeSkirmishFactions[s]) == 0 ||
+					pt->getSide().compareNoCase(TheGlobalData->m_bfmeSkirmishFactions[s]) == 0))
+			{
+				factions[s] = i;
+				break;
+			}
+		}
+	if (factions[0] < 0 || factions[1] < 0)
+	{
+		fprintf(stderr, "[bfme] -skirmish: unknown faction '%s' or '%s'\n", TheGlobalData->m_bfmeSkirmishFactions[0].str(), TheGlobalData->m_bfmeSkirmishFactions[1].str());
+		return FALSE;
+	}
+	if (TheSkirmishGameInfo == nullptr)
+		TheSkirmishGameInfo = NEW SkirmishGameInfo;
+	TheSkirmishGameInfo->init();
+	TheSkirmishGameInfo->clearSlotList();
+	TheSkirmishGameInfo->reset();
+	TheSkirmishGameInfo->setLocalIP(TheSkirmishGameInfo->getSlot(0)->getIP());
+	TheSkirmishGameInfo->enterGame();
+	GameSlot you;
+	you.setState(SLOT_PLAYER, UnicodeString(L"Player"));
+	you.setPlayerTemplate(factions[0]);
+	you.setColor(0);
+	you.setStartPos(0);
+	TheSkirmishGameInfo->setSlot(0, you);
+	GameSlot ai;
+	ai.setState(SLOT_MED_AI);
+	ai.setPlayerTemplate(factions[1]);
+	ai.setColor(1);
+	ai.setStartPos(1);
+	TheSkirmishGameInfo->setSlot(1, ai);
+	TheSkirmishGameInfo->setSeed(1);
+	TheSkirmishGameInfo->setMap(TheGlobalData->m_initialFile);
+	TheSkirmishGameInfo->setMapCRC(0);
+	TheSkirmishGameInfo->setMapSize(0);
+	TheSkirmishGameInfo->startGame(0);
+	fprintf(stderr, "[bfme] skirmish on %s: %s vs %s\n", TheGlobalData->m_initialFile.str(),
+		TheGlobalData->m_bfmeSkirmishFactions[0].str(), TheGlobalData->m_bfmeSkirmishFactions[1].str());
+	return TRUE;
+}
+
 void GameEngine::init()
 {
 	try {
@@ -884,12 +936,24 @@ void GameEngine::init()
 				// shutdown the top, but do not pop it off the stack
 	//			TheShell->hideShell();
 
+				if (TheGlobalData->m_bfmeSkirmish && bfmeSetupSkirmish())
+				{
+					// bfme-native: -skirmish
+					InitRandom(TheSkirmishGameInfo->getSeed());
+					GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+					msg->appendIntegerArgument(GAME_SKIRMISH);
+					msg->appendIntegerArgument(DIFFICULTY_NORMAL);
+					msg->appendIntegerArgument(0);
+				}
+				else
+				{
 				// send a message to the logic for a new game
 				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
 				msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
 				msg->appendIntegerArgument(DIFFICULTY_NORMAL);
 				msg->appendIntegerArgument(0);
 				InitRandom(0);
+				}
 			}
 		}
 

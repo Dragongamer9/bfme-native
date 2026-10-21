@@ -936,6 +936,7 @@ GlobalData::GlobalData()
 			m_bfmeCommandPoints[e][k][1] = 0;
 		}
 	m_bfmeTerrainResourceCellSize = 20.0f;
+	m_bfmeSkirmish = FALSE;
 	m_maxFieldParticleCount = 30;
 
 	m_debugAI = AI_DEBUG_NONE;

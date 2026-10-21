@@ -409,6 +409,8 @@ public:
 	/// bfme-native: command points [0 good / 1 evil][0 solo human, 1 solo AI, 2..8 multiplayer by player count][start, max]
 	Int m_bfmeCommandPoints[2][9][2];
 	Real m_bfmeTerrainResourceCellSize;
+	Bool m_bfmeSkirmish;									///< bfme-native: -skirmish on the command line
+	AsciiString m_bfmeSkirmishFactions[2];
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
 	WeaponBonusSet* m_weaponBonusSet;
