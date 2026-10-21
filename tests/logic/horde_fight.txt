@@ -1,0 +1,11 @@
+# Two hordes meet: Gondor soldiers vs Isengard fighters
+1   players
+1   spawn GondorFighterHorde player1 800 1100 0
+1   spawn IsengardFighterHorde player2 1300 1100 180
+5   summary
+60  attack player1 player2
+60  attack player2 player1
+300 summary
+600 summary
+900 summary
+901 quit

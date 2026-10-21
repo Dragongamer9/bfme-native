@@ -1,0 +1,6 @@
+1   spawn GondorFighterHorde player1 800 1100 0
+1   spawn IsengardFighter player2 1100 1100 180
+40  attack player1 player2
+41  state
+100 state
+101 quit

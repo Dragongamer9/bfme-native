@@ -13,6 +13,7 @@ ICD="${SWIFTSHADER_ICD:-/root/deps/swiftshader/b/Linux/vk_swiftshader_icd.json}"
 export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA"
 export BFME_INI_REPORT="$DATA/ini_report.tsv"
 ARGS=(-win)
+EXTRA=(${BFME_ARGS:-})
 if [[ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
   # no desktop: the engine's -headless mode skips rendering (software Vulkan lacks what DXVK needs)
   ARGS=(-win -headless)
@@ -23,7 +24,7 @@ fi
 BUILD="$(dirname "$(dirname "$EXE")")"
 export LD_LIBRARY_PATH="$BUILD/_deps/dxvk-src/lib:$BUILD/_deps/sdl3-build:$BUILD/_deps/sdl3_image-build:${LD_LIBRARY_PATH:-}"
 cd "$DATA"
-timeout "$SECS" "$EXE" "${ARGS[@]}" > boot.log 2>&1
+timeout "$SECS" "$EXE" "${ARGS[@]}" "${EXTRA[@]}" > boot.log 2>&1
 rc=$?
 echo "exit code: $rc"
 echo "INI files loaded: $(grep -c "\[INI\] load('.*') END" boot.log)"
