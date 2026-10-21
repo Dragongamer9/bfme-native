@@ -46,47 +46,66 @@ class ThingTemplate;
 //-------------------------------------------------------------------------------------------------
 enum DamageType CPP_11(: Int)
 {
-	DAMAGE_EXPLOSION							= 0,
-	DAMAGE_CRUSH									= 1,
-	DAMAGE_ARMOR_PIERCING					= 2,
-	DAMAGE_SMALL_ARMS							= 3,
-	DAMAGE_GATTLING								= 4,
-	DAMAGE_RADIATION							= 5,
-	DAMAGE_FLAME									= 6,
-	DAMAGE_LASER									= 7,
-	DAMAGE_SNIPER									= 8,
-	DAMAGE_POISON									= 9,
-	DAMAGE_HEALING								= 10,
-	DAMAGE_UNRESISTABLE						= 11,		// this is for scripting to cause 'armorproof' damage
-	DAMAGE_WATER									= 12,
-	DAMAGE_DEPLOY									= 13,					// for transports to deploy units and order them to all attack.
-	DAMAGE_SURRENDER							= 14,				// if something "dies" to surrender damage, they surrender.... duh!
-	DAMAGE_HACK										= 15,
-	DAMAGE_KILLPILOT							= 16,				// special snipe attack that kills the pilot and renders a vehicle unmanned.
-	DAMAGE_PENALTY								= 17,					// from game penalty (you won't receive radar warnings BTW)
-	DAMAGE_FALLING								= 18,
-	DAMAGE_MELEE									= 19,						// Blades, clubs...
-	DAMAGE_DISARM									= 20,	// "special" damage type used for disarming mines, bombs, etc (NOT for "disarming" an opponent!)
-	DAMAGE_HAZARD_CLEANUP					= 21,	// special damage type for cleaning up hazards like radiation or bio-poison.
-	DAMAGE_PARTICLE_BEAM					= 22,	// Incinerates virtually everything (insanely powerful orbital beam)
-	DAMAGE_TOPPLING								= 23,	// damage from getting toppled.
-	DAMAGE_INFANTRY_MISSILE				= 24,
-	DAMAGE_AURORA_BOMB						= 25,
-	DAMAGE_LAND_MINE							= 26,
-	DAMAGE_JET_MISSILES						= 27,
-	DAMAGE_STEALTHJET_MISSILES		= 28,
-	DAMAGE_MOLOTOV_COCKTAIL				= 29,
-	DAMAGE_COMANCHE_VULCAN				= 30,
-#if RTS_GENERALS
-	DAMAGE_FLESHY_SNIPER					= 31,		// like DAMAGE_SNIPER, but (generally) does no damage to vehicles.
-#endif
-	DAMAGE_SUBDUAL_MISSILE				/*= 31*/,	///< Damage that does not kill you, but produces some special effect based on your Body Module. Separate HP from normal damage.
-	DAMAGE_SUBDUAL_VEHICLE				/*= 32*/,
-	DAMAGE_SUBDUAL_BUILDING				/*= 33*/,
-	DAMAGE_SUBDUAL_UNRESISTABLE		/*= 34*/,
-	DAMAGE_MICROWAVE							/*= 35*/, ///< Radiation that only affects infantry
-	DAMAGE_KILL_GARRISONED				/*= 36*/, ///< Kills Passengers up to the number specified in Damage
-	DAMAGE_STATUS									/*= 37*/, ///< Damage that gives a status condition, not that does hitpoint damage
+	// bfme-native: RotWK damage types first, in game.dat order (WeaponTemplate.DamageType list)
+	DAMAGE_FORCE                       = 0,
+	DAMAGE_CRUSH                       = 1,
+	DAMAGE_SLASH                       = 2,
+	DAMAGE_PIERCE                      = 3,
+	DAMAGE_SIEGE                       = 4,
+	DAMAGE_STRUCTURAL                  = 5,
+	DAMAGE_FLAME                       = 6,
+	DAMAGE_HEALING                     = 7,
+	DAMAGE_UNRESISTABLE                = 8,
+	DAMAGE_WATER                       = 9,
+	DAMAGE_PENALTY                     = 10,
+	DAMAGE_FALLING                     = 11,
+	DAMAGE_TOPPLING                    = 12,
+	DAMAGE_REFLECTED                   = 13,
+	DAMAGE_PASSENGER                   = 14,
+	DAMAGE_MAGIC                       = 15,
+	DAMAGE_CHOP                        = 16,
+	DAMAGE_HERO                        = 17,
+	DAMAGE_SPECIALIST                  = 18,
+	DAMAGE_URUK                        = 19,
+	DAMAGE_HERO_RANGED                 = 20,
+	DAMAGE_FLY_INTO                    = 21,
+	DAMAGE_UNDEFINED                   = 22,
+	DAMAGE_LOGICAL_FIRE                = 23,
+	DAMAGE_CAVALRY                     = 24,
+	DAMAGE_CAVALRY_RANGED              = 25,
+	DAMAGE_POISON                      = 26,
+	DAMAGE_FROST                       = 27,
+
+	// Generals/Zero Hour damage types that RotWK does not have; kept so the shared code compiles
+	DAMAGE_EXPLOSION,
+	DAMAGE_ARMOR_PIERCING,
+	DAMAGE_SMALL_ARMS,
+	DAMAGE_GATTLING,
+	DAMAGE_RADIATION,
+	DAMAGE_LASER,
+	DAMAGE_SNIPER,
+	DAMAGE_DEPLOY,
+	DAMAGE_SURRENDER,
+	DAMAGE_HACK,
+	DAMAGE_KILLPILOT,
+	DAMAGE_MELEE,
+	DAMAGE_DISARM,
+	DAMAGE_HAZARD_CLEANUP,
+	DAMAGE_PARTICLE_BEAM,
+	DAMAGE_INFANTRY_MISSILE,
+	DAMAGE_AURORA_BOMB,
+	DAMAGE_LAND_MINE,
+	DAMAGE_JET_MISSILES,
+	DAMAGE_STEALTHJET_MISSILES,
+	DAMAGE_MOLOTOV_COCKTAIL,
+	DAMAGE_COMANCHE_VULCAN,
+	DAMAGE_SUBDUAL_MISSILE,
+	DAMAGE_SUBDUAL_VEHICLE,
+	DAMAGE_SUBDUAL_BUILDING,
+	DAMAGE_SUBDUAL_UNRESISTABLE,
+	DAMAGE_MICROWAVE,
+	DAMAGE_KILL_GARRISONED,
+	DAMAGE_STATUS,
 
 	// Please note: There is a string array DamageTypeFlags::s_bitNameList[]
 
@@ -192,7 +211,12 @@ enum DeathType CPP_11(: Int)
 	DEATH_EXTRA_6		= 17,
 	DEATH_EXTRA_7		= 18,
 	DEATH_EXTRA_8		= 19,
-	DEATH_POISONED_GAMMA = 20,
+	// bfme-native: RotWK death types (game.dat WeaponTemplate.DeathType list)
+	DEATH_KNOCKBACK		= 20,
+	DEATH_SUPERNATURAL	= 21,
+	DEATH_FADED			= 22,
+	DEATH_SLAUGHTERED	= 23,
+	DEATH_POISONED_GAMMA = 24,	// Zero Hour only
 
 	DEATH_NUM_TYPES
 };
@@ -220,6 +244,10 @@ static const char *const TheDeathNames[] =
 	"EXTRA_6",
 	"EXTRA_7",
 	"EXTRA_8",
+	"KNOCKBACK",
+	"SUPERNATURAL",
+	"FADED",
+	"SLAUGHTERED",
 	"POISONED_GAMMA",
 
 	nullptr

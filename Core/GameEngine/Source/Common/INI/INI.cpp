@@ -347,6 +347,22 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 		delete[] m_readBuffer;
 		m_readBuffer = expanded;
 		m_readBufferUsed = expandedLen;
+
+		// BFME_INI_DUMP_DIR=<dir>: write each expanded file for debugging line numbers
+		if (const char* dumpDir = getenv("BFME_INI_DUMP_DIR"))
+		{
+			std::string flat = filename.str();	// copy: AsciiString buffers are shared
+			for (char& c : flat)
+				if (c == '\\' || c == '/')
+					c = '_';
+			char path[1024];
+			snprintf(path, sizeof(path), "%s/%s", dumpDir, flat.c_str());
+			if (FILE* f = fopen(path, "wb"))
+			{
+				fwrite(m_readBuffer, 1, m_readBufferUsed, f);
+				fclose(f);
+			}
+		}
 	}
 
 	// save our filename
@@ -528,9 +544,10 @@ void INI::bfmeSkipBlock()
 			}
 			continue;
 		}
+		const Bool singleToken = !m_bfmeLineHasEquals && strtok_r(nullptr, " \n\r\t", &save) == nullptr;
 		if (stricmp(t, "End") == 0 || stricmp(t, "END_END") == 0)
 			--depth;
-		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals))
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals) || singleToken)
 			++depth;
 	}
 }
@@ -1133,6 +1150,11 @@ static Bool bfmeTryScanIndex(const char* token, ConstCharPtrArray list, Int& out
 	}
 	bfmeRecordSkip("value", s_bfmeCurrentBlock.str(), token);
 	return FALSE;
+}
+
+/*static*/ Bool INI::scanIndexListTolerant(const char* token, ConstCharPtrArray nameList, Int& out)
+{
+	return bfmeTryScanIndex(token, nameList, out);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1797,7 +1819,9 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				{
 					// bfme-native: record; a field that opens a nested block is skipped to its End
 					bfmeRecordSkip("field", s_bfmeCurrentBlock.str(), field);
-					if (isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals))
+					// a bare keyword on its own line (e.g. "TintDrawable") opens a nested block
+					const Bool bareKeyword = !m_bfmeLineHasEquals && strtok(nullptr, INI::getSeps()) == nullptr;
+					if (isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals) || bareKeyword)
 						bfmeSkipBlock();
 				}
 
