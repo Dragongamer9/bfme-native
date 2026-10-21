@@ -609,6 +609,10 @@ LocomotorStore::~LocomotorStore()
 	}
 
 	m_locomotorTemplates.clear();
+
+	for (std::map< std::pair<const LocomotorTemplate*, Int>, LocomotorTemplate* >::iterator v = m_bfmeSpeedVariants.begin(); v != m_bfmeSpeedVariants.end(); ++v)
+		deleteInstance(v->second);	// bfme-native
+	m_bfmeSpeedVariants.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -662,6 +666,23 @@ void LocomotorStore::reset()
 			++it;
 		}
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+const LocomotorTemplate* LocomotorStore::bfmeSpeedVariant(const LocomotorTemplate* base, Real speedPerSecond)
+{
+	if (base == nullptr)
+		return nullptr;
+	const std::pair<const LocomotorTemplate*, Int> key(base, (Int)(speedPerSecond * 100.0f));
+	std::map< std::pair<const LocomotorTemplate*, Int>, LocomotorTemplate* >::iterator it = m_bfmeSpeedVariants.find(key);
+	if (it != m_bfmeSpeedVariants.end())
+		return it->second;
+	LocomotorTemplate* v = newInstance(LocomotorTemplate);
+	*v = *base;
+	v->setNextOverride(nullptr);
+	v->bfmeSetSpeed(speedPerSecond / LOGICFRAMES_PER_SECOND);
+	m_bfmeSpeedVariants[key] = v;
+	return v;
 }
 
 //-------------------------------------------------------------------------------------------------

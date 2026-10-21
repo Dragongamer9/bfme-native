@@ -185,6 +185,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "AttributeModifierUpgrade", 1024, 256 },	// bfme-native
 	{ "AttributeModifierAuraUpdate", 512, 128 },	// bfme-native
 	{ "BfmeGenericSpecialPower", 1024, 256 },	// bfme-native
+	{ "HordeContain", 256, 64 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },
 	{ "AutoDepositUpdate", 256, 32 },

@@ -30,6 +30,10 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#define DEFINE_LOCOMOTORSET_NAMES	// bfme-native
+#include "GameLogic/Locomotor.h"	// bfme-native
+#include "GameLogic/Module/AIUpdate.h"	// bfme-native
+#include "GameLogic/Module/HordeContain.h"	// bfme-native
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/FileSystem.h"
@@ -536,8 +540,47 @@ void reportMissingNameInTemplate( AsciiString templateName )
 //-------------------------------------------------------------------------------------------------
 /** Post process phase after loading the database files */
 //-------------------------------------------------------------------------------------------------
+// bfme-native: resolve RotWK object-level LocomotorSets into per-template locomotors. A horde
+// (HordeContain, no LocomotorSet of its own) moves with its members' locomotors.
+static void bfmeResolveLocomotorSets(ThingTemplate* firstTemplate)
+{
+	for (ThingTemplate* t = firstTemplate; t; t = t->friend_getNextTemplate())
+	{
+		const std::vector<ThingTemplate::BfmeLocomotorSet>& sets = t->getBfmeLocomotorSets();
+		std::map<Int, std::vector<const LocomotorTemplate*> > bySet;
+		for (size_t i = 0; i < sets.size(); ++i)
+		{
+			Int type = -1;
+			for (Int n = 0; TheLocomotorSetNames[n]; ++n)
+				if (sets[i].m_condition.compareNoCase(TheLocomotorSetNames[n]) == 0) { type = n; break; }
+			const LocomotorTemplate* base = TheLocomotorStore->findLocomotorTemplate(NAMEKEY(sets[i].m_locomotor));
+			if (type < 0 || base == nullptr)
+				continue;
+			bySet[type].push_back(TheLocomotorStore->bfmeSpeedVariant(base, sets[i].m_speed));
+		}
+		for (std::map<Int, std::vector<const LocomotorTemplate*> >::iterator it = bySet.begin(); it != bySet.end(); ++it)
+			t->friend_bfmeSetLocomotors(it->first, it->second);
+	}
+	for (ThingTemplate* t = firstTemplate; t; t = t->friend_getNextTemplate())
+	{
+		if (t->bfmeHasLocomotors())
+			continue;
+		const ThingTemplate* member = bfmeHordeMemberTemplate(t);
+		if (member == nullptr || !member->bfmeHasLocomotors())
+			continue;
+		for (Int n = 0; n < LOCOMOTORSET_COUNT; ++n)
+		{
+			const std::vector<const LocomotorTemplate*>* v = member->bfmeFindLocomotors(n);
+			if (v)
+				t->friend_bfmeSetLocomotors(n, *v);
+		}
+	}
+}
+
 void ThingFactory::postProcessLoad()
 {
+	bfmeResolveLocomotorSets(m_firstTemplate);	// bfme-native
+
 #ifdef CHECK_THING_NAMES
 	//resetReportFile();
 #endif
