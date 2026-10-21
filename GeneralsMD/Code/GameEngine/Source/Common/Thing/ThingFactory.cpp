@@ -374,6 +374,26 @@ AsciiString TheThingTemplateBeingParsedName;
 //-------------------------------------------------------------------------------------------------
 /** Parse Object entry */
 //-------------------------------------------------------------------------------------------------
+/*static*/ void ThingFactory::parseChildObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& parent )
+{
+	const ThingTemplate* parentTmpl = TheThingFactory->findTemplate(parent);
+	if (!parentTmpl)
+	{
+		DEBUG_CRASH(("ChildObject %s: parent %s is not defined yet", name.str(), parent.str()));
+		fprintf(stderr, "[INI] ChildObject %s: parent %s is not defined yet (skipped)\n", name.str(), parent.str());
+		ini->bfmeSkipBlock();
+		return;
+	}
+	ThingTemplate *thingTemplate = TheThingFactory->findTemplateInternal( name, FALSE );
+	if( !thingTemplate )
+		thingTemplate = TheThingFactory->newTemplate( name );
+	thingTemplate->copyFrom(parentTmpl);
+	thingTemplate->friend_setBfmeChildParsing(TRUE);
+	ini->initFromINI( thingTemplate, thingTemplate->getFieldParse() );
+	thingTemplate->friend_setBfmeChildParsing(FALSE);
+	thingTemplate->validate();
+}
+
 /*static*/ void ThingFactory::parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom )
 {
 #if defined(RTS_DEBUG) || defined(DEBUG_CRASHING)
