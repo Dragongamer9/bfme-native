@@ -1,0 +1,3313 @@
+{
+ "exe": "game.dat",
+ "addModuleInternal": [
+  6648062,
+  6648062
+ ],
+ "registry_start": [
+  6650330,
+  4606679
+ ],
+ "modules": [
+  {
+   "name": "AutoHealBehavior",
+   "newModuleInstance": 6596041,
+   "newModuleData": 6645320,
+   "site": 6650371,
+   "in_generals": true,
+   "ctor": 8738349,
+   "vtable": 12936356,
+   "vtable_len": 37
+  },
+  {
+   "name": "WallHubBehavior",
+   "newModuleInstance": 6596097,
+   "newModuleData": 6596153,
+   "site": 6650428,
+   "in_generals": false,
+   "ctor": 8740551,
+   "vtable": 12936616,
+   "vtable_len": 28
+  },
+  {
+   "name": "GettingBuiltBehavior",
+   "newModuleInstance": 6596234,
+   "newModuleData": 6596290,
+   "site": 6650484,
+   "in_generals": false,
+   "ctor": 8745881,
+   "vtable": 12938224,
+   "vtable_len": 90
+  },
+  {
+   "name": "CastleBehavior",
+   "newModuleInstance": 6596431,
+   "newModuleData": 6596490,
+   "site": 6650540,
+   "in_generals": false,
+   "ctor": 7973121,
+   "vtable": 12783064,
+   "vtable_len": 4
+  },
+  {
+   "name": "CastleMemberBehavior",
+   "newModuleInstance": 6596571,
+   "newModuleData": 6596627,
+   "site": 6650594,
+   "in_generals": false,
+   "ctor": 7962589,
+   "vtable": 12781756,
+   "vtable_len": 68
+  },
+  {
+   "name": "BuildingBehavior",
+   "newModuleInstance": 6596708,
+   "newModuleData": 6596764,
+   "site": 6650650,
+   "in_generals": false,
+   "ctor": 8753787,
+   "vtable": 12938992,
+   "vtable_len": 16
+  },
+  {
+   "name": "BridgeBehavior",
+   "newModuleInstance": 6596845,
+   "newModuleData": 6596904,
+   "site": 6650706,
+   "in_generals": true,
+   "ctor": 8758500,
+   "vtable": 12939520,
+   "vtable_len": 13
+  },
+  {
+   "name": "BridgeScaffoldBehavior",
+   "newModuleInstance": 6596989,
+   "newModuleData": 6638290,
+   "site": 6650762,
+   "in_generals": true,
+   "ctor": 8762263,
+   "vtable": 12940192,
+   "vtable_len": 9
+  },
+  {
+   "name": "BridgeTowerBehavior",
+   "newModuleInstance": 6597045,
+   "newModuleData": 7373379,
+   "site": 6650818,
+   "in_generals": true,
+   "ctor": 8763258,
+   "vtable": 12940476,
+   "vtable_len": 66
+  },
+  {
+   "name": "RampageBehavior",
+   "newModuleInstance": 6597101,
+   "newModuleData": 6597157,
+   "site": 6650874,
+   "in_generals": false,
+   "ctor": 8764361,
+   "vtable": 12940748,
+   "vtable_len": 16
+  },
+  {
+   "name": "EnragedBehavior",
+   "newModuleInstance": 6597238,
+   "newModuleData": 6597294,
+   "site": 6650930,
+   "in_generals": false,
+   "ctor": 8765452,
+   "vtable": 12941280,
+   "vtable_len": 16
+  },
+  {
+   "name": "EntEnragedUpdate",
+   "newModuleInstance": 6617313,
+   "newModuleData": 6617369,
+   "site": 6650986,
+   "in_generals": false,
+   "ctor": 9135643,
+   "vtable": 13030708,
+   "vtable_len": 16
+  },
+  {
+   "name": "AIGateUpdate",
+   "newModuleInstance": 6617030,
+   "newModuleData": 6617086,
+   "site": 6651042,
+   "in_generals": false,
+   "ctor": 9128437,
+   "vtable": 13029476,
+   "vtable_len": 16
+  },
+  {
+   "name": "HitReactionBehavior",
+   "newModuleInstance": 6597375,
+   "newModuleData": 6597431,
+   "site": 6651098,
+   "in_generals": false,
+   "ctor": 8766102,
+   "vtable": 12941352,
+   "vtable_len": 16
+  },
+  {
+   "name": "ClickReactionBehavior",
+   "newModuleInstance": 6597512,
+   "newModuleData": 6597568,
+   "site": 6651154,
+   "in_generals": false,
+   "ctor": 8767106,
+   "vtable": 12941752,
+   "vtable_len": 66
+  },
+  {
+   "name": "SiegeDockingBehavior",
+   "newModuleInstance": 6597649,
+   "newModuleData": 6597705,
+   "site": 6651210,
+   "in_generals": false,
+   "ctor": 8767940,
+   "vtable": 12942388,
+   "vtable_len": 67
+  },
+  {
+   "name": "AutoAbilityBehavior",
+   "newModuleInstance": 6597786,
+   "newModuleData": 6597842,
+   "site": 6651266,
+   "in_generals": false,
+   "ctor": 8771581,
+   "vtable": 12943232,
+   "vtable_len": 16
+  },
+  {
+   "name": "DualWeaponBehavior",
+   "newModuleInstance": 6597923,
+   "newModuleData": 6597979,
+   "site": 6651322,
+   "in_generals": false,
+   "ctor": 8773321,
+   "vtable": 12943304,
+   "vtable_len": 16
+  },
+  {
+   "name": "AimWeaponBehavior",
+   "newModuleInstance": 6598060,
+   "newModuleData": 6598116,
+   "site": 6651378,
+   "in_generals": false,
+   "ctor": 8774298,
+   "vtable": 12943600,
+   "vtable_len": 16
+  },
+  {
+   "name": "BezierProjectileBehavior",
+   "newModuleInstance": 6598197,
+   "newModuleData": 6598256,
+   "site": 6651434,
+   "in_generals": false,
+   "ctor": 8779929,
+   "vtable": 12944840,
+   "vtable_len": 29
+  },
+  {
+   "name": "MissileUpdate",
+   "newModuleInstance": 6614093,
+   "newModuleData": 6614152,
+   "site": 6651490,
+   "in_generals": false,
+   "ctor": 9088143,
+   "vtable": 13016960,
+   "vtable_len": 15
+  },
+  {
+   "name": "PhysicsBehavior",
+   "newModuleInstance": 6612004,
+   "newModuleData": 6612060,
+   "site": 6651546,
+   "in_generals": true,
+   "ctor": 7940969,
+   "vtable": 12781240,
+   "vtable_len": 16
+  },
+  {
+   "name": "InstantDeathBehavior",
+   "newModuleInstance": 6598340,
+   "newModuleData": 6598396,
+   "site": 6651602,
+   "in_generals": true,
+   "ctor": 8781699,
+   "vtable": 12944964,
+   "vtable_len": 25
+  },
+  {
+   "name": "SlowDeathBehavior",
+   "newModuleInstance": 6598477,
+   "newModuleData": 6598533,
+   "site": 6651658,
+   "in_generals": true,
+   "ctor": 8783074,
+   "vtable": 12945440,
+   "vtable_len": 17
+  },
+  {
+   "name": "ShipSlowDeathBehavior",
+   "newModuleInstance": 6598617,
+   "newModuleData": 6598673,
+   "site": 6651714,
+   "in_generals": false,
+   "ctor": 8788461,
+   "vtable": 12946424,
+   "vtable_len": 20
+  },
+  {
+   "name": "SpawnBehavior",
+   "newModuleInstance": 6598894,
+   "newModuleData": 6648727,
+   "site": 6651773,
+   "in_generals": true,
+   "ctor": 8791558,
+   "vtable": 12946744,
+   "vtable_len": 39
+  },
+  {
+   "name": "GiantBirdSlowDeathBehavior",
+   "newModuleInstance": 6599298,
+   "newModuleData": 6599354,
+   "site": 6651829,
+   "in_generals": false,
+   "ctor": 8802127,
+   "vtable": 12948656,
+   "vtable_len": 7
+  },
+  {
+   "name": "CaveContain",
+   "newModuleInstance": 6599804,
+   "newModuleData": 6648869,
+   "site": 6651885,
+   "in_generals": true,
+   "ctor": 8820499,
+   "vtable": 12951764,
+   "vtable_len": 104
+  },
+  {
+   "name": "OpenContain",
+   "newModuleInstance": 6599634,
+   "newModuleData": 6599693,
+   "site": 6651941,
+   "in_generals": true,
+   "ctor": 8814422,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "SpawnUnitBehavior",
+   "newModuleInstance": 6620864,
+   "newModuleData": 6641567,
+   "site": 6651997,
+   "in_generals": false,
+   "ctor": 9160996,
+   "vtable": 13041112,
+   "vtable_len": 64
+  },
+  {
+   "name": "OathbreakersFadeAwayBehavior",
+   "newModuleInstance": 6620920,
+   "newModuleData": 6637212,
+   "site": 6652053,
+   "in_generals": false,
+   "ctor": 9161675,
+   "vtable": 13041464,
+   "vtable_len": 16
+  },
+  {
+   "name": "WargBehavior",
+   "newModuleInstance": 6598956,
+   "newModuleData": 6632124,
+   "site": 6652108,
+   "in_generals": false,
+   "ctor": 8796322,
+   "vtable": 12602656,
+   "vtable_len": 59
+  },
+  {
+   "name": "DynamicPortalBehaviour",
+   "newModuleInstance": 6599012,
+   "newModuleData": 6599068,
+   "site": 6652167,
+   "in_generals": false,
+   "ctor": 8797225,
+   "vtable": 12947344,
+   "vtable_len": 5
+  },
+  {
+   "name": "FakePathfindPortalBehaviour",
+   "newModuleInstance": 6599158,
+   "newModuleData": 6599214,
+   "site": 6652223,
+   "in_generals": false,
+   "ctor": 8800807,
+   "vtable": 12948264,
+   "vtable_len": 21
+  },
+  {
+   "name": "MineshaftPortalBehaviour",
+   "newModuleInstance": 6599438,
+   "newModuleData": 6599494,
+   "site": 6652279,
+   "in_generals": false,
+   "ctor": 7820234,
+   "vtable": 12772612,
+   "vtable_len": 39
+  },
+  {
+   "name": "CritterEmitterUpdate",
+   "newModuleInstance": 6628971,
+   "newModuleData": 6629027,
+   "site": 6652335,
+   "in_generals": false,
+   "ctor": 9228698,
+   "vtable": 13063416,
+   "vtable_len": 22
+  },
+  {
+   "name": "StancesBehavior",
+   "newModuleInstance": 6598757,
+   "newModuleData": 6598813,
+   "site": 6652391,
+   "in_generals": false,
+   "ctor": 8789977,
+   "vtable": 12946664,
+   "vtable_len": 16
+  },
+  {
+   "name": "HealContain",
+   "newModuleInstance": 6599863,
+   "newModuleData": 6599922,
+   "site": 6652447,
+   "in_generals": true,
+   "ctor": 8821710,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "HordeContain",
+   "newModuleInstance": 6600149,
+   "newModuleData": 6600208,
+   "site": 6652507,
+   "in_generals": false,
+   "ctor": 8857593,
+   "vtable": 12956152,
+   "vtable_len": 295
+  },
+  {
+   "name": "HorseHordeContain",
+   "newModuleInstance": 6600292,
+   "newModuleData": 6632203,
+   "site": 6652567,
+   "in_generals": false,
+   "ctor": 8886345,
+   "vtable": 12959384,
+   "vtable_len": 295
+  },
+  {
+   "name": "AODHordeContain",
+   "newModuleInstance": 6600714,
+   "newModuleData": 6600773,
+   "site": 6652627,
+   "in_generals": false,
+   "ctor": 8906311,
+   "vtable": 12963752,
+   "vtable_len": 273
+  },
+  {
+   "name": "GarrisonContain",
+   "newModuleInstance": 6600512,
+   "newModuleData": 6638815,
+   "site": 6652683,
+   "in_generals": true,
+   "ctor": 8892839,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "TransportContain",
+   "newModuleInstance": 6600006,
+   "newModuleData": 6600065,
+   "site": 6652743,
+   "in_generals": true,
+   "ctor": 8828541,
+   "vtable": 12967772,
+   "vtable_len": 18
+  },
+  {
+   "name": "SiegeEngineContain",
+   "newModuleInstance": 6600857,
+   "newModuleData": 6600916,
+   "site": 6652799,
+   "in_generals": false,
+   "ctor": 8910048,
+   "vtable": 12967772,
+   "vtable_len": 18
+  },
+  {
+   "name": "HordeSiegeEngineContain",
+   "newModuleInstance": 6601000,
+   "newModuleData": 6601059,
+   "site": 6652855,
+   "in_generals": false,
+   "ctor": 8914135,
+   "vtable": 12967772,
+   "vtable_len": 18
+  },
+  {
+   "name": "TunnelContain",
+   "newModuleInstance": 6601170,
+   "newModuleData": 6649627,
+   "site": 6652911,
+   "in_generals": true,
+   "ctor": 8916624,
+   "vtable": 12967068,
+   "vtable_len": 114
+  },
+  {
+   "name": "HordeTransportContain",
+   "newModuleInstance": 6600369,
+   "newModuleData": 6600428,
+   "site": 6652967,
+   "in_generals": false,
+   "ctor": 8888966,
+   "vtable": 12967772,
+   "vtable_len": 18
+  },
+  {
+   "name": "HordeGarrisonContain",
+   "newModuleInstance": 6600571,
+   "newModuleData": 6600630,
+   "site": 6653023,
+   "in_generals": false,
+   "ctor": 8901310,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "RiderChangeContain",
+   "newModuleInstance": 6601233,
+   "newModuleData": 6601292,
+   "site": 6653079,
+   "in_generals": true,
+   "ctor": 8918273,
+   "vtable": 12967772,
+   "vtable_len": 18
+  },
+  {
+   "name": "SlaughterHordeContain",
+   "newModuleInstance": 6602015,
+   "newModuleData": 6602074,
+   "site": 6653135,
+   "in_generals": false,
+   "ctor": 8926635,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "CitadelSlaughterHordeContain",
+   "newModuleInstance": 6602158,
+   "newModuleData": 6602217,
+   "site": 6653191,
+   "in_generals": false,
+   "ctor": 8927233,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "ProductionQueueHordeContain",
+   "newModuleInstance": 6602301,
+   "newModuleData": 6602360,
+   "site": 6653247,
+   "in_generals": false,
+   "ctor": 8930715,
+   "vtable": 12950188,
+   "vtable_len": 16
+  },
+  {
+   "name": "PropagandaTowerBehavior",
+   "newModuleInstance": 6602444,
+   "newModuleData": 6602500,
+   "site": 6653303,
+   "in_generals": true,
+   "ctor": 8932386,
+   "vtable": 12974600,
+   "vtable_len": 51
+  },
+  {
+   "name": "TerrainResourceBehavior",
+   "newModuleInstance": 6602581,
+   "newModuleData": 6602637,
+   "site": 6653359,
+   "in_generals": false,
+   "ctor": 8934089,
+   "vtable": 12975032,
+   "vtable_len": 99
+  },
+  {
+   "name": "FireWeaponWhenDamagedBehavior",
+   "newModuleInstance": 6602722,
+   "newModuleData": 6632550,
+   "site": 6653418,
+   "in_generals": true,
+   "ctor": 8936047,
+   "vtable": 12975632,
+   "vtable_len": 3
+  },
+  {
+   "name": "FireWeaponWhenDeadBehavior",
+   "newModuleInstance": 6602784,
+   "newModuleData": 6632767,
+   "site": 6653477,
+   "in_generals": true,
+   "ctor": 8937142,
+   "vtable": 12975992,
+   "vtable_len": 21
+  },
+  {
+   "name": "PoisonedBehavior",
+   "newModuleInstance": 6602843,
+   "newModuleData": 6602899,
+   "site": 6653533,
+   "in_generals": true,
+   "ctor": 8937978,
+   "vtable": 12976320,
+   "vtable_len": 19
+  },
+  {
+   "name": "RebuildHoleBehavior",
+   "newModuleInstance": 6602980,
+   "newModuleData": 6603036,
+   "site": 6653589,
+   "in_generals": true,
+   "ctor": 8938734,
+   "vtable": 12976752,
+   "vtable_len": 23
+  },
+  {
+   "name": "SupplyWarehouseCripplingBehavior",
+   "newModuleInstance": 6603117,
+   "newModuleData": 6603173,
+   "site": 6653645,
+   "in_generals": true,
+   "ctor": 8940808,
+   "vtable": 12976844,
+   "vtable_len": 6
+  },
+  {
+   "name": "ClearanceTestingSlowDeathBehavior",
+   "newModuleInstance": 6603254,
+   "newModuleData": 6603310,
+   "site": 6653701,
+   "in_generals": false,
+   "ctor": 8941489,
+   "vtable": 12977744,
+   "vtable_len": 11
+  },
+  {
+   "name": "RunOffMapBehavior",
+   "newModuleInstance": 6599578,
+   "newModuleData": 6638707,
+   "site": 6653756,
+   "in_generals": false,
+   "ctor": 8802953,
+   "vtable": 12949224,
+   "vtable_len": 59
+  },
+  {
+   "name": "ReplenishUnitsBehavior",
+   "newModuleInstance": 6603394,
+   "newModuleData": 6603450,
+   "site": 6653815,
+   "in_generals": false,
+   "ctor": 8942771,
+   "vtable": 12975648,
+   "vtable_len": 21
+  },
+  {
+   "name": "SlaveWatcherBehavior",
+   "newModuleInstance": 6603534,
+   "newModuleData": 6603593,
+   "site": 6653871,
+   "in_generals": false,
+   "ctor": 8943703,
+   "vtable": 12978760,
+   "vtable_len": 47
+  },
+  {
+   "name": "AnnounceBirthAndDeathBehavior",
+   "newModuleInstance": 6603978,
+   "newModuleData": 6638290,
+   "site": 6653927,
+   "in_generals": false,
+   "ctor": 8946609,
+   "vtable": 12979708,
+   "vtable_len": 64
+  },
+  {
+   "name": "DestroyDie",
+   "newModuleInstance": 6604617,
+   "newModuleData": 6638540,
+   "site": 6653983,
+   "in_generals": true,
+   "ctor": 8951743,
+   "vtable": 12981628,
+   "vtable_len": 13
+  },
+  {
+   "name": "FXListDie",
+   "newModuleInstance": 6604673,
+   "newModuleData": 6633495,
+   "site": 6654039,
+   "in_generals": true,
+   "ctor": 8951950,
+   "vtable": 12981688,
+   "vtable_len": 13
+  },
+  {
+   "name": "CrushDie",
+   "newModuleInstance": 6604561,
+   "newModuleData": 6633354,
+   "site": 6654095,
+   "in_generals": true,
+   "ctor": 8951186,
+   "vtable": 12981296,
+   "vtable_len": 59
+  },
+  {
+   "name": "HeroDie",
+   "newModuleInstance": 6624761,
+   "newModuleData": 6633576,
+   "site": 6654151,
+   "in_generals": false,
+   "ctor": 9200824,
+   "vtable": 13054116,
+   "vtable_len": 13
+  },
+  {
+   "name": "CreateCrateDie",
+   "newModuleInstance": 6604090,
+   "newModuleData": 6647981,
+   "site": 6654207,
+   "in_generals": true,
+   "ctor": 8947553,
+   "vtable": 12980024,
+   "vtable_len": 13
+  },
+  {
+   "name": "RefundDie",
+   "newModuleInstance": 6604034,
+   "newModuleData": 6633123,
+   "site": 6654263,
+   "in_generals": false,
+   "ctor": 8946899,
+   "vtable": 12979964,
+   "vtable_len": 13
+  },
+  {
+   "name": "CreateObjectDie",
+   "newModuleInstance": 6604146,
+   "newModuleData": 6604202,
+   "site": 6654319,
+   "in_generals": true,
+   "ctor": 8949012,
+   "vtable": 12980180,
+   "vtable_len": 14
+  },
+  {
+   "name": "CreateObjectDieIfEldestKindof",
+   "newModuleInstance": 6604283,
+   "newModuleData": 6604339,
+   "site": 6654375,
+   "in_generals": false,
+   "ctor": 8949193,
+   "vtable": 12980240,
+   "vtable_len": 59
+  },
+  {
+   "name": "DamageFilteredCreateObjectDie",
+   "newModuleInstance": 6604420,
+   "newModuleData": 6604476,
+   "site": 6654431,
+   "in_generals": false,
+   "ctor": 8950306,
+   "vtable": 12980860,
+   "vtable_len": 4
+  },
+  {
+   "name": "SpecialPowerCompletionDie",
+   "newModuleInstance": 6604866,
+   "newModuleData": 6633576,
+   "site": 6654487,
+   "in_generals": true,
+   "ctor": 8953125,
+   "vtable": 12982076,
+   "vtable_len": 13
+  },
+  {
+   "name": "RebuildHoleExposeDie",
+   "newModuleInstance": 6604729,
+   "newModuleData": 6604785,
+   "site": 6654543,
+   "in_generals": true,
+   "ctor": 8952345,
+   "vtable": 12982024,
+   "vtable_len": 13
+  },
+  {
+   "name": "UpgradeDie",
+   "newModuleInstance": 6604922,
+   "newModuleData": 6639186,
+   "site": 6654599,
+   "in_generals": true,
+   "ctor": 8953451,
+   "vtable": 12982128,
+   "vtable_len": 13
+  },
+  {
+   "name": "KeepObjectDie",
+   "newModuleInstance": 6604978,
+   "newModuleData": 6633754,
+   "site": 6654655,
+   "in_generals": true,
+   "ctor": 8953892,
+   "vtable": 12982180,
+   "vtable_len": 13
+  },
+  {
+   "name": "AssistedTargetingUpdate",
+   "newModuleInstance": 6605034,
+   "newModuleData": 6633862,
+   "site": 6654711,
+   "in_generals": true,
+   "ctor": 8954174,
+   "vtable": 13015000,
+   "vtable_len": 17
+  },
+  {
+   "name": "AutoFindHealingUpdate",
+   "newModuleInstance": 6609823,
+   "newModuleData": 6609879,
+   "site": 6654767,
+   "in_generals": true,
+   "ctor": 9013447,
+   "vtable": 12997436,
+   "vtable_len": 16
+  },
+  {
+   "name": "StealthDetectorUpdate",
+   "newModuleInstance": 6613149,
+   "newModuleData": 6639987,
+   "site": 6654823,
+   "in_generals": true,
+   "ctor": 9069403,
+   "vtable": 13011368,
+   "vtable_len": 16
+  },
+  {
+   "name": "BroadcastStealthUpdate",
+   "newModuleInstance": 6613205,
+   "newModuleData": 6640110,
+   "site": 6654882,
+   "in_generals": false,
+   "ctor": 9071271,
+   "vtable": 13012224,
+   "vtable_len": 34
+  },
+  {
+   "name": "StealthUpdate",
+   "newModuleInstance": 6613261,
+   "newModuleData": 6613320,
+   "site": 6654938,
+   "in_generals": true,
+   "ctor": 7827005,
+   "vtable": 12772968,
+   "vtable_len": 16
+  },
+  {
+   "name": "InvisibilityUpdate",
+   "newModuleInstance": 6613404,
+   "newModuleData": 6640360,
+   "site": 6654994,
+   "in_generals": false,
+   "ctor": 9072294,
+   "vtable": 13012744,
+   "vtable_len": 20
+  },
+  {
+   "name": "DelayedWeaponSetUpgradeUpdate",
+   "newModuleInstance": 6605205,
+   "newModuleData": 6605261,
+   "site": 6655050,
+   "in_generals": false,
+   "ctor": 8959684,
+   "vtable": 12982992,
+   "vtable_len": 18
+  },
+  {
+   "name": "DeletionUpdate",
+   "newModuleInstance": 6605342,
+   "newModuleData": 6634171,
+   "site": 6655106,
+   "in_generals": true,
+   "ctor": 8959920,
+   "vtable": 12983064,
+   "vtable_len": 16
+  },
+  {
+   "name": "DynamicShroudClearingRangeUpdate",
+   "newModuleInstance": 6605538,
+   "newModuleData": 6605597,
+   "site": 6655162,
+   "in_generals": true,
+   "ctor": 8971992,
+   "vtable": 12986072,
+   "vtable_len": 16
+  },
+  {
+   "name": "DeployStyleAIUpdate",
+   "newModuleInstance": 6606527,
+   "newModuleData": 6639309,
+   "site": 6655218,
+   "in_generals": true,
+   "ctor": 8986643,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "AssaultTransportAIUpdate",
+   "newModuleInstance": 6606652,
+   "newModuleData": 6606711,
+   "site": 6655274,
+   "in_generals": true,
+   "ctor": 8989752,
+   "vtable": 12989624,
+   "vtable_len": 5
+  },
+  {
+   "name": "GiantBirdAIUpdate",
+   "newModuleInstance": 6606792,
+   "newModuleData": 6606851,
+   "site": 6655330,
+   "in_generals": false,
+   "ctor": 7787535,
+   "vtable": 12771740,
+   "vtable_len": 10
+  },
+  {
+   "name": "LargeGroupBonusUpdate",
+   "newModuleInstance": 6607072,
+   "newModuleData": 6607128,
+   "site": 6655386,
+   "in_generals": false,
+   "ctor": 8992613,
+   "vtable": 12990588,
+   "vtable_len": 6
+  },
+  {
+   "name": "ToppleUpdate",
+   "newModuleInstance": 6614376,
+   "newModuleData": 6614432,
+   "site": 6655442,
+   "in_generals": true,
+   "ctor": 9091287,
+   "vtable": 13017756,
+   "vtable_len": 100
+  },
+  {
+   "name": "DelayedLuaEventUpdate",
+   "newModuleInstance": 6614513,
+   "newModuleData": 6614569,
+   "site": 6655498,
+   "in_generals": false,
+   "ctor": 9094481,
+   "vtable": 13018464,
+   "vtable_len": 16
+  },
+  {
+   "name": "LifetimeUpdate",
+   "newModuleInstance": 6611027,
+   "newModuleData": 6611083,
+   "site": 6655554,
+   "in_generals": true,
+   "ctor": 8027878,
+   "vtable": 12785568,
+   "vtable_len": 16
+  },
+  {
+   "name": "OneRingPenaltyUpdate",
+   "newModuleInstance": 6611164,
+   "newModuleData": 6611220,
+   "site": 6655610,
+   "in_generals": false,
+   "ctor": 9032223,
+   "vtable": 13003192,
+   "vtable_len": 17
+  },
+  {
+   "name": "SpecialEnemySenseUpdate",
+   "newModuleInstance": 6611301,
+   "newModuleData": 6635096,
+   "site": 6655666,
+   "in_generals": false,
+   "ctor": 9033560,
+   "vtable": 13003780,
+   "vtable_len": 16
+  },
+  {
+   "name": "RadiusDecalUpdate",
+   "newModuleInstance": 6611357,
+   "newModuleData": 6636172,
+   "site": 6655722,
+   "in_generals": true,
+   "ctor": 7944269,
+   "vtable": 12781404,
+   "vtable_len": 16
+  },
+  {
+   "name": "RainOfFireUpdate",
+   "newModuleInstance": 6615199,
+   "newModuleData": 6615255,
+   "site": 6655778,
+   "in_generals": false,
+   "ctor": 9107218,
+   "vtable": 13022904,
+   "vtable_len": 5
+  },
+  {
+   "name": "DestroyEnvironmentUpdate",
+   "newModuleInstance": 6615336,
+   "newModuleData": 6615392,
+   "site": 6655834,
+   "in_generals": false,
+   "ctor": 9108644,
+   "vtable": 13023348,
+   "vtable_len": 16
+  },
+  {
+   "name": "PartTheHeavensUpdate",
+   "newModuleInstance": 6615473,
+   "newModuleData": 6615529,
+   "site": 6655890,
+   "in_generals": false,
+   "ctor": 9109523,
+   "vtable": 13023412,
+   "vtable_len": 16
+  },
+  {
+   "name": "AutoDepositUpdate",
+   "newModuleInstance": 6611413,
+   "newModuleData": 6635295,
+   "site": 6655946,
+   "in_generals": true,
+   "ctor": 9034174,
+   "vtable": 13003852,
+   "vtable_len": 16
+  },
+  {
+   "name": "FireSpreadUpdate",
+   "newModuleInstance": 6605678,
+   "newModuleData": 6605734,
+   "site": 6656002,
+   "in_generals": true,
+   "ctor": 8973786,
+   "vtable": 12986284,
+   "vtable_len": 16
+  },
+  {
+   "name": "FireWeaponUpdate",
+   "newModuleInstance": 6605815,
+   "newModuleData": 6605871,
+   "site": 6656058,
+   "in_generals": true,
+   "ctor": 8976177,
+   "vtable": 12986812,
+   "vtable_len": 16
+  },
+  {
+   "name": "OilSpillUpdate",
+   "newModuleInstance": 6605952,
+   "newModuleData": 6606008,
+   "site": 6656114,
+   "in_generals": false,
+   "ctor": 8976483,
+   "vtable": 12987300,
+   "vtable_len": 16
+  },
+  {
+   "name": "DamageFieldUpdate",
+   "newModuleInstance": 6607969,
+   "newModuleData": 6608025,
+   "site": 6656170,
+   "in_generals": false,
+   "ctor": 8997173,
+   "vtable": 12992724,
+   "vtable_len": 16
+  },
+  {
+   "name": "MonitorConditionUpdate",
+   "newModuleInstance": 6608106,
+   "newModuleData": 6608162,
+   "site": 6656226,
+   "in_generals": false,
+   "ctor": 8998079,
+   "vtable": 12993084,
+   "vtable_len": 16
+  },
+  {
+   "name": "FlammableUpdate",
+   "newModuleInstance": 6606089,
+   "newModuleData": 6606145,
+   "site": 6656282,
+   "in_generals": true,
+   "ctor": 8977624,
+   "vtable": 12987372,
+   "vtable_len": 50
+  },
+  {
+   "name": "FloatUpdate",
+   "newModuleInstance": 6606226,
+   "newModuleData": 6606282,
+   "site": 6656338,
+   "in_generals": true,
+   "ctor": 8982078,
+   "vtable": 12988308,
+   "vtable_len": 16
+  },
+  {
+   "name": "FloodUpdate",
+   "newModuleInstance": 6606363,
+   "newModuleData": 6606419,
+   "site": 6656394,
+   "in_generals": false,
+   "ctor": 8984339,
+   "vtable": 12988780,
+   "vtable_len": 16
+  },
+  {
+   "name": "HeightDieUpdate",
+   "newModuleInstance": 6606935,
+   "newModuleData": 6606991,
+   "site": 6656450,
+   "in_generals": true,
+   "ctor": 8991559,
+   "vtable": 12990268,
+   "vtable_len": 16
+  },
+  {
+   "name": "SiegeAIUpdate",
+   "newModuleInstance": 6607209,
+   "newModuleData": 6607268,
+   "site": 6656506,
+   "in_generals": false,
+   "ctor": 8993722,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "AIUpdateInterface",
+   "newModuleInstance": 6601376,
+   "newModuleData": 6601435,
+   "site": 6656562,
+   "in_generals": true,
+   "ctor": 6745342,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "HordeAIUpdate",
+   "newModuleInstance": 6611469,
+   "newModuleData": 6635376,
+   "site": 6656618,
+   "in_generals": false,
+   "ctor": 9035694,
+   "vtable": 13004008,
+   "vtable_len": 178
+  },
+  {
+   "name": "HordeWorkerAIUpdate",
+   "newModuleInstance": 6611528,
+   "newModuleData": 6635376,
+   "site": 6656674,
+   "in_generals": false,
+   "ctor": 9037018,
+   "vtable": 13004008,
+   "vtable_len": 178
+  },
+  {
+   "name": "SupplyTruckAIUpdate",
+   "newModuleInstance": 6613950,
+   "newModuleData": 6614009,
+   "site": 6656730,
+   "in_generals": true,
+   "ctor": 9087095,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "LaserUpdate",
+   "newModuleInstance": 6607355,
+   "newModuleData": 6607411,
+   "site": 6656787,
+   "in_generals": true,
+   "ctor": 7752515,
+   "vtable": 12769128,
+   "vtable_len": 15
+  },
+  {
+   "name": "CommandButtonHuntUpdate",
+   "newModuleInstance": 6609960,
+   "newModuleData": 6610016,
+   "site": 6656840,
+   "in_generals": true,
+   "ctor": 9013853,
+   "vtable": 12997672,
+   "vtable_len": 16
+  },
+  {
+   "name": "DemoTrapUpdate",
+   "newModuleInstance": 6610097,
+   "newModuleData": 6610153,
+   "site": 6656893,
+   "in_generals": true,
+   "ctor": 9015615,
+   "vtable": 12997736,
+   "vtable_len": 16
+  },
+  {
+   "name": "AutoPickUpUpdate",
+   "newModuleInstance": 6610234,
+   "newModuleData": 6610290,
+   "site": 6656946,
+   "in_generals": false,
+   "ctor": 9016511,
+   "vtable": 12998200,
+   "vtable_len": 7
+  },
+  {
+   "name": "BoredUpdate",
+   "newModuleInstance": 6610371,
+   "newModuleData": 6610427,
+   "site": 6656999,
+   "in_generals": false,
+   "ctor": 9019167,
+   "vtable": 12999672,
+   "vtable_len": 47
+  },
+  {
+   "name": "CivilianSpawnUpdate",
+   "newModuleInstance": 6601741,
+   "newModuleData": 6601797,
+   "site": 6657052,
+   "in_generals": false,
+   "ctor": 8924209,
+   "vtable": 12971004,
+   "vtable_len": 16
+  },
+  {
+   "name": "ShareExperienceBehavior",
+   "newModuleInstance": 6601878,
+   "newModuleData": 6601934,
+   "site": 6657105,
+   "in_generals": false,
+   "ctor": 8925514,
+   "vtable": 12971420,
+   "vtable_len": 4
+  },
+  {
+   "name": "BannerCarrierUpdate",
+   "newModuleInstance": 6610508,
+   "newModuleData": 6610564,
+   "site": 6657158,
+   "in_generals": false,
+   "ctor": 9019992,
+   "vtable": 13000404,
+   "vtable_len": 16
+  },
+  {
+   "name": "BattlePlanUpdate",
+   "newModuleInstance": 6610645,
+   "newModuleData": 6610704,
+   "site": 6657211,
+   "in_generals": true,
+   "ctor": 9025163,
+   "vtable": 13001252,
+   "vtable_len": 25
+  },
+  {
+   "name": "GateOpenAndCloseBehavior",
+   "newModuleInstance": 6610788,
+   "newModuleData": 6634715,
+   "site": 6657264,
+   "in_generals": false,
+   "ctor": 9027659,
+   "vtable": 13002720,
+   "vtable_len": 3
+  },
+  {
+   "name": "GateProxyBehavior",
+   "newModuleInstance": 6634796,
+   "newModuleData": 6634861,
+   "site": 6657317,
+   "in_generals": false,
+   "ctor": 6610853,
+   "vtable": 12604828,
+   "vtable_len": 29
+  },
+  {
+   "name": "QueueProductionExitUpdate",
+   "newModuleInstance": 6612561,
+   "newModuleData": 6635548,
+   "site": 6657370,
+   "in_generals": true,
+   "ctor": 9058632,
+   "vtable": 13009604,
+   "vtable_len": 75
+  },
+  {
+   "name": "RepairDockUpdate",
+   "newModuleInstance": 6612813,
+   "newModuleData": 6612872,
+   "site": 6657423,
+   "in_generals": true,
+   "ctor": 9062454,
+   "vtable": 13010472,
+   "vtable_len": 33
+  },
+  {
+   "name": "ArrowStormUpdate",
+   "newModuleInstance": 6607519,
+   "newModuleData": 6607578,
+   "site": 6657476,
+   "in_generals": false,
+   "ctor": 8994915,
+   "vtable": 12992076,
+   "vtable_len": 32
+  },
+  {
+   "name": "WeaponModeSpecialPowerUpdate",
+   "newModuleInstance": 6609346,
+   "newModuleData": 6609402,
+   "site": 6657532,
+   "in_generals": false,
+   "ctor": 9011925,
+   "vtable": 12996848,
+   "vtable_len": 51
+  },
+  {
+   "name": "ModelConditionSpecialAbilityUpdate",
+   "newModuleInstance": 6607689,
+   "newModuleData": 6607748,
+   "site": 6657585,
+   "in_generals": false,
+   "ctor": 8995787,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "StrafeAreaUpdate",
+   "newModuleInstance": 6607832,
+   "newModuleData": 6607888,
+   "site": 6657638,
+   "in_generals": false,
+   "ctor": 8028337,
+   "vtable": 12785864,
+   "vtable_len": 16
+  },
+  {
+   "name": "ToggleMountedSpecialAbilityUpdate",
+   "newModuleInstance": 6615926,
+   "newModuleData": 6615985,
+   "site": 6657691,
+   "in_generals": false,
+   "ctor": 9113820,
+   "vtable": 13024440,
+   "vtable_len": 9
+  },
+  {
+   "name": "ToggleHiddenSpecialAbilityUpdate",
+   "newModuleInstance": 6616096,
+   "newModuleData": 6616155,
+   "site": 6657744,
+   "in_generals": false,
+   "ctor": 9115722,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "ToggleDeploySpecialAbilityUpdate",
+   "newModuleInstance": 6616266,
+   "newModuleData": 6616325,
+   "site": 6657797,
+   "in_generals": false,
+   "ctor": 9116551,
+   "vtable": 13025024,
+   "vtable_len": 9
+  },
+  {
+   "name": "WeaponFireSpecialAbilityUpdate",
+   "newModuleInstance": 6608884,
+   "newModuleData": 6608943,
+   "site": 6657850,
+   "in_generals": false,
+   "ctor": 9002392,
+   "vtable": 12994532,
+   "vtable_len": 12
+  },
+  {
+   "name": "TeleportSpecialAbilityUpdate",
+   "newModuleInstance": 6609054,
+   "newModuleData": 6609113,
+   "site": 6657903,
+   "in_generals": false,
+   "ctor": 9003998,
+   "vtable": 12994828,
+   "vtable_len": 32
+  },
+  {
+   "name": "HeroModeSpecialAbilityUpdate",
+   "newModuleInstance": 6608544,
+   "newModuleData": 6608603,
+   "site": 6657956,
+   "in_generals": false,
+   "ctor": 9000965,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "WeaponSetSpecialAbilityUpdate",
+   "newModuleInstance": 6608714,
+   "newModuleData": 6608773,
+   "site": 6658009,
+   "in_generals": false,
+   "ctor": 9001614,
+   "vtable": 12994396,
+   "vtable_len": 32
+  },
+  {
+   "name": "ScaleWallSpecialAbilityUpdate",
+   "newModuleInstance": 6609510,
+   "newModuleData": 6609569,
+   "site": 6658062,
+   "in_generals": false,
+   "ctor": 9012583,
+   "vtable": 12997188,
+   "vtable_len": 12
+  },
+  {
+   "name": "FlingPassengerSpecialAbilityUpdate",
+   "newModuleInstance": 6609680,
+   "newModuleData": 6609739,
+   "site": 6658115,
+   "in_generals": false,
+   "ctor": 9012850,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "GiveUpgradeUpdate",
+   "newModuleInstance": 6612141,
+   "newModuleData": 6612200,
+   "site": 6658168,
+   "in_generals": false,
+   "ctor": 9042735,
+   "vtable": 13007656,
+   "vtable_len": 35
+  },
+  {
+   "name": "LargeGroupAudioUpdate",
+   "newModuleInstance": 6615059,
+   "newModuleData": 6615118,
+   "site": 6658221,
+   "in_generals": false,
+   "ctor": 9105164,
+   "vtable": 13022160,
+   "vtable_len": 17
+  },
+  {
+   "name": "NotifyTargetsOfImminentProbableCrushingUpdate",
+   "newModuleInstance": 6639446,
+   "newModuleData": 6634447,
+   "site": 6658274,
+   "in_generals": false,
+   "ctor": 6634528,
+   "vtable": 12614516,
+   "vtable_len": 16
+  },
+  {
+   "name": "HordeNotifyTargetsOfImminentProbableCrushingUpdate",
+   "newModuleInstance": 6639390,
+   "newModuleData": 6634447,
+   "site": 6658327,
+   "in_generals": false,
+   "ctor": 6634277,
+   "vtable": 12614400,
+   "vtable_len": 16
+  },
+  {
+   "name": "AttachUpdate",
+   "newModuleInstance": 6608243,
+   "newModuleData": 6608299,
+   "site": 6658380,
+   "in_generals": false,
+   "ctor": 8999067,
+   "vtable": 12993156,
+   "vtable_len": 16
+  },
+  {
+   "name": "PickupStuffUpdate",
+   "newModuleInstance": 6608380,
+   "newModuleData": 6608436,
+   "site": 6658433,
+   "in_generals": false,
+   "ctor": 9000228,
+   "vtable": 12993804,
+   "vtable_len": 16
+  },
+  {
+   "name": "SummonReplacementSpecialAbilityUpdate",
+   "newModuleInstance": 6616436,
+   "newModuleData": 6616495,
+   "site": 6658486,
+   "in_generals": false,
+   "ctor": 9117529,
+   "vtable": 13024440,
+   "vtable_len": 9
+  },
+  {
+   "name": "DefaultProductionExitUpdate",
+   "newModuleInstance": 6605149,
+   "newModuleData": 6634073,
+   "site": 6658539,
+   "in_generals": true,
+   "ctor": 8958556,
+   "vtable": 12982888,
+   "vtable_len": 26
+  },
+  {
+   "name": "SpawnPointProductionExitUpdate",
+   "newModuleInstance": 6613460,
+   "newModuleData": 6643386,
+   "site": 6658592,
+   "in_generals": true,
+   "ctor": 9073300,
+   "vtable": 13012828,
+   "vtable_len": 25
+  },
+  {
+   "name": "SlavedUpdate",
+   "newModuleInstance": 6613093,
+   "newModuleData": 6639854,
+   "site": 6658645,
+   "in_generals": true,
+   "ctor": 9064295,
+   "vtable": 13010976,
+   "vtable_len": 72
+  },
+  {
+   "name": "OCLUpdate",
+   "newModuleInstance": 6611587,
+   "newModuleData": 6611643,
+   "site": 6658698,
+   "in_generals": true,
+   "ctor": 9038664,
+   "vtable": 13005556,
+   "vtable_len": 63
+  },
+  {
+   "name": "AttributeModifierAuraUpdate",
+   "newModuleInstance": 6611724,
+   "newModuleData": 6611780,
+   "site": 6658754,
+   "in_generals": false,
+   "ctor": 9039196,
+   "vtable": 13006160,
+   "vtable_len": 34
+  },
+  {
+   "name": "RadiateFearUpdate",
+   "newModuleInstance": 6611864,
+   "newModuleData": 6611920,
+   "site": 6658810,
+   "in_generals": false,
+   "ctor": 9042064,
+   "vtable": 13006816,
+   "vtable_len": 21
+  },
+  {
+   "name": "SpecialAbilityUpdate",
+   "newModuleInstance": 6595892,
+   "newModuleData": 6595951,
+   "site": 6658863,
+   "in_generals": true,
+   "ctor": 8723778,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "SupplyCenterProductionExitUpdate",
+   "newModuleInstance": 6613799,
+   "newModuleData": 6634073,
+   "site": 6658916,
+   "in_generals": true,
+   "ctor": 9083944,
+   "vtable": 13014952,
+   "vtable_len": 12
+  },
+  {
+   "name": "SupplyCenterDockUpdate",
+   "newModuleInstance": 6612673,
+   "newModuleData": 6612732,
+   "site": 6658969,
+   "in_generals": true,
+   "ctor": 9061523,
+   "vtable": 13010104,
+   "vtable_len": 23
+  },
+  {
+   "name": "SupplyWarehouseDockUpdate",
+   "newModuleInstance": 6614236,
+   "newModuleData": 6614295,
+   "site": 6659022,
+   "in_generals": true,
+   "ctor": 9090240,
+   "vtable": 13017488,
+   "vtable_len": 33
+  },
+  {
+   "name": "MonsterDockUpdate",
+   "newModuleInstance": 6612953,
+   "newModuleData": 6613012,
+   "site": 6659075,
+   "in_generals": false,
+   "ctor": 9062981,
+   "vtable": 13010704,
+   "vtable_len": 33
+  },
+  {
+   "name": "DozerAIUpdate",
+   "newModuleInstance": 6605398,
+   "newModuleData": 6605457,
+   "site": 6659128,
+   "in_generals": true,
+   "ctor": 8964059,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "RousingSpeechUpdate",
+   "newModuleInstance": 6615613,
+   "newModuleData": 6615672,
+   "site": 6659181,
+   "in_generals": false,
+   "ctor": 9111018,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "GloriousChargeUpdate",
+   "newModuleInstance": 6615756,
+   "newModuleData": 6615815,
+   "site": 6659234,
+   "in_generals": false,
+   "ctor": 9112830,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "ProductionUpdate",
+   "newModuleInstance": 6612284,
+   "newModuleData": 6612343,
+   "site": 6659287,
+   "in_generals": true,
+   "ctor": 9050072,
+   "vtable": 13008304,
+   "vtable_len": 125
+  },
+  {
+   "name": "ProneUpdate",
+   "newModuleInstance": 6612424,
+   "newModuleData": 6612480,
+   "site": 6659340,
+   "in_generals": true,
+   "ctor": 9058112,
+   "vtable": 13009480,
+   "vtable_len": 16
+  },
+  {
+   "name": "HijackerUpdate",
+   "newModuleInstance": 6613519,
+   "newModuleData": 6643514,
+   "site": 6659393,
+   "in_generals": true,
+   "ctor": 9074382,
+   "vtable": 13012936,
+   "vtable_len": 16
+  },
+  {
+   "name": "FadeAndDieOrnamentUpdate",
+   "newModuleInstance": 6613575,
+   "newModuleData": 6640559,
+   "site": 6659446,
+   "in_generals": false,
+   "ctor": 8025899,
+   "vtable": 12785352,
+   "vtable_len": 16
+  },
+  {
+   "name": "StructureToppleUpdate",
+   "newModuleInstance": 6613743,
+   "newModuleData": 6650104,
+   "site": 6659499,
+   "in_generals": true,
+   "ctor": 9079732,
+   "vtable": 13014208,
+   "vtable_len": 17
+  },
+  {
+   "name": "StructureCollapseUpdate",
+   "newModuleInstance": 6613631,
+   "newModuleData": 6645991,
+   "site": 6659552,
+   "in_generals": true,
+   "ctor": 9075037,
+   "vtable": 13013032,
+   "vtable_len": 64
+  },
+  {
+   "name": "RubbleRiseUpdate",
+   "newModuleInstance": 6613687,
+   "newModuleData": 6644723,
+   "site": 6659605,
+   "in_generals": false,
+   "ctor": 9077541,
+   "vtable": 13013760,
+   "vtable_len": 17
+  },
+  {
+   "name": "BoneFXUpdate",
+   "newModuleInstance": 6605090,
+   "newModuleData": 6633947,
+   "site": 6659658,
+   "in_generals": true,
+   "ctor": 8956818,
+   "vtable": 12982812,
+   "vtable_len": 17
+  },
+  {
+   "name": "RadarUpdate",
+   "newModuleInstance": 6612617,
+   "newModuleData": 6635614,
+   "site": 6659711,
+   "in_generals": true,
+   "ctor": 9061182,
+   "vtable": 13009908,
+   "vtable_len": 16
+  },
+  {
+   "name": "TransportAIUpdate",
+   "newModuleInstance": 6614650,
+   "newModuleData": 6601435,
+   "site": 6659764,
+   "in_generals": true,
+   "ctor": 9094936,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "WanderAIUpdate",
+   "newModuleInstance": 6614773,
+   "newModuleData": 6614832,
+   "site": 6659817,
+   "in_generals": true,
+   "ctor": 9095669,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "AnimalAIUpdate",
+   "newModuleInstance": 6601598,
+   "newModuleData": 6601657,
+   "site": 6659870,
+   "in_generals": false,
+   "ctor": 8920887,
+   "vtable": 12649848,
+   "vtable_len": 160
+  },
+  {
+   "name": "FoundationAIUpdate",
+   "newModuleInstance": 6596371,
+   "newModuleData": 6631945,
+   "site": 6659923,
+   "in_generals": false,
+   "ctor": 8749591,
+   "vtable": 12783080,
+   "vtable_len": 11
+  },
+  {
+   "name": "WorkerAIUpdate",
+   "newModuleInstance": 6614940,
+   "newModuleData": 6636088,
+   "site": 6659976,
+   "in_generals": true,
+   "ctor": 9099936,
+   "vtable": 13020100,
+   "vtable_len": 212
+  },
+  {
+   "name": "WallUpgradeUpdate",
+   "newModuleInstance": 6614999,
+   "newModuleData": 6636172,
+   "site": 6660029,
+   "in_generals": false,
+   "ctor": 9103890,
+   "vtable": 13021820,
+   "vtable_len": 20
+  },
+  {
+   "name": "DetachableRiderUpdate",
+   "newModuleInstance": 6616579,
+   "newModuleData": 6616635,
+   "site": 6660082,
+   "in_generals": false,
+   "ctor": 9120065,
+   "vtable": 13025548,
+   "vtable_len": 16
+  },
+  {
+   "name": "RespawnUpdate",
+   "newModuleInstance": 6616716,
+   "newModuleData": 6616772,
+   "site": 6660135,
+   "in_generals": false,
+   "ctor": 9122372,
+   "vtable": 13026132,
+   "vtable_len": 19
+  },
+  {
+   "name": "BloodthirstyUpdate",
+   "newModuleInstance": 6595755,
+   "newModuleData": 6595811,
+   "site": 6660188,
+   "in_generals": false,
+   "ctor": 8719732,
+   "vtable": 12932692,
+   "vtable_len": 73
+  },
+  {
+   "name": "AttributeModifierPoolUpdate",
+   "newModuleInstance": 6603720,
+   "newModuleData": 6638290,
+   "site": 6660241,
+   "in_generals": false,
+   "ctor": 8411046,
+   "vtable": 12904952,
+   "vtable_len": 16
+  },
+  {
+   "name": "SpecialDisguiseUpdate",
+   "newModuleInstance": 6616883,
+   "newModuleData": 6616942,
+   "site": 6660294,
+   "in_generals": false,
+   "ctor": 9126815,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "EmotionTrackerUpdate",
+   "newModuleInstance": 6617167,
+   "newModuleData": 6617226,
+   "site": 6660350,
+   "in_generals": false,
+   "ctor": 9134782,
+   "vtable": 13029788,
+   "vtable_len": 4
+  },
+  {
+   "name": "ThreatFinderUpdate",
+   "newModuleInstance": 6617450,
+   "newModuleData": 6617506,
+   "site": 6660403,
+   "in_generals": false,
+   "ctor": 8314173,
+   "vtable": 12895040,
+   "vtable_len": 3
+  },
+  {
+   "name": "ProjectileStreamUpdate",
+   "newModuleInstance": 6617587,
+   "newModuleData": 6638290,
+   "site": 6660456,
+   "in_generals": true,
+   "ctor": 7604203,
+   "vtable": 12743676,
+   "vtable_len": 16
+  },
+  {
+   "name": "ReplaceObjectUpdate",
+   "newModuleInstance": 6617673,
+   "newModuleData": 6617732,
+   "site": 6660509,
+   "in_generals": false,
+   "ctor": 9136780,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "AISpecialPowerUpdate",
+   "newModuleInstance": 6617816,
+   "newModuleData": 6617872,
+   "site": 6660562,
+   "in_generals": false,
+   "ctor": 9138234,
+   "vtable": 13031752,
+   "vtable_len": 3
+  },
+  {
+   "name": "CostModifierUpgrade",
+   "newModuleInstance": 6619256,
+   "newModuleData": 6619312,
+   "site": 6660618,
+   "in_generals": true,
+   "ctor": 9149331,
+   "vtable": 13036840,
+   "vtable_len": 81
+  },
+  {
+   "name": "SpellRechargeModifierUpgrade",
+   "newModuleInstance": 6619396,
+   "newModuleData": 6619452,
+   "site": 6660674,
+   "in_generals": false,
+   "ctor": 9150295,
+   "vtable": 13037512,
+   "vtable_len": 65
+  },
+  {
+   "name": "ArmorUpgrade",
+   "newModuleInstance": 6617953,
+   "newModuleData": 6636353,
+   "site": 6660730,
+   "in_generals": true,
+   "ctor": 9139665,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "BaseUpgrade",
+   "newModuleInstance": 6618009,
+   "newModuleData": 6618065,
+   "site": 6660786,
+   "in_generals": false,
+   "ctor": 9140357,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "CommandSetUpgrade",
+   "newModuleInstance": 6618149,
+   "newModuleData": 6640710,
+   "site": 6660842,
+   "in_generals": true,
+   "ctor": 9141275,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "DelayedUpgrade",
+   "newModuleInstance": 6618205,
+   "newModuleData": 6636464,
+   "site": 6660898,
+   "in_generals": false,
+   "ctor": 9141735,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "LevelUpUpgrade",
+   "newModuleInstance": 6618261,
+   "newModuleData": 6636548,
+   "site": 6660954,
+   "in_generals": false,
+   "ctor": 9142083,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "StatusBitsUpgrade",
+   "newModuleInstance": 6618584,
+   "newModuleData": 6636803,
+   "site": 6661010,
+   "in_generals": true,
+   "ctor": 9145070,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "StatusBitsUpgradeIfEldestKindof",
+   "newModuleInstance": 6618640,
+   "newModuleData": 6640794,
+   "site": 6661066,
+   "in_generals": false,
+   "ctor": 9145280,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "DoCommandUpgrade",
+   "newModuleInstance": 6618696,
+   "newModuleData": 6640995,
+   "site": 6661122,
+   "in_generals": false,
+   "ctor": 9145775,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "SubObjectsUpgrade",
+   "newModuleInstance": 6618752,
+   "newModuleData": 6649122,
+   "site": 6661178,
+   "in_generals": true,
+   "ctor": 9146084,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "StealthUpgrade",
+   "newModuleInstance": 6618808,
+   "newModuleData": 6638338,
+   "site": 6661234,
+   "in_generals": true,
+   "ctor": 9147653,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "RadarUpgrade",
+   "newModuleInstance": 6618528,
+   "newModuleData": 6636711,
+   "site": 6661290,
+   "in_generals": true,
+   "ctor": 9144604,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "LocomotorSetUpgrade",
+   "newModuleInstance": 6618317,
+   "newModuleData": 6636634,
+   "site": 6661346,
+   "in_generals": true,
+   "ctor": 9142406,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "ObjectCreationUpgrade",
+   "newModuleInstance": 6618373,
+   "newModuleData": 6618438,
+   "site": 6661402,
+   "in_generals": true,
+   "ctor": 9142817,
+   "vtable": 13033808,
+   "vtable_len": 3
+  },
+  {
+   "name": "UnpauseSpecialPowerUpgrade",
+   "newModuleInstance": 6618864,
+   "newModuleData": 6618920,
+   "site": 6661458,
+   "in_generals": true,
+   "ctor": 9147929,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "WeaponBonusUpgrade",
+   "newModuleInstance": 6619004,
+   "newModuleData": 6638338,
+   "site": 6661514,
+   "in_generals": true,
+   "ctor": 9148352,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "WeaponSetUpgrade",
+   "newModuleInstance": 6619060,
+   "newModuleData": 6619116,
+   "site": 6661570,
+   "in_generals": true,
+   "ctor": 9148581,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "WeaponBonusUpgrade",
+   "newModuleInstance": 6619004,
+   "newModuleData": 6638338,
+   "site": 6661626,
+   "in_generals": true,
+   "ctor": 9148352,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "ExperienceScalarUpgrade",
+   "newModuleInstance": 6619536,
+   "newModuleData": 6619592,
+   "site": 6661682,
+   "in_generals": true,
+   "ctor": 9151328,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "MaxHealthUpgrade",
+   "newModuleInstance": 6619676,
+   "newModuleData": 6619732,
+   "site": 6661738,
+   "in_generals": true,
+   "ctor": 9151652,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "ModelConditionUpgrade",
+   "newModuleInstance": 6619816,
+   "newModuleData": 6619872,
+   "site": 6661794,
+   "in_generals": true,
+   "ctor": 9152027,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "AttributeModifierUpgrade",
+   "newModuleInstance": 6619956,
+   "newModuleData": 6641072,
+   "site": 6661850,
+   "in_generals": false,
+   "ctor": 9152630,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "CastleUpgrade",
+   "newModuleInstance": 6620012,
+   "newModuleData": 6641160,
+   "site": 6661906,
+   "in_generals": false,
+   "ctor": 9152927,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "GeometryUpgrade",
+   "newModuleInstance": 6620068,
+   "newModuleData": 6620124,
+   "site": 6661962,
+   "in_generals": false,
+   "ctor": 9153483,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "ReplaceSelfUpgrade",
+   "newModuleInstance": 6620208,
+   "newModuleData": 6620264,
+   "site": 6662018,
+   "in_generals": false,
+   "ctor": 9154932,
+   "vtable": 13039384,
+   "vtable_len": 65
+  },
+  {
+   "name": "GarrisonUpgrade",
+   "newModuleInstance": 6619200,
+   "newModuleData": 6638338,
+   "site": 6662074,
+   "in_generals": false,
+   "ctor": 9148870,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "TooltipUpgrade",
+   "newModuleInstance": 6620354,
+   "newModuleData": 6641303,
+   "site": 6662130,
+   "in_generals": false,
+   "ctor": 9157503,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "AudioLoopUpgrade",
+   "newModuleInstance": 6620410,
+   "newModuleData": 6620466,
+   "site": 6662186,
+   "in_generals": false,
+   "ctor": 9158106,
+   "vtable": 13039824,
+   "vtable_len": 65
+  },
+  {
+   "name": "RemoveUpgradeUpgrade",
+   "newModuleInstance": 6620556,
+   "newModuleData": 6620612,
+   "site": 6662242,
+   "in_generals": false,
+   "ctor": 9158850,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "BuildableHeroListUpgrade",
+   "newModuleInstance": 6620696,
+   "newModuleData": 6636913,
+   "site": 6662298,
+   "in_generals": false,
+   "ctor": 9159801,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "AllowBannerSpawnUpgrade",
+   "newModuleInstance": 6620752,
+   "newModuleData": 6636989,
+   "site": 6662354,
+   "in_generals": false,
+   "ctor": 9160398,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "CommandPointsUpgrade",
+   "newModuleInstance": 6620808,
+   "newModuleData": 6637112,
+   "site": 6662410,
+   "in_generals": false,
+   "ctor": 9160616,
+   "vtable": 13040904,
+   "vtable_len": 3
+  },
+  {
+   "name": "PassiveAreaEffectBehavior",
+   "newModuleInstance": 6603779,
+   "newModuleData": 6603835,
+   "site": 6662463,
+   "in_generals": false,
+   "ctor": 8944883,
+   "vtable": 12979240,
+   "vtable_len": 3
+  },
+  {
+   "name": "DominateEnemySpecialPower",
+   "newModuleInstance": 6630475,
+   "newModuleData": 6630534,
+   "site": 6662516,
+   "in_generals": false,
+   "ctor": 9244134,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "TeleportToCasterSpecialPower",
+   "newModuleInstance": 6630904,
+   "newModuleData": 6630963,
+   "site": 6662569,
+   "in_generals": false,
+   "ctor": 9246722,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "TemporarilyDefectUpdate",
+   "newModuleInstance": 6630419,
+   "newModuleData": 6638057,
+   "site": 6662622,
+   "in_generals": false,
+   "ctor": 9243405,
+   "vtable": 13066692,
+   "vtable_len": 16
+  },
+  {
+   "name": "StoreObjectsSpecialPower",
+   "newModuleInstance": 6631047,
+   "newModuleData": 6631106,
+   "site": 6662675,
+   "in_generals": false,
+   "ctor": 9248145,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "UnleashSpecialPower",
+   "newModuleInstance": 6631392,
+   "newModuleData": 6631451,
+   "site": 6662728,
+   "in_generals": false,
+   "ctor": 9249892,
+   "vtable": 13068744,
+   "vtable_len": 45
+  },
+  {
+   "name": "EvacuateGarrisonSpecialPower",
+   "newModuleInstance": 6631190,
+   "newModuleData": 6631249,
+   "site": 6662781,
+   "in_generals": false,
+   "ctor": 9248876,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "CurseSpecialPower",
+   "newModuleInstance": 6630618,
+   "newModuleData": 6630677,
+   "site": 6662834,
+   "in_generals": false,
+   "ctor": 9245149,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "GiveOrRestoreUpgradeSpecialPower",
+   "newModuleInstance": 6630761,
+   "newModuleData": 6630820,
+   "site": 6662887,
+   "in_generals": false,
+   "ctor": 9246010,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "PillageModule",
+   "newModuleInstance": 6603922,
+   "newModuleData": 6632941,
+   "site": 6662943,
+   "in_generals": false,
+   "ctor": 8946073,
+   "vtable": 12979460,
+   "vtable_len": 2
+  },
+  {
+   "name": "ActivateModuleSpecialPower",
+   "newModuleInstance": 6631333,
+   "newModuleData": 6646466,
+   "site": 6662996,
+   "in_generals": false,
+   "ctor": 9249138,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "LockWeaponCreate",
+   "newModuleInstance": 6620976,
+   "newModuleData": 6621032,
+   "site": 6663049,
+   "in_generals": true,
+   "ctor": 9162063,
+   "vtable": 13041572,
+   "vtable_len": 16
+  },
+  {
+   "name": "PreorderCreate",
+   "newModuleInstance": 6621621,
+   "newModuleData": 7373379,
+   "site": 6663102,
+   "in_generals": true,
+   "ctor": 9163675,
+   "vtable": 13042460,
+   "vtable_len": 16
+  },
+  {
+   "name": "SpawnedModelConditionCreate",
+   "newModuleInstance": 6637267,
+   "newModuleData": 6650188,
+   "site": 6663155,
+   "in_generals": false,
+   "ctor": 6621113,
+   "vtable": 12606728,
+   "vtable_len": 63
+  },
+  {
+   "name": "SupplyCenterCreate",
+   "newModuleInstance": 6621235,
+   "newModuleData": 7373379,
+   "site": 6663208,
+   "in_generals": true,
+   "ctor": 9162434,
+   "vtable": 13041760,
+   "vtable_len": 16
+  },
+  {
+   "name": "SupplyWarehouseCreate",
+   "newModuleInstance": 6621291,
+   "newModuleData": 7373379,
+   "site": 6663261,
+   "in_generals": true,
+   "ctor": 9162681,
+   "vtable": 13041824,
+   "vtable_len": 16
+  },
+  {
+   "name": "SpecialPowerCreate",
+   "newModuleInstance": 6621677,
+   "newModuleData": 7373379,
+   "site": 6663314,
+   "in_generals": true,
+   "ctor": 9163913,
+   "vtable": 13042524,
+   "vtable_len": 16
+  },
+  {
+   "name": "GrantUpgradeCreate",
+   "newModuleInstance": 6621347,
+   "newModuleData": 6621403,
+   "site": 6663367,
+   "in_generals": true,
+   "ctor": 9162915,
+   "vtable": 13041888,
+   "vtable_len": 16
+  },
+  {
+   "name": "ExperienceLevelCreate",
+   "newModuleInstance": 6621484,
+   "newModuleData": 6621540,
+   "site": 6663420,
+   "in_generals": false,
+   "ctor": 9163452,
+   "vtable": 13042196,
+   "vtable_len": 16
+  },
+  {
+   "name": "InheritUpgradeCreate",
+   "newModuleInstance": 6621733,
+   "newModuleData": 6621789,
+   "site": 6663473,
+   "in_generals": false,
+   "ctor": 9164167,
+   "vtable": 13042588,
+   "vtable_len": 16
+  },
+  {
+   "name": "BoneFXDamage",
+   "newModuleInstance": 6621877,
+   "newModuleData": 6636172,
+   "site": 6663526,
+   "in_generals": true,
+   "ctor": 9165057,
+   "vtable": 13042848,
+   "vtable_len": 3
+  },
+  {
+   "name": "TransitionDamageFX",
+   "newModuleInstance": 6621933,
+   "newModuleData": 6637384,
+   "site": 6663579,
+   "in_generals": true,
+   "ctor": 9168179,
+   "vtable": 13043416,
+   "vtable_len": 3
+  },
+  {
+   "name": "ReflectDamage",
+   "newModuleInstance": 6621992,
+   "newModuleData": 6622048,
+   "site": 6663632,
+   "in_generals": false,
+   "ctor": 9170173,
+   "vtable": 13044072,
+   "vtable_len": 15
+  },
+  {
+   "name": "EvacuateDamage",
+   "newModuleInstance": 6622129,
+   "newModuleData": 6622185,
+   "site": 6663685,
+   "in_generals": false,
+   "ctor": 9170790,
+   "vtable": 13044440,
+   "vtable_len": 15
+  },
+  {
+   "name": "HordeTransportContainDamage",
+   "newModuleInstance": 6622266,
+   "newModuleData": 6622322,
+   "site": 6663738,
+   "in_generals": false,
+   "ctor": 9171577,
+   "vtable": 13044508,
+   "vtable_len": 15
+  },
+  {
+   "name": "CallHelpOnDamage",
+   "newModuleInstance": 6622403,
+   "newModuleData": 6622459,
+   "site": 6663791,
+   "in_generals": false,
+   "ctor": 9172357,
+   "vtable": 13044872,
+   "vtable_len": 21
+  },
+  {
+   "name": "FireWeaponCollide",
+   "newModuleInstance": 6622540,
+   "newModuleData": 6637536,
+   "site": 6663844,
+   "in_generals": true,
+   "ctor": 9173219,
+   "vtable": 13044956,
+   "vtable_len": 6
+  },
+  {
+   "name": "SquishCollide",
+   "newModuleInstance": 6622596,
+   "newModuleData": 6637585,
+   "site": 6663897,
+   "in_generals": true,
+   "ctor": 9173784,
+   "vtable": 13045412,
+   "vtable_len": 18
+  },
+  {
+   "name": "AODCrushCollide",
+   "newModuleInstance": 6622652,
+   "newModuleData": 6622708,
+   "site": 6663950,
+   "in_generals": false,
+   "ctor": 9175382,
+   "vtable": 13045492,
+   "vtable_len": 22
+  },
+  {
+   "name": "HordeMemberCollide",
+   "newModuleInstance": 6622789,
+   "newModuleData": 6637585,
+   "site": 6664003,
+   "in_generals": false,
+   "ctor": 9176274,
+   "vtable": 13046200,
+   "vtable_len": 32
+  },
+  {
+   "name": "HealCrateCollide",
+   "newModuleInstance": 6622926,
+   "newModuleData": 6622845,
+   "site": 6664056,
+   "in_generals": true,
+   "ctor": 9177432,
+   "vtable": 13047100,
+   "vtable_len": 20
+  },
+  {
+   "name": "MoneyCrateCollide",
+   "newModuleInstance": 6623009,
+   "newModuleData": 6643887,
+   "site": 6664109,
+   "in_generals": true,
+   "ctor": 9177736,
+   "vtable": 13047100,
+   "vtable_len": 20
+  },
+  {
+   "name": "ShroudCrateCollide",
+   "newModuleInstance": 6623065,
+   "newModuleData": 6622845,
+   "site": 6664162,
+   "in_generals": true,
+   "ctor": 9178150,
+   "vtable": 13047100,
+   "vtable_len": 20
+  },
+  {
+   "name": "UnitCrateCollide",
+   "newModuleInstance": 6623148,
+   "newModuleData": 6641766,
+   "site": 6664215,
+   "in_generals": true,
+   "ctor": 9178460,
+   "vtable": 13047100,
+   "vtable_len": 20
+  },
+  {
+   "name": "VeterancyCrateCollide",
+   "newModuleInstance": 6623231,
+   "newModuleData": 6641883,
+   "site": 6664268,
+   "in_generals": true,
+   "ctor": 9179003,
+   "vtable": 13047100,
+   "vtable_len": 20
+  },
+  {
+   "name": "SalvageCrateCollide",
+   "newModuleInstance": 6623314,
+   "newModuleData": 6642048,
+   "site": 6664321,
+   "in_generals": true,
+   "ctor": 9179842,
+   "vtable": 13047208,
+   "vtable_len": 20
+  },
+  {
+   "name": "CivilianSpawnCollide",
+   "newModuleInstance": 6623370,
+   "newModuleData": 6623426,
+   "site": 6664374,
+   "in_generals": false,
+   "ctor": 9181149,
+   "vtable": 13047408,
+   "vtable_len": 49
+  },
+  {
+   "name": "InactiveBody",
+   "newModuleInstance": 6623507,
+   "newModuleData": 7373379,
+   "site": 6664427,
+   "in_generals": true,
+   "ctor": 9181702,
+   "vtable": 13048008,
+   "vtable_len": 70
+  },
+  {
+   "name": "ActiveBody",
+   "newModuleInstance": 6623563,
+   "newModuleData": 6623622,
+   "site": 6664480,
+   "in_generals": true,
+   "ctor": 9189441,
+   "vtable": 13050096,
+   "vtable_len": 67
+  },
+  {
+   "name": "HighlanderBody",
+   "newModuleInstance": 6623703,
+   "newModuleData": 6623622,
+   "site": 6664533,
+   "in_generals": true,
+   "ctor": 9193757,
+   "vtable": 13049552,
+   "vtable_len": 67
+  },
+  {
+   "name": "ImmortalBody",
+   "newModuleInstance": 6623762,
+   "newModuleData": 6623622,
+   "site": 6664586,
+   "in_generals": true,
+   "ctor": 9193994,
+   "vtable": 13049824,
+   "vtable_len": 67
+  },
+  {
+   "name": "StructureBody",
+   "newModuleInstance": 6623848,
+   "newModuleData": 6647172,
+   "site": 6664639,
+   "in_generals": true,
+   "ctor": 9194221,
+   "vtable": 13050096,
+   "vtable_len": 67
+  },
+  {
+   "name": "SymbioticStructuresBody",
+   "newModuleInstance": 6623934,
+   "newModuleData": 6646349,
+   "site": 6664692,
+   "in_generals": false,
+   "ctor": 9194626,
+   "vtable": 13050368,
+   "vtable_len": 91
+  },
+  {
+   "name": "DelayedDeathBody",
+   "newModuleInstance": 6624133,
+   "newModuleData": 6624192,
+   "site": 6664745,
+   "in_generals": false,
+   "ctor": 9197411,
+   "vtable": 13051512,
+   "vtable_len": 67
+  },
+  {
+   "name": "FreeLifeBody",
+   "newModuleInstance": 6624276,
+   "newModuleData": 6624335,
+   "site": 6664798,
+   "in_generals": false,
+   "ctor": 9198196,
+   "vtable": 13051976,
+   "vtable_len": 67
+  },
+  {
+   "name": "DetachableRiderBody",
+   "newModuleInstance": 6624419,
+   "newModuleData": 6624478,
+   "site": 6664851,
+   "in_generals": false,
+   "ctor": 9199148,
+   "vtable": 13052480,
+   "vtable_len": 109
+  },
+  {
+   "name": "OathbreakerBody",
+   "newModuleInstance": 6624562,
+   "newModuleData": 6623622,
+   "site": 6664904,
+   "in_generals": false,
+   "ctor": 9199734,
+   "vtable": 13053120,
+   "vtable_len": 67
+  },
+  {
+   "name": "PorcupineFormationBodyModule",
+   "newModuleInstance": 6624621,
+   "newModuleData": 6624680,
+   "site": 6664957,
+   "in_generals": false,
+   "ctor": 9200026,
+   "vtable": 13053528,
+   "vtable_len": 91
+  },
+  {
+   "name": "RespawnBody",
+   "newModuleInstance": 6623993,
+   "newModuleData": 6624052,
+   "site": 6665010,
+   "in_generals": false,
+   "ctor": 9196666,
+   "vtable": 13050928,
+   "vtable_len": 67
+  },
+  {
+   "name": "SpecialPowerModule",
+   "newModuleInstance": 6609197,
+   "newModuleData": 6609253,
+   "site": 6665066,
+   "in_generals": false,
+   "ctor": 9008110,
+   "vtable": 12996592,
+   "vtable_len": 40
+  },
+  {
+   "name": "InvisibilitySpecialPower",
+   "newModuleInstance": 6624817,
+   "newModuleData": 6624873,
+   "site": 6665122,
+   "in_generals": false,
+   "ctor": 9200979,
+   "vtable": 13054264,
+   "vtable_len": 71
+  },
+  {
+   "name": "CashHackSpecialPower",
+   "newModuleInstance": 6624957,
+   "newModuleData": 6625013,
+   "site": 6665178,
+   "in_generals": true,
+   "ctor": 9201658,
+   "vtable": 13054552,
+   "vtable_len": 40
+  },
+  {
+   "name": "DefectorSpecialPower",
+   "newModuleInstance": 6625097,
+   "newModuleData": 6625153,
+   "site": 6665234,
+   "in_generals": true,
+   "ctor": 9202577,
+   "vtable": 13054984,
+   "vtable_len": 71
+  },
+  {
+   "name": "LevelGrantSpecialPower",
+   "newModuleInstance": 6625237,
+   "newModuleData": 6625296,
+   "site": 6665287,
+   "in_generals": false,
+   "ctor": 9202938,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "ProductionSpeedBonus",
+   "newModuleInstance": 6625380,
+   "newModuleData": 6625436,
+   "site": 6665343,
+   "in_generals": false,
+   "ctor": 9203964,
+   "vtable": 13055584,
+   "vtable_len": 71
+  },
+  {
+   "name": "OCLSpecialPower",
+   "newModuleInstance": 6625520,
+   "newModuleData": 6625576,
+   "site": 6665399,
+   "in_generals": true,
+   "ctor": 9204457,
+   "vtable": 13056144,
+   "vtable_len": 71
+  },
+  {
+   "name": "SpecialPowerTimerRefreshSpecialPower",
+   "newModuleInstance": 6637700,
+   "newModuleData": 6609253,
+   "site": 6665455,
+   "in_generals": false,
+   "ctor": 6625660,
+   "vtable": 12996592,
+   "vtable_len": 40
+  },
+  {
+   "name": "ElvenWoodSpecialPower",
+   "newModuleInstance": 6625817,
+   "newModuleData": 6625873,
+   "site": 6665511,
+   "in_generals": false,
+   "ctor": 9206600,
+   "vtable": 13056680,
+   "vtable_len": 40
+  },
+  {
+   "name": "WeaponChangeSpecialPowerModule",
+   "newModuleInstance": 6625957,
+   "newModuleData": 6626013,
+   "site": 6665567,
+   "in_generals": false,
+   "ctor": 9208445,
+   "vtable": 13057488,
+   "vtable_len": 71
+  },
+  {
+   "name": "ScavengerSpecialPower",
+   "newModuleInstance": 6626097,
+   "newModuleData": 6626153,
+   "site": 6665623,
+   "in_generals": false,
+   "ctor": 9209842,
+   "vtable": 13057824,
+   "vtable_len": 40
+  },
+  {
+   "name": "CloudBreakSpecialPower",
+   "newModuleInstance": 6626237,
+   "newModuleData": 6626293,
+   "site": 6665679,
+   "in_generals": false,
+   "ctor": 9210257,
+   "vtable": 13058128,
+   "vtable_len": 71
+  },
+  {
+   "name": "TaintSpecialPower",
+   "newModuleInstance": 6626377,
+   "newModuleData": 6626433,
+   "site": 6665735,
+   "in_generals": false,
+   "ctor": 9211215,
+   "vtable": 13058544,
+   "vtable_len": 71
+  },
+  {
+   "name": "FreezingRainSpecialPower",
+   "newModuleInstance": 6626517,
+   "newModuleData": 6626573,
+   "site": 6665791,
+   "in_generals": false,
+   "ctor": 9211994,
+   "vtable": 13058952,
+   "vtable_len": 40
+  },
+  {
+   "name": "DarknessSpecialPower",
+   "newModuleInstance": 6626657,
+   "newModuleData": 6626713,
+   "site": 6665847,
+   "in_generals": false,
+   "ctor": 9212452,
+   "vtable": 13059192,
+   "vtable_len": 40
+  },
+  {
+   "name": "GrabPassengerSpecialPower",
+   "newModuleInstance": 6626797,
+   "newModuleData": 6626853,
+   "site": 6665903,
+   "in_generals": false,
+   "ctor": 9212973,
+   "vtable": 13059432,
+   "vtable_len": 40
+  },
+  {
+   "name": "DeflectSpecialPower",
+   "newModuleInstance": 6626937,
+   "newModuleData": 6626993,
+   "site": 6665959,
+   "in_generals": false,
+   "ctor": 9214187,
+   "vtable": 13059592,
+   "vtable_len": 78
+  },
+  {
+   "name": "SiegeDeploySpecialPower",
+   "newModuleInstance": 6627080,
+   "newModuleData": 6627136,
+   "site": 6666015,
+   "in_generals": false,
+   "ctor": 9214793,
+   "vtable": 13060216,
+   "vtable_len": 51
+  },
+  {
+   "name": "SiegeDeployHordeSpecialPower",
+   "newModuleInstance": 6627217,
+   "newModuleData": 6627273,
+   "site": 6666071,
+   "in_generals": false,
+   "ctor": 9218069,
+   "vtable": 12996848,
+   "vtable_len": 51
+  },
+  {
+   "name": "StopSpecialPower",
+   "newModuleInstance": 6627354,
+   "newModuleData": 6627410,
+   "site": 6666127,
+   "in_generals": false,
+   "ctor": 9219062,
+   "vtable": 13060760,
+   "vtable_len": 40
+  },
+  {
+   "name": "WoundArrowUpdate",
+   "newModuleInstance": 6627494,
+   "newModuleData": 6627553,
+   "site": 6666180,
+   "in_generals": false,
+   "ctor": 9219471,
+   "vtable": 13060976,
+   "vtable_len": 35
+  },
+  {
+   "name": "FellBeastSwoopPower",
+   "newModuleInstance": 6627664,
+   "newModuleData": 6627723,
+   "site": 6666233,
+   "in_generals": false,
+   "ctor": 9220264,
+   "vtable": 12994136,
+   "vtable_len": 9
+  },
+  {
+   "name": "ManTheWallsSpecialPower",
+   "newModuleInstance": 6627807,
+   "newModuleData": 6628476,
+   "site": 6666289,
+   "in_generals": false,
+   "ctor": 9221073,
+   "vtable": 13061232,
+   "vtable_len": 54
+  },
+  {
+   "name": "UntamedAllegianceSpecialPower",
+   "newModuleInstance": 6627863,
+   "newModuleData": 6627919,
+   "site": 6666345,
+   "in_generals": false,
+   "ctor": 9223973,
+   "vtable": 12996592,
+   "vtable_len": 40
+  },
+  {
+   "name": "PlayerUpgradeSpecialPower",
+   "newModuleInstance": 6628000,
+   "newModuleData": 6628056,
+   "site": 6666401,
+   "in_generals": false,
+   "ctor": 9224226,
+   "vtable": 13061448,
+   "vtable_len": 71
+  },
+  {
+   "name": "PlayerHealSpecialPower",
+   "newModuleInstance": 6628140,
+   "newModuleData": 6628196,
+   "site": 6666457,
+   "in_generals": false,
+   "ctor": 9224861,
+   "vtable": 13061936,
+   "vtable_len": 40
+  },
+  {
+   "name": "DevastateSpecialPower",
+   "newModuleInstance": 6628280,
+   "newModuleData": 6628336,
+   "site": 6666513,
+   "in_generals": false,
+   "ctor": 9225743,
+   "vtable": 13062240,
+   "vtable_len": 40
+  },
+  {
+   "name": "SplitHordeSpecialPower",
+   "newModuleInstance": 6628420,
+   "newModuleData": 6628476,
+   "site": 6666569,
+   "in_generals": false,
+   "ctor": 9226651,
+   "vtable": 13062600,
+   "vtable_len": 71
+  },
+  {
+   "name": "RepairSpecialPower",
+   "newModuleInstance": 6628557,
+   "newModuleData": 6628613,
+   "site": 6666625,
+   "in_generals": false,
+   "ctor": 9226971,
+   "vtable": 13062896,
+   "vtable_len": 40
+  },
+  {
+   "name": "CombineHordeSpecialPower",
+   "newModuleInstance": 6628694,
+   "newModuleData": 6628750,
+   "site": 6666681,
+   "in_generals": false,
+   "ctor": 9227243,
+   "vtable": 13063096,
+   "vtable_len": 40
+  },
+  {
+   "name": "HordeDispatchSpecialPower",
+   "newModuleInstance": 6628834,
+   "newModuleData": 6628890,
+   "site": 6666737,
+   "in_generals": false,
+   "ctor": 9227789,
+   "vtable": 13063256,
+   "vtable_len": 40
+  },
+  {
+   "name": "AnimatedParticleSysBoneClientUpdate",
+   "newModuleInstance": 6629112,
+   "newModuleData": 7373379,
+   "site": 6666794,
+   "in_generals": true,
+   "ctor": 9229308,
+   "vtable": 13063808,
+   "vtable_len": 15
+  },
+  {
+   "name": "SwayClientUpdate",
+   "newModuleInstance": 6629168,
+   "newModuleData": 7373379,
+   "site": 6666851,
+   "in_generals": true,
+   "ctor": 9229509,
+   "vtable": 13063868,
+   "vtable_len": 15
+  },
+  {
+   "name": "BeaconClientUpdate",
+   "newModuleInstance": 6629224,
+   "newModuleData": 6629280,
+   "site": 6666908,
+   "in_generals": true,
+   "ctor": 9230802,
+   "vtable": 13064032,
+   "vtable_len": 15
+  },
+  {
+   "name": "RadarMarkerClientUpdate",
+   "newModuleInstance": 6629498,
+   "newModuleData": 6629554,
+   "site": 6666965,
+   "in_generals": false,
+   "ctor": 9232391,
+   "vtable": 13064680,
+   "vtable_len": 15
+  },
+  {
+   "name": "AnimationSoundClientBehavior",
+   "newModuleInstance": 6629675,
+   "newModuleData": 6629731,
+   "site": 6667022,
+   "in_generals": false,
+   "ctor": 9233549,
+   "vtable": 13064868,
+   "vtable_len": 2
+  },
+  {
+   "name": "ModelConditionSoundSelectorClientBehavior",
+   "newModuleInstance": 6642132,
+   "newModuleData": 6629812,
+   "site": 6667079,
+   "in_generals": false,
+   "ctor": 6637828,
+   "vtable": 12620960,
+   "vtable_len": 3
+  },
+  {
+   "name": "UpgradeSoundSelectorClientBehavior",
+   "newModuleInstance": 6637945,
+   "newModuleData": 6629893,
+   "site": 6667136,
+   "in_generals": false,
+   "ctor": 6629974,
+   "vtable": 12607996,
+   "vtable_len": 22
+  },
+  {
+   "name": "RandomSoundSelectorClientBehavior",
+   "newModuleInstance": 6630091,
+   "newModuleData": 6649408,
+   "site": 6667193,
+   "in_generals": false,
+   "ctor": 9240678,
+   "vtable": 13066136,
+   "vtable_len": 3
+  },
+  {
+   "name": "ModelConditionAudioLoopClientBehavior",
+   "newModuleInstance": 6630147,
+   "newModuleData": 6630203,
+   "site": 6667250,
+   "in_generals": false,
+   "ctor": 9241405,
+   "vtable": 13066364,
+   "vtable_len": 22
+  },
+  {
+   "name": "TerrainResourceClientBehavior",
+   "newModuleInstance": 6638001,
+   "newModuleData": 7373379,
+   "site": 6667307,
+   "in_generals": false,
+   "ctor": 6630284,
+   "vtable": 12608120,
+   "vtable_len": 19
+  },
+  {
+   "name": "EvaAnnounceClientCreate",
+   "newModuleInstance": 6629361,
+   "newModuleData": 6629417,
+   "site": 6667364,
+   "in_generals": false,
+   "ctor": 9231961,
+   "vtable": 13064568,
+   "vtable_len": 17
+  },
+  {
+   "name": "W3DDefaultDraw",
+   "newModuleInstance": 4603994,
+   "newModuleData": 7373379,
+   "site": 4606724,
+   "in_generals": true,
+   "ctor": 4922072,
+   "vtable": 12449800,
+   "vtable_len": 62
+  },
+  {
+   "name": "W3DDebrisDraw",
+   "newModuleInstance": 4603938,
+   "newModuleData": 7373379,
+   "site": 4606777,
+   "in_generals": true,
+   "ctor": 4920678,
+   "vtable": 12449528,
+   "vtable_len": 64
+  },
+  {
+   "name": "W3DScriptedModelDraw",
+   "newModuleInstance": 4604050,
+   "newModuleData": 4604109,
+   "site": 4606837,
+   "in_generals": false,
+   "ctor": 4981923,
+   "vtable": 12467064,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DHordeModelDraw",
+   "newModuleInstance": 4605559,
+   "newModuleData": 4605618,
+   "site": 4606897,
+   "in_generals": false,
+   "ctor": 4686632,
+   "vtable": 12467064,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DLaserDraw",
+   "newModuleInstance": 4604193,
+   "newModuleData": 4604249,
+   "site": 4606954,
+   "in_generals": true,
+   "ctor": 5018704,
+   "vtable": 12458292,
+   "vtable_len": 63
+  },
+  {
+   "name": "W3DQuadrupedDraw",
+   "newModuleInstance": 4604330,
+   "newModuleData": 4606479,
+   "site": 4607014,
+   "in_generals": false,
+   "ctor": 5019580,
+   "vtable": 12458704,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DRopeDraw",
+   "newModuleInstance": 4604389,
+   "newModuleData": 7373379,
+   "site": 4607071,
+   "in_generals": true,
+   "ctor": 5021495,
+   "vtable": 12459188,
+   "vtable_len": 65
+  },
+  {
+   "name": "W3DSupplyDraw",
+   "newModuleInstance": 4604445,
+   "newModuleData": 4604504,
+   "site": 4607131,
+   "in_generals": true,
+   "ctor": 5023260,
+   "vtable": 12459608,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DTruckDraw",
+   "newModuleInstance": 4604588,
+   "newModuleData": 4604647,
+   "site": 4607191,
+   "in_generals": true,
+   "ctor": 5024744,
+   "vtable": 12467064,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DTankDraw",
+   "newModuleInstance": 4604731,
+   "newModuleData": 4604790,
+   "site": 4607251,
+   "in_generals": true,
+   "ctor": 5038688,
+   "vtable": 12467064,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DTreeDraw",
+   "newModuleInstance": 4604874,
+   "newModuleData": 4604930,
+   "site": 4607311,
+   "in_generals": true,
+   "ctor": 5038913,
+   "vtable": 12462992,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DFloorDraw",
+   "newModuleInstance": 4605285,
+   "newModuleData": 4605341,
+   "site": 4607371,
+   "in_generals": false,
+   "ctor": 5040411,
+   "vtable": 12465016,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DPropDraw",
+   "newModuleInstance": 4605148,
+   "newModuleData": 4605204,
+   "site": 4607431,
+   "in_generals": true,
+   "ctor": 5039758,
+   "vtable": 12464576,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DLightDraw",
+   "newModuleInstance": 4605422,
+   "newModuleData": 4605478,
+   "site": 4607488,
+   "in_generals": false,
+   "ctor": 5042465,
+   "vtable": 12465880,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DBuffDraw",
+   "newModuleInstance": 4605011,
+   "newModuleData": 4605067,
+   "site": 4607545,
+   "in_generals": false,
+   "ctor": 5039535,
+   "vtable": 12464144,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DStreakDraw",
+   "newModuleInstance": 4605702,
+   "newModuleData": 4605758,
+   "site": 4607602,
+   "in_generals": false,
+   "ctor": 5044890,
+   "vtable": 12466256,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DSailModelDraw",
+   "newModuleInstance": 4605839,
+   "newModuleData": 4605898,
+   "site": 4607659,
+   "in_generals": false,
+   "ctor": 5046146,
+   "vtable": 12467064,
+   "vtable_len": 49
+  },
+  {
+   "name": "W3DBoatWakeModelDraw",
+   "newModuleInstance": 4605982,
+   "newModuleData": 4606038,
+   "site": 4607716,
+   "in_generals": false,
+   "ctor": 5047252,
+   "vtable": 12467536,
+   "vtable_len": 93
+  },
+  {
+   "name": "W3DProjectileStreamDraw",
+   "newModuleInstance": 4606119,
+   "newModuleData": 4606175,
+   "site": 4607773,
+   "in_generals": true,
+   "ctor": 5049215,
+   "vtable": 12468208,
+   "vtable_len": 62
+  },
+  {
+   "name": "W3DTornadoDraw",
+   "newModuleInstance": 4606256,
+   "newModuleData": 4606312,
+   "site": 4607830,
+   "in_generals": false,
+   "ctor": 5050414,
+   "vtable": 12468728,
+   "vtable_len": 66
+  }
+ ]
+}
