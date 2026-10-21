@@ -32,6 +32,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DamageFX.h"
 #include "GameLogic/Module/BodyModule.h"
+#include "GameLogic/ObjectFilter.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Armor.h"
 #include "GameLogic/ArmorSet.h"
@@ -50,6 +51,7 @@ class ActiveBodyModuleData : public BodyModuleData
 public:
 	Real m_maxHealth;
 	Real m_initialHealth;
+	ObjectFilter m_bfmePermanentlyKilledBy;	///< bfme-native RespawnBody: killers that kill for good
 
 	Real m_subdualDamageCap;								///< Subdual damage will never accumulate past this
 	UnsignedInt m_subdualDamageHealRate;		///< Every this often, we drop subdual damage...

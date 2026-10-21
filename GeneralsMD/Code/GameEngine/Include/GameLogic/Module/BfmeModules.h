@@ -250,6 +250,68 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** RespawnUpdate: RotWK heroes do not die -- they fall (DeathAnim), vanish and wait to be revived at a
+	fortress (Cost/Time per level), or come back by themselves (AutoSpawn) at AutoRespawnAtObjectFilter. */
+struct RespawnRule
+{
+	RespawnRule() : m_level(0), m_autoSpawn(FALSE), m_cost(0), m_time(0), m_health(1.0f) {}
+	Int m_level;
+	Bool m_autoSpawn;
+	Int m_cost;
+	UnsignedInt m_time;
+	Real m_health;
+};
+
+class RespawnUpdateModuleData : public UpdateModuleData
+{
+public:
+	RespawnUpdateModuleData() : m_deathAnimationTime(0), m_respawnAnimationTime(0), m_deathFX(nullptr), m_respawnFX(nullptr), m_initialSpawnFX(nullptr) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	static void parseRule(INI* ini, void* instance, void* store, const void* userData);
+	static void parseEntry(INI* ini, void* instance, void* store, const void* userData);
+
+	ModelConditionFlags m_deathAnim;
+	UnsignedInt m_deathAnimationTime;
+	ModelConditionFlags m_respawnAnim;
+	UnsignedInt m_respawnAnimationTime;
+	const FXList* m_deathFX;
+	const FXList* m_respawnFX;
+	const FXList* m_initialSpawnFX;
+	ObjectFilter m_autoRespawnAt;
+	AsciiString m_buttonImage;
+	AsciiString m_respawnAsTemplate;
+	RespawnRule m_rules;
+	std::vector<RespawnRule> m_entries;	///< per-level overrides of Cost/Time
+};
+
+class RespawnUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RespawnUpdate, "RespawnUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RespawnUpdate, RespawnUpdateModuleData )
+public:
+	RespawnUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+
+	/// the hero just took lethal damage: fall instead of dying
+	void onFallen();
+	Bool isFallen() const { return m_state != STATE_ALIVE; }
+	/// revive cost and time at the hero's current level
+	RespawnRule currentRule() const;
+	/// bring the hero back at 'pos' (its own position if null). Returns the revived object.
+	Object* revive(const Coord3D* pos);
+
+	static RespawnUpdate* findOn(const Object* obj);
+
+private:
+	enum State { STATE_ALIVE, STATE_DYING, STATE_DEAD };
+	State m_state;
+	UnsignedInt m_stateFrame;
+};
+
+/// called by ActiveBody when health reaches 0; TRUE when a RespawnUpdate took over
+Bool bfmeRespawnInterceptDeath(Object* obj, DamageInfo* damageInfo);
+
+//-------------------------------------------------------------------------------------------------
 /** A RotWK module that is parsed but has no behaviour yet (audio/animation polish, or logic still to
 	be ported -- see docs/SCOPE.md "inert modules"). Registered under several names. */
 class BfmeInertBehaviorModuleData : public BehaviorModuleData

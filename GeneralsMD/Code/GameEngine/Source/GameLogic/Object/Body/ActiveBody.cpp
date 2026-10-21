@@ -60,6 +60,7 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/DamageModule.h"
 #include "GameLogic/Module/DieModule.h"
+#include "GameLogic/Module/BfmeModules.h"	// bfme-native
 
 
 
@@ -146,6 +147,7 @@ void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 	{
 		{ "MaxHealth",						INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
 		{ "InitialHealth",				INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
+		{ "PermanentlyKilledByFilter",	ObjectFilter::parseFromINI,	nullptr,	offsetof( ActiveBodyModuleData, m_bfmePermanentlyKilledBy ) },	// bfme-native
 
 		{ "SubdualDamageCap",					INI::parseReal,									nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageCap ) },
 		{ "SubdualDamageHealRate",		INI::parseDurationUnsignedInt,	nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageHealRate ) },
@@ -674,7 +676,13 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 				damager->scoreTheKill( obj );
 			}
 
-			obj->onDie( damageInfo );
+			// bfme-native: heroes with a RespawnUpdate fall down and wait to be revived instead
+			const Object* killer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
+			const ObjectFilter& perm = getActiveBodyModuleData()->m_bfmePermanentlyKilledBy;
+			if( (perm.isEmpty() || killer == nullptr || !perm.matches( killer, obj )) && bfmeRespawnInterceptDeath( obj, damageInfo ) )
+				;
+			else
+				obj->onDie( damageInfo );
 		}
 	}
 

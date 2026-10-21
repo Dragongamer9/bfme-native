@@ -516,6 +516,7 @@ void ModuleFactory::init()
 	addModule( TerrainResourceBehavior );	// bfme-native
 	addModule( AutoAbilityBehavior );	// bfme-native
 	addModule( DoCommandUpgrade );	// bfme-native
+	addModule( RespawnUpdate );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );
