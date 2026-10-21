@@ -823,8 +823,8 @@ void ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *store, con
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s. The game will crash now!",modToRemove, self->getName().str()));
-		throw INI_INVALID_DATA;
+		// bfme-native: usually a module this engine skipped (not implemented yet); not fatal
+		DEBUG_LOG(("RemoveModule %s was not found for %s", modToRemove, self->getName().str()));
 	}
 
 	self->m_moduleParsingMode = oldMode;
@@ -848,9 +848,8 @@ void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, co
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.",
-															ini->getLineNum(), ini->getFilename().str(), modToRemove, self->getName().str()));
-		throw INI_INVALID_DATA;
+		// bfme-native: the module being replaced may be one this engine skipped; add the new one anyway
+		DEBUG_LOG(("ReplaceModule %s was not found for %s", modToRemove, self->getName().str()));
 	}
 
 	self->m_moduleBeingReplacedName = removedModuleName;
