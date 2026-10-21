@@ -489,6 +489,7 @@ private:
 	static void parseWeaponBonusSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseScatterTarget( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseShotDelay( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
+	static void parseClipReloadTime( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );	// bfme-native
 
 	static const FieldParse TheWeaponTemplateFieldParseTable[];		///< the parse table for INI definition
 
