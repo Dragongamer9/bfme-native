@@ -533,7 +533,8 @@ private:
 	UnsignedInt m_fireSoundLoopTime;				///< if nonzero, num frames for looping of fire sound
 	WeaponBonusSet* m_extraBonus;						///< optional extra per-weapon bonus
 	Int m_clipSize;													///< number of 'shots' in a clip
-	Int m_clipReloadTime;										///< when 'clip' is empty, how long it takes to reload (frames)
+	Int m_clipReloadTime;										///< when 'clip' is empty, how long it takes to reload (frames); min of the range
+	Int m_maxClipReloadTime;								///< bfme-native: RotWK "ClipReloadTime = Min:a Max:b" (frames)
 	Int m_minDelayBetweenShots;							///< min time allowed between firing single shots (frames)
 	Int m_maxDelayBetweenShots;							///< max time allowed between firing single shots (frames)
 	Int m_continuousFireOneShotsNeeded;			///< How many consecutive shots will give my owner the ContinuousFire Property

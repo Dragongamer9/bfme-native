@@ -1797,16 +1797,32 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 
 						// GeneralsX @bugfix Copilot 20/09/2026 Do not replace nested field errors with an enclosing module.
 						} catch (const INIException&) {
-							throw;
+							if (!getenv("BFME_INI_STRICT"))
+							{
+								// bfme-native: report and keep going, so one boot lists every problem
+								bfmeRecordSkip("badfield", s_bfmeCurrentBlock.str(), field);
+								fprintf(stderr, "[INI] bad field '%s' (block %s) at %s:%u\n", field,
+									s_bfmeCurrentBlock.str(), INI::getFilename().str(), INI::getLineNum());
+							}
+							else
+								throw;
 						} catch (...) {
 							DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Error reading field '%s' of block '%s'",
 																 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
 
-
-							char buff[1024];
-							snprintf(buff, ARRAY_SIZE(buff), "[LINE: %d - FILE: '%s'] Error reading field '%s'\n",
-								INI::getLineNum(), INI::getFilename().str(), field);
-							throw INIException(buff);
+							if (!getenv("BFME_INI_STRICT"))
+							{
+								bfmeRecordSkip("badfield", s_bfmeCurrentBlock.str(), field);
+								fprintf(stderr, "[INI] bad field '%s' (block %s) at %s:%u\n", field,
+									s_bfmeCurrentBlock.str(), INI::getFilename().str(), INI::getLineNum());
+							}
+							else
+							{
+								char buff[1024];
+								snprintf(buff, ARRAY_SIZE(buff), "[LINE: %d - FILE: '%s'] Error reading field '%s'\n",
+									INI::getLineNum(), INI::getFilename().str(), field);
+								throw INIException(buff);
+							}
 						}
 
 						found = true;
