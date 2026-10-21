@@ -1017,6 +1017,11 @@ void INI::parseBitInInt32( INI *ini, void *instance, void *store, const void* us
 		return TRUE;
 	else if( stricmp( token, "no" ) == 0 )
 		return FALSE;
+	// bfme-native: RotWK data also writes 1/0 and true/false
+	else if( strcmp( token, "1" ) == 0 || stricmp( token, "true" ) == 0 )
+		return TRUE;
+	else if( strcmp( token, "0" ) == 0 || stricmp( token, "false" ) == 0 )
+		return FALSE;
 	else
 	{
 		DEBUG_CRASH(("invalid boolean token %s -- expected Yes or No",token));

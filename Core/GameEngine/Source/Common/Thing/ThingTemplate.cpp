@@ -271,7 +271,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
   { "MaxSimultaneousOfType",	ThingTemplate::parseMaxSimultaneous,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousOfType ) },
   { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		nullptr, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) }, // Added in Zero Hour
 	{ "CrusherLevel",					INI::parseUnsignedByte,			nullptr, offsetof( ThingTemplate, m_crusherLevel ) },
-	{ "CrushableLevel",				INI::parseUnsignedByte,			nullptr, offsetof( ThingTemplate, m_crushableLevel ) },
+	{ "CrushableLevel",				ThingTemplate::parseBfmeLevel,	nullptr, offsetof( ThingTemplate, m_crushableLevel ) },	// bfme-native: RotWK uses -1
 
 	{ nullptr, nullptr, nullptr, 0 }
 
@@ -975,6 +975,15 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 #endif
 	self->m_armorTemplateSets.push_back(ws);
 	self->m_armorTemplateSetFinder.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
+void ThingTemplate::parseBfmeLevel( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
+{
+	Int v = INI::scanInt(ini->getNextToken());
+	if (v < 0) v = 0;
+	if (v > 255) v = 255;
+	*(UnsignedByte*)store = (UnsignedByte)v;
 }
 
 //-------------------------------------------------------------------------------------------------
