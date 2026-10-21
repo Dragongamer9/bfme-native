@@ -66,6 +66,20 @@ Zero bad INI fields left except 14 edge cases (was 2,353). Added, each from game
 Can't test in-game yet: the container only has the INI archives. Art, maps and audio archives are
 on the PC (C:\RotWK) and are needed for map loading and rendering tests.
 
+## Session 3 — battles, economy and heroes (2026-10-21)
+Headless battle tests run on a generated flat map (`tools/mkmap.py`, `tools/logictest.sh`,
+scripts in `tests/logic/`). Working now:
+- hordes (formation, attack hand-off, horde dies with its last member), archers, mixed armies,
+  self-building structures (GettingBuiltBehavior)
+- economy: TerrainResourceBehavior (farm income, shared land, upgrade bonus)
+- heroes: AutoAbilityBehavior (units use abilities by themselves), WeaponFireSpecialAbilityUpdate,
+  WeaponModeSpecialPowerUpdate, HeroModeSpecialAbilityUpdate, ToggleMountedSpecialAbilityUpdate
+  (mount/dismount and ring-hero forms), DoCommandUpgrade, RespawnUpdate (fall, revive, auto-revive)
+- RotWK experience: ExperienceLevels.ini ranks 1-10 with their upgrades and attribute modifiers,
+  ExperienceLevelCreate, LevelUpUpgrade on ranks
+- parser fix: `AddEmotion = OVERRIDE ... End` sub-blocks inside not-yet-ported modules were cutting
+  the rest of ~1,900 module lines out of horde and hero objects
+
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
 2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test

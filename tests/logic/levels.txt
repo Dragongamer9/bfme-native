@@ -1,0 +1,8 @@
+# RotWK ranks: units start at rank 1, gain ranks from experience (Upgrade_Level_N), and award XP by rank
+1    spawn RohanTheoden_mod player1 800 1100 0
+1    spawn IsengardFighter player2 1300 1100 180
+5    xp
+10   xp player1 RohanTheoden_mod 5000
+20   attack player1 player2
+600  xp
+601  quit
