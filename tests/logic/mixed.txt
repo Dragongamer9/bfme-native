@@ -1,0 +1,16 @@
+# Archers, cavalry, pikes and a hero
+1   spawn GondorArcherHorde player1 700 1000 0
+1   spawn GondorKnightHorde player1 700 1300 0
+1   spawn GondorAragorn player1 750 1150 0
+1   spawn IsengardPikemanHorde player2 1300 1100 180
+1   spawn ElvenLorienArcherHorde player2 1400 1300 180
+5   summary
+60  attack player1 player2
+60  attack player2 player1
+120 state
+300 summary
+600 summary
+900 summary
+1200 summary
+1200 dump
+1201 quit

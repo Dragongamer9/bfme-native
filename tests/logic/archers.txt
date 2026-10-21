@@ -1,0 +1,8 @@
+1   spawn GondorArcher player1 800 1100 0
+1   spawn ElvenLorienArcher player2 1300 1100 180
+10  attack player1 player2
+11  state
+60  state
+200 state
+200 dump
+201 quit
