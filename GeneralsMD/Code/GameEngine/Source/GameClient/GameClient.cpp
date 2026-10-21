@@ -444,7 +444,8 @@ void GameClient::init()
 
 	TheDisplayStringManager->postProcessLoad();
 
-	TheSnowManager = createSnowManager();
+	// bfme-native: no GPU resources in headless mode (snow creates index buffers)
+	TheSnowManager = TheGlobalData->m_headless ? nullptr : createSnowManager();
 	if (TheSnowManager)
 	{
 		TheSnowManager->init();

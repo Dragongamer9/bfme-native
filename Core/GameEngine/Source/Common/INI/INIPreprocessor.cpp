@@ -29,7 +29,17 @@ static void bfmeIniErrorf(const char* fmt, ...)
 
 namespace {
 
+// RotWK compares macro names case-insensitively (Edain writes Isengard_TAVERN_BUILDTIME for
+// ISENGARD_TAVERN_BUILDTIME), so names are stored upper-cased.
 typedef std::map<std::string, std::string> MacroMap;
+
+std::string upper(const std::string& s)
+{
+	std::string u = s;
+	for (char& c : u)
+		c = (char)toupper((unsigned char)c);
+	return u;
+}
 
 MacroMap& macros()
 {
@@ -163,7 +173,7 @@ std::string substitute(const std::string& line, int depth = 0)
 		while (e < line.size() && !isTokenSep(line[e]) && line[e] != '"')
 			++e;
 		std::string tok = line.substr(i, e - i);
-		MacroMap::const_iterator it = m.find(tok);
+		MacroMap::const_iterator it = m.find(upper(tok));
 		if (it != m.end()) {
 			out += it->second;
 			changed = true;
@@ -214,6 +224,7 @@ void defineMacro(const AsciiString& file, unsigned lineNum, const char* rest)
 		BFME_INI_ERROR(("[%s:%u] Error parsing MACRO '%s' has no value", file.str(), lineNum, name.c_str()));
 		throw INI_INVALID_DATA;
 	}
+	name = upper(name);
 	MacroMap& m = macros();
 	MacroMap::iterator it = m.find(name);
 	if (it != m.end()) {

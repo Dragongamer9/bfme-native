@@ -3886,7 +3886,7 @@ void ScriptActions::doSkyBox(Bool startDraw)
 
 void ScriptActions::doWeather(Bool showWeather)
 {
-	TheSnowManager->setVisible(showWeather);
+	if (TheSnowManager) TheSnowManager->setVisible(showWeather);	// bfme-native: null in headless mode
 }
 
 //-------------------------------------------------------------------------------------------------

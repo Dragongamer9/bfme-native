@@ -2049,8 +2049,8 @@ CommandButton *ControlBar::newCommandButtonOverride( CommandButton *buttonToOver
 		//with the same name, and just nuke the old button with the new one.
 		//So, I (KM) have added this assert to notify in case of two same-name
 		//command set.
-		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate commandset %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
-		throw INI_INVALID_DATA;
+		// bfme-native: RotWK/Edain redefine command sets; the later definition wins
+		DEBUG_LOG(( "[LINE: %d in '%s'] Duplicate commandset %s, later definition wins", ini->getLineNum(), ini->getFilename().str(), name.str() ));
 
 		//@todo SUPPORT OVERRIDES -- JM
 	} else {

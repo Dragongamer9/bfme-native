@@ -37,6 +37,7 @@
 #include "Common/INIPreprocessor.h"
 #include <string>
 static const std::string* s_bfmeMemoryText = nullptr;	// bfme-native: consumed by prepFile for "<mem>" loads
+static void bfmeRecordSkip(const char* kind, const char* block, const char* name);
 
 #include "Common/DamageFX.h"
 #include "Common/file.h"
@@ -240,13 +241,27 @@ UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadTyp
 	fprintf(stderr, "[INI] loadFileDirectory - calling loadDirectory('%s') END\n", iniDir.str());
 	fflush(stderr);
 
+	// bfme-native: BFME keeps localized INI (HeaderTemplate, CommandMap, Language) at the root of
+	// lang\<language>.big instead of Data\<Language>\. Fall back to "<name>.ini" at the root.
+	if (filesRead == 0)
+	{
+		const char* base = strrchr(iniDir.str(), '\\');
+		AsciiString rootFile = base ? base + 1 : iniDir.str();
+		rootFile.concat(ext);
+		if (TheFileSystem->doesFileExist(rootFile.str()))
+			filesRead += load(rootFile, loadType, pXfer);
+	}
+
 	// Expect to open and load at least one file.
 	const Bool expectFileFound = (loadFlags & LoadFlags_ExpectFileFound) != 0;
 	if (expectFileFound && filesRead == 0)
 	{
-		fprintf(stderr, "[INI] ERROR: No files read from directory '%s'\n", fileDirName.str());
+		fprintf(stderr, "[INI] WARNING: No files read from directory '%s'\n", fileDirName.str());
 		fflush(stderr);
-		throw INI_CANT_OPEN_FILE;
+		// bfme-native: Zero Hour-only data (ChallengeMode, ...) does not exist in RotWK
+		bfmeRecordSkip("missing", "-", fileDirName.str());
+		if (getenv("BFME_INI_STRICT"))
+			throw INI_CANT_OPEN_FILE;
 	}
 
 	fprintf(stderr, "[INI] loadFileDirectory('%s') END - filesRead=%d\n", fileDirName.str(), filesRead);
