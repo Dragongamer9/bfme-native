@@ -1216,6 +1216,11 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ConditionState", W3DModelDrawModuleData::parseConditionState, (void*)PARSE_NORMAL, 0 },
 		{ "AliasConditionState", W3DModelDrawModuleData::parseConditionState, (void*)PARSE_ALIAS, 0 },
 		{ "TransitionState", W3DModelDrawModuleData::parseConditionState, (void*)PARSE_TRANSITION, 0 },
+		// bfme-native: RotWK W3DScriptedModelDraw
+		{ "DefaultModelConditionState", W3DModelDrawModuleData::parseBfmeModelState, (void*)1, 0 },
+		{ "ModelConditionState", W3DModelDrawModuleData::parseBfmeModelState, (void*)0, 0 },
+		{ "AnimationState", W3DModelDrawModuleData::parseBfmeAnimationState, (void*)0, 0 },
+		{ "IdleAnimationState", W3DModelDrawModuleData::parseBfmeAnimationState, (void*)1, 0 },
 		{ "TrackMarks", parseAsciiStringLC, nullptr, offsetof(W3DModelDrawModuleData, m_trackFile) },
 		{ "ExtraPublicBone", INI::parseAsciiStringVectorAppend, nullptr, offsetof(W3DModelDrawModuleData, m_extraPublicBones) },
 		{ "AttachToBoneInAnotherModule", parseAsciiStringLC, nullptr, offsetof(W3DModelDrawModuleData, m_attachToDrawableBone) },
@@ -1419,36 +1424,39 @@ static Bool doesStateExist(const ModelConditionVector& v, const ModelConditionFl
 }
 
 //-------------------------------------------------------------------------------------------------
+// condition-state fields, shared by Generals ConditionState and RotWK ModelConditionState
+static const FieldParse s_conditionStateFieldParse[] =
+{
+	{ "Model",	parseAsciiStringLC, nullptr, offsetof(ModelConditionInfo, m_modelName) },
+	{ "Turret",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretAngleNameKey) },
+	{ "TurretArtAngle", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretArtAngle) },
+	{ "TurretPitch",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretPitchNameKey) },
+	{ "TurretArtPitch", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretArtPitch) },
+	{ "AltTurret",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretAngleNameKey) },
+	{ "AltTurretArtAngle", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretArtAngle) },
+	{ "AltTurretPitch",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretPitchNameKey) },
+	{ "AltTurretArtPitch", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretArtPitch) },
+	{ "ShowSubObject", parseShowHideSubObject, (void*)nullptr, offsetof(ModelConditionInfo, m_hideShowVec) },
+	{ "HideSubObject", parseShowHideSubObject, (void*)1, offsetof(ModelConditionInfo, m_hideShowVec) },
+	{ "WeaponFireFXBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponFireFXBoneName[0]) },
+	{ "WeaponRecoilBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponRecoilBoneName[0]) },
+	{ "WeaponMuzzleFlash", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponMuzzleFlashName[0]) },
+	{ "WeaponLaunchBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponProjectileLaunchBoneName[0]) },
+	{ "WeaponHideShowBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponProjectileHideShowName[0]) },
+	{ "Animation", parseAnimation, (void*)ANIM_NORMAL, offsetof(ModelConditionInfo, m_animations) },
+	{ "IdleAnimation", parseAnimation, (void*)ANIM_IDLE, offsetof(ModelConditionInfo, m_animations) },
+	{ "AnimationMode", INI::parseIndexList, TheAnimModeNames, offsetof(ModelConditionInfo, m_mode) },
+	{ "TransitionKey", parseLowercaseNameKey, nullptr, offsetof(ModelConditionInfo, m_transitionKey) },
+	{ "WaitForStateToFinishIfPossible", parseLowercaseNameKey, nullptr, offsetof(ModelConditionInfo, m_allowToFinishKey) },
+	{ "Flags", INI::parseBitString32, ACBitsNames, offsetof(ModelConditionInfo, m_flags) },
+	{ "ParticleSysBone", parseParticleSysBone, nullptr, 0 },
+	{ "AnimationSpeedFactorRange", parseRealRange, nullptr, 0 },
+	{ nullptr, nullptr, nullptr, 0 }
+};
+
 void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void * /*store*/, const void* userData)
 {
-	static const FieldParse myFieldParse[] =
-	{
-		{ "Model",	parseAsciiStringLC, nullptr, offsetof(ModelConditionInfo, m_modelName) },
-		{ "Turret",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretAngleNameKey) },
-		{ "TurretArtAngle", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretArtAngle) },
-		{ "TurretPitch",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretPitchNameKey) },
-		{ "TurretArtPitch", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[0].m_turretArtPitch) },
-		{ "AltTurret",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretAngleNameKey) },
-		{ "AltTurretArtAngle", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretArtAngle) },
-		{ "AltTurretPitch",	parseBoneNameKey, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretPitchNameKey) },
-		{ "AltTurretArtPitch", INI::parseAngleReal, nullptr, offsetof(ModelConditionInfo, m_turrets[1].m_turretArtPitch) },
-		{ "ShowSubObject", parseShowHideSubObject, (void*)nullptr, offsetof(ModelConditionInfo, m_hideShowVec) },
-		{ "HideSubObject", parseShowHideSubObject, (void*)1, offsetof(ModelConditionInfo, m_hideShowVec) },
-		{ "WeaponFireFXBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponFireFXBoneName[0]) },
-		{ "WeaponRecoilBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponRecoilBoneName[0]) },
-		{ "WeaponMuzzleFlash", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponMuzzleFlashName[0]) },
-		{ "WeaponLaunchBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponProjectileLaunchBoneName[0]) },
-		{ "WeaponHideShowBone", parseWeaponBoneName, nullptr, offsetof(ModelConditionInfo, m_weaponProjectileHideShowName[0]) },
-		{ "Animation", parseAnimation, (void*)ANIM_NORMAL, offsetof(ModelConditionInfo, m_animations) },
-		{ "IdleAnimation", parseAnimation, (void*)ANIM_IDLE, offsetof(ModelConditionInfo, m_animations) },
-		{ "AnimationMode", INI::parseIndexList, TheAnimModeNames, offsetof(ModelConditionInfo, m_mode) },
-		{ "TransitionKey", parseLowercaseNameKey, nullptr, offsetof(ModelConditionInfo, m_transitionKey) },
-		{ "WaitForStateToFinishIfPossible", parseLowercaseNameKey, nullptr, offsetof(ModelConditionInfo, m_allowToFinishKey) },
-		{ "Flags", INI::parseBitString32, ACBitsNames, offsetof(ModelConditionInfo, m_flags) },
-		{ "ParticleSysBone", parseParticleSysBone, nullptr, 0 },
-		{ "AnimationSpeedFactorRange", parseRealRange, nullptr, 0 },
-		{ nullptr, nullptr, nullptr, 0 }
-	};
+	const FieldParse* myFieldParse = s_conditionStateFieldParse;
 
 	ModelConditionInfo info;
 	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
@@ -1497,7 +1505,16 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 		case PARSE_TRANSITION:
 		{
 			AsciiString firstNm = ini->getNextToken();
-			AsciiString secondNm = ini->getNextToken();
+			const char* secondTok = ini->getNextTokenOrNull();
+			if (secondTok == nullptr)
+			{
+				// bfme-native: RotWK "TransitionState = TRANS_IdleToDying" holds animations for a
+				// named transition (used by AnimationState scripts); kept for later, not applied yet.
+				W3DModelDrawModuleData scratch;
+				parseBfmeAnimationState(ini, &scratch, nullptr, (const void*)2);
+				return;
+			}
+			AsciiString secondNm = secondTok;
 			firstNm.toLower();
 			secondNm.toLower();
 			NameKeyType firstKey = NAMEKEY(firstNm);
@@ -1700,6 +1717,174 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	}
 }
 
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK W3DScriptedModelDraw animation states (game.dat 0x004c8840 / table 0x00d99f60)
+//
+//   AnimationState = MOVING [more flags]       IdleAnimationState
+//     Animation = Label                          Animation
+//       AnimationName = KURhdrSpr_RUNA             AnimationName = ...
+//       AnimationMode = LOOP                       AnimationMode = ONCE
+//     End                                        End
+//     Flags = RANDOMSTART                      End
+//   End
+//-------------------------------------------------------------------------------------------------
+static const char* const TheBfmeAnimModeNames[] =
+{
+	"MANUAL", "LOOP", "ONCE", "LOOP_PINGPONG", "PLAY_TO_FRAME", "LOOP_BACKWARDS", "ONCE_BACKWARDS", nullptr
+};
+
+static RenderObjClass::AnimMode bfmeAnimModeToGenerals(Int i)
+{
+	switch (i)
+	{
+		case 0: return RenderObjClass::ANIM_MODE_MANUAL;
+		case 1: return RenderObjClass::ANIM_MODE_LOOP;
+		case 3: return RenderObjClass::ANIM_MODE_LOOP_PINGPONG;
+		case 5: return RenderObjClass::ANIM_MODE_LOOP_BACKWARDS;
+		case 6: return RenderObjClass::ANIM_MODE_ONCE_BACKWARDS;
+		default: return RenderObjClass::ANIM_MODE_ONCE;	// ONCE, PLAY_TO_FRAME
+	}
+}
+
+struct BfmeAnimBlock
+{
+	AsciiString name;
+	Int mode;
+	Real distance;
+	BfmeAnimBlock() : mode(-1), distance(0.0f) {}
+};
+
+static void parseBfmeAnimationBlock(INI* ini, void* instance, void* /*store*/, const void* userData)
+{
+	static const FieldParse fp[] =
+	{
+		{ "AnimationName", INI::parseAsciiString, nullptr, offsetof(BfmeAnimBlock, name) },
+		{ "AnimationMode", INI::parseIndexList, TheBfmeAnimModeNames, offsetof(BfmeAnimBlock, mode) },
+		{ "Distance", INI::parseReal, nullptr, offsetof(BfmeAnimBlock, distance) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	ModelConditionInfo* info = (ModelConditionInfo*)instance;
+	const Bool idle = userData != nullptr;
+	BfmeAnimBlock b;
+	ini->initFromINI(&b, fp);
+	b.name.toLower();
+	if (b.name.isNotEmpty() && !b.name.isNone())
+	{
+		W3DAnimationInfo animInfo(b.name, idle, b.distance);
+		info->m_animations.push_back(animInfo);
+		info->m_iniReadFlags |= idle ? (1 << GOT_IDLE_ANIMS) : (1 << GOT_NONIDLE_ANIMS);
+	}
+	if (b.mode >= 0)
+		info->m_mode = bfmeAnimModeToGenerals(b.mode);
+}
+
+static void parseBfmeIdleAnimationBlock(INI* ini, void* instance, void* store, const void* /*userData*/)
+{
+	parseBfmeAnimationBlock(ini, instance, store, (const void*)1);
+}
+
+void W3DModelDrawModuleData::parseBfmeAnimationState(INI* ini, void* instance, void* /*store*/, const void* userData)
+{
+	static const FieldParse animStateParse[] =
+	{
+		{ "Animation", parseBfmeAnimationBlock, nullptr, 0 },
+		{ "Flags", INI::parseBitString32, ACBitsNames, offsetof(ModelConditionInfo, m_flags) },
+		{ "ParticleSysBone", parseParticleSysBone, nullptr, 0 },
+		{ "AnimationSpeedFactorRange", parseRealRange, nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	static const FieldParse idleStateParse[] =
+	{
+		{ "Animation", parseBfmeIdleAnimationBlock, nullptr, 0 },
+		{ "Flags", INI::parseBitString32, ACBitsNames, offsetof(ModelConditionInfo, m_flags) },
+		{ "ParticleSysBone", parseParticleSysBone, nullptr, 0 },
+		{ "AnimationSpeedFactorRange", parseRealRange, nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+
+	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
+	const Int kind = (Int)(uintptr_t)userData;	// 0 AnimationState, 1 IdleAnimationState, 2 TransitionState
+	const Bool idle = kind == 1;
+
+	ModelConditionInfo info;
+	ModelConditionFlags conditionsYes;
+	if (kind == 0)
+		conditionsYes.parse(ini, nullptr);	// "AnimationState = MOVING ATTACKING" (empty = default)
+	info.m_conditionsYesVec.push_back(conditionsYes);
+	info.m_mode = idle ? RenderObjClass::ANIM_MODE_ONCE : RenderObjClass::ANIM_MODE_LOOP;
+
+	ini->initFromINI(&info, idle ? idleStateParse : animStateParse);
+	if (kind == 2)
+		return;
+
+	// the first state for a given flag set wins, as in RotWK; idle states share the empty set
+	if (!idle && doesStateExist(self->m_bfmeAnimStates, conditionsYes))
+		return;
+	if (idle)
+	{
+		for (ModelConditionInfo& existing : self->m_bfmeAnimStates)
+		{
+			if (!existing.m_conditionsYesVec.empty() && !existing.m_conditionsYesVec[0].any())
+			{
+				// several IdleAnimationStates: pooled, one is picked at random by the animation code
+				existing.m_animations.insert(existing.m_animations.end(), info.m_animations.begin(), info.m_animations.end());
+				return;
+			}
+		}
+	}
+	self->m_bfmeAnimStates.push_back(info);
+}
+
+
+//-------------------------------------------------------------------------------------------------
+/** bfme-native: RotWK "DefaultModelConditionState" / "ModelConditionState = FLAGS".
+	Same fields as a Generals ConditionState (unknown RotWK ones are tolerated), but with RotWK's
+	looser rules: states may come in any order, a later duplicate is ignored, a state without a
+	Model inherits the default state's model. */
+void W3DModelDrawModuleData::parseBfmeModelState(INI* ini, void *instance, void * /*store*/, const void* userData)
+{
+	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
+	const Bool isDefault = userData != nullptr;
+
+	ModelConditionInfo info;
+	ModelConditionFlags conditionsYes;
+	if (!isDefault)
+		conditionsYes.parse(ini, nullptr);
+	if (self->m_defaultState >= 0)
+	{
+		info = self->m_conditionStates.at(self->m_defaultState);
+		info.m_iniReadFlags |= (1<<ANIMS_COPIED_FROM_DEFAULT_STATE);
+	}
+	info.m_conditionsYesVec.clear();
+	info.m_conditionsYesVec.push_back(conditionsYes);
+
+	ini->initFromINI(&info, s_conditionStateFieldParse);
+
+	if (info.m_modelName.isNone())
+		info.m_modelName.clear();
+
+	info.m_validStuff &= ~ModelConditionInfo::HAS_PROJECTILE_BONES;
+	for (int wslot = 0; wslot < WEAPONSLOT_COUNT; ++wslot)
+		if (info.m_weaponProjectileLaunchBoneName[wslot].isNotEmpty())
+			info.m_validStuff |= ModelConditionInfo::HAS_PROJECTILE_BONES;
+
+	if (isDefault)
+	{
+		if (self->m_defaultState >= 0)
+		{
+			self->m_conditionStates[self->m_defaultState] = info;	// a later default replaces the earlier one
+			return;
+		}
+		self->m_defaultState = self->m_conditionStates.size();
+		self->m_conditionStates.push_back(info);
+		return;
+	}
+	if (doesStateExist(self->m_conditionStates, conditionsYes))
+		return;
+	self->m_conditionStates.push_back(info);
+}
+
 //-------------------------------------------------------------------------------------------------
 static Int countOnBits(UnsignedInt val)
 {
@@ -1718,7 +1903,28 @@ const ModelConditionInfo* W3DModelDrawModuleData::findBestInfo(const ModelCondit
 {
 	ModelConditionFlags bits = c;
 	bits.clear(m_ignoreConditionStates);
-	return m_conditionStateMap.findBestInfo(m_conditionStates, bits);
+	const ModelConditionInfo* model = m_conditionStateMap.findBestInfo(m_conditionStates, bits);
+	if (m_bfmeAnimStates.empty() || model == nullptr)
+		return model;
+
+	// bfme-native: pick the animation state independently and combine it with the model state
+	const ModelConditionInfo* anim = m_bfmeAnimStateMap.findBestInfo(m_bfmeAnimStates, bits);
+	if (anim == nullptr)
+		return model;
+	const std::pair<Int, Int> key((Int)(model - &m_conditionStates[0]), (Int)(anim - &m_bfmeAnimStates[0]));
+	std::map< std::pair<Int, Int>, ModelConditionInfo >::iterator it = m_bfmeCombinedStates.find(key);
+	if (it == m_bfmeCombinedStates.end())
+	{
+		ModelConditionInfo combined = *model;
+		combined.m_animations = anim->m_animations;
+		combined.m_mode = anim->m_mode;
+		combined.m_flags = anim->m_flags;
+		combined.m_iniReadFlags = anim->m_iniReadFlags;
+		combined.m_particleSysBones.insert(combined.m_particleSysBones.end(),
+			anim->m_particleSysBones.begin(), anim->m_particleSysBones.end());
+		it = m_bfmeCombinedStates.insert(std::make_pair(key, combined)).first;
+	}
+	return &it->second;
 }
 
 //-------------------------------------------------------------------------------------------------

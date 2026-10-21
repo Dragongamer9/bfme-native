@@ -29,6 +29,8 @@
 
 #pragma once
 
+#include <map>
+
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModelState.h"
 #include "Common/DrawModule.h"
@@ -287,6 +289,13 @@ public:
 	mutable SparseMatchFinder< ModelConditionInfo, ModelConditionFlags >
 																		m_conditionStateMap;
 	mutable TransitionMap							m_transitionMap;
+	// bfme-native: RotWK W3DScriptedModelDraw keeps models and animations apart.
+	// m_conditionStates holds the ModelConditionStates; animations are chosen independently
+	// from m_bfmeAnimStates and the two are combined on demand (see findBestInfo).
+	mutable ModelConditionVector			m_bfmeAnimStates;
+	mutable SparseMatchFinder< ModelConditionInfo, ModelConditionFlags >
+																		m_bfmeAnimStateMap;
+	mutable std::map< std::pair<Int, Int>, ModelConditionInfo > m_bfmeCombinedStates;
 	std::vector<AsciiString>					m_extraPublicBones;
 	AsciiString												m_trackFile;						///< if present, leaves tracks using this texture
 	AsciiString												m_attachToDrawableBone;
@@ -330,6 +339,8 @@ public:
 
 private:
 	static void parseConditionState( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
+	static void parseBfmeAnimationState( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );	// bfme-native
+	static void parseBfmeModelState( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );	// bfme-native
 
 public:
  	virtual void crc( Xfer *xfer ) override;
