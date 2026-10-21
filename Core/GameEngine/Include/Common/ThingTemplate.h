@@ -650,6 +650,7 @@ protected:
 
 	static void parseArmorTemplateSet( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	static void parseBfmeLocomotorSet( INI* ini, void *instance, void *store, const void* /*userData*/ );	// bfme-native
+	static void parseBfmeLevel( INI* ini, void *instance, void *store, const void* /*userData*/ );	// bfme-native
 	static void parseWeaponTemplateSet( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	static void parsePrerequisites( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseModuleName(INI* ini, void *instance, void* /*store*/, const void* userData);

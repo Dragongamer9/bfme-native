@@ -56,21 +56,34 @@ static Real scanTaggedReal(const char* tok, const char* tag)
 void HordeContainModuleData::parseRankInfo(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	// "RankInfo = RankNumber:1 UnitType:LAGondorFighter Position:X:15 Y:0 Position:X:15 Y:25 ..."
+	// (also seen: "Position:X: 0 Y:0" with the number split off, and "Leader 1 0" annotations)
+	std::vector<AsciiString> toks;
+	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	{
+		AsciiString t = tok;
+		if (!toks.empty() && toks.back().getLength() > 0 && toks.back().getCharAt(toks.back().getLength() - 1) == ':')
+			toks.back().concat(t);	// glue "X:" + "0"
+		else
+			toks.push_back(t);
+	}
 	std::vector<HordeRankInfo>* v = (std::vector<HordeRankInfo>*)store;
 	HordeRankInfo r;
 	r.m_rankNumber = 0;
-	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	for (size_t i = 0; i < toks.size(); ++i)
 	{
+		const char* tok = toks[i].str();
 		if (strnicmp(tok, "RankNumber:", 11) == 0)
-			r.m_rankNumber = INI::scanInt(tok + 11);
+			r.m_rankNumber = atoi(tok + 11);
 		else if (strnicmp(tok, "UnitType:", 9) == 0)
 			r.m_unitType = tok + 9;
 		else if (strnicmp(tok, "Position:", 9) == 0)
 		{
 			Coord2D c;
-			c.x = scanTaggedReal(tok + 9, "X:");
-			const char* y = ini->getNextTokenOrNull();
-			c.y = y ? scanTaggedReal(y, "Y:") : 0.0f;
+			const char* x = tok + 9;
+			c.x = (Real)atof(strnicmp(x, "X:", 2) == 0 ? x + 2 : x);
+			c.y = 0.0f;
+			if (i + 1 < toks.size() && strnicmp(toks[i + 1].str(), "Y:", 2) == 0)
+				c.y = (Real)atof(toks[++i].str() + 2);
 			r.m_positions.push_back(c);
 		}
 	}

@@ -51,6 +51,7 @@ enum SlowDeathPhaseType CPP_11(: Int)
 	SDPHASE_MIDPOINT,
 	SDPHASE_FINAL,
 
+	SD_PHASE_HIT_GROUND,	// bfme-native: RotWK (a flung corpse lands)
 	SD_PHASE_COUNT
 };
 
@@ -60,6 +61,7 @@ static const char *const TheSlowDeathPhaseNames[] =
 	"INITIAL",
 	"MIDPOINT",
 	"FINAL",
+	"HIT_GROUND",
 
 	nullptr
 };
