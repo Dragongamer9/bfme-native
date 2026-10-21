@@ -1,0 +1,7 @@
+# A computer-controlled Legolas uses Hawk Strike by himself (AutoAbilityBehavior) once it has recharged
+1    spawn RohanLegolas player2 1100 1100 180
+1400 spawn IsengardFighter player1 900 1100 0
+1400 spawn IsengardFighter player1 920 1120 0
+1405 summary
+1600 summary
+1601 quit
