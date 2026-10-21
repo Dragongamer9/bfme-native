@@ -24,6 +24,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
 #include "GameLogic/AI.h"
+#include "GameLogic/AIPathfind.h"
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -137,6 +138,34 @@ void run(const TestCmd& c)
 				printf("[BFMETEST] spawned %s #%u for %s at %.0f %.0f\n", t->getName().str(), o->getID(), c.args[2].c_str(), pos.x, pos.y);
 			}
 		}
+	}
+	else if (op == "build" && c.args.size() >= 5)
+	{
+		// build TEMPLATE PLAYER X Y : place a structure as a fresh construction site
+		const ThingTemplate* t = TheThingFactory->findTemplate(c.args[1].c_str());
+		Player* p = findPlayer(c.args[2]);
+		if (t == nullptr || p == nullptr)
+			return;
+		Object* o = TheThingFactory->newObject(t, p->getDefaultTeam(), MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION));
+		Coord3D pos;
+		pos.x = (Real)atof(c.args[3].c_str());
+		pos.y = (Real)atof(c.args[4].c_str());
+		pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);
+		o->setPosition(&pos);
+		TheAI->pathfinder()->addObjectToPathfindMap(o);
+		p->onStructureCreated(o, o);
+		o->setConstructionPercent(0.0f);
+		BodyModuleInterface* body = o->getBodyModule();
+		if (body)
+			body->internalChangeHealth(-body->getHealth() + 1.0f);
+		printf("[BFMETEST] build %s #%u for %s (build time %d frames)\n", t->getName().str(), o->getID(), c.args[2].c_str(), t->calcTimeToBuild(p));
+	}
+	else if (op == "construction")
+	{
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+			if (o->isKindOf(KINDOF_STRUCTURE))
+				printf("[BFMETEST] construction #%u %s %.0f%% underConstruction=%d hp=%.0f\n", o->getID(), o->getTemplate()->getName().str(),
+					o->getConstructionPercent(), (int)o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION), o->getBodyModule() ? o->getBodyModule()->getHealth() : 0.0f);
 	}
 	else if (op == "attack" && c.args.size() >= 3)
 	{

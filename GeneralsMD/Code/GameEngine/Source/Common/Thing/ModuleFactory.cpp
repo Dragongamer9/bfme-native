@@ -507,6 +507,7 @@ void ModuleFactory::init()
 	addModule( PassiveAreaEffectBehavior );	// bfme-native
 	addModule( LargeGroupBonusUpdate );	// bfme-native
 	addModule( HordeMemberCollide );	// bfme-native
+	addModule( GettingBuiltBehavior );	// bfme-native
 	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("RespawnBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO hero respawn
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("HorseHordeContain"), HordeContain::getInterfaceMask() );
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("CitadelSlaughterHordeContain"), HordeContain::getInterfaceMask() );
