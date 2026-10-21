@@ -1,0 +1,11 @@
+# Farms earn money once built; two farms crowded together share their land
+1    build GondorFarm player1 800 1000
+1    build GondorFarm player1 830 1000
+1    build GondorFarm player2 1800 1000
+2    money
+2    construction
+1200 construction
+1200 money
+2400 money
+3600 money
+3601 quit
