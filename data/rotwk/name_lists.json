@@ -1,0 +1,3984 @@
+[
+ {
+  "va": 12520200,
+  "names": [
+   "CONTROL"
+  ],
+  "used_by": [
+   "?.Category"
+  ],
+  "generals_array": null,
+  "added": [
+   "CONTROL"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 12520968,
+  "names": [
+   "DOWN"
+  ],
+  "used_by": [
+   "?.Transition"
+  ],
+  "generals_array": null,
+  "added": [
+   "DOWN"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 12521000,
+  "names": [
+   "NONE"
+  ],
+  "used_by": [
+   "?.Modifiers"
+  ],
+  "generals_array": null,
+  "added": [],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 12675368,
+  "names": [
+   "PRIMARY"
+  ],
+  "used_by": [
+   "ObjectCreationNugget.WeaponSlot",
+   "CommandButton.WeaponSlot",
+   "CommandButton.WeaponSlotToggle1",
+   "CommandButton.WeaponSlotToggle2",
+   "CommandButton.WeaponSlotToggle3",
+   "AssistedTargetingUpdateModuleData.AssistingWeaponSlot",
+   "?.LockWeaponSlot",
+   "DemoTrapUpdateModuleData.DetonationWeaponSlot",
+   "DemoTrapUpdateModuleData.ProximityModeWeaponSlot",
+   "DemoTrapUpdateModuleData.ManualModeWeaponSlot",
+   "?.RiderlessWeaponSlot",
+   "?.LockWeaponSlot"
+  ],
+  "generals_array": null,
+  "added": [],
+  "removed": [
+   "SECONDARY",
+   "TERTIARY"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 12691088,
+  "names": [
+   "NONE",
+   "FORTRESS",
+   "ARMORY",
+   "RESOURCE",
+   "BARRACKS"
+  ],
+  "used_by": [
+   "?.Type"
+  ],
+  "generals_array": null,
+  "added": [
+   "FORTRESS",
+   "ARMORY",
+   "RESOURCE",
+   "BARRACKS"
+  ],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 12728400,
+  "names": [
+   "SLIDE_RIGHT"
+  ],
+  "used_by": [
+   "ControlBarSchemeManager.Animation"
+  ],
+  "generals_array": null,
+  "added": [
+   "SLIDE_RIGHT"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 12761744,
+  "names": [
+   "NONE"
+  ],
+  "used_by": [
+   "CommandButton.ButtonBorderType"
+  ],
+  "generals_array": null,
+  "added": [],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 12768736,
+  "names": [
+   "DO_NOT_USE_THIS_TYPE",
+   "Healing",
+   "LeaderShip",
+   "GloriousCharge",
+   "Dominate",
+   "Cursed",
+   "Buff",
+   "Debuff",
+   "Poison"
+  ],
+  "used_by": [
+   "?.BuffType"
+  ],
+  "generals_array": null,
+  "added": [
+   "DO_NOT_USE_THIS_TYPE",
+   "Healing",
+   "LeaderShip",
+   "GloriousCharge",
+   "Dominate",
+   "Cursed",
+   "Buff",
+   "Debuff",
+   "Poison"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 12786260,
+  "names": [
+   "NONE",
+   "ADDITIVE",
+   "ADDITIVE_ALPHA_TEST",
+   "ALPHA",
+   "ALPHA_TEST",
+   "MULTIPLY",
+   "ADDITIVE_NO_DEPTH_TEST",
+   "ALPHA_NO_DEPTH_TEST",
+   "W3D_DIFFUSE",
+   "W3D_ALPHA",
+   "W3D_EMISSIVE"
+  ],
+  "used_by": [
+   "?.Shader1",
+   "?.Shader2",
+   "?.Shader3"
+  ],
+  "generals_array": "ParticleShaderTypeNames",
+  "added": [
+   "ADDITIVE_ALPHA_TEST",
+   "ADDITIVE_NO_DEPTH_TEST",
+   "ALPHA_NO_DEPTH_TEST",
+   "W3D_DIFFUSE",
+   "W3D_ALPHA",
+   "W3D_EMISSIVE"
+  ],
+  "removed": [],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 12786408,
+  "names": [
+   "NONE",
+   "ULTRA_HIGH_ONLY",
+   "HIGH_OR_ABOVE",
+   "MEDIUM_OR_ABOVE",
+   "LOW_OR_ABOVE",
+   "VERY_LOW_OR_ABOVE",
+   "ALWAYS_RENDER"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.MinParticlePriority",
+   "StaticGameLODInfo.MinParticleSkipPriority"
+  ],
+  "generals_array": "ParticlePriorityNames",
+  "added": [
+   "ULTRA_HIGH_ONLY",
+   "HIGH_OR_ABOVE",
+   "MEDIUM_OR_ABOVE",
+   "LOW_OR_ABOVE",
+   "VERY_LOW_OR_ABOVE"
+  ],
+  "removed": [
+   "WEAPON_EXPLOSION",
+   "SCORCHMARK",
+   "DUST_TRAIL",
+   "BUILDUP",
+   "DEBRIS_TRAIL",
+   "UNIT_DAMAGE_FX",
+   "DEATH_EXPLOSION",
+   "SEMI_CONSTANT",
+   "CONSTANT",
+   "WEAPON_TRAIL",
+   "AREA_EFFECT",
+   "CRITICAL"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 12786440,
+  "names": [
+   "NONE",
+   "Unused",
+   "PingPong",
+   "Circular"
+  ],
+  "used_by": [
+   "ParticleSystemTemplate.WindMotion"
+  ],
+  "generals_array": "WindMotionNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 12786460,
+  "names": [
+   "NONE",
+   "ROTATION_OFF",
+   "ROTATE_X",
+   "ROTATE_Y",
+   "ROTATE_Z",
+   "ROTATE_V"
+  ],
+  "used_by": [
+   "?.Rotation",
+   "ParticleSystemTemplate.Rotation"
+  ],
+  "generals_array": null,
+  "added": [
+   "ROTATION_OFF",
+   "ROTATE_X",
+   "ROTATE_Y",
+   "ROTATE_Z",
+   "ROTATE_V"
+  ],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 13154128,
+  "names": [
+   "TITLE"
+  ],
+  "used_by": [
+   "CreditsManager.Style"
+  ],
+  "generals_array": null,
+  "added": [
+   "TITLE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 13157620,
+  "names": [
+   "TACTICAL",
+   "WORLD"
+  ],
+  "used_by": [
+   "?.Type"
+  ],
+  "generals_array": null,
+  "added": [
+   "TACTICAL"
+  ],
+  "removed": [
+   "UI",
+   "SHROUDED",
+   "GLOBAL",
+   "VOICE",
+   "PLAYER",
+   "ALLIES",
+   "ENEMIES",
+   "EVERYONE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 13157796,
+  "names": [
+   "THIS_TERRIORITY",
+   "ALL_ARMIES"
+  ],
+  "used_by": [
+   "?.StrengtheningRange"
+  ],
+  "generals_array": null,
+  "added": [
+   "THIS_TERRIORITY",
+   "ALL_ARMIES"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14262008,
+  "names": [
+   "MANUAL",
+   "LOOP",
+   "ONCE",
+   "LOOP_PINGPONG",
+   "PLAY_TO_FRAME",
+   "LOOP_BACKWARDS",
+   "ONCE_BACKWARDS"
+  ],
+  "used_by": [
+   "?.AnimationMode"
+  ],
+  "generals_array": "TheAnimModeNames",
+  "added": [
+   "PLAY_TO_FRAME"
+  ],
+  "removed": [],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14262040,
+  "names": [
+   "RANDOMSTART",
+   "START_FRAME_FIRST",
+   "START_FRAME_LAST",
+   "ADJUST_HEIGHT_BY_CONSTRUCTION_PERCENT",
+   "MAINTAIN_FRAME_ACROSS_STATES",
+   "RESTART_ANIM_WHEN_COMPLETE",
+   "MAINTAIN_FRAME_ACROSS_STATES2",
+   "MAINTAIN_FRAME_ACROSS_STATES3",
+   "MAINTAIN_FRAME_ACROSS_STATES4"
+  ],
+  "used_by": [
+   "?.Flags"
+  ],
+  "generals_array": "ACBitsNames",
+  "added": [],
+  "removed": [
+   "PRISTINE_BONE_POS_IN_FINAL_FRAME"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14270688,
+  "names": [
+   "INI",
+   "STR"
+  ],
+  "used_by": [
+   "?.Loader"
+  ],
+  "generals_array": null,
+  "added": [
+   "INI",
+   "STR"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14277416,
+  "names": [
+   "LOWEST",
+   "LOW",
+   "NORMAL",
+   "HIGH",
+   "CRITICAL"
+  ],
+  "used_by": [
+   "AudioEventInfo.Priority"
+  ],
+  "generals_array": "theAudioPriorityNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14277440,
+  "names": [
+   "UI",
+   "WORLD",
+   "SHROUDED",
+   "GLOBAL",
+   "VOICE",
+   "PLAYER",
+   "ALLIES",
+   "ENEMIES",
+   "EVERYONE",
+   "FAKE",
+   "DEFAULT"
+  ],
+  "used_by": [
+   "AudioEventInfo.Type"
+  ],
+  "generals_array": "theSoundTypeNames",
+  "added": [
+   "FAKE",
+   "DEFAULT"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14277488,
+  "names": [
+   "LOOP",
+   "SEQUENTIAL",
+   "RANDOMSTART",
+   "INTERRUPT",
+   "FADE_ON_KILL",
+   "FADE_ON_START",
+   "\not used by INI files",
+   "PLAY_ONE"
+  ],
+  "used_by": [
+   "AudioEventInfo.Control",
+   "?.Control"
+  ],
+  "generals_array": "theAudioControlNames",
+  "added": [
+   "SEQUENTIAL",
+   "RANDOMSTART",
+   "FADE_ON_KILL",
+   "FADE_ON_START",
+   "\not used by INI files",
+   "PLAY_ONE"
+  ],
+  "removed": [
+   "RANDOM",
+   "ALL",
+   "POSTDELAY"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14277524,
+  "names": [
+   "SOUNDFX",
+   "VOICE",
+   "MUSIC",
+   "AMBIENT",
+   "MOVIE",
+   "NONE"
+  ],
+  "used_by": [
+   "AudioEventInfo.SubmixSlider"
+  ],
+  "generals_array": null,
+  "added": [
+   "SOUNDFX",
+   "VOICE",
+   "MUSIC",
+   "AMBIENT",
+   "MOVIE"
+  ],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14277804,
+  "names": [
+   "SHELL",
+   "GAME",
+   "PLANNING"
+  ],
+  "used_by": [
+   "?.UseableIn"
+  ],
+  "generals_array": "TheCommandUsableInNames",
+  "added": [
+   "PLANNING"
+  ],
+  "removed": [
+   "OBSERVER"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14278288,
+  "names": [
+   "ALPHA",
+   "ADDITIVE",
+   "SUBTRACT"
+  ],
+  "used_by": [
+   "?.Shader"
+  ],
+  "generals_array": "ParticleShaderTypeNames",
+  "added": [
+   "SUBTRACT"
+  ],
+  "removed": [
+   "NONE",
+   "ALPHA_TEST",
+   "MULTIPLY"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14278380,
+  "names": [
+   "TWO_LEGS",
+   "FOUR_WHEELS",
+   "HOVER",
+   "WINGS",
+   "FOUR_LEGS_HUGE",
+   "GIANT_BIRD",
+   "HORDE",
+   "HUGE_TWO_LEGS",
+   "TREADS",
+   "SHIP",
+   "OTHER"
+  ],
+  "used_by": [
+   "LocomotorTemplate.Appearance"
+  ],
+  "generals_array": "TheLocomotorAppearanceNames",
+  "added": [
+   "FOUR_LEGS_HUGE",
+   "GIANT_BIRD",
+   "HORDE",
+   "HUGE_TWO_LEGS",
+   "SHIP"
+  ],
+  "removed": [
+   "THRUST",
+   "CLIMBER",
+   "MOTORCYCLE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14278428,
+  "names": [
+   "NO_Z_MOTIVE_FORCE",
+   "SEA_LEVEL",
+   "SURFACE_RELATIVE_HEIGHT",
+   "ABSOLUTE_HEIGHT",
+   "FIXED_SURFACE_RELATIVE_HEIGHT",
+   "FIXED_ABSOLUTE_HEIGHT",
+   "FIXED_RELATIVE_TO_GROUND_AND_BUILDINGS",
+   "RELATIVE_TO_HIGHEST_LAYER",
+   "FLOATING_Z",
+   "SCALING_WALLS"
+  ],
+  "used_by": [
+   "LocomotorTemplate.ZAxisBehavior"
+  ],
+  "generals_array": "TheLocomotorBehaviorZNames",
+  "added": [
+   "FLOATING_Z",
+   "SCALING_WALLS"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14278604,
+  "names": [
+   "NO_FORMATION",
+   "CAVALRY1",
+   "CAVALRY2",
+   "CAVALRY3",
+   "MELEE1",
+   "MELEE2",
+   "MELEE3",
+   "RANGED1",
+   "RANGED2",
+   "RANGED3",
+   "ARTILLERY1",
+   "ARTILLERY2",
+   "ARTILLERY3",
+   "UNUSED"
+  ],
+  "used_by": [
+   "LocomotorTemplate.FormationPriority"
+  ],
+  "generals_array": null,
+  "added": [
+   "NO_FORMATION",
+   "CAVALRY1",
+   "CAVALRY2",
+   "CAVALRY3",
+   "MELEE1",
+   "MELEE2",
+   "MELEE3",
+   "RANGED1",
+   "RANGED2",
+   "RANGED3",
+   "ARTILLERY1",
+   "ARTILLERY2",
+   "ARTILLERY3",
+   "UNUSED"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14278664,
+  "names": [
+   "GROUND",
+   "WATER",
+   "CLIFF",
+   "AIR",
+   "RUBBLE",
+   "OBSTACLE",
+   "IMPASSABLE",
+   "DEEP_WATER",
+   "WALL_RAILING"
+  ],
+  "used_by": [
+   "LocomotorTemplate.Surfaces"
+  ],
+  "generals_array": "TheLocomotorSurfaceTypeNames",
+  "added": [
+   "OBSTACLE",
+   "IMPASSABLE",
+   "DEEP_WATER",
+   "WALL_RAILING"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14279496,
+  "names": [
+   "SHADOW_DECAL",
+   "SHADOW_VOLUME",
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_DYNAMIC_PROJECTION",
+   "SHADOW_DIRECTIONAL_PROJECTION",
+   "SHADOW_ALPHA_DECAL",
+   "SHADOW_ADDITIVE_DECAL",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "used_by": [
+   "ObjectCreationNugget.Shadow"
+  ],
+  "generals_array": "TheShadowNames",
+  "added": [
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "removed": [
+   "SHADOW_PROJECTION"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14279592,
+  "names": [
+   "LIKE_EXISTING",
+   "ON_GROUND_ALIGNED",
+   "SEND_IT_FLYING",
+   "SEND_IT_UP",
+   "SEND_IT_OUT",
+   "RANDOM_FORCE",
+   "FLOATING",
+   "INHERIT_VELOCITY",
+   "FORWARD_IMPACT",
+   "REVERSE_IMPACT",
+   "BUILDING_CHUNKS",
+   "FADE_AND_DIE_ORNAMENT",
+   "ANIMATED",
+   "ABSOLUTE_ANGLE",
+   "SPAWN_AROUND",
+   "RELATIVE_ANGLE",
+   "SPAWNED_MODELCONDITION_TRIGGER",
+   "USE_WATER_SURFACE",
+   "USE_CLIFF"
+  ],
+  "used_by": [
+   "ObjectCreationNugget.Disposition"
+  ],
+  "generals_array": "DebrisDispositionNames",
+  "added": [
+   "FORWARD_IMPACT",
+   "REVERSE_IMPACT",
+   "BUILDING_CHUNKS",
+   "FADE_AND_DIE_ORNAMENT",
+   "ANIMATED",
+   "ABSOLUTE_ANGLE",
+   "SPAWN_AROUND",
+   "RELATIVE_ANGLE",
+   "SPAWNED_MODELCONDITION_TRIGGER",
+   "USE_WATER_SURFACE",
+   "USE_CLIFF"
+  ],
+  "removed": [
+   "WHIRLING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280380,
+  "names": [
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "W3DModelDrawModuleData.MinLODRequired",
+   "StaticGameLODInfo.ModelLOD"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "UltraHigh",
+   "VeryLow",
+   "UltraHigh",
+   "VeryLow",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280396,
+  "names": [
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.AnimationDetail"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "VeryLow",
+   "UltraHigh",
+   "VeryLow",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280416,
+  "names": [
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.EffectsLOD"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "VeryLow",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280436,
+  "names": [
+   "Off",
+   "Low",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.DecalLOD"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "Off",
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280448,
+  "names": [
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Off",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.WaterLOD"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "UltraHigh",
+   "Off",
+   "UltraHigh",
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280464,
+  "names": [
+   "Off",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.ShadowLOD"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "Off",
+   "UltraHigh",
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14280508,
+  "names": [
+   "Low",
+   "Medium",
+   "High",
+   "UltraHigh",
+   "VeryLow",
+   "Low",
+   "Medium",
+   "High",
+   "VeryHigh",
+   "Low",
+   "High",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "used_by": [
+   "StaticGameLODInfo.ShaderLOD"
+  ],
+  "generals_array": "StaticGameLODNames",
+  "added": [
+   "UltraHigh",
+   "VeryLow",
+   "XX",
+   "P3",
+   "P4",
+   "K7"
+  ],
+  "removed": [
+   "Custom"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14282168,
+  "names": [
+   "ATTRIBUTE",
+   "APPEARANCE",
+   "INVALID"
+  ],
+  "used_by": [
+   "?.BlingType"
+  ],
+  "generals_array": null,
+  "added": [
+   "ATTRIBUTE",
+   "APPEARANCE"
+  ],
+  "removed": [
+   "APPEARS_AT_RALLY_POINT",
+   "PLACED_BY_PLAYER"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14282192,
+  "names": [
+   "Men",
+   "Elves",
+   "Dwarves",
+   "Isengard",
+   "Mordor",
+   "Wild",
+   "Angmar",
+   "Arnor",
+   "Neutral"
+  ],
+  "used_by": [
+   "?.DefaultFaction"
+  ],
+  "generals_array": "bfmeTerrainClassNames",
+  "added": [
+   "Men",
+   "Elves",
+   "Dwarves",
+   "Wild",
+   "Angmar",
+   "Arnor",
+   "Neutral"
+  ],
+  "removed": [
+   "NONE",
+   "NEXT",
+   "Region",
+   "Minas_Tirith",
+   "Osgiliath",
+   "Dead_Marshes",
+   "Edoras",
+   "Helm's_Deep",
+   "Paths_of_Dead",
+   "Fangorn_Forest",
+   "Misty_Mountains",
+   "Rivendell",
+   "Moria",
+   "The_Shire",
+   "Misc_Village",
+   "Misc_Grassland",
+   "Misc_Town",
+   "Misc_Woodland",
+   "Misc_Water",
+   "Type",
+   "Grass",
+   "Rock",
+   "Dirt",
+   "Snow",
+   "Cliff",
+   "Misc",
+   "DESERT_1",
+   "DESERT_2",
+   "DESERT_3",
+   "EASTERN_EUROPE_1",
+   "EASTERN_EUROPE_2",
+   "EASTERN_EUROPE_3",
+   "SWISS_1",
+   "SWISS_2",
+   "SWISS_3",
+   "SNOW_1",
+   "SNOW_2",
+   "SNOW_3",
+   "ASPHALT",
+   "CONCRETE",
+   "TRANSITION",
+   "SAND",
+   "WOOD",
+   "BLEND_EDGE",
+   "LOTR_NEW"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14283668,
+  "names": [
+   "Tactical",
+   "World",
+   "Shell"
+  ],
+  "used_by": [
+   "?.ViewsToFade"
+  ],
+  "generals_array": null,
+  "added": [
+   "Tactical",
+   "World",
+   "Shell"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14284136,
+  "names": [
+   "PRISTINE",
+   "DAMAGED",
+   "REALLYDAMAGED",
+   "RUBBLE"
+  ],
+  "used_by": [
+   "GlobalData.MovementPenaltyDamageState"
+  ],
+  "generals_array": "TheBodyDamageTypeNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14284180,
+  "names": [
+   "NONE",
+   "MIN",
+   "STRETCH_NO_CLOUDS",
+   "HALF_CLOUDS",
+   "NO_CLOUDS",
+   "STRETCH_CLOUDS",
+   "NO_WATER",
+   "MAX",
+   "AUTOMATIC",
+   "DISABLE"
+  ],
+  "used_by": [
+   "GlobalData.TerrainLOD"
+  ],
+  "generals_array": "TerrainLODNames",
+  "added": [
+   "STRETCH_NO_CLOUDS",
+   "HALF_CLOUDS",
+   "STRETCH_CLOUDS"
+  ],
+  "removed": [],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14284260,
+  "names": [
+   "REGULAR",
+   "VETERAN",
+   "ELITE",
+   "HEROIC"
+  ],
+  "used_by": [
+   "CrateTemplate.VeterancyLevel"
+  ],
+  "generals_array": "TheVeterancyNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14288132,
+  "names": [
+   "YES",
+   "STEALTHED",
+   "NO",
+   "NOTWHILEATTACKING",
+   "ATTACK_BUILDINGS"
+  ],
+  "used_by": [
+   "?.AutoAcquireEnemiesWhenIdle"
+  ],
+  "generals_array": "TheAutoAcquireEnemiesNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14288176,
+  "names": [
+   "SET_NORMAL",
+   "SET_NORMAL_UPGRADED",
+   "SET_FREEFALL",
+   "SET_WANDER",
+   "SET_PANIC",
+   "SET_TAXIING",
+   "SET_SUPERSONIC",
+   "SET_MOUNTED",
+   "SET_ENRAGED",
+   "SET_SCARED",
+   "SET_CONTAINED",
+   "SET_COMBO",
+   "SET_COMBO2",
+   "SET_COMBO3",
+   "SET_WALL_SCALING",
+   "SET_CHANGING_FIRINGARC",
+   "SET_BURNINGDEATH"
+  ],
+  "used_by": [
+   "?.ComboLocomotorSet",
+   "?.AttackLocomotorType",
+   "?.ReturnForAmmoLocomotorType",
+   "?.ForcedLocomotorSet"
+  ],
+  "generals_array": "TheLocomotorSetNames",
+  "added": [
+   "SET_MOUNTED",
+   "SET_ENRAGED",
+   "SET_SCARED",
+   "SET_CONTAINED",
+   "SET_COMBO",
+   "SET_COMBO2",
+   "SET_COMBO3",
+   "SET_WALL_SCALING",
+   "SET_CHANGING_FIRINGARC",
+   "SET_BURNINGDEATH"
+  ],
+  "removed": [
+   "SET_SLUGGISH"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14288328,
+  "names": [
+   "PLAYER",
+   "OBJECT"
+  ],
+  "used_by": [
+   "UpgradeTemplate.Type"
+  ],
+  "generals_array": "TheUpgradeTypeNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14291684,
+  "names": [
+   "PRIMARY",
+   "SECONDARY",
+   "TERTIARY",
+   "QUATERNARY",
+   "QUINARY"
+  ],
+  "used_by": [
+   "W3DModelDrawModuleData.ProjectileBoneFeedbackEnabledSlots"
+  ],
+  "generals_array": "TheWeaponSlotTypeNames",
+  "added": [
+   "QUATERNARY",
+   "QUINARY"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14291708,
+  "names": [
+   "PREFER_MOST_DAMAGE",
+   "PREFER_LONGEST_RANGE",
+   "PREFER_GRAB_OVER_DAMAGE",
+   "PREFER_LEAST_MOVEMENT",
+   "SELECT_AT_RANDOM",
+   "USE_WEAPONSET_DEFAULT_CRITERIA",
+   "FROM_PLAYER",
+   "FROM_SCRIPT",
+   "FROM_AI"
+  ],
+  "used_by": [
+   "WeaponTemplateSet.DefaultWeaponChoiceCritera"
+  ],
+  "generals_array": "TheCommandSourceMaskNames",
+  "added": [
+   "PREFER_MOST_DAMAGE",
+   "PREFER_LONGEST_RANGE",
+   "PREFER_GRAB_OVER_DAMAGE",
+   "PREFER_LEAST_MOVEMENT",
+   "SELECT_AT_RANDOM",
+   "USE_WEAPONSET_DEFAULT_CRITERIA"
+  ],
+  "removed": [
+   "FROM_DOZER",
+   "DEFAULT_SWITCH_WEAPON"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14292220,
+  "names": [
+   "NONE",
+   "CATAPULT_ROCK",
+   "TREBUCHET_ROCK"
+  ],
+  "used_by": [
+   "WeaponTemplate.FXTrigger"
+  ],
+  "generals_array": null,
+  "added": [
+   "CATAPULT_ROCK",
+   "TREBUCHET_ROCK"
+  ],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14292240,
+  "names": [
+   "SWORD_SLASH",
+   "WITCH_KING_MORGUL_BLADE",
+   "REFLECTED",
+   "GOOD_ARROW_PIERCE",
+   "EVIL_ARROW_PIERCE",
+   "SMALL_ROCK",
+   "BIG_ROCK",
+   "CLUBBING",
+   "FLAME",
+   "MAGIC",
+   "BALROG_SWORD",
+   "BALROG_WHIP",
+   "ELECTRIC",
+   "GIMLI_LEAP",
+   "STRUCTURAL",
+   "FLOOD_HORSE",
+   "BOLT",
+   "BOLT2",
+   "MAGIC2",
+   "MAGIC3",
+   "FIRE1",
+   "FIRE2",
+   "FIRE3",
+   "SPARKS1",
+   "SPARKS2",
+   "EARTH1",
+   "EARTH2",
+   "POISON",
+   "TORNADO",
+   "UNDEFINED",
+   "NECRO1",
+   "NECRO2",
+   "NECRO3",
+   "NECRO4",
+   "NECRO5",
+   "NECRO6"
+  ],
+  "used_by": [
+   "WeaponTemplate.DamageFXType",
+   "WeaponTemplate.DamageSubType"
+  ],
+  "generals_array": null,
+  "added": [
+   "SWORD_SLASH",
+   "WITCH_KING_MORGUL_BLADE",
+   "REFLECTED",
+   "GOOD_ARROW_PIERCE",
+   "EVIL_ARROW_PIERCE",
+   "SMALL_ROCK",
+   "BIG_ROCK",
+   "CLUBBING",
+   "FLAME",
+   "MAGIC",
+   "BALROG_SWORD",
+   "BALROG_WHIP",
+   "ELECTRIC",
+   "GIMLI_LEAP",
+   "STRUCTURAL",
+   "FLOOD_HORSE",
+   "BOLT",
+   "BOLT2",
+   "MAGIC2",
+   "MAGIC3",
+   "FIRE1",
+   "FIRE2",
+   "FIRE3",
+   "SPARKS1",
+   "SPARKS2",
+   "EARTH1",
+   "EARTH2",
+   "POISON",
+   "TORNADO",
+   "UNDEFINED",
+   "NECRO1",
+   "NECRO2",
+   "NECRO3",
+   "NECRO4",
+   "NECRO5",
+   "NECRO6"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14292392,
+  "names": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "HERO",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "used_by": [
+   "WeaponTemplate.DamageType"
+  ],
+  "generals_array": null,
+  "added": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "removed": [
+   "GARRISONED",
+   "HORDE",
+   "CONTINUOUS_FIRE_MEAN",
+   "CONTINUOUS_FIRE_FAST",
+   "NATIONALISM",
+   "PLAYER_UPGRADE",
+   "DRONE_SPOTTING",
+   "DEMORALIZED",
+   "DEMORALIZED_OBSOLETE",
+   "ENTHUSIASTIC",
+   "VETERAN",
+   "ELITE",
+   "BATTLEPLAN_BOMBARDMENT",
+   "BATTLEPLAN_HOLDTHELINE",
+   "BATTLEPLAN_SEARCHANDDESTROY",
+   "SUBLIMINAL",
+   "SOLO_HUMAN_EASY",
+   "SOLO_HUMAN_NORMAL",
+   "SOLO_HUMAN_HARD",
+   "SOLO_AI_EASY",
+   "SOLO_AI_NORMAL",
+   "SOLO_AI_HARD",
+   "TARGET_FAERIE_FIRE",
+   "FANATICISM",
+   "FRENZY_ONE",
+   "FRENZY_TWO",
+   "FRENZY_THREE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14292528,
+  "names": [
+   "NORMAL",
+   "NONE",
+   "CRUSHED",
+   "BURNED",
+   "EXPLODED",
+   "POISONED",
+   "TOPPLED",
+   "FLOODED",
+   "SUICIDED",
+   "LASERED",
+   "DETONATED",
+   "SPLATTED",
+   "POISONED_BETA",
+   "EXTRA_2",
+   "EXTRA_3",
+   "EXTRA_4",
+   "EXTRA_5",
+   "EXTRA_6",
+   "EXTRA_7",
+   "EXTRA_8",
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "used_by": [
+   "WeaponTemplate.DeathType"
+  ],
+  "generals_array": "TheDeathNames",
+  "added": [
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "removed": [
+   "POISONED_GAMMA"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14292668,
+  "names": [
+   "YES",
+   "NO",
+   "RETURN_TO_BASE"
+  ],
+  "used_by": [
+   "WeaponTemplate.AutoReloadsClip"
+  ],
+  "generals_array": "TheWeaponReloadNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14292684,
+  "names": [
+   "PER_SHOT",
+   "PER_ATTACK",
+   "PER_CLIP",
+   "PER_POSITION"
+  ],
+  "used_by": [
+   "WeaponTemplate.PreAttackType"
+  ],
+  "generals_array": "TheWeaponPrefireNames",
+  "added": [
+   "PER_POSITION"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14292704,
+  "names": [
+   "SELF",
+   "ALLIES",
+   "ENEMIES",
+   "NEUTRALS",
+   "SUICIDE",
+   "NOT_SIMILAR",
+   "NOT_AIRBORNE",
+   "PROJECTILES",
+   "SAME_HEIGHT_ONLY",
+   "MINES"
+  ],
+  "used_by": [
+   "WeaponTemplate.RadiusDamageAffects"
+  ],
+  "generals_array": "TheWeaponAffectsMaskNames",
+  "added": [
+   "PROJECTILES",
+   "SAME_HEIGHT_ONLY",
+   "MINES"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14292748,
+  "names": [
+   "ALLIES",
+   "ENEMIES",
+   "NEUTRAL",
+   "STRUCTURES",
+   "SHRUBBERY",
+   "PROJECTILES",
+   "WALLS",
+   "SMALL_MISSILES",
+   "BALLISTIC_MISSILES",
+   "CONTROLLED_STRUCTURES",
+   "MONSTERS"
+  ],
+  "used_by": [
+   "WeaponTemplate.ProjectileCollidesWith"
+  ],
+  "generals_array": "TheWeaponCollideMaskNames",
+  "added": [
+   "NEUTRAL",
+   "MONSTERS"
+  ],
+  "removed": [],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14294408,
+  "names": [
+   "NONE",
+   "ONCE",
+   "ONCE_BACKWARDS",
+   "LOOP",
+   "LOOP_BACKWARDS",
+   "PING_PONG",
+   "PING_PONG_BACKWARDS"
+  ],
+  "used_by": [
+   "Anim2DTemplate.AnimationMode"
+  ],
+  "generals_array": "Anim2DModeNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14301176,
+  "names": [
+   "SHADOW_DECAL",
+   "SHADOW_VOLUME",
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_DYNAMIC_PROJECTION",
+   "SHADOW_DIRECTIONAL_PROJECTION",
+   "SHADOW_ALPHA_DECAL",
+   "SHADOW_ADDITIVE_DECAL",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "used_by": [
+   "RadiusDecalTemplate.Style"
+  ],
+  "generals_array": "TheShadowNames",
+  "added": [
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "removed": [
+   "SHADOW_PROJECTION"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14301800,
+  "names": [
+   "NONE",
+   "MORNING",
+   "AFTERNOON",
+   "EVENING",
+   "NIGHT",
+   "INTERPOLATE"
+  ],
+  "used_by": [
+   "GlobalData.TimeOfDay"
+  ],
+  "generals_array": "TimeOfDayNames",
+  "added": [
+   "INTERPOLATE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14301828,
+  "names": [
+   "NORMAL",
+   "SNOWY"
+  ],
+  "used_by": [
+   "?.Weather",
+   "GlobalData.Weather"
+  ],
+  "generals_array": "WeatherNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14301840,
+  "names": [
+   "ARMY",
+   "BATTLE_MARKER",
+   "REGION_AWARD_DISPUTE",
+   "CLOUD",
+   "BUILDING",
+   "DEFAULT"
+  ],
+  "used_by": [
+   "?.ObjectType"
+  ],
+  "generals_array": null,
+  "added": [
+   "ARMY",
+   "BATTLE_MARKER",
+   "REGION_AWARD_DISPUTE",
+   "CLOUD",
+   "BUILDING",
+   "DEFAULT"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14301988,
+  "names": [
+   "INVALID",
+   "NOT_ON_RADAR",
+   "STRUCTURE",
+   "UNIT",
+   "LOCAL_UNIT_ONLY"
+  ],
+  "used_by": [
+   "ThingTemplate.RadarPriority"
+  ],
+  "generals_array": "RadarPriorityNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14302016,
+  "names": [
+   "SHADOW_DECAL",
+   "SHADOW_VOLUME",
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_DYNAMIC_PROJECTION",
+   "SHADOW_DIRECTIONAL_PROJECTION",
+   "SHADOW_ALPHA_DECAL",
+   "SHADOW_ADDITIVE_DECAL",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "used_by": [
+   "ThingTemplate.Shadow"
+  ],
+  "generals_array": "TheShadowNames",
+  "added": [
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "removed": [
+   "SHADOW_PROJECTION"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14302248,
+  "names": [
+   "INVALID",
+   "APPEARS_AT_RALLY_POINT",
+   "PLACED_BY_PLAYER"
+  ],
+  "used_by": [
+   "ThingTemplate.BuildCompletion"
+  ],
+  "generals_array": "BuildCompletionNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14302264,
+  "names": [
+   "Yes",
+   "Ignore_Prerequisites",
+   "No",
+   "Only_By_AI"
+  ],
+  "used_by": [
+   "ThingTemplate.Buildable"
+  ],
+  "generals_array": "BuildableStatusNames",
+  "added": [],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14302288,
+  "names": [
+   "NONE",
+   "STRUCTURE",
+   "UNIT",
+   "SHRUBBERY",
+   "MISC_MAN_MADE",
+   "MISC_NATURAL",
+   "DEBRIS",
+   "SYSTEM",
+   "AUDIO",
+   "TEST",
+   "FOR_REVIEW",
+   "ROAD",
+   "WAYPOINT",
+   "EMITTERS",
+   "SCORCH",
+   "OBSOLETE"
+  ],
+  "used_by": [
+   "ThingTemplate.EditorSorting"
+  ],
+  "generals_array": "EditorSortingNames",
+  "added": [
+   "UNIT",
+   "EMITTERS",
+   "SCORCH",
+   "OBSOLETE"
+  ],
+  "removed": [
+   "INFANTRY",
+   "VEHICLE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14302620,
+  "names": [
+   "SMALL",
+   "MEDIUM",
+   "LARGE"
+  ],
+  "used_by": [
+   "ThingTemplate.DeadCollideSize"
+  ],
+  "generals_array": null,
+  "added": [
+   "SMALL",
+   "MEDIUM",
+   "LARGE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14302640,
+  "names": [
+   "UNSPECIFIED",
+   "HORDE_UNIT",
+   "CHARACTER_UNIT",
+   "CAVALRY_UNIT",
+   "MEDIUM_MONSTER",
+   "LARGE_MONSTER",
+   "PROP",
+   "CIV_BUILDING",
+   "WALL_PIECE",
+   "FACTION_BUILDING",
+   "LANDMARK_BUILDING",
+   "GROUND_COVER",
+   "BUSH",
+   "TREE",
+   "MACHINE",
+   "BUFF"
+  ],
+  "used_by": [
+   "ThingTemplate.ThingClass"
+  ],
+  "generals_array": null,
+  "added": [
+   "UNSPECIFIED",
+   "HORDE_UNIT",
+   "CHARACTER_UNIT",
+   "CAVALRY_UNIT",
+   "MEDIUM_MONSTER",
+   "LARGE_MONSTER",
+   "PROP",
+   "CIV_BUILDING",
+   "WALL_PIECE",
+   "FACTION_BUILDING",
+   "LANDMARK_BUILDING",
+   "GROUND_COVER",
+   "BUSH",
+   "TREE",
+   "MACHINE",
+   "BUFF"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14306440,
+  "names": [
+   "NEED_TARGET_ENEMY_OBJECT",
+   "NEED_TARGET_NEUTRAL_OBJECT",
+   "NEED_TARGET_ALLY_OBJECT",
+   "NO_PLAY_UNIT_SPECIFIC_SOUND_FOR_AUTO_ABILITY",
+   "ALLOW_SHRUBBERY_TARGET",
+   "NEED_TARGET_POS",
+   "NEED_UPGRADE",
+   "NEED_SPECIAL_POWER_SCIENCE",
+   "OK_FOR_MULTI_SELECT",
+   "CONTEXTMODE_COMMAND",
+   "CHECK_LIKE",
+   "NEEDS_CASTLE_KINDOF",
+   "ATTACK_OBJECTS_POSITION",
+   "OPTION_ONE",
+   "OPTION_TWO",
+   "OPTION_THREE",
+   "NOT_QUEUEABLE",
+   "SINGLE_USE_COMMAND",
+   "---DO-NOT-USE---",
+   "SCRIPT_ONLY",
+   "OK_FOR_MULTI_EXECUTE",
+   "ALLOW_ROCK_TARGET",
+   "HIDE_WHILE_DISABLED",
+   "TOGGLE_IMAGE_ON_WEAPON",
+   "TOGGLE_IMAGE_ON_WEAPONSET",
+   "TOGGLE_IMAGE_ON_FORMATION",
+   "MOUNTED_ONLY",
+   "UNMOUNTED_ONLY",
+   "NONPRESSABLE",
+   "AUTO_ABILITY_TRIGGERED",
+   "ON_GROUND_ONLY",
+   "CANCELABLE"
+  ],
+  "used_by": [
+   "CommandButton.Options"
+  ],
+  "generals_array": "TheCommandOptionNames",
+  "added": [
+   "NO_PLAY_UNIT_SPECIFIC_SOUND_FOR_AUTO_ABILITY",
+   "NEEDS_CASTLE_KINDOF",
+   "OK_FOR_MULTI_EXECUTE",
+   "ALLOW_ROCK_TARGET",
+   "HIDE_WHILE_DISABLED",
+   "TOGGLE_IMAGE_ON_WEAPON",
+   "TOGGLE_IMAGE_ON_WEAPONSET",
+   "TOGGLE_IMAGE_ON_FORMATION",
+   "MOUNTED_ONLY",
+   "UNMOUNTED_ONLY",
+   "NONPRESSABLE",
+   "AUTO_ABILITY_TRIGGERED",
+   "ON_GROUND_ONLY",
+   "CANCELABLE"
+  ],
+  "removed": [
+   "NEED_TARGET_PRISONER",
+   "unused-reserved",
+   "ALLOW_MINE_TARGET",
+   "IGNORES_UNDERPOWERED",
+   "USES_MINE_CLEARING_WEAPONSET",
+   "CAN_USE_WAYPOINTS",
+   "MUST_BE_STOPPED"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14308644,
+  "names": [
+   "ATTACKING",
+   "MOVING",
+   "USING_ABILITY",
+   "FIRING_PRIMARY",
+   "FIRING_SECONDARY",
+   "FIRING_TERTIARY",
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "MOUNTED",
+   "AWAY_FROM_TREES",
+   "HORDEBRAIN_NOT_STEALTHED",
+   "PRIMARY_FORMATION",
+   "TAKING_DAMAGE"
+  ],
+  "used_by": [
+   "StealthUpdateModuleData.StealthForbiddenConditions"
+  ],
+  "generals_array": "TheStealthLevelNames",
+  "added": [
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "MOUNTED",
+   "AWAY_FROM_TREES",
+   "HORDEBRAIN_NOT_STEALTHED",
+   "PRIMARY_FORMATION",
+   "TAKING_DAMAGE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14310200,
+  "names": [
+   "NORMAL",
+   "NONE",
+   "CRUSHED",
+   "BURNED",
+   "EXPLODED",
+   "POISONED",
+   "TOPPLED",
+   "FLOODED",
+   "SUICIDED",
+   "LASERED",
+   "DETONATED",
+   "SPLATTED",
+   "POISONED_BETA",
+   "EXTRA_2",
+   "EXTRA_3",
+   "EXTRA_4",
+   "EXTRA_5",
+   "EXTRA_6",
+   "EXTRA_7",
+   "EXTRA_8",
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "used_by": [
+   "?.DeathType"
+  ],
+  "generals_array": "TheDeathNames",
+  "added": [
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "removed": [
+   "POISONED_GAMMA"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14310544,
+  "names": [
+   "SPECIAL_INVALID",
+   "SPECIAL_DAISY_CUTTER",
+   "SPECIAL_PARADROP_AMERICA",
+   "SPECIAL_CARPET_BOMB",
+   "SPECIAL_CLUSTER_MINES",
+   "SPECIAL_UP_FOR_GRABS_2",
+   "SPECIAL_UP_FOR_GRABS_3",
+   "SPECIAL_UP_FOR_GRABS_4",
+   "SPECIAL_NEUTRON_MISSILE",
+   "SPECIAL_UP_FOR_GRABS",
+   "SPECIAL_DEFECTOR",
+   "SPECIAL_TERROR_CELL",
+   "SPECIAL_AMBUSH",
+   "SPECIAL_BLACK_MARKET_NUKE",
+   "SPECIAL_ANTHRAX_BOMB",
+   "SPECIAL_SCUD_STORM",
+   "SPECIAL_PRINCE_OF_DOL_ARMOTH",
+   "SPECIAL_CRATE_DROP",
+   "SPECIAL_A10_THUNDERBOLT_STRIKE",
+   "SPECIAL_DETONATE_DIRTY_NUKE",
+   "SPECIAL_ARTILLERY_BARRAGE",
+   "SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES",
+   "SPECIAL_REMOTE_CHARGES",
+   "SPECIAL_TIMED_CHARGES",
+   "SPECIAL_HACKER_DISABLE_BUILDING",
+   "SPECIAL_TANKHUNTER_TNT_ATTACK",
+   "SPECIAL_BLACKLOTUS_CAPTURE_BUILDING",
+   "SPECIAL_MAN_THE_WALLS",
+   "SPECIAL_OSGILIATH_VETERANS",
+   "SPECIAL_INFANTRY_CAPTURE_BUILDING",
+   "SPECIAL_RADAR_VAN_SCAN",
+   "SPECIAL_SPY_DRONE",
+   "SPECIAL_DISGUISE_AS_VEHICLE",
+   "SPECIAL_REPAIR_VEHICLES",
+   "SPECIAL_PARTICLE_UPLINK_CANNON",
+   "SPECIAL_RANGER_AMBUSH",
+   "SPECIAL_CHANGE_BATTLE_PLANS",
+   "SPECIAL_CIA_INTELLIGENCE",
+   "SPECIAL_CLEANUP_AREA",
+   "SPECIAL_GRAB_PASSENGER",
+   "SPECIAL_GRAB_CHUNK",
+   "SPECIAL_SPAWN_ORCS",
+   "SPECIAL_CHARGE_ATTACK",
+   "SPECIAL_PART_THE_HEAVENS",
+   "SPECIAL_DEFLECT_PROJECTILES",
+   "SPECIAL_SIEGEDEPLOY",
+   "SPECIAL_STOP",
+   "SPECIAL_ARROW_STORM",
+   "SPECIAL_SWOOP_ATTACK",
+   "SPECIAL_LEVEL_ATTACK",
+   "SPECIAL_LEVEL_POSITION",
+   "SPECIAL_GIVE_UPGRADE",
+   "SPECIAL_ROUSING_SPEECH",
+   "SPECIAL_GENERAL_TARGETLESS",
+   "SPECIAL_GENERAL_TARGETLESS_TWO",
+   "SPECIAL_SHIELD_BUBBLE",
+   "SPECIAL_TOGGLE_MOUNTED",
+   "SPECIAL_WIZARD_BLAST",
+   "SPECIAL_GLORIOUS_CHARGE",
+   "SPECIAL_WOUND_ARROW",
+   "SPECIAL_HERO_MODE",
+   "SPECIAL_FLAMING_SWORD",
+   "SPECIAL_FIRE_WHIP",
+   "SPECIAL_BALROG_BREATH",
+   "SPECIAL_MTTROLL_BORED",
+   "SPECIAL_BALROG_WINGS",
+   "SPECIAL_BALROG_SCREAM",
+   "SPECIAL_TRAINING",
+   "SPECIAL_TELEKENETIC_PUSH",
+   "SPECIAL_SONIC_SONG",
+   "SPECIAL_REVEAL_MAP_AREA",
+   "SPECIAL_KNIFE_ATTACK",
+   "SPECIAL_SPAWN_OATHBREAKERS",
+   "SPECIAL_CALL_OF_THE_DEEP",
+   "SPECIAL_SKULL_TOTEM",
+   "SPECIAL_EXTINGUISH_FIRE",
+   "SPECIAL_TRIGGER_ATTRIBUTE_MODIFIER",
+   "SPECIAL_DOMINATE_ENEMY",
+   "SPECIAL_WORD_OF_POWER",
+   "SPECIAL_KNIFE_FIGHTER",
+   "SPECIAL_SPELL_BOOK_HEAL",
+   "SPECIAL_SPELL_BOOK_ELVEN_GIFTS",
+   "SPECIAL_SPELL_BOOK_SPAWN_LONE_TOWER",
+   "SPECIAL_SPELL_BOOK_ENSHROUDING_MIST",
+   "SPECIAL_SPELL_BOOK_RALLYING_CALL",
+   "SPECIAL_SPELL_BOOK_TOM_BOMBADIL",
+   "SPECIAL_SPELL_BOOK_HOBBIT_ALLIES",
+   "SPECIAL_SPELL_BOOK_REBUILD",
+   "SPECIAL_SPELL_BOOK_ARROW_VOLLEY_GOOD",
+   "SPECIAL_SPELL_BOOK_ELVEN_WOOD",
+   "SPECIAL_SPELL_BOOK_DWARVEN_RICHES",
+   "SPECIAL_SPELL_BOOK_MEN_OF_DALE_ALLIES",
+   "SPECIAL_SPELL_BOOK_CLOUD_BREAK",
+   "SPECIAL_SPELL_BOOK_ROHAN_ALLIES",
+   "SPECIAL_SPELL_BOOK_DUNEDAIN_ALLIES",
+   "SPECIAL_SPELL_BOOK_ENT_ALLIES",
+   "SPECIAL_SPELL_BOOK_EAGLE_ALLIES",
+   "SPECIAL_SPELL_BOOK_UNDERMINE",
+   "SPECIAL_SPELL_BOOK_BOMBARD",
+   "SPECIAL_SPELL_BOOK_ARMY_OF_THE_DEAD",
+   "SPECIAL_SPELL_BOOK_EARTHQUAKE",
+   "SPECIAL_SPELL_BOOK_FLOOD",
+   "SPECIAL_SPELL_BOOK_SUNFLARE",
+   "SPECIAL_SPELL_BOOK_CITADEL",
+   "SPECIAL_SPELL_BOOK_TAINT",
+   "SPECIAL_SPELL_BOOK_EYE_OF_SAURON",
+   "SPECIAL_SPELL_BOOK_BARRICADE",
+   "SPECIAL_SPELL_BOOK_WAR_CHANT",
+   "SPECIAL_SPELL_BOOK_PALANTIR_VISION",
+   "SPECIAL_SPELL_BOOK_CREBAIN",
+   "SPECIAL_SPELL_BOOK_CAVE_BATS",
+   "SPECIAL_SPELL_BOOK_INDUSTRY",
+   "SPECIAL_SPELL_BOOK_DEVASTATION",
+   "SPECIAL_SPELL_BOOK_UNTAMED_ALLEGIANCE",
+   "SPECIAL_SPELL_BOOK_ARROW_VOLLEY_EVIL",
+   "SPECIAL_SPELL_BOOK_WILD_MEN_ALLIES",
+   "SPECIAL_SPELL_BOOK_SCAVENGER",
+   "SPECIAL_SPELL_BOOK_CALL_THE_HORDE",
+   "SPECIAL_SPELL_BOOK_SPIDERLING_ALLIES",
+   "SPECIAL_SPELL_BOOK_DARKNESS",
+   "SPECIAL_SPELL_BOOK_AWAKEN_WYRM",
+   "SPECIAL_SPELL_BOOK_FREEZING_RAIN",
+   "SPECIAL_SPELL_BOOK_FUEL_THE_FIRES",
+   "SPECIAL_SPELL_BOOK_WATCHER_ALLY",
+   "SPECIAL_SPELL_BOOK_BALROG_ALLY",
+   "SPECIAL_SPELL_BOOK_RAIN_OF_FIRE",
+   "SPECIAL_SPELL_BOOK_DRAGON_ALLY",
+   "SPECIAL_SPELL_BOOK_DRAGON_STRIKE",
+   "SPECIAL_ATHELAS",
+   "SPECIAL_AT_VISIBLE_OBJECT",
+   "SPECIAL_SARUMAN_FIRE_BALL",
+   "SPECIAL_DISGUISE",
+   "SPECIAL_SMITE_CANCELDISGUISE",
+   "SPECIAL_ATTRIBUTEMOD_CANCELDISGUISE",
+   "SPECIAL_KINGS_FAVOR",
+   "SPECIAL_FAKE_LEADERSHIP_BUTTON",
+   "SPECIAL_GIVE_UPGRADE_NEAREST",
+   "SPECIAL_SCREECH",
+   "SPECIAL_REPAIR_STRUCTURE",
+   "SPECIAL_EAT",
+   "SPECIAL_GIMLI_LEAP",
+   "SPECIAL_HARVEST",
+   "SPECIAL_PERSONAL_FLOOD",
+   "SPECIAL_ELVEN_GRACE",
+   "SPECIAL_AT_VISIBLE_GROUNDED_OBJECT",
+   "SPECIAL_TELEPORT_TEAM_TO_CASTER",
+   "SPECIAL_SPAWN_TORNADO",
+   "SPECIAL_CURSE_ENEMY",
+   "SPECIAL_STORE_LIST_1",
+   "SPECIAL_STORE_LIST_2",
+   "SPECIAL_TELEPORT_LIST_TO_POSITION",
+   "SPECIAL_EVACUATE_GARRISON",
+   "SPECIAL_GENERAL_TARGETLESS_THREE",
+   "SPECIAL_SUMMON_ALLIES",
+   "SPECIAL_SPELL_BOOK_GENERAL_SUMMON",
+   "SPECIAL_SPELL_BOOK_BLIGHT",
+   "SPECIAL_SPELL_BOOK_SNOWBIND",
+   "SPECIAL_SPELL_BOOK_CHILL_WIND",
+   "SPECIAL_AOE_ATTACK_HEAL"
+  ],
+  "used_by": [
+   "SpecialPowerTemplate.Enum"
+  ],
+  "generals_array": null,
+  "added": [
+   "SPECIAL_INVALID",
+   "SPECIAL_DAISY_CUTTER",
+   "SPECIAL_PARADROP_AMERICA",
+   "SPECIAL_CARPET_BOMB",
+   "SPECIAL_CLUSTER_MINES",
+   "SPECIAL_UP_FOR_GRABS_2",
+   "SPECIAL_UP_FOR_GRABS_3",
+   "SPECIAL_UP_FOR_GRABS_4",
+   "SPECIAL_NEUTRON_MISSILE",
+   "SPECIAL_UP_FOR_GRABS",
+   "SPECIAL_DEFECTOR",
+   "SPECIAL_TERROR_CELL",
+   "SPECIAL_AMBUSH",
+   "SPECIAL_BLACK_MARKET_NUKE",
+   "SPECIAL_ANTHRAX_BOMB",
+   "SPECIAL_SCUD_STORM",
+   "SPECIAL_PRINCE_OF_DOL_ARMOTH",
+   "SPECIAL_CRATE_DROP",
+   "SPECIAL_A10_THUNDERBOLT_STRIKE",
+   "SPECIAL_DETONATE_DIRTY_NUKE",
+   "SPECIAL_ARTILLERY_BARRAGE",
+   "SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES",
+   "SPECIAL_REMOTE_CHARGES",
+   "SPECIAL_TIMED_CHARGES",
+   "SPECIAL_HACKER_DISABLE_BUILDING",
+   "SPECIAL_TANKHUNTER_TNT_ATTACK",
+   "SPECIAL_BLACKLOTUS_CAPTURE_BUILDING",
+   "SPECIAL_MAN_THE_WALLS",
+   "SPECIAL_OSGILIATH_VETERANS",
+   "SPECIAL_INFANTRY_CAPTURE_BUILDING",
+   "SPECIAL_RADAR_VAN_SCAN",
+   "SPECIAL_SPY_DRONE",
+   "SPECIAL_DISGUISE_AS_VEHICLE",
+   "SPECIAL_REPAIR_VEHICLES",
+   "SPECIAL_PARTICLE_UPLINK_CANNON",
+   "SPECIAL_RANGER_AMBUSH",
+   "SPECIAL_CHANGE_BATTLE_PLANS",
+   "SPECIAL_CIA_INTELLIGENCE",
+   "SPECIAL_CLEANUP_AREA",
+   "SPECIAL_GRAB_PASSENGER",
+   "SPECIAL_GRAB_CHUNK",
+   "SPECIAL_SPAWN_ORCS",
+   "SPECIAL_CHARGE_ATTACK",
+   "SPECIAL_PART_THE_HEAVENS",
+   "SPECIAL_DEFLECT_PROJECTILES",
+   "SPECIAL_SIEGEDEPLOY",
+   "SPECIAL_STOP",
+   "SPECIAL_ARROW_STORM",
+   "SPECIAL_SWOOP_ATTACK",
+   "SPECIAL_LEVEL_ATTACK",
+   "SPECIAL_LEVEL_POSITION",
+   "SPECIAL_GIVE_UPGRADE",
+   "SPECIAL_ROUSING_SPEECH",
+   "SPECIAL_GENERAL_TARGETLESS",
+   "SPECIAL_GENERAL_TARGETLESS_TWO",
+   "SPECIAL_SHIELD_BUBBLE",
+   "SPECIAL_TOGGLE_MOUNTED",
+   "SPECIAL_WIZARD_BLAST",
+   "SPECIAL_GLORIOUS_CHARGE",
+   "SPECIAL_WOUND_ARROW",
+   "SPECIAL_HERO_MODE",
+   "SPECIAL_FLAMING_SWORD",
+   "SPECIAL_FIRE_WHIP",
+   "SPECIAL_BALROG_BREATH",
+   "SPECIAL_MTTROLL_BORED",
+   "SPECIAL_BALROG_WINGS",
+   "SPECIAL_BALROG_SCREAM",
+   "SPECIAL_TRAINING",
+   "SPECIAL_TELEKENETIC_PUSH",
+   "SPECIAL_SONIC_SONG",
+   "SPECIAL_REVEAL_MAP_AREA",
+   "SPECIAL_KNIFE_ATTACK",
+   "SPECIAL_SPAWN_OATHBREAKERS",
+   "SPECIAL_CALL_OF_THE_DEEP",
+   "SPECIAL_SKULL_TOTEM",
+   "SPECIAL_EXTINGUISH_FIRE",
+   "SPECIAL_TRIGGER_ATTRIBUTE_MODIFIER",
+   "SPECIAL_DOMINATE_ENEMY",
+   "SPECIAL_WORD_OF_POWER",
+   "SPECIAL_KNIFE_FIGHTER",
+   "SPECIAL_SPELL_BOOK_HEAL",
+   "SPECIAL_SPELL_BOOK_ELVEN_GIFTS",
+   "SPECIAL_SPELL_BOOK_SPAWN_LONE_TOWER",
+   "SPECIAL_SPELL_BOOK_ENSHROUDING_MIST",
+   "SPECIAL_SPELL_BOOK_RALLYING_CALL",
+   "SPECIAL_SPELL_BOOK_TOM_BOMBADIL",
+   "SPECIAL_SPELL_BOOK_HOBBIT_ALLIES",
+   "SPECIAL_SPELL_BOOK_REBUILD",
+   "SPECIAL_SPELL_BOOK_ARROW_VOLLEY_GOOD",
+   "SPECIAL_SPELL_BOOK_ELVEN_WOOD",
+   "SPECIAL_SPELL_BOOK_DWARVEN_RICHES",
+   "SPECIAL_SPELL_BOOK_MEN_OF_DALE_ALLIES",
+   "SPECIAL_SPELL_BOOK_CLOUD_BREAK",
+   "SPECIAL_SPELL_BOOK_ROHAN_ALLIES",
+   "SPECIAL_SPELL_BOOK_DUNEDAIN_ALLIES",
+   "SPECIAL_SPELL_BOOK_ENT_ALLIES",
+   "SPECIAL_SPELL_BOOK_EAGLE_ALLIES",
+   "SPECIAL_SPELL_BOOK_UNDERMINE",
+   "SPECIAL_SPELL_BOOK_BOMBARD",
+   "SPECIAL_SPELL_BOOK_ARMY_OF_THE_DEAD",
+   "SPECIAL_SPELL_BOOK_EARTHQUAKE",
+   "SPECIAL_SPELL_BOOK_FLOOD",
+   "SPECIAL_SPELL_BOOK_SUNFLARE",
+   "SPECIAL_SPELL_BOOK_CITADEL",
+   "SPECIAL_SPELL_BOOK_TAINT",
+   "SPECIAL_SPELL_BOOK_EYE_OF_SAURON",
+   "SPECIAL_SPELL_BOOK_BARRICADE",
+   "SPECIAL_SPELL_BOOK_WAR_CHANT",
+   "SPECIAL_SPELL_BOOK_PALANTIR_VISION",
+   "SPECIAL_SPELL_BOOK_CREBAIN",
+   "SPECIAL_SPELL_BOOK_CAVE_BATS",
+   "SPECIAL_SPELL_BOOK_INDUSTRY",
+   "SPECIAL_SPELL_BOOK_DEVASTATION",
+   "SPECIAL_SPELL_BOOK_UNTAMED_ALLEGIANCE",
+   "SPECIAL_SPELL_BOOK_ARROW_VOLLEY_EVIL",
+   "SPECIAL_SPELL_BOOK_WILD_MEN_ALLIES",
+   "SPECIAL_SPELL_BOOK_SCAVENGER",
+   "SPECIAL_SPELL_BOOK_CALL_THE_HORDE",
+   "SPECIAL_SPELL_BOOK_SPIDERLING_ALLIES",
+   "SPECIAL_SPELL_BOOK_DARKNESS",
+   "SPECIAL_SPELL_BOOK_AWAKEN_WYRM",
+   "SPECIAL_SPELL_BOOK_FREEZING_RAIN",
+   "SPECIAL_SPELL_BOOK_FUEL_THE_FIRES",
+   "SPECIAL_SPELL_BOOK_WATCHER_ALLY",
+   "SPECIAL_SPELL_BOOK_BALROG_ALLY",
+   "SPECIAL_SPELL_BOOK_RAIN_OF_FIRE",
+   "SPECIAL_SPELL_BOOK_DRAGON_ALLY",
+   "SPECIAL_SPELL_BOOK_DRAGON_STRIKE",
+   "SPECIAL_ATHELAS",
+   "SPECIAL_AT_VISIBLE_OBJECT",
+   "SPECIAL_SARUMAN_FIRE_BALL",
+   "SPECIAL_DISGUISE",
+   "SPECIAL_SMITE_CANCELDISGUISE",
+   "SPECIAL_ATTRIBUTEMOD_CANCELDISGUISE",
+   "SPECIAL_KINGS_FAVOR",
+   "SPECIAL_FAKE_LEADERSHIP_BUTTON",
+   "SPECIAL_GIVE_UPGRADE_NEAREST",
+   "SPECIAL_SCREECH",
+   "SPECIAL_REPAIR_STRUCTURE",
+   "SPECIAL_EAT",
+   "SPECIAL_GIMLI_LEAP",
+   "SPECIAL_HARVEST",
+   "SPECIAL_PERSONAL_FLOOD",
+   "SPECIAL_ELVEN_GRACE",
+   "SPECIAL_AT_VISIBLE_GROUNDED_OBJECT",
+   "SPECIAL_TELEPORT_TEAM_TO_CASTER",
+   "SPECIAL_SPAWN_TORNADO",
+   "SPECIAL_CURSE_ENEMY",
+   "SPECIAL_STORE_LIST_1",
+   "SPECIAL_STORE_LIST_2",
+   "SPECIAL_TELEPORT_LIST_TO_POSITION",
+   "SPECIAL_EVACUATE_GARRISON",
+   "SPECIAL_GENERAL_TARGETLESS_THREE",
+   "SPECIAL_SUMMON_ALLIES",
+   "SPECIAL_SPELL_BOOK_GENERAL_SUMMON",
+   "SPECIAL_SPELL_BOOK_BLIGHT",
+   "SPECIAL_SPELL_BOOK_SNOWBIND",
+   "SPECIAL_SPELL_BOOK_CHILL_WIND",
+   "SPECIAL_AOE_ATTACK_HEAL"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14311220,
+  "names": [
+   "NEEDS_TARGET",
+   "WATER_OK",
+   "NEEDS_OBJECT_FILTER",
+   "LIMIT_DISTANCE",
+   "NO_FORBIDDEN_OBJECTS",
+   "RESPECT_RECHARGE_TIME_DISCOUNT",
+   "PATHABLE_ONLY",
+   "ATTRIBUTE_NONE",
+   "ARMOR",
+   "DAMAGE_ADD",
+   "DAMAGE_MULT",
+   "RESIST_FEAR",
+   "RESIST_TERROR",
+   "EXPERIENCE",
+   "RANGE",
+   "SPEED",
+   "CRUSH_DECELERATE",
+   "RESIST_KNOCKBACK",
+   "SPELL_DAMAGE",
+   "RECHARGE_TIME",
+   "PRODUCTION",
+   "HEALTH",
+   "HEALTH_MULT",
+   "VISION",
+   "BOUNTY_PERCENTAGE",
+   "MINIMUM_CRUSH_VELOCITY",
+   "AUTO_HEAL",
+   "SHROUD_CLEARING",
+   "RATE_OF_FIRE",
+   "DAMAGE_STRUCTURE_BOUNTY_ADD",
+   "CRUSHER_LEVEL",
+   "COMMAND_POINT_BONUS",
+   "CRUSHABLE_LEVEL",
+   "CRUSHED_DECELERATE",
+   "INVULNERABLE"
+  ],
+  "used_by": [
+   "SpecialPowerTemplate.Flags"
+  ],
+  "generals_array": "TheWeaponBonusFieldNames",
+  "added": [
+   "NEEDS_TARGET",
+   "WATER_OK",
+   "NEEDS_OBJECT_FILTER",
+   "LIMIT_DISTANCE",
+   "NO_FORBIDDEN_OBJECTS",
+   "RESPECT_RECHARGE_TIME_DISCOUNT",
+   "PATHABLE_ONLY",
+   "ATTRIBUTE_NONE",
+   "ARMOR",
+   "DAMAGE_ADD",
+   "DAMAGE_MULT",
+   "RESIST_FEAR",
+   "RESIST_TERROR",
+   "EXPERIENCE",
+   "SPEED",
+   "CRUSH_DECELERATE",
+   "RESIST_KNOCKBACK",
+   "SPELL_DAMAGE",
+   "RECHARGE_TIME",
+   "PRODUCTION",
+   "HEALTH",
+   "HEALTH_MULT",
+   "VISION",
+   "BOUNTY_PERCENTAGE",
+   "MINIMUM_CRUSH_VELOCITY",
+   "AUTO_HEAL",
+   "SHROUD_CLEARING",
+   "DAMAGE_STRUCTURE_BOUNTY_ADD",
+   "CRUSHER_LEVEL",
+   "COMMAND_POINT_BONUS",
+   "CRUSHABLE_LEVEL",
+   "CRUSHED_DECELERATE",
+   "INVULNERABLE"
+  ],
+  "removed": [
+   "DAMAGE",
+   "RADIUS",
+   "PRE_ATTACK"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14314048,
+  "names": [
+   "SHADOW_DECAL",
+   "SHADOW_VOLUME",
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_DYNAMIC_PROJECTION",
+   "SHADOW_DIRECTIONAL_PROJECTION",
+   "SHADOW_ALPHA_DECAL",
+   "SHADOW_ADDITIVE_DECAL",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "used_by": [
+   "?.Shadow"
+  ],
+  "generals_array": "TheShadowNames",
+  "added": [
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "removed": [
+   "SHADOW_PROJECTION"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14316676,
+  "names": [
+   "STEALTH",
+   "CAMOUFLAGE",
+   "AWAY_FROM_TREES",
+   "MOVING",
+   "FIRING_PRIMARY",
+   "FIRING_SECONDARY",
+   "FIRING_TERTIARY",
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "FIRING_ANY",
+   "TAKING_DAMAGE",
+   "USING_ABILITY",
+   "ALLOW_NEAR_TREES",
+   "DETECTED_BY_FRIENDLIES",
+   "DISCONTINUE_WHEN_REVEALED",
+   "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH",
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "used_by": [
+   "?.InvisibilityType"
+  ],
+  "generals_array": "TheStealthLevelNames",
+  "added": [
+   "STEALTH",
+   "CAMOUFLAGE",
+   "AWAY_FROM_TREES",
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "FIRING_ANY",
+   "TAKING_DAMAGE",
+   "ALLOW_NEAR_TREES",
+   "DETECTED_BY_FRIENDLIES",
+   "DISCONTINUE_WHEN_REVEALED",
+   "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH",
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "removed": [
+   "ATTACKING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14316684,
+  "names": [
+   "AWAY_FROM_TREES",
+   "MOVING",
+   "FIRING_PRIMARY",
+   "FIRING_SECONDARY",
+   "FIRING_TERTIARY",
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "FIRING_ANY",
+   "TAKING_DAMAGE",
+   "USING_ABILITY",
+   "ALLOW_NEAR_TREES",
+   "DETECTED_BY_FRIENDLIES",
+   "DISCONTINUE_WHEN_REVEALED",
+   "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH",
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "used_by": [
+   "?.ForbiddenConditions"
+  ],
+  "generals_array": "TheStealthLevelNames",
+  "added": [
+   "AWAY_FROM_TREES",
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "FIRING_ANY",
+   "TAKING_DAMAGE",
+   "ALLOW_NEAR_TREES",
+   "DETECTED_BY_FRIENDLIES",
+   "DISCONTINUE_WHEN_REVEALED",
+   "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH",
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "removed": [
+   "ATTACKING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14316724,
+  "names": [
+   "ALLOW_NEAR_TREES",
+   "DETECTED_BY_FRIENDLIES",
+   "DISCONTINUE_WHEN_REVEALED",
+   "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH",
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "used_by": [
+   "?.Options"
+  ],
+  "generals_array": null,
+  "added": [
+   "ALLOW_NEAR_TREES",
+   "DETECTED_BY_FRIENDLIES",
+   "DISCONTINUE_WHEN_REVEALED",
+   "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "removed": [
+   "FASTER",
+   "DOUBLE_SHOT",
+   "SELF_HEALING"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14343140,
+  "names": [
+   "AutoResolveUnit_Soldier",
+   "AutoResolveUnit_Archer",
+   "AutoResolveUnit_Pikemen",
+   "AutoResolveUnit_Cavalry",
+   "AutoResolveUnit_Monster",
+   "AutoResolveUnit_Hero",
+   "AutoResolveUnit_Fortress",
+   "AutoResolveUnit_Siege",
+   "AutoResolveUnit_Support",
+   "AutoResolveUnit_INVALID"
+  ],
+  "used_by": [
+   "ThingTemplate.AutoResolveUnitType"
+  ],
+  "generals_array": null,
+  "added": [
+   "AutoResolveUnit_Soldier",
+   "AutoResolveUnit_Archer",
+   "AutoResolveUnit_Pikemen",
+   "AutoResolveUnit_Cavalry",
+   "AutoResolveUnit_Monster",
+   "AutoResolveUnit_Hero",
+   "AutoResolveUnit_Fortress",
+   "AutoResolveUnit_Siege",
+   "AutoResolveUnit_Support",
+   "AutoResolveUnit_INVALID"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14344416,
+  "names": [
+   "MOUNTED",
+   "WEAPON_TOGGLE",
+   "MOVING"
+  ],
+  "used_by": [
+   "?.RequiredConditions",
+   "?.RejectedConditions"
+  ],
+  "generals_array": null,
+  "added": [
+   "MOUNTED",
+   "WEAPON_TOGGLE"
+  ],
+  "removed": [
+   "ATTACKING",
+   "USING_ABILITY",
+   "FIRING_PRIMARY",
+   "FIRING_SECONDARY",
+   "FIRING_TERTIARY"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14344808,
+  "names": [
+   "NEED_TARGET_ENEMY_OBJECT",
+   "NEED_TARGET_NEUTRAL_OBJECT",
+   "NEED_TARGET_ALLY_OBJECT",
+   "NO_PLAY_UNIT_SPECIFIC_SOUND_FOR_AUTO_ABILITY",
+   "ALLOW_SHRUBBERY_TARGET",
+   "NEED_TARGET_POS",
+   "NEED_UPGRADE",
+   "NEED_SPECIAL_POWER_SCIENCE",
+   "OK_FOR_MULTI_SELECT",
+   "CONTEXTMODE_COMMAND",
+   "CHECK_LIKE",
+   "NEEDS_CASTLE_KINDOF",
+   "ATTACK_OBJECTS_POSITION",
+   "OPTION_ONE",
+   "OPTION_TWO",
+   "OPTION_THREE",
+   "NOT_QUEUEABLE",
+   "SINGLE_USE_COMMAND",
+   "---DO-NOT-USE---",
+   "SCRIPT_ONLY",
+   "OK_FOR_MULTI_EXECUTE",
+   "ALLOW_ROCK_TARGET",
+   "HIDE_WHILE_DISABLED",
+   "TOGGLE_IMAGE_ON_WEAPON",
+   "TOGGLE_IMAGE_ON_WEAPONSET",
+   "TOGGLE_IMAGE_ON_FORMATION",
+   "MOUNTED_ONLY",
+   "UNMOUNTED_ONLY",
+   "NONPRESSABLE",
+   "AUTO_ABILITY_TRIGGERED",
+   "ON_GROUND_ONLY",
+   "CANCELABLE"
+  ],
+  "used_by": [
+   "?.Options"
+  ],
+  "generals_array": "TheCommandOptionNames",
+  "added": [
+   "NO_PLAY_UNIT_SPECIFIC_SOUND_FOR_AUTO_ABILITY",
+   "NEEDS_CASTLE_KINDOF",
+   "OK_FOR_MULTI_EXECUTE",
+   "ALLOW_ROCK_TARGET",
+   "HIDE_WHILE_DISABLED",
+   "TOGGLE_IMAGE_ON_WEAPON",
+   "TOGGLE_IMAGE_ON_WEAPONSET",
+   "TOGGLE_IMAGE_ON_FORMATION",
+   "MOUNTED_ONLY",
+   "UNMOUNTED_ONLY",
+   "NONPRESSABLE",
+   "AUTO_ABILITY_TRIGGERED",
+   "ON_GROUND_ONLY",
+   "CANCELABLE"
+  ],
+  "removed": [
+   "NEED_TARGET_PRISONER",
+   "unused-reserved",
+   "ALLOW_MINE_TARGET",
+   "IGNORES_UNDERPOWERED",
+   "USES_MINE_CLEARING_WEAPONSET",
+   "CAN_USE_WAYPOINTS",
+   "MUST_BE_STOPPED"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14349772,
+  "names": [
+   "NORMAL",
+   "BECOME_UNDEAD",
+   "SELF",
+   "BECOME_UNDEAD_ONCE"
+  ],
+  "used_by": [
+   "?.DamageTypeTriggersInstantly",
+   "?.DamageTypeTriggersForDuration"
+  ],
+  "generals_array": null,
+  "added": [
+   "NORMAL",
+   "BECOME_UNDEAD",
+   "BECOME_UNDEAD_ONCE"
+  ],
+  "removed": [
+   "ALLIES",
+   "ENEMIES",
+   "NEUTRALS",
+   "SUICIDE",
+   "NOT_SIMILAR",
+   "NOT_AIRBORNE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14350824,
+  "names": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "HERO",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "used_by": [
+   "FlammableUpdateModuleData.DamageType"
+  ],
+  "generals_array": null,
+  "added": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "removed": [
+   "GARRISONED",
+   "HORDE",
+   "CONTINUOUS_FIRE_MEAN",
+   "CONTINUOUS_FIRE_FAST",
+   "NATIONALISM",
+   "PLAYER_UPGRADE",
+   "DRONE_SPOTTING",
+   "DEMORALIZED",
+   "DEMORALIZED_OBSOLETE",
+   "ENTHUSIASTIC",
+   "VETERAN",
+   "ELITE",
+   "BATTLEPLAN_BOMBARDMENT",
+   "BATTLEPLAN_HOLDTHELINE",
+   "BATTLEPLAN_SEARCHANDDESTROY",
+   "SUBLIMINAL",
+   "SOLO_HUMAN_EASY",
+   "SOLO_HUMAN_NORMAL",
+   "SOLO_HUMAN_HARD",
+   "SOLO_AI_EASY",
+   "SOLO_AI_NORMAL",
+   "SOLO_AI_HARD",
+   "TARGET_FAERIE_FIRE",
+   "FANATICISM",
+   "FRENZY_ONE",
+   "FRENZY_TWO",
+   "FRENZY_THREE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14353900,
+  "names": [
+   "SAME_CURRENTHEALTH",
+   "PRESERVE_RATIO",
+   "ADD_CURRENT_HEALTH_TOO",
+   "ATTRIBUTE_NONE",
+   "ARMOR",
+   "DAMAGE_ADD",
+   "DAMAGE_MULT",
+   "RESIST_FEAR",
+   "RESIST_TERROR",
+   "EXPERIENCE",
+   "RANGE",
+   "SPEED",
+   "CRUSH_DECELERATE",
+   "RESIST_KNOCKBACK",
+   "SPELL_DAMAGE",
+   "RECHARGE_TIME",
+   "PRODUCTION",
+   "HEALTH",
+   "HEALTH_MULT",
+   "VISION",
+   "BOUNTY_PERCENTAGE",
+   "MINIMUM_CRUSH_VELOCITY",
+   "AUTO_HEAL",
+   "SHROUD_CLEARING",
+   "RATE_OF_FIRE",
+   "DAMAGE_STRUCTURE_BOUNTY_ADD",
+   "CRUSHER_LEVEL",
+   "COMMAND_POINT_BONUS",
+   "CRUSHABLE_LEVEL",
+   "CRUSHED_DECELERATE",
+   "INVULNERABLE"
+  ],
+  "used_by": [
+   "BattlePlanUpdateModuleData.StrategyCenterHoldTheLineMaxHealthChangeType"
+  ],
+  "generals_array": "TheMaxHealthChangeTypeNames",
+  "added": [
+   "ATTRIBUTE_NONE",
+   "ARMOR",
+   "DAMAGE_ADD",
+   "DAMAGE_MULT",
+   "RESIST_FEAR",
+   "RESIST_TERROR",
+   "EXPERIENCE",
+   "RANGE",
+   "SPEED",
+   "CRUSH_DECELERATE",
+   "RESIST_KNOCKBACK",
+   "SPELL_DAMAGE",
+   "RECHARGE_TIME",
+   "PRODUCTION",
+   "HEALTH",
+   "HEALTH_MULT",
+   "VISION",
+   "BOUNTY_PERCENTAGE",
+   "MINIMUM_CRUSH_VELOCITY",
+   "AUTO_HEAL",
+   "SHROUD_CLEARING",
+   "RATE_OF_FIRE",
+   "DAMAGE_STRUCTURE_BOUNTY_ADD",
+   "CRUSHER_LEVEL",
+   "COMMAND_POINT_BONUS",
+   "CRUSHABLE_LEVEL",
+   "CRUSHED_DECELERATE",
+   "INVULNERABLE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14354764,
+  "names": [
+   "MOUNTED",
+   "TAINT",
+   "ELVEN_WOOD"
+  ],
+  "used_by": [
+   "?.RequiredConditions"
+  ],
+  "generals_array": null,
+  "added": [
+   "MOUNTED",
+   "TAINT",
+   "ELVEN_WOOD"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14355820,
+  "names": [
+   "ATTACKING",
+   "MOVING",
+   "USING_ABILITY",
+   "FIRING_PRIMARY",
+   "FIRING_SECONDARY",
+   "FIRING_TERTIARY",
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "MOUNTED",
+   "AWAY_FROM_TREES",
+   "HORDEBRAIN_NOT_STEALTHED",
+   "PRIMARY_FORMATION",
+   "TAKING_DAMAGE"
+  ],
+  "used_by": [
+   "?.PersistantConditions"
+  ],
+  "generals_array": "TheStealthLevelNames",
+  "added": [
+   "FIRING_QUATERNARY",
+   "FIRING_QUINARY",
+   "MOUNTED",
+   "AWAY_FROM_TREES",
+   "HORDEBRAIN_NOT_STEALTHED",
+   "PRIMARY_FORMATION",
+   "TAKING_DAMAGE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14360572,
+  "names": [
+   "SAME_CURRENTHEALTH",
+   "PRESERVE_RATIO",
+   "ADD_CURRENT_HEALTH_TOO",
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "used_by": [
+   "MaxHealthUpgradeModuleData.ChangeType"
+  ],
+  "generals_array": "TheMaxHealthChangeTypeNames",
+  "added": [
+   "NONE",
+   "HOLD",
+   "KILL",
+   "SPAWN"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14362000,
+  "names": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "HERO",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "used_by": [
+   "?.DamageTypeToTrack"
+  ],
+  "generals_array": null,
+  "added": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "removed": [
+   "GARRISONED",
+   "HORDE",
+   "CONTINUOUS_FIRE_MEAN",
+   "CONTINUOUS_FIRE_FAST",
+   "NATIONALISM",
+   "PLAYER_UPGRADE",
+   "DRONE_SPOTTING",
+   "DEMORALIZED",
+   "DEMORALIZED_OBSOLETE",
+   "ENTHUSIASTIC",
+   "VETERAN",
+   "ELITE",
+   "BATTLEPLAN_BOMBARDMENT",
+   "BATTLEPLAN_HOLDTHELINE",
+   "BATTLEPLAN_SEARCHANDDESTROY",
+   "SUBLIMINAL",
+   "SOLO_HUMAN_EASY",
+   "SOLO_HUMAN_NORMAL",
+   "SOLO_HUMAN_HARD",
+   "SOLO_AI_EASY",
+   "SOLO_AI_NORMAL",
+   "SOLO_AI_HARD",
+   "TARGET_FAERIE_FIRE",
+   "FANATICISM",
+   "FRENZY_ONE",
+   "FRENZY_TWO",
+   "FRENZY_THREE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14362576,
+  "names": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "HERO",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "used_by": [
+   "?.DamageType",
+   "?.SpecialDamageType",
+   "?.SelfDamageType"
+  ],
+  "generals_array": null,
+  "added": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "removed": [
+   "GARRISONED",
+   "HORDE",
+   "CONTINUOUS_FIRE_MEAN",
+   "CONTINUOUS_FIRE_FAST",
+   "NATIONALISM",
+   "PLAYER_UPGRADE",
+   "DRONE_SPOTTING",
+   "DEMORALIZED",
+   "DEMORALIZED_OBSOLETE",
+   "ENTHUSIASTIC",
+   "VETERAN",
+   "ELITE",
+   "BATTLEPLAN_BOMBARDMENT",
+   "BATTLEPLAN_HOLDTHELINE",
+   "BATTLEPLAN_SEARCHANDDESTROY",
+   "SUBLIMINAL",
+   "SOLO_HUMAN_EASY",
+   "SOLO_HUMAN_NORMAL",
+   "SOLO_HUMAN_HARD",
+   "SOLO_AI_EASY",
+   "SOLO_AI_NORMAL",
+   "SOLO_AI_HARD",
+   "TARGET_FAERIE_FIRE",
+   "FANATICISM",
+   "FRENZY_ONE",
+   "FRENZY_TWO",
+   "FRENZY_THREE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14362712,
+  "names": [
+   "NORMAL",
+   "NONE",
+   "CRUSHED",
+   "BURNED",
+   "EXPLODED",
+   "POISONED",
+   "TOPPLED",
+   "FLOODED",
+   "SUICIDED",
+   "LASERED",
+   "DETONATED",
+   "SPLATTED",
+   "POISONED_BETA",
+   "EXTRA_2",
+   "EXTRA_3",
+   "EXTRA_4",
+   "EXTRA_5",
+   "EXTRA_6",
+   "EXTRA_7",
+   "EXTRA_8",
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "used_by": [
+   "?.DeathType",
+   "?.SpecialDeathType",
+   "?.SelfDeathType"
+  ],
+  "generals_array": "TheDeathNames",
+  "added": [
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "removed": [
+   "POISONED_GAMMA"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14365400,
+  "names": [
+   "CREATE_AT_EDGE_NEAR_SOURCE",
+   "CREATE_AT_EDGE_NEAR_TARGET",
+   "CREATE_AT_EDGE_NEAR_TARGET_AND_MOVE_TO_LOCATION",
+   "CREATE_AT_LOCATION",
+   "USE_OWNER_OBJECT",
+   "CREATE_ABOVE_LOCATION",
+   "CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
+   "CREATE_CLOSEST_TO_SPAWN_POINT",
+   "USE_SECONDARY_OBJECT_LOCATION"
+  ],
+  "used_by": [
+   "OCLSpecialPowerModuleData.CreateLocation"
+  ],
+  "generals_array": "TheOCLCreateLocTypeNames",
+  "added": [
+   "CREATE_AT_EDGE_NEAR_TARGET_AND_MOVE_TO_LOCATION",
+   "CREATE_CLOSEST_TO_SPAWN_POINT",
+   "USE_SECONDARY_OBJECT_LOCATION"
+  ],
+  "removed": [],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14367996,
+  "names": [
+   "MOUNTED"
+  ],
+  "used_by": [
+   "?.ForbiddenConditions"
+  ],
+  "generals_array": null,
+  "added": [
+   "MOUNTED"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14376080,
+  "names": [
+   "SWORD_SLASH",
+   "WITCH_KING_MORGUL_BLADE",
+   "REFLECTED",
+   "GOOD_ARROW_PIERCE",
+   "EVIL_ARROW_PIERCE",
+   "SMALL_ROCK",
+   "BIG_ROCK",
+   "CLUBBING",
+   "FLAME",
+   "MAGIC",
+   "BALROG_SWORD",
+   "BALROG_WHIP",
+   "ELECTRIC",
+   "GIMLI_LEAP",
+   "STRUCTURAL",
+   "FLOOD_HORSE",
+   "BOLT",
+   "BOLT2",
+   "MAGIC2",
+   "MAGIC3",
+   "FIRE1",
+   "FIRE2",
+   "FIRE3",
+   "SPARKS1",
+   "SPARKS2",
+   "EARTH1",
+   "EARTH2",
+   "POISON",
+   "TORNADO",
+   "UNDEFINED",
+   "NECRO1",
+   "NECRO2",
+   "NECRO3",
+   "NECRO4",
+   "NECRO5",
+   "NECRO6"
+  ],
+  "used_by": [
+   "?.DamageFXType"
+  ],
+  "generals_array": null,
+  "added": [
+   "SWORD_SLASH",
+   "WITCH_KING_MORGUL_BLADE",
+   "REFLECTED",
+   "GOOD_ARROW_PIERCE",
+   "EVIL_ARROW_PIERCE",
+   "SMALL_ROCK",
+   "BIG_ROCK",
+   "CLUBBING",
+   "FLAME",
+   "MAGIC",
+   "BALROG_SWORD",
+   "BALROG_WHIP",
+   "ELECTRIC",
+   "GIMLI_LEAP",
+   "STRUCTURAL",
+   "FLOOD_HORSE",
+   "BOLT",
+   "BOLT2",
+   "MAGIC2",
+   "MAGIC3",
+   "FIRE1",
+   "FIRE2",
+   "FIRE3",
+   "SPARKS1",
+   "SPARKS2",
+   "EARTH1",
+   "EARTH2",
+   "POISON",
+   "TORNADO",
+   "UNDEFINED",
+   "NECRO1",
+   "NECRO2",
+   "NECRO3",
+   "NECRO4",
+   "NECRO5",
+   "NECRO6"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14376232,
+  "names": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "HERO",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "used_by": [
+   "?.DamageType"
+  ],
+  "generals_array": null,
+  "added": [
+   "FORCE",
+   "CRUSH",
+   "SLASH",
+   "PIERCE",
+   "SIEGE",
+   "STRUCTURAL",
+   "FLAME",
+   "HEALING",
+   "UNRESISTABLE",
+   "WATER",
+   "PENALTY",
+   "FALLING",
+   "TOPPLING",
+   "REFLECTED",
+   "PASSENGER",
+   "MAGIC",
+   "CHOP",
+   "SPECIALIST",
+   "URUK",
+   "HERO_RANGED",
+   "FLY_INTO",
+   "UNDEFINED",
+   "LOGICAL_FIRE",
+   "CAVALRY",
+   "CAVALRY_RANGED",
+   "POISON",
+   "FROST"
+  ],
+  "removed": [
+   "GARRISONED",
+   "HORDE",
+   "CONTINUOUS_FIRE_MEAN",
+   "CONTINUOUS_FIRE_FAST",
+   "NATIONALISM",
+   "PLAYER_UPGRADE",
+   "DRONE_SPOTTING",
+   "DEMORALIZED",
+   "DEMORALIZED_OBSOLETE",
+   "ENTHUSIASTIC",
+   "VETERAN",
+   "ELITE",
+   "BATTLEPLAN_BOMBARDMENT",
+   "BATTLEPLAN_HOLDTHELINE",
+   "BATTLEPLAN_SEARCHANDDESTROY",
+   "SUBLIMINAL",
+   "SOLO_HUMAN_EASY",
+   "SOLO_HUMAN_NORMAL",
+   "SOLO_HUMAN_HARD",
+   "SOLO_AI_EASY",
+   "SOLO_AI_NORMAL",
+   "SOLO_AI_HARD",
+   "TARGET_FAERIE_FIRE",
+   "FANATICISM",
+   "FRENZY_ONE",
+   "FRENZY_TWO",
+   "FRENZY_THREE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14376348,
+  "names": [
+   "NORMAL",
+   "BECOME_UNDEAD",
+   "SELF",
+   "BECOME_UNDEAD_ONCE"
+  ],
+  "used_by": [
+   "?.DamageSubType"
+  ],
+  "generals_array": null,
+  "added": [
+   "NORMAL",
+   "BECOME_UNDEAD",
+   "BECOME_UNDEAD_ONCE"
+  ],
+  "removed": [
+   "ALLIES",
+   "ENEMIES",
+   "NEUTRALS",
+   "SUICIDE",
+   "NOT_SIMILAR",
+   "NOT_AIRBORNE"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14376368,
+  "names": [
+   "NORMAL",
+   "NONE",
+   "CRUSHED",
+   "BURNED",
+   "EXPLODED",
+   "POISONED",
+   "TOPPLED",
+   "FLOODED",
+   "SUICIDED",
+   "LASERED",
+   "DETONATED",
+   "SPLATTED",
+   "POISONED_BETA",
+   "EXTRA_2",
+   "EXTRA_3",
+   "EXTRA_4",
+   "EXTRA_5",
+   "EXTRA_6",
+   "EXTRA_7",
+   "EXTRA_8",
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "used_by": [
+   "?.DeathType"
+  ],
+  "generals_array": "TheDeathNames",
+  "added": [
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "removed": [
+   "POISONED_GAMMA"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14376768,
+  "names": [
+   "SWORD_SLASH",
+   "WITCH_KING_MORGUL_BLADE",
+   "REFLECTED",
+   "GOOD_ARROW_PIERCE",
+   "EVIL_ARROW_PIERCE",
+   "SMALL_ROCK",
+   "BIG_ROCK",
+   "CLUBBING",
+   "FLAME",
+   "MAGIC",
+   "BALROG_SWORD",
+   "BALROG_WHIP",
+   "ELECTRIC",
+   "GIMLI_LEAP",
+   "STRUCTURAL",
+   "FLOOD_HORSE",
+   "BOLT",
+   "BOLT2",
+   "MAGIC2",
+   "MAGIC3",
+   "FIRE1",
+   "FIRE2",
+   "FIRE3",
+   "SPARKS1",
+   "SPARKS2",
+   "EARTH1",
+   "EARTH2",
+   "POISON",
+   "TORNADO",
+   "UNDEFINED",
+   "NECRO1",
+   "NECRO2",
+   "NECRO3",
+   "NECRO4",
+   "NECRO5",
+   "NECRO6"
+  ],
+  "used_by": [
+   "?.DamageFXType"
+  ],
+  "generals_array": null,
+  "added": [
+   "SWORD_SLASH",
+   "WITCH_KING_MORGUL_BLADE",
+   "REFLECTED",
+   "GOOD_ARROW_PIERCE",
+   "EVIL_ARROW_PIERCE",
+   "SMALL_ROCK",
+   "BIG_ROCK",
+   "CLUBBING",
+   "FLAME",
+   "MAGIC",
+   "BALROG_SWORD",
+   "BALROG_WHIP",
+   "ELECTRIC",
+   "GIMLI_LEAP",
+   "STRUCTURAL",
+   "FLOOD_HORSE",
+   "BOLT",
+   "BOLT2",
+   "MAGIC2",
+   "MAGIC3",
+   "FIRE1",
+   "FIRE2",
+   "FIRE3",
+   "SPARKS1",
+   "SPARKS2",
+   "EARTH1",
+   "EARTH2",
+   "POISON",
+   "TORNADO",
+   "UNDEFINED",
+   "NECRO1",
+   "NECRO2",
+   "NECRO3",
+   "NECRO4",
+   "NECRO5",
+   "NECRO6"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14377944,
+  "names": [
+   "NORMAL",
+   "NONE",
+   "CRUSHED",
+   "BURNED",
+   "EXPLODED",
+   "POISONED",
+   "TOPPLED",
+   "FLOODED",
+   "SUICIDED",
+   "LASERED",
+   "DETONATED",
+   "SPLATTED",
+   "POISONED_BETA",
+   "EXTRA_2",
+   "EXTRA_3",
+   "EXTRA_4",
+   "EXTRA_5",
+   "EXTRA_6",
+   "EXTRA_7",
+   "EXTRA_8",
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "used_by": [
+   "?.DeathType"
+  ],
+  "generals_array": "TheDeathNames",
+  "added": [
+   "KNOCKBACK",
+   "SUPERNATURAL",
+   "FADED",
+   "SLAUGHTERED"
+  ],
+  "removed": [
+   "POISONED_GAMMA"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14378644,
+  "names": [
+   "INCREASE_BURN_RATE",
+   "DECREASE_BURN_RATE",
+   "INCREASE_FUEL",
+   "INCREASE_BURN_RATE_ON_EXISTING_FIRE",
+   "INCREASE_FUEL_ON_EXISTING_FIRE"
+  ],
+  "used_by": [
+   "?.LogicType"
+  ],
+  "generals_array": null,
+  "added": [
+   "INCREASE_BURN_RATE",
+   "DECREASE_BURN_RATE",
+   "INCREASE_FUEL",
+   "INCREASE_BURN_RATE_ON_EXISTING_FIRE",
+   "INCREASE_FUEL_ON_EXISTING_FIRE"
+  ],
+  "removed": [],
+  "generals_is_prefix": true
+ },
+ {
+  "va": 14384112,
+  "names": [
+   "SHADOW_DECAL",
+   "SHADOW_VOLUME",
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_DYNAMIC_PROJECTION",
+   "SHADOW_DIRECTIONAL_PROJECTION",
+   "SHADOW_ALPHA_DECAL",
+   "SHADOW_ADDITIVE_DECAL",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "used_by": [
+   "?.Shadow"
+  ],
+  "generals_array": "TheShadowNames",
+  "added": [
+   "SHADOW_VOLUME_NEW",
+   "SHADOW_VOLUME_NON_SELF_1",
+   "SHADOW_VOLUME_NON_SELF_2",
+   "SHADOW_VOLUME_NON_SELF_3",
+   "SHADOW_ALPHA_DECAL_DYNAMIC",
+   "SHADOW_ADDITIVE_DECAL_DYNAMIC",
+   "SHADOW_MERGE_DECAL",
+   "SHADOW_DECAL_TERRAIN_CLAIM",
+   "SHADOW_VOLUME_OR_DECAL",
+   "SHADOW_VOLUME_NEW_OR_DECAL",
+   "SHADOW_SUBTRACT_DECAL_DYNAMIC"
+  ],
+  "removed": [
+   "SHADOW_PROJECTION"
+  ],
+  "generals_is_prefix": false
+ },
+ {
+  "va": 14384184,
+  "names": [
+   "MANUAL",
+   "LOOP",
+   "ONCE",
+   "LOOP_PINGPONG",
+   "PLAY_TO_FRAME",
+   "LOOP_BACKWARDS",
+   "ONCE_BACKWARDS"
+  ],
+  "used_by": [
+   "?.AnimMode"
+  ],
+  "generals_array": "TheAnimModeNames",
+  "added": [
+   "PLAY_TO_FRAME"
+  ],
+  "removed": [],
+  "generals_is_prefix": false
+ }
+]
