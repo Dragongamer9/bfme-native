@@ -130,7 +130,7 @@ static BodyDamageType calcDamageState(Real health, Real maxHealth)
 ActiveBodyModuleData::ActiveBodyModuleData()
 {
 	m_maxHealth = 0;
-	m_initialHealth = 0;
+	m_initialHealth = -1.0f;	// bfme-native: RotWK leaves InitialHealth out (= MaxHealth)
 	m_subdualDamageCap = 0;
 	m_subdualDamageHealRate = 0;
 	m_subdualDamageHealAmount = 0;
@@ -173,10 +173,11 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_currentSubdualDamage(0),
 	m_indestructible(false)
 {
-	m_currentHealth = getActiveBodyModuleData()->m_initialHealth;
-	m_prevHealth = getActiveBodyModuleData()->m_initialHealth;
+	const Real bfmeInitial = getActiveBodyModuleData()->m_initialHealth < 0.0f ? getActiveBodyModuleData()->m_maxHealth : getActiveBodyModuleData()->m_initialHealth;	// bfme-native
+	m_currentHealth = bfmeInitial;
+	m_prevHealth = bfmeInitial;
 	m_maxHealth = getActiveBodyModuleData()->m_maxHealth;
-	m_initialHealth = getActiveBodyModuleData()->m_initialHealth;
+	m_initialHealth = bfmeInitial;
 
 	// force an initially-valid armor setup
 	validateArmorAndDamageFX();

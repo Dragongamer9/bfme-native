@@ -688,6 +688,17 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
+// bfme-native: "-file <map>" in every build configuration
+static Int bfmeParseFile(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_initialFile = args[1];
+		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_initialFile);
+	}
+	return 2;
+}
+
 #if defined(RTS_DEBUG)
 Int parseDisplayDebug(char *args[], int)
 {
@@ -1253,6 +1264,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-UseCSF", parseUseCSF },
 	{ "-NoInputDisable", parseNoInputDisable },
 #endif
+	// bfme-native: run a map directly (used by the headless logic tests), available in release builds
+	{ "-file", bfmeParseFile },
+
 #ifdef DEBUG_CRC
 	// TheSuperHackers @info helmutbuhler 04/09/2025
 	// The following arguments are useful for CRC debugging.
@@ -1327,7 +1341,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-jabber", parseJabber },
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
-	{ "-file", parseFile },
 
 //	{ "-preload", parsePreload },
 

@@ -613,6 +613,19 @@ void AttributeModifierNugget::trigger(const WeaponTemplate* /*wt*/, Object* sour
 }
 
 //=================================================================================================
+const FieldParse HordeAttackNugget::s_fieldParse[] =
+{
+	{ "LockWeaponSlot",	INI::parseAsciiString,	nullptr, offsetof(HordeAttackNugget, m_unusedString) },
+	{ nullptr, nullptr, nullptr, 0 }
+};
+
+void HordeAttackNugget::buildFieldParse(MultiIniFieldParse& p) const
+{
+	WeaponNugget::buildFieldParse(p);
+	p.add(s_fieldParse);
+}
+
+//=================================================================================================
 WeaponNugget* newWeaponNugget(const char* token)
 {
 	if (stricmp(token, "DamageNugget") == 0) return new DamageNugget;
@@ -622,5 +635,6 @@ WeaponNugget* newWeaponNugget(const char* token)
 	if (stricmp(token, "WeaponOCLNugget") == 0) return new WeaponOCLNugget;
 	if (stricmp(token, "ParalyzeNugget") == 0) return new ParalyzeNugget;
 	if (stricmp(token, "AttributeModifierNugget") == 0) return new AttributeModifierNugget;
+	if (stricmp(token, "HordeAttackNugget") == 0) return new HordeAttackNugget;
 	return nullptr;
 }

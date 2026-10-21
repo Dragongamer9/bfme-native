@@ -233,5 +233,20 @@ protected:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** HordeAttackNugget: the weapon of a horde is only a range finder -- the soldiers do the damage
+	(HordeContain hands the target to them). It still has to look like a damaging weapon so the
+	AI is willing to attack with it. */
+class HordeAttackNugget : public WeaponNugget
+{
+public:
+	HordeAttackNugget() {}
+	virtual void trigger(const WeaponTemplate*, Object*, Object*, const Coord3D*, const WeaponBonus&) const {}
+	virtual void buildFieldParse(MultiIniFieldParse& p) const;
+	virtual Real getAggregateDamage() const { return 1.0f; }
+protected:
+	static const FieldParse s_fieldParse[];
+};
+
+//-------------------------------------------------------------------------------------------------
 /// Factory: returns a new nugget for an INI token such as "DamageNugget", or null if unsupported.
 WeaponNugget* newWeaponNugget(const char* token);

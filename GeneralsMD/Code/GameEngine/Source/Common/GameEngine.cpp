@@ -647,8 +647,10 @@ void GameEngine::init()
 	DEBUG_LOG(("%s", Buf));////////////////////////////////////////////////////////////////////////////
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 		initSubsystem(TheAudio,"TheAudio", createAudioManager(TheGlobalData->m_headless), nullptr);
+		// bfme-native: Generals quits here when its music archive is missing (the CD check);
+		// RotWK keeps music elsewhere and headless runs have no audio at all.
 		if (!TheAudio->isMusicAlreadyLoaded())
-			setQuitting(TRUE);
+			DEBUG_LOG(("Music not found, continuing without it"));
 
 #if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 		TheNameKeyGenerator->syncNameKeyID();

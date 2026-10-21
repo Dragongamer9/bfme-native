@@ -1084,6 +1084,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/BfmeGenericSpecialPower.cpp
     Source/GameLogic/Object/Contain/HordeContain.cpp
     Source/GameLogic/Object/BfmeModules.cpp
+    Source/GameLogic/System/BfmeTestHarness.cpp
     Source/GameLogic/Object/WeaponNugget.cpp
     Source/GameLogic/Object/WeaponSet.cpp
     Source/GameLogic/ScriptEngine/ScriptActions.cpp
