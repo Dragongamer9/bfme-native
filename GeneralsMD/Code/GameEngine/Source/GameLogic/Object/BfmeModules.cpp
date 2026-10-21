@@ -374,3 +374,6 @@ UpdateSleepTime GettingBuiltBehavior::update()
 	me->setModelConditionState(MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED);
 	return UPDATE_SLEEP_NONE;
 }
+
+//=================================================================================================
+BFME_TRIVIAL_SNAPSHOT(BfmeInertBehavior, BehaviorModule)

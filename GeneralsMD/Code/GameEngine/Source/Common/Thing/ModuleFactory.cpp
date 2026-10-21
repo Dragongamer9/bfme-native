@@ -508,6 +508,15 @@ void ModuleFactory::init()
 	addModule( LargeGroupBonusUpdate );	// bfme-native
 	addModule( HordeMemberCollide );	// bfme-native
 	addModule( GettingBuiltBehavior );	// bfme-native
+	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("BuildingBehavior"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("StancesBehavior"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("CastleMemberBehavior"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("PickupStuffUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("AISpecialPowerUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("EmotionTrackerUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("RespawnBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO hero respawn
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("HorseHordeContain"), HordeContain::getInterfaceMask() );
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("CitadelSlaughterHordeContain"), HordeContain::getInterfaceMask() );

@@ -558,7 +558,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	}
 
 	// bfme-native: module classes this engine does not implement yet are skipped and reported
-	if (TheModuleFactory->findModuleInterfaceMask(tokenStr, type == 999 ? MODULETYPE_BEHAVIOR : type) == 0)
+	if (!TheModuleFactory->bfmeIsKnownModule(tokenStr, type == 999 ? MODULETYPE_BEHAVIOR : type))
 	{
 		ini->bfmeRecordUnknownModule(tokenStr.str());
 		ini->bfmeSkipBlock();
