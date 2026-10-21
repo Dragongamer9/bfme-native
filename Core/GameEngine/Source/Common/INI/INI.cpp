@@ -445,19 +445,30 @@ static const char* const kBfmeSubBlockKeywords[] = {
 	"TeamVictoryCondition", "TerrainScorch", "ThingStat", "ThreatBreakdown", "Threshold",
 	"TransitionState", "Trigger", "Turret", "UnitCategory", "UnitDefinition", "UnitSpecificSounds",
 	"ViewInfo", "ViewShake", "WeaponOCLNugget", "WeaponSet", "Window", "WorldText",
-	// "Key = Value" lines that open a block
-	"Alpha", "Body", "ClientBehavior", "ClientUpdate", "Color", "ConnectsTo", "Event",
-	"HistoricalScenario", "LodOptions", "Physics", "RadiusCursorTemplate", "ShowsAmmoPips",
-	"SoundState", "SoundUpgrade", "Update", "Wind", "Draw",
 };
 
-static Bool isBfmeSubBlockKeyword(const char* tok)
+// "Key = Value" lines that open a block (module declarations and BFME draw states).
+// Ambiguous keys that are plain fields elsewhere (Color, Alpha, Event...) are left out.
+static const char* const kBfmeEqBlockKeywords[] = {
+	"Behavior", "Body", "Draw", "ClientBehavior", "ClientUpdate", "Update", "Physics",
+	"AnimationState", "ModelConditionState", "TransitionState", "SoundState", "SoundUpgrade",
+	"ThreatBreakdown", "LodOptions", "Wind", "HistoricalScenario", "RadiusCursorTemplate",
+};
+
+/// Does this line open a nested block? 'hasEquals' = the line is "Key = Value".
+static Bool isBfmeSubBlockKeyword(const char* tok, Bool hasEquals = FALSE)
 {
-	static std::set<std::string> s;
-	if (s.empty())
+	static std::set<std::string> plain, eq;
+	if (plain.empty())
+	{
 		for (const char* k : kBfmeSubBlockKeywords)
-			s.insert(k);
-	return tok && s.count(tok) != 0;
+			plain.insert(k);
+		for (const char* k : kBfmeEqBlockKeywords)
+			eq.insert(k);
+	}
+	if (!tok)
+		return FALSE;
+	return hasEquals ? eq.count(tok) != 0 : plain.count(tok) != 0;
 }
 
 static std::map<std::string, int>& bfmeSkipReport()
@@ -519,7 +530,7 @@ void INI::bfmeSkipBlock()
 		}
 		if (stricmp(t, "End") == 0 || stricmp(t, "END_END") == 0)
 			--depth;
-		else if (isBfmeSubBlockKeyword(t))
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals))
 			++depth;
 	}
 }
@@ -690,6 +701,9 @@ void INI::readLine()
 		}
 
 		*p = 0;
+
+		// bfme-native: remembered before strtok() splits the line
+		m_bfmeLineHasEquals = strchr(m_buffer, '=') != nullptr;
 
 		// increase our line count
 		m_lineNum++;
@@ -1103,6 +1117,25 @@ void INI::parsePercentToReal( INI* ini, void * /*instance*/, void *store, const 
 }
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: an unknown enum/flag name is recorded (BFME_INI_REPORT) and ignored instead of
+// failing the whole file - RotWK's own data contains such values (e.g. Priority = WEAPON_EXPLSION
+// in ParticleSystem.ini, which the original game accepts).
+static Bool bfmeTryScanIndex(const char* token, ConstCharPtrArray list, Int& out)
+{
+	Int count = 0;
+	for (ConstCharPtrArray name = list; name && *name; name++, count++)
+	{
+		if (stricmp(*name, token) == 0)
+		{
+			out = count;
+			return TRUE;
+		}
+	}
+	bfmeRecordSkip("value", s_bfmeCurrentBlock.str(), token);
+	return FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** 'store' points to an 32 bit unsigned integer.  We will zero that integer, parse each token
 	* in the buffer, if the token is in the userData table of strings, we will set the
 	* according bit flag for it */
@@ -1159,8 +1192,9 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
 				throw INI_INVALID_NAME_LIST;
 			}
-			Int bitIndex = INI::scanIndexList(token+1, flagList);	// this throws if the token is not found
-			*bits |= (1 << bitIndex);
+			Int bitIndex;
+			if (bfmeTryScanIndex(token+1, flagList, bitIndex))
+				*bits |= (1 << bitIndex);
 			foundAddOrSub = true;
 		}
 		else if (token[0] == '-')
@@ -1170,8 +1204,9 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
 				throw INI_INVALID_NAME_LIST;
 			}
-			Int bitIndex = INI::scanIndexList(token+1, flagList);	// this throws if the token is not found
-			*bits &= ~(1 << bitIndex);
+			Int bitIndex;
+			if (bfmeTryScanIndex(token+1, flagList, bitIndex))
+				*bits &= ~(1 << bitIndex);
 			foundAddOrSub = true;
 		}
 		else
@@ -1185,8 +1220,9 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 			if (!foundNormal)
 				*bits = 0;
 
-			Int bitIndex = INI::scanIndexList(token, flagList);	// this throws if the token is not found
-			*bits |= (1 << bitIndex);
+			Int bitIndex;
+			if (bfmeTryScanIndex(token, flagList, bitIndex))
+				*bits |= (1 << bitIndex);
 			foundNormal = true;
 		}
 	}
@@ -1619,7 +1655,9 @@ void INI::parseSpecialPowerTemplate( INI* ini, void * /*instance*/, void *store,
 void INI::parseIndexList( INI* ini, void * /*instance*/, void *store, const void* userData )
 {
 	ConstCharPtrArray nameList = (ConstCharPtrArray)userData;
-	*(Int *)store = scanIndexList(ini->getNextToken(), nameList);
+	Int v;
+	if (bfmeTryScanIndex(ini->getNextToken(), nameList, v))
+		*(Int *)store = v;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1632,7 +1670,9 @@ void INI::parseIndexList( INI* ini, void * /*instance*/, void *store, const void
 void INI::parseByteSizedIndexList( INI* ini, void * /*instance*/, void *store, const void* userData )
 {
 	ConstCharPtrArray nameList = (ConstCharPtrArray)userData;
-	Int value = scanIndexList(ini->getNextToken(), nameList);
+	Int value;
+	if (!bfmeTryScanIndex(ini->getNextToken(), nameList, value))
+		return;
 	if (value < 0 || value > 255)
 	{
 		DEBUG_CRASH(("Bad index list INI::parseByteSizedIndexList"));
@@ -1757,7 +1797,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				{
 					// bfme-native: record; a field that opens a nested block is skipped to its End
 					bfmeRecordSkip("field", s_bfmeCurrentBlock.str(), field);
-					if (isBfmeSubBlockKeyword(field))
+					if (isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals))
 						bfmeSkipBlock();
 				}
 
