@@ -476,12 +476,15 @@ static const char* const kBfmeSubBlockKeywords[] = {
 	"TeamVictoryCondition", "TerrainScorch", "ThingStat", "ThreatBreakdown", "Threshold",
 	"TransitionState", "Trigger", "Turret", "UnitCategory", "UnitDefinition", "UnitSpecificSounds",
 	"ViewInfo", "ViewShake", "WeaponOCLNugget", "WeaponSet", "Window", "WorldText",
+	// bare sub-block keywords found in RotWK+Edain data (single word on a line, followed by a body)
+	"TintDrawable", "LightPulse", "AttachedModel", "FireWeapon", "DamageFieldNugget",
+	"HordeAttackNugget", "SlaveAttackNugget", "DamageContainedNugget", "StealMoneyNugget",
 };
 
 // "Key = Value" lines that open a block (module declarations and BFME draw states).
 // Ambiguous keys that are plain fields elsewhere (Color, Alpha, Event...) are left out.
 static const char* const kBfmeEqBlockKeywords[] = {
-	"Behavior", "Body", "Draw", "ClientBehavior", "ClientUpdate", "Update", "Physics",
+	"Animation", "Behavior", "Body", "Draw", "ClientBehavior", "ClientUpdate", "Update", "Physics",
 	"AnimationState", "ModelConditionState", "TransitionState", "SoundState", "SoundUpgrade",
 	"ThreatBreakdown", "LodOptions", "Wind", "HistoricalScenario", "RadiusCursorTemplate",
 };
@@ -499,7 +502,12 @@ static Bool isBfmeSubBlockKeyword(const char* tok, Bool hasEquals = FALSE)
 	}
 	if (!tok)
 		return FALSE;
-	return hasEquals ? eq.count(tok) != 0 : plain.count(tok) != 0;
+	if (hasEquals)
+		return eq.count(tok) != 0;
+	if (plain.count(tok))
+		return TRUE;
+	const size_t n = strlen(tok);
+	return n > 6 && strcmp(tok + n - 6, "Nugget") == 0;	// every *Nugget is a block
 }
 
 static std::map<std::string, int>& bfmeSkipReport()
@@ -560,10 +568,9 @@ void INI::bfmeDeferBlock(const char* blockType, const char* headerLine)
 		const char* t = strtok_r(tmp, " \n\r\t=", &save);
 		if (!t)
 			continue;
-		const Bool singleToken = !m_bfmeLineHasEquals && strtok_r(nullptr, " \n\r\t", &save) == nullptr;
 		if (stricmp(t, "End") == 0)
 			--depth;
-		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals) || singleToken)
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals))
 			++depth;
 	}
 	bfmeDeferred().push_back(b);
@@ -592,6 +599,8 @@ void INI::bfmeDeferBlock(const char* blockType, const char* headerLine)
 /// Skip lines up to the End that closes a block whose opening line was just read.
 void INI::bfmeSkipBlock()
 {
+	static const Bool trace = getenv("BFME_INI_TRACE") != nullptr;
+	const UnsignedInt startLine = m_lineNum;
 	Int depth = 1;
 	while (depth > 0 && !m_endOfFile) {
 		readLine();
@@ -614,12 +623,13 @@ void INI::bfmeSkipBlock()
 			}
 			continue;
 		}
-		const Bool singleToken = !m_bfmeLineHasEquals && strtok_r(nullptr, " \n\r\t", &save) == nullptr;
 		if (stricmp(t, "End") == 0 || stricmp(t, "END_END") == 0)
 			--depth;
-		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals) || singleToken)
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals))
 			++depth;
 	}
+	if (trace)
+		fprintf(stderr, "[INI-TRACE] skip %s:%u-%u\n", m_filename.str(), startLine, m_lineNum);
 }
 //-------------------------------------------------------------------------------------------------
 /** Load and parse an INI file */
@@ -660,6 +670,12 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 
 			// the first word is the type of data we're processing
 			const char *token = strtok( m_buffer, getSeps() );
+			// bfme-native: Edain has blocks with one End too many; RotWK ignores a stray top-level End
+			if( token && stricmp(token, getEndToken()) == 0 )
+			{
+				bfmeRecordSkip("strayEnd", m_filename.str(), "End");
+				token = nullptr;
+			}
 			if( token )
 			{
 				INIBlockParse parse = findBlockParse(token);
@@ -1910,9 +1926,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				{
 					// bfme-native: record; a field that opens a nested block is skipped to its End
 					bfmeRecordSkip("field", s_bfmeCurrentBlock.str(), field);
-					// a bare keyword on its own line (e.g. "TintDrawable") opens a nested block
-					const Bool bareKeyword = !m_bfmeLineHasEquals && strtok(nullptr, INI::getSeps()) == nullptr;
-					if (isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals) || bareKeyword)
+					if (isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals))
 						bfmeSkipBlock();
 				}
 
