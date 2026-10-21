@@ -39,6 +39,7 @@
 #include "Common/PlayerList.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
+#include "Common/SubsystemLegend.h"
 #include "Common/INI.h"
 #include "Common/INIException.h"
 #include "Common/MessageStream.h"
@@ -475,6 +476,10 @@ void GameEngine::init()
 		// Mods must be mounted before GameData.ini is loaded, or the mod's GameData.ini is ignored.
 		CommandLine::parseCommandLineForModInit();
 		TheArchiveFileSystem->loadMods();
+
+		// bfme-native: BFME2/RotWK data lists each subsystem's INI files in a legend
+		if (SubsystemLegend::loadDefault())
+			DEBUG_LOG(("Using subsystem legend (%u entries)", SubsystemLegend::getEntryCount()));
 
 		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created"));
 	initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData", "Data\\INI\\GameData");
