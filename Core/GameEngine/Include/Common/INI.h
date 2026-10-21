@@ -414,7 +414,8 @@ protected:
 	INILoadType m_loadType;										///< load type for current file
 	UnsignedInt m_lineNum;										///< current line number that's been read
 	char m_buffer[ INI_MAX_CHARS_PER_LINE+1 ];///< buffer to read file contents into
-	Bool m_endOfFile;													///< TRUE when we've hit EOF
+	Bool m_endOfFile;
+	Bool m_bfmeLineHasEquals = FALSE;	///< bfme-native: current line is "Key = Value"													///< TRUE when we've hit EOF
 #ifdef DEBUG_CRASHING
 	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE+1 ];	///< first line of cur block
 #endif

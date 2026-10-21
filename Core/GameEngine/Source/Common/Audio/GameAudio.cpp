@@ -215,22 +215,27 @@ AudioManager::~AudioManager()
 void AudioManager::init()
 {
 	INI ini;
-	ini.loadFileDirectory( "Data\\INI\\AudioSettings", INI_LOAD_OVERWRITE, nullptr);
+	// bfme-native: RotWK has no Default\Voice and adds AmbientStream; a missing file is not an error
+	const INI::LoadFlags flags = INI::LoadFlags_SearchSubDirs;
+	ini.loadFileDirectory( "Data\\INI\\AudioSettings", INI_LOAD_OVERWRITE, nullptr, flags );
 
-	ini.loadFileDirectory( "Data\\INI\\Default\\Music", INI_LOAD_OVERWRITE, nullptr );
-	ini.loadFileDirectory( "Data\\INI\\Music", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Music", INI_LOAD_OVERWRITE, nullptr, flags );
+	ini.loadFileDirectory( "Data\\INI\\Music", INI_LOAD_OVERWRITE, nullptr, flags );
 
-	ini.loadFileDirectory( "Data\\INI\\Default\\SoundEffects", INI_LOAD_OVERWRITE, nullptr );
-	ini.loadFileDirectory( "Data\\INI\\SoundEffects", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory( "Data\\INI\\Default\\SoundEffects", INI_LOAD_OVERWRITE, nullptr, flags );
+	ini.loadFileDirectory( "Data\\INI\\SoundEffects", INI_LOAD_OVERWRITE, nullptr, flags );
 
-	ini.loadFileDirectory( "Data\\INI\\Default\\Speech", INI_LOAD_OVERWRITE, nullptr );
-	ini.loadFileDirectory( "Data\\INI\\Speech", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Speech", INI_LOAD_OVERWRITE, nullptr, flags );
+	ini.loadFileDirectory( "Data\\INI\\Speech", INI_LOAD_OVERWRITE, nullptr, flags );
 
-	ini.loadFileDirectory( "Data\\INI\\Default\\Voice", INI_LOAD_OVERWRITE, nullptr );
-	ini.loadFileDirectory( "Data\\INI\\Voice", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory( "Data\\INI\\Default\\Voice", INI_LOAD_OVERWRITE, nullptr, flags );
+	ini.loadFileDirectory( "Data\\INI\\Voice", INI_LOAD_OVERWRITE, nullptr, flags );
+
+	ini.loadFileDirectory( "Data\\INI\\Default\\AmbientStream", INI_LOAD_OVERWRITE, nullptr, flags );
+	ini.loadFileDirectory( "Data\\INI\\AmbientStream", INI_LOAD_OVERWRITE, nullptr, flags );
 
 	// do the miscellaneous sound files last so that we find the AudioEventRTS associated with the events.
-	ini.loadFileDirectory( "Data\\INI\\MiscAudio", INI_LOAD_OVERWRITE, nullptr);
+	ini.loadFileDirectory( "Data\\INI\\MiscAudio", INI_LOAD_OVERWRITE, nullptr, flags );
 
 	m_music = NEW MusicManager;
 	m_sound = NEW SoundManager;

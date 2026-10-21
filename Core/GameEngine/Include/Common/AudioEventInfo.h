@@ -70,6 +70,8 @@ enum SoundType CPP_11(: Int)
 	ST_ALLIES								= 0x0040,
 	ST_ENEMIES							= 0x0080,
 	ST_EVERYONE							= 0x0100,
+	ST_FAKE									= 0x0200,	// bfme-native: RotWK
+	ST_DEFAULT							= 0x0400,	// bfme-native: RotWK
 };
 
 extern const char *const theAudioControlNames[];
@@ -105,6 +107,8 @@ public:
 	AudioPriority m_priority;	// Priority of this sound
 	UnsignedInt m_type;								// Type of sound
 	UnsignedInt m_control;						// control of sound
+	UnsignedInt m_bfmeControl = 0;		// bfme-native: RotWK control bits as written in INI (see theBfmeAudioControlNames)
+	Int m_submixSlider = 0;						// bfme-native: RotWK SubmixSlider (SOUNDFX, VOICE, MUSIC, AMBIENT, MOVIE, NONE)
 
 	std::vector<AsciiString> m_soundsMorning;	// Sounds to play in the wee hours of the morning
 	std::vector<AsciiString> m_sounds;				// Default sounds to play

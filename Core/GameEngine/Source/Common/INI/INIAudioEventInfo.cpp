@@ -127,6 +127,47 @@ static void parseDelay( INI* ini, void *instance, void *store, const void* /*use
 static void parsePitchShift( INI* ini, void *instance, void *store, const void* /*userData*/ );
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK audio vocabularies (game.dat AudioEventInfo field table)
+static const char *const theBfmeAudioControlNames[] =
+{
+	"LOOP", "SEQUENTIAL", "RANDOMSTART", "INTERRUPT", "FADE_ON_KILL", "FADE_ON_START",
+	"\\not used by INI files", "PLAY_ONE", nullptr
+};
+static const char *const theBfmeSubmixSliderNames[] =
+{
+	"SOUNDFX", "VOICE", "MUSIC", "AMBIENT", "MOVIE", "NONE", nullptr
+};
+
+/** bfme-native: RotWK Control flags. Stored verbatim in m_bfmeControl and translated onto the
+	Generals flags the audio code uses: RotWK sounds pick randomly unless SEQUENTIAL is given. */
+static void parseBfmeAudioControl( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+{
+	AudioEventInfo *info = (AudioEventInfo*) instance;
+	UnsignedInt bits = 0;
+	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	{
+		if (stricmp(tok, "NONE") == 0) { bits = 0; break; }
+		Bool found = FALSE;
+		for (Int i = 0; theBfmeAudioControlNames[i]; ++i)
+			if (stricmp(theBfmeAudioControlNames[i], tok) == 0) { bits |= (1u << i); found = TRUE; break; }
+		if (!found)
+		{
+			// Generals spelling (shared ZH data)
+			for (Int i = 0; theAudioControlNames[i]; ++i)
+				if (stricmp(theAudioControlNames[i], tok) == 0) { info->m_control |= (1u << i); break; }
+		}
+	}
+	info->m_bfmeControl = bits;
+	if (bits)
+	{
+		UnsignedInt c = 0;
+		if (bits & (1u << 0)) c |= AC_LOOP;
+		if (!(bits & (1u << 1))) c |= AC_RANDOM;
+		if (bits & (1u << 3)) c |= AC_INTERRUPT;
+		info->m_control = c;
+	}
+}
+
 const FieldParse AudioEventInfo::m_audioEventInfo[] =
 {
 	{ "Filename",							INI::parseAsciiString,		nullptr,								offsetof( AudioEventInfo, m_filename) },
@@ -139,7 +180,8 @@ const FieldParse AudioEventInfo::m_audioEventInfo[] =
 	{ "LoopCount",						INI::parseInt,						nullptr,								offsetof( AudioEventInfo, m_loopCount ) },
 	{ "Priority",							INI::parseIndexList,			theAudioPriorityNames,	offsetof( AudioEventInfo, m_priority ) },
 	{ "Type",									INI::parseBitString32,		theSoundTypeNames,			offsetof( AudioEventInfo, m_type ) },
-	{ "Control",							INI::parseBitString32,		theAudioControlNames,	offsetof( AudioEventInfo, m_control ) },
+	{ "Control",							parseBfmeAudioControl,		nullptr,								0 },
+	{ "SubmixSlider",					INI::parseIndexList,			theBfmeSubmixSliderNames, offsetof( AudioEventInfo, m_submixSlider ) },
 	{ "Sounds",								INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_sounds ) },
 	{ "SoundsNight",					INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_soundsNight ) },
 	{ "SoundsEvening",				INI::parseSoundsList,			nullptr,								offsetof( AudioEventInfo, m_soundsEvening ) },
@@ -202,6 +244,8 @@ const char *const theSoundTypeNames[] =
 	"ALLIES",
 	"ENEMIES",
 	"EVERYONE",
+	"FAKE",		// bfme-native: RotWK
+	"DEFAULT",	// bfme-native: RotWK
 	nullptr
 };
 
