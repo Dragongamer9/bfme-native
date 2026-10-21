@@ -100,6 +100,47 @@ def main():
                     if key(src[cs]) == key(dst[cd]) or (src[cs]["strs"] and src[cs]["strs"] == dst[cd]["strs"]):
                         changed |= add(cs, cd, "callgraph")
 
+    # 4. relaxed propagation (different optimisation settings between the two builds):
+    #    a) callees aligned by call order, sizes within a factor of ~1.7
+    #    b) address-order neighbours: object files keep their function order at link time
+    def similar(a, b):
+        na, nb = a["ninsn"], b["ninsn"]
+        if min(na, nb) < 4:
+            return na == nb
+        r = na / nb
+        sa = set(x for x in a["strs"] if len(x) >= 4)
+        sb = set(x for x in b["strs"] if len(x) >= 4)
+        if sa and sb and not (sa & sb):
+            return False
+        return 0.6 <= r <= 1.7
+    import difflib
+    s_order = sorted(src, key=lambda e: int(e, 16))
+    d_order = sorted(dst, key=lambda e: int(e, 16))
+    s_idx = {e: i for i, e in enumerate(s_order)}
+    d_idx = {e: i for i, e in enumerate(d_order)}
+    for rnd in range(30):
+        added = 0
+        for s, (d, _) in list(match.items()):
+            sc = [c for c in src[s]["calls"] if c in src]
+            dc = [c for c in dst[d]["calls"] if c in dst]
+            if sc and dc and len(sc) <= 200 and len(dc) <= 200:
+                sm = difflib.SequenceMatcher(a=[src[c]["ninsn"] // 8 for c in sc],
+                                             b=[dst[c]["ninsn"] // 8 for c in dc], autojunk=False)
+                for blk in sm.get_matching_blocks():
+                    for k in range(blk.size):
+                        cs, cd = sc[blk.a + k], dc[blk.b + k]
+                        if cs not in match and cd not in taken and similar(src[cs], dst[cd]):
+                            added += add(cs, cd, "callgraph")
+            for step in (-1, 1):
+                i, j = s_idx[s] + step, d_idx[d] + step
+                if 0 <= i < len(s_order) and 0 <= j < len(d_order):
+                    ns, nd = s_order[i], d_order[j]
+                    if ns not in match and nd not in taken and similar(src[ns], dst[nd]) \
+                            and src[ns]["ninsn"] >= 6:
+                        added += add(ns, nd, "neighbour")
+        if not added:
+            break
+
     labels, by = [], collections.Counter()
     for s, (d, how) in match.items():
         n = names.get(s, "")
@@ -108,7 +149,7 @@ def main():
         dn = dst[d]["name"]
         if not dn.startswith("FUN_"):
             continue  # already named in dst
-        conf = {"shape": 0.8, "strings": 0.85, "callgraph": 0.7}[how]
+        conf = {"shape": 0.8, "strings": 0.85, "callgraph": 0.65, "neighbour": 0.55}[how]
         labels.append({"va": int(d, 16), "name": n, "kind": "function", "source": f"match-{how}",
                        "confidence": conf})
         by[how] += 1

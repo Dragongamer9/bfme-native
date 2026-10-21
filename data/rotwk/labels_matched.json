@@ -1,0 +1,1101 @@
+[
+ {
+  "va": 11125712,
+  "name": "SubTitleManager::GetStartFrame",
+  "kind": "function",
+  "source": "match-shape",
+  "confidence": 0.8
+ },
+ {
+  "va": 4206282,
+  "name": "lstrcmpiWFake",
+  "kind": "function",
+  "source": "match-shape",
+  "confidence": 0.8
+ },
+ {
+  "va": 4219954,
+  "name": "CompareStringWFake",
+  "kind": "function",
+  "source": "match-shape",
+  "confidence": 0.8
+ },
+ {
+  "va": 6239170,
+  "name": "FXParticleSystem::ParticleSystemTemplate::parse",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 6269837,
+  "name": "FXParticleSystem::ParticleSystemTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 7637430,
+  "name": "AIIdleState::onEnter",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9018493,
+  "name": "AutoPickUpUpdateModuleData::iniParseEatObjectEntry",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9125221,
+  "name": "RespawnUpdate::iniParseDefaultRule",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9125746,
+  "name": "RespawnUpdate::iniParseNewRuleForLevel",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9536612,
+  "name": "AptMessenger::OnInitialized",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9594301,
+  "name": "AptTimeLine::OnInitialized",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9862951,
+  "name": "FXParticleSystem::LineEmissionVolumeModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9864037,
+  "name": "FXParticleSystem::BoxEmissionVolumeModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9864655,
+  "name": "FXParticleSystem::SphereEmissionVolumeModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9865407,
+  "name": "FXParticleSystem::CylinderEmissionVolumeModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9868326,
+  "name": "FXParticleSystem::LightningEmissionModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9869051,
+  "name": "FXParticleSystem::TerrainFireEmissionModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9861283,
+  "name": "FXParticleSystem::CylindricalEmissionVelocityModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9875002,
+  "name": "FXParticleSystem::DefaultModuleTemplate<3>::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9876705,
+  "name": "FXParticleSystem::DefaultModuleTemplate<2>::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9878557,
+  "name": "FXParticleSystem::LifeEventModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9852251,
+  "name": "FXParticleSystem::RenderObjectDrawModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9843411,
+  "name": "FXParticleSystem::LightningDrawModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9854037,
+  "name": "FXParticleSystem::GpuDrawModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9856392,
+  "name": "FXParticleSystem::RenderObjectUpdateModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9880179,
+  "name": "FXParticleSystem::TerrainCollisionModuleTemplate::writeINI",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9545407,
+  "name": "CreateAHero::RenderPictureGuard",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 8674234,
+  "name": "MpGameSetup::OnTabSelect",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 8702276,
+  "name": "LANMessage::MSG_SET_ACCEPT",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10155057,
+  "name": "AptOnline::OnOpenCreateDialog",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9996471,
+  "name": "GameSorter::OnSortStatus",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10223847,
+  "name": "MyHero::MaxAwards",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10225605,
+  "name": "MyHero::MaxAttrib",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10236811,
+  "name": "CahPowers::InitGadgets",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10235859,
+  "name": "CahPowers::Powers::InitGadgets",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10240597,
+  "name": "CahAppearance::SkinColor",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10239284,
+  "name": "CahAppearance::Portrait",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10242784,
+  "name": "CahClass::NumClasses",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10247844,
+  "name": "Mission::OnSortType",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9990406,
+  "name": "MpGameRules::NumComboBoxes",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 9993005,
+  "name": "MpClans::Initialized",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10420766,
+  "name": "Stats::OnSelectFaction",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 10663872,
+  "name": "INIClass::Load",
+  "kind": "function",
+  "source": "match-strings",
+  "confidence": 0.85
+ },
+ {
+  "va": 11349216,
+  "name": "GeometryInfo::CollidesWith",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11350240,
+  "name": "GeometryInfo::getBestContactPoint",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11353024,
+  "name": "GeometryInfo::parseAdditionalGeometryType",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 4447920,
+  "name": "DebugCmdInterfaceDebug::Execute",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11873616,
+  "name": "PooledString::compare",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10621666,
+  "name": "XferSaveAsText::Close",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10634784,
+  "name": "GenericMultiListClass::Internal_Remove",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10635056,
+  "name": "CriticalSectionClass::~CriticalSectionClass",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 10630224,
+  "name": "RegistryClass::Save_Registry_Tree",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10671584,
+  "name": "MutexClass::MutexClass",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10699024,
+  "name": "AssetKeyGenerator::nameToKey",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10702976,
+  "name": "AssetManagerImpl::GetString",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10703264,
+  "name": "AssetManagerImpl::EnumAssets",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10704672,
+  "name": "AssetManagerImpl::AddStickyAssets",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10705280,
+  "name": "AssetManagerImpl::UnloadAsset",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10730416,
+  "name": "PartitionManagerImpl::SetTreeDepth",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 4206220,
+  "name": "ATL::_AtlInstallStringThunk",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 4202479,
+  "name": "CW2AEX<>",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11359040,
+  "name": "TaintManagerImpl::_ReallocCells",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11359968,
+  "name": "TaintManagerImpl::ChangeTaintLevel",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 4637019,
+  "name": "AssetManager::AddActiveAssets",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 4387777,
+  "name": "StringBase<char>::toLower",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 10635984,
+  "name": "DXWrapper::ValidateOwningThread",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 5412656,
+  "name": "TextureAsset::GetFilter",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 5623584,
+  "name": "MeshMatDescClass::Switch_For_FXShader_Conversion",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 5539820,
+  "name": "Dict::getAsciiString",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 8419400,
+  "name": "BannerUI::OnBannerButton",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6417960,
+  "name": "AsciiString::AsciiString",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 7430052,
+  "name": "CMFCToolTipInfo::CMFCToolTipInfo",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6842356,
+  "name": "FireLogicSystem::parseINI",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 7149150,
+  "name": "ThingFactory::findTemplateInternal",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6899346,
+  "name": "PlayerList::getNeutralPlayer",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6142617,
+  "name": "Display::SetStaticImage",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6885015,
+  "name": "Thing::getTemplate",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6311301,
+  "name": "StringBase<char>::concat",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6723055,
+  "name": "AIUpdateInterface::requestPath",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6699471,
+  "name": "AIUpdateInterface::requestMeleeApproachPath",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 8711517,
+  "name": "XferSave::Close",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6776249,
+  "name": "Object::Get3DCenterDistanceSquared",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6250182,
+  "name": "GetPolicy",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 9235134,
+  "name": "StringBase<char>::toUpper",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 9296486,
+  "name": "StringBase<char>::set",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 7480391,
+  "name": "StringBase<unsigned_short>::concat",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 7855843,
+  "name": "BadAllocException",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6553786,
+  "name": "logic_error::`vector_deleting_destructor'",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9533554,
+  "name": "AptMessenger::GetSelectedPlayers",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9862927,
+  "name": "FXParticleSystem::LineEmissionVolumeModuleTemplate::parse",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6259459,
+  "name": "FID_conflict:~istrstream",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 9852220,
+  "name": "FXParticleSystem::RenderObjectDrawModuleTemplate::parse",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9843387,
+  "name": "FXParticleSystem::LightningDrawModuleTemplate::parse",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9544202,
+  "name": "AptCreateAHero::ExternFunc",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9946566,
+  "name": "AptOnlineLogin::OnBttnLogin",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 8654655,
+  "name": "AptMpGameSetup::UpdateReadyIcon",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 8659941,
+  "name": "AptMpGameSetup::GameRules::OnGameRuleChange",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10006943,
+  "name": "AptFileTransferPopup::ProcessProgress",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10420934,
+  "name": "AptStats::InitializeFactionVariables",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10616910,
+  "name": "Xfer::Version::NotifyOfXfer",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 10953984,
+  "name": "FID_conflict:~XElementButtonLaunch",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10958512,
+  "name": "FID_conflict:~XElementButtonLaunch",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10959952,
+  "name": "FID_conflict:`scalar_deleting_destructor'",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11439648,
+  "name": "CTempBuffer<>",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 11672480,
+  "name": "StringPool::Teardown",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11522784,
+  "name": "AptError::objectMemberLookup",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11579232,
+  "name": "AptDisplayListState::insert",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 11588816,
+  "name": "AptDisplayList::AddToDisplayList",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11655520,
+  "name": "AptScriptFunctionBase::PopStaticData",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11130384,
+  "name": "VideoPlayer::init",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10645184,
+  "name": "file_auto_ptr::file_auto_ptr",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11980896,
+  "name": "CollisionManagerImpl::RegisterObject",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 7288326,
+  "name": "Pathfinder::AdjustMeleeOffset",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10638608,
+  "name": "CPUDetectClass::Init_Memory",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10629728,
+  "name": "RegistryClass::Save_Registry_Values",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10660960,
+  "name": "INIClass::Put_String",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10704144,
+  "name": "AssetManagerImpl::AddDependentAssets",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6418027,
+  "name": "AsciiString::operator=",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 7393432,
+  "name": "AreaPolygonBase::reserve",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6899501,
+  "name": "Player::addCommandPoints",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6142374,
+  "name": "Display::SetMovieImage",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 8608498,
+  "name": "std::_Yarn<char>::_Yarn<char>",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 6311238,
+  "name": "StringBase<char>::set",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 8446045,
+  "name": "AwardSystemManager::init",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 8474076,
+  "name": "InGameNotificationBox::Close",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6250833,
+  "name": "std::basic_ostream<char,std::char_traits<char>_>::~basic_ostream<char,std::char_traits<char>_>",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 9843321,
+  "name": "FXParticleSystem::LightningDrawModuleInfo::DoXfer",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9541305,
+  "name": "AptDisconnectScreen::AptKick",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9900028,
+  "name": "Xfer::Version",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 9946876,
+  "name": "AptOnlineLogin::OnBttnCreateAccount",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10420544,
+  "name": "AptStats::StatsList",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10616995,
+  "name": "Xfer::XferRawBytes",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10919552,
+  "name": "FID_conflict:~CRectTracker",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10984720,
+  "name": "FID_conflict:`scalar_deleting_destructor'",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10959904,
+  "name": "FID_conflict:~COleControlSiteFactory",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11457888,
+  "name": "AptArray::DestroyGCPointers",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11455584,
+  "name": "AptArray::SetAt",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 11491472,
+  "name": "AptCIH::render",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11659968,
+  "name": "AptNativeHash::ClearDataNoDelete",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10725200,
+  "name": "PartitionManager::Result::Sort",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10730928,
+  "name": "PartitionManagerImpl::GetClosestObject",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6290312,
+  "name": "RankInfoStore::reset",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6410901,
+  "name": "INI::getNextTokenOrNull",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6418074,
+  "name": "AsciiString::format",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6899988,
+  "name": "Player::removeCommandPoints",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9394877,
+  "name": "ProductionEntry::getProductionObject",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 9485873,
+  "name": "LargeGroupAudioSoundKeyPair::setupDuckingTarget",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10966368,
+  "name": "FID_conflict:`scalar_deleting_destructor'",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 11457648,
+  "name": "AptArray::CleanNativeFunctions",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10732768,
+  "name": "PartitionManagerImpl::GetObjectsInRange",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10574250,
+  "name": "TextFile::ParseFile",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6414890,
+  "name": "StringBase<char>::format_va",
+  "kind": "function",
+  "source": "match-callgraph",
+  "confidence": 0.65
+ },
+ {
+  "va": 11018816,
+  "name": "CObject::CObject",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10733296,
+  "name": "PartitionManagerImpl::GetAllObjects",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 5445922,
+  "name": "Concurrency::cancellation_token_source::~cancellation_token_source",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 6995315,
+  "name": "Command::RemoveCommandPointsFromBonus",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ },
+ {
+  "va": 10590300,
+  "name": "StreamingArchiveFile::openFromArchive",
+  "kind": "function",
+  "source": "match-neighbour",
+  "confidence": 0.55
+ }
+]
