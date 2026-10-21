@@ -608,10 +608,29 @@ static void placeNetworkBuildingsForPlayer(Int slotNum, const GameSlot *pSlot, P
 
 	AsciiString buildingTemplateName = pTemplate->getStartingBuilding();
 
-	DEBUG_ASSERTCRASH(!buildingTemplateName.isEmpty(), ("no starting building type for player %d (playertemplate %ls)",
-		slotNum, pTemplate->getDisplayName().str()));
 	if (buildingTemplateName.isEmpty())
+	{
+		// bfme-native: RotWK/Edain sides start without a building -- the units go to the start
+		// position plus their StartingUnitOffset (castles come from the map)
+		for (Int i=0; i<MAX_MP_STARTING_UNITS; ++i)
+		{
+			AsciiString objName = pTemplate->getStartingUnit(i);
+			if (objName.isEmpty())
+				continue;
+			Coord3D objPos = pos;
+			const Coord3D* off = pTemplate->getBfmeStartingUnitOffset(i);
+			if (off)
+			{
+				objPos.x += off->x;
+				objPos.y += off->y;
+			}
+			objPos.z = TheTerrainLogic->getGroundHeight( objPos.x, objPos.y );
+			Object *unit = placeObjectAtPosition(slotNum, objName, objPos, pPlayer, pTemplate);
+			if (unit)
+				pPlayer->onUnitCreated(nullptr, unit);
+		}
 		return;
+	}
 
 	DEBUG_LOG(("Placing starting building at waypoint %s", waypointName.str()));
 	Object *conYard = placeObjectAtPosition(slotNum, buildingTemplateName, pos, pPlayer, pTemplate);
@@ -2156,6 +2175,22 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 
 		}
 	}
+	// bfme-native: RotWK player templates come with InitialUpgrades (Upgrade_MenFaction, ...)
+	for (Int pi = 0; pi < ThePlayerList->getPlayerCount(); ++pi)
+	{
+		Player* p = ThePlayerList->getNthPlayer(pi);
+		const PlayerTemplate* pt = p ? p->getPlayerTemplate() : nullptr;
+		if (pt == nullptr)
+			continue;
+		const std::vector<AsciiString>& ups = pt->getBfmeInitialUpgrades();
+		for (size_t u = 0; u < ups.size(); ++u)
+		{
+			const UpgradeTemplate* ut = TheUpgradeCenter->findUpgrade(ups[u]);
+			if (ut && !p->hasUpgradeComplete(ut))
+				p->addUpgrade(ut, UPGRADE_STATUS_COMPLETE);
+		}
+	}
+
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_INITIAL_NETWORK_BUILDINGS);
 
