@@ -9,6 +9,7 @@
 
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/ObjectFilter.h"
+#include "Common/Upgrade.h"
 #include <vector>
 
 class ThingTemplate;
@@ -85,6 +86,8 @@ private:
 	std::vector<ObjectID> m_members;
 	std::vector<Coord3D> m_lastOrder;
 	Bool m_spawned;
+	UpgradeMaskType m_syncedUpgrades;	///< horde object upgrades already handed to the members
+	void syncUpgrades();
 };
 
 /// the unit type a horde template is made of (first InitialPayload), or null

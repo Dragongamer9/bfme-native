@@ -269,6 +269,7 @@ void HordeContain::spawnMembers()
 			m->setOrientation(me->getOrientation());
 			m->setProducer(me);
 			m_members.push_back(m->getID());
+			m_syncedUpgrades.clear();	// hand the horde's upgrades to the newcomer on the next update
 			m_lastOrder.push_back(pos);
 
 			for (size_t am = 0; am < d->m_attributeModifiers.size(); ++am)
@@ -343,6 +344,9 @@ UpdateSleepTime HordeContain::update()
 		TheGameLogic->destroyObject(me);
 		return UPDATE_SLEEP_FOREVER;
 	}
+	// upgrades bought for the horde (armor, blades...) are object upgrades on its members
+	if (me->getObjectCompletedUpgradeMask() != m_syncedUpgrades)
+		syncUpgrades();
 
 	AIUpdateInterface* ai = me->getAI();
 	Object* victim = ai ? ai->getCurrentVictim() : nullptr;
@@ -426,4 +430,30 @@ void HordeContain::xfer( Xfer *xfer )
 void HordeContain::loadPostProcess()
 {
 	UpdateModule::loadPostProcess();
+}
+
+void HordeContain::syncUpgrades()
+{
+	Object* me = getObject();
+	const UpgradeMaskType& now = me->getObjectCompletedUpgradeMask();
+	for (const UpgradeTemplate* ut = TheUpgradeCenter->firstUpgradeTemplate(); ut; ut = ut->friend_getNext())
+	{
+		if (ut->getUpgradeType() != UPGRADE_TYPE_OBJECT)
+			continue;
+		const Bool has = now.testForAny(ut->getUpgradeMask());
+		const Bool had = m_syncedUpgrades.testForAny(ut->getUpgradeMask());
+		if (has == had)
+			continue;
+		for (size_t i = 0; i < m_members.size(); ++i)
+		{
+			Object* m = TheGameLogic->findObjectByID(m_members[i]);
+			if (m == nullptr)
+				continue;
+			if (has && !m->hasUpgrade(ut))
+				m->giveUpgrade(ut);
+			else if (!has && m->hasUpgrade(ut))
+				m->removeUpgrade(ut);
+		}
+	}
+	m_syncedUpgrades = now;
 }
