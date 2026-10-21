@@ -1,0 +1,8 @@
+# Command points: hordes take 60 (members are part of the horde), outpost farms raise the limit by 40
+1    spawn GondorFighterHorde player1 800 1100 0
+1    spawn GondorFighterHorde player1 800 1300 0
+5    money
+6    build GondorFarm_ExternFreeBuild player1 600 900
+1000 construction
+1000 money
+1001 quit

@@ -360,3 +360,11 @@ session 3. Gameplay-relevant first:
   `optionregistry.ini`, `meshinstancingmanager.ini`, `webpages.ini`
 - audio: `crowdresponse.ini`, `largegroupaudio.ini`
 - War of the Ring mode: `livingworld*.ini`, campaigns: `linearcampaign*.ini`
+
+## Inert modules (parsed, no behaviour yet)
+Registered as `BfmeInertBehavior` so objects load cleanly; each still needs porting. Mostly
+audio/animation polish or systems that wait on other work:
+LargeGroupAudioUpdate, HitReactionBehavior, BuildingBehavior, StancesBehavior (stances.ini not
+loaded yet), CastleMemberBehavior, PickupStuffUpdate, AISpecialPowerUpdate (skirmish AI),
+EmotionTrackerUpdate (emotions.ini), NotifyTargetsOfImminentProbableCrushingUpdate,
+HordeNotifyTargetsOfImminentProbableCrushingUpdate, AudioLoopUpgrade.
