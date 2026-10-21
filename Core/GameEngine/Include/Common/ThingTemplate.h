@@ -402,6 +402,7 @@ public:
 	}
 
 	/// convenience for doing multiple kindof testing at once.
+	const KindOfMaskType& getKindOfMask() const { return m_kindof; }	// bfme-native
 	Bool isKindOfMulti(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) const
 	{
 		return TEST_KINDOFMASK_MULTI(m_kindof, mustBeSet, mustBeClear);
