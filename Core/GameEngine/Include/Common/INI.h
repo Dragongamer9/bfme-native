@@ -57,7 +57,7 @@ enum INILoadType CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 enum
 {
-	INI_MAX_CHARS_PER_LINE = 1028,			///< max characters per line entry in any ini file
+	INI_MAX_CHARS_PER_LINE = 32768,			///< max characters per line entry in any ini file (bfme-native: RotWK/Edain macros expand to 5000+ character lines; was 1028)
 };
 
 //-------------------------------------------------------------------------------------------------

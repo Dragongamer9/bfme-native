@@ -95,6 +95,14 @@ public:
 
 	AsciiString getStartingBuilding() const { return m_startingBuilding; }
 	AsciiString getStartingUnit( Int i ) const;
+	// bfme-native: RotWK player template fields
+	const Coord3D* getBfmeStartingUnitOffset( Int i ) const { return (i >= 0 && i < MAX_MP_STARTING_UNITS) ? &m_bfmeStartingUnitOffsets[i] : nullptr; }
+	const std::vector<AsciiString>& getBfmeInitialUpgrades() const { return m_bfmeInitialUpgrades; }
+	const ScienceVec& getBfmeIntrinsicSciencesMP() const { return m_bfmeIntrinsicSciencesMP; }
+	const std::vector<AsciiString>& getBfmeBuildableHeroesMP() const { return m_bfmeBuildableHeroesMP; }
+	AsciiString getBfmeDefaultPlayerAIType() const { return m_bfmeDefaultPlayerAIType; }
+	AsciiString getBfmeSpellBookMP() const { return m_bfmeSpellBookMP; }
+	AsciiString getBfmePurchaseScienceCommandSetMP() const { return m_bfmePurchaseScienceCommandSetMP; }
 
 	const ProductionChangeMap& getProductionCostChanges() const { return m_productionCostChanges; }
 	const ProductionChangeMap& getProductionTimeChanges() const { return m_productionTimeChanges; }
@@ -158,6 +166,17 @@ private:
 	RGBColor				m_preferredColor;			///< our preferred starting color
 	AsciiString			m_startingBuilding;		///< template name of our multiplayer start building (con yard, i'd expect)
 	AsciiString			m_startingUnits[MAX_MP_STARTING_UNITS];		///< template names of our multiplayer start units
+	// bfme-native
+	Coord3D					m_bfmeStartingUnitOffsets[MAX_MP_STARTING_UNITS];
+	std::vector<AsciiString>	m_bfmeInitialUpgrades;
+	ScienceVec			m_bfmeIntrinsicSciencesMP;
+	std::vector<AsciiString>	m_bfmeBuildableHeroesMP;
+	std::vector<AsciiString>	m_bfmeBuildableRingHeroesMP;
+	AsciiString			m_bfmeDefaultPlayerAIType;
+	AsciiString			m_bfmeSpellBook, m_bfmeSpellBookMP;
+	AsciiString			m_bfmePurchaseScienceCommandSet, m_bfmePurchaseScienceCommandSetMP;
+	AsciiString			m_bfmeUnusedString;
+	std::vector<AsciiString>	m_bfmeUnusedStrings;
 	ProductionChangeMap			m_productionCostChanges;
 	ProductionChangeMap			m_productionTimeChanges;
 	ProductionVeterancyMap	m_productionVeterancyLevels;

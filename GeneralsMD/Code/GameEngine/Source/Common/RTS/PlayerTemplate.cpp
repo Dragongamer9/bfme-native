@@ -69,6 +69,30 @@
 	{
 		{ "Side",											INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_side ) },
 		{ "Evil",											INI::parseBool,																	nullptr, offsetof( PlayerTemplate, m_isEvil ) },	// bfme-native
+		{ "StartingUnitOffset0",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[0] ) },
+		{ "StartingUnitOffset1",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[1] ) },
+		{ "StartingUnitOffset2",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[2] ) },
+		{ "StartingUnitOffset3",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[3] ) },
+		{ "StartingUnitOffset4",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[4] ) },
+		{ "StartingUnitOffset5",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[5] ) },
+		{ "StartingUnitOffset6",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[6] ) },
+		{ "StartingUnitOffset7",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[7] ) },
+		{ "StartingUnitOffset8",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[8] ) },
+		{ "StartingUnitOffset9",		INI::parseCoord3D,		nullptr, offsetof( PlayerTemplate, m_bfmeStartingUnitOffsets[9] ) },
+		{ "InitialUpgrades",					INI::parseAsciiStringVectorAppend,	nullptr, offsetof( PlayerTemplate, m_bfmeInitialUpgrades ) },
+		{ "IntrinsicSciencesMP",			INI::parseScienceVector,		nullptr, offsetof( PlayerTemplate, m_bfmeIntrinsicSciencesMP ) },
+		{ "BuildableHeroesMP",				INI::parseAsciiStringVectorAppend,	nullptr, offsetof( PlayerTemplate, m_bfmeBuildableHeroesMP ) },
+		{ "BuildableRingHeroesMP",		INI::parseAsciiStringVectorAppend,	nullptr, offsetof( PlayerTemplate, m_bfmeBuildableRingHeroesMP ) },
+		{ "DefaultPlayerAIType",			INI::parseAsciiString,			nullptr, offsetof( PlayerTemplate, m_bfmeDefaultPlayerAIType ) },
+		{ "SpellBook",								INI::parseAsciiString,			nullptr, offsetof( PlayerTemplate, m_bfmeSpellBook ) },
+		{ "SpellBookMp",							INI::parseAsciiString,			nullptr, offsetof( PlayerTemplate, m_bfmeSpellBookMP ) },
+		{ "PurchaseScienceCommandSet",	INI::parseAsciiString,		nullptr, offsetof( PlayerTemplate, m_bfmePurchaseScienceCommandSet ) },
+		{ "PurchaseScienceCommandSetMP", INI::parseAsciiString,		nullptr, offsetof( PlayerTemplate, m_bfmePurchaseScienceCommandSetMP ) },
+		{ "StartingUnitTacticalWOTR",	INI::parseAsciiStringVectorAppend,	nullptr, offsetof( PlayerTemplate, m_bfmeUnusedStrings ) },
+		{ "MaxLevelMP",								INI::parseAsciiString,			nullptr, offsetof( PlayerTemplate, m_bfmeUnusedString ) },
+		{ "MaxLevelSP",								INI::parseAsciiString,			nullptr, offsetof( PlayerTemplate, m_bfmeUnusedString ) },
+		{ "ResourceModifierObjectFilter", INI::parseAsciiString,		nullptr, offsetof( PlayerTemplate, m_bfmeUnusedString ) },
+		{ "ResourceModifierValues",		INI::parseAsciiString,			nullptr, offsetof( PlayerTemplate, m_bfmeUnusedString ) },
 		{ "BaseSide",								INI::parseAsciiString,													nullptr, offsetof( PlayerTemplate, m_baseSide ) },
 		{ "PlayableSide",							INI::parseBool,																	nullptr, offsetof( PlayerTemplate, m_playableSide ) },
 		{ "DisplayName",							INI::parseAndTranslateLabel,										nullptr, offsetof( PlayerTemplate, m_displayName) },
@@ -195,10 +219,13 @@ PlayerTemplate::PlayerTemplate() :
 	m_observer(false),
 	m_playableSide(false),
 	m_isEvil(false),
+	// (bfme-native offsets are zeroed in the constructor body)
   m_oldFaction(false),
 	m_intrinsicSPP(0),
 	m_specialPowerShortcutButtonCount(0)
 {
+	for (Int i = 0; i < MAX_MP_STARTING_UNITS; ++i)
+		m_bfmeStartingUnitOffsets[i].zero();	// bfme-native
 	m_preferredColor.red = m_preferredColor.green = m_preferredColor.blue = 0.0f;
 	m_beaconTemplate.clear();
 }

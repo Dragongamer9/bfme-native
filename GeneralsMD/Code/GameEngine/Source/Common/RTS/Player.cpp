@@ -2544,7 +2544,13 @@ void Player::resetSciences()
 	m_sciences.clear();
 
 	if (getPlayerTemplate())
+	{
 		m_sciences = getPlayerTemplate()->getIntrinsicSciences();
+		const ScienceVec& mp = getPlayerTemplate()->getBfmeIntrinsicSciencesMP();	// bfme-native
+		for (ScienceVec::const_iterator it = mp.begin(); it != mp.end(); ++it)
+			if (std::find(m_sciences.begin(), m_sciences.end(), *it) == m_sciences.end())
+				m_sciences.push_back(*it);
+	}
 
 	for (Int i = 1; i <= m_rankLevel; ++i)
 	{
