@@ -201,6 +201,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "TerrainResourceBehavior", 512, 128 },	// bfme-native
 	{ "AutoAbilityBehavior", 1024, 256 },	// bfme-native
 	{ "DoCommandUpgrade", 1024, 256 },	// bfme-native
+	{ "RespawnUpdate", 512, 128 },	// bfme-native
 	{ "BfmeInertBehavior", 8192, 2048 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },

@@ -1,9 +1,11 @@
 // bfme-native: small RotWK modules, see BfmeModules.h
+#include "PreRTS.h"
+#include "Common/Money.h"
+#include "GameLogic/TerrainLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/SpecialPower.h"
 #include "GameClient/ControlBar.h"
-#include "PreRTS.h"
 
 #include "Common/BuildAssistant.h"
 #include "Common/Player.h"
@@ -23,6 +25,7 @@
 
 // standard snapshot boilerplate for modules without own state
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
+#include "GameLogic/Module/ToggleMountedSpecialAbilityUpdate.h"
 
 #define BFME_TRIVIAL_SNAPSHOT(Cls, Base) \
 	void Cls::crc( Xfer *xfer ) { Base::crc( xfer ); } \
@@ -704,4 +707,243 @@ void DoCommandUpgrade::upgradeImplementation()
 		default:
 			break;
 	}
+}
+
+//=================================================================================================
+// RespawnUpdate
+//=================================================================================================
+/// "AutoSpawn:No Cost:2500 Time:135000 Health:100%" / "Level:3 Cost:200 Time:30000" (the value may be a separate token)
+static void parseRespawnTokens(INI* ini, RespawnRule& r)
+{
+	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	{
+		AsciiString key = tok, val;
+		const char* colon = strchr(tok, ':');
+		if (colon)
+		{
+			key.set(tok, colon - tok);
+			val = colon + 1;
+		}
+		if (val.isEmpty())
+		{
+			const char* v = ini->getNextTokenOrNull();
+			if (v == nullptr)
+				break;
+			val = v;
+		}
+		if (key.compareNoCase("AutoSpawn") == 0)
+			r.m_autoSpawn = INI::scanBool(val.str());
+		else if (key.compareNoCase("Cost") == 0)
+			r.m_cost = INI::scanInt(val.str());
+		else if (key.compareNoCase("Time") == 0)
+			r.m_time = (UnsignedInt)ceilf(INI::scanReal(val.str()) * LOGICFRAMES_PER_SECOND / 1000.0f);
+		else if (key.compareNoCase("Health") == 0)
+			r.m_health = INI::scanPercentToReal(val.str());
+		else if (key.compareNoCase("Level") == 0)
+			r.m_level = INI::scanInt(val.str());
+	}
+}
+
+void RespawnUpdateModuleData::parseRule(INI* ini, void*, void* store, const void*)
+{
+	parseRespawnTokens(ini, *(RespawnRule*)store);
+}
+
+void RespawnUpdateModuleData::parseEntry(INI* ini, void*, void* store, const void*)
+{
+	RespawnRule r;
+	r.m_cost = -1;
+	r.m_time = 0;
+	parseRespawnTokens(ini, r);
+	((std::vector<RespawnRule>*)store)->push_back(r);
+}
+
+void RespawnUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "DeathAnim",									ModelConditionFlags::parseFromINI,	nullptr, offsetof( RespawnUpdateModuleData, m_deathAnim ) },
+		{ "DeathAnimationTime",					INI::parseDurationUnsignedInt,			nullptr, offsetof( RespawnUpdateModuleData, m_deathAnimationTime ) },
+		{ "RespawnAnim",								ModelConditionFlags::parseFromINI,	nullptr, offsetof( RespawnUpdateModuleData, m_respawnAnim ) },
+		{ "RespawnAnimationTime",				INI::parseDurationUnsignedInt,			nullptr, offsetof( RespawnUpdateModuleData, m_respawnAnimationTime ) },
+		{ "DeathFX",										INI::parseFXList,										nullptr, offsetof( RespawnUpdateModuleData, m_deathFX ) },
+		{ "RespawnFX",									INI::parseFXList,										nullptr, offsetof( RespawnUpdateModuleData, m_respawnFX ) },
+		{ "InitialSpawnFX",							INI::parseFXList,										nullptr, offsetof( RespawnUpdateModuleData, m_initialSpawnFX ) },
+		{ "AutoRespawnAtObjectFilter",	ObjectFilter::parseFromINI,					nullptr, offsetof( RespawnUpdateModuleData, m_autoRespawnAt ) },
+		{ "ButtonImage",								INI::parseAsciiString,							nullptr, offsetof( RespawnUpdateModuleData, m_buttonImage ) },
+		{ "RespawnAsTemplate",					INI::parseAsciiString,							nullptr, offsetof( RespawnUpdateModuleData, m_respawnAsTemplate ) },
+		{ "RespawnRules",								RespawnUpdateModuleData::parseRule,	nullptr, offsetof( RespawnUpdateModuleData, m_rules ) },
+		{ "RespawnEntry",								RespawnUpdateModuleData::parseEntry,	nullptr, offsetof( RespawnUpdateModuleData, m_entries ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+RespawnUpdate::RespawnUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
+	m_state(STATE_ALIVE), m_stateFrame(0)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
+}
+
+void RespawnUpdate::crc( Xfer *xfer ) { UpdateModule::crc( xfer ); }
+void RespawnUpdate::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	UpdateModule::xfer( xfer );
+	Int st = (Int)m_state;
+	xfer->xferInt(&st);
+	m_state = (State)st;
+	xfer->xferUnsignedInt(&m_stateFrame);
+}
+void RespawnUpdate::loadPostProcess() { UpdateModule::loadPostProcess(); }
+RespawnUpdate::~RespawnUpdate() {}
+
+RespawnUpdate* RespawnUpdate::findOn(const Object* obj)
+{
+	for (BehaviorModule** m = const_cast<Object*>(obj)->getBehaviorModules(); *m; ++m)
+	{
+		RespawnUpdate* r = dynamic_cast<RespawnUpdate*>(*m);
+		if (r)
+			return r;
+	}
+	return nullptr;
+}
+
+Bool bfmeRespawnInterceptDeath(Object* obj, DamageInfo* /*damageInfo*/)
+{
+	RespawnUpdate* r = RespawnUpdate::findOn(obj);
+	if (r == nullptr || r->isFallen())
+		return FALSE;
+	r->onFallen();
+	return TRUE;
+}
+
+RespawnRule RespawnUpdate::currentRule() const
+{
+	const RespawnUpdateModuleData* d = getRespawnUpdateModuleData();
+	RespawnRule r = d->m_rules;
+	const ExperienceTracker* xp = getObject()->getExperienceTracker();
+	const Int level = xp ? (Int)xp->getVeterancyLevel() + 1 : 1;
+	for (size_t i = 0; i < d->m_entries.size(); ++i)
+	{
+		if (d->m_entries[i].m_level != level)
+			continue;
+		if (d->m_entries[i].m_cost >= 0)
+			r.m_cost = d->m_entries[i].m_cost;
+		if (d->m_entries[i].m_time > 0)
+			r.m_time = d->m_entries[i].m_time;
+	}
+	return r;
+}
+
+void RespawnUpdate::onFallen()
+{
+	const RespawnUpdateModuleData* d = getRespawnUpdateModuleData();
+	Object* me = getObject();
+	m_state = STATE_DYING;
+	m_stateFrame = TheGameLogic->getFrame();
+	AIUpdateInterface* ai = me->getAI();
+	if (ai)
+		ai->aiIdle(CMD_FROM_AI);
+	if (d->m_deathAnim.any())
+		me->setModelConditionFlags(d->m_deathAnim);
+	if (d->m_deathFX)
+		FXList::doFXObj(d->m_deathFX, me);
+	if (getenv("BFME_DEBUG_RESPAWN"))
+		printf("[respawn] #%u %s has fallen (revive: cost %d, %u frames, auto=%d)\n", me->getID(), me->getTemplate()->getName().str(),
+			currentRule().m_cost, currentRule().m_time, (int)currentRule().m_autoSpawn);
+	setWakeFrame(me, UPDATE_SLEEP(max(1u, d->m_deathAnimationTime)));
+}
+
+UpdateSleepTime RespawnUpdate::update()
+{
+	const RespawnUpdateModuleData* d = getRespawnUpdateModuleData();
+	Object* me = getObject();
+	const UnsignedInt now = TheGameLogic->getFrame();
+	if (m_state == STATE_DYING)
+	{
+		// gone from the battlefield until revived
+		if (d->m_deathAnim.any())
+			me->clearModelConditionFlags(d->m_deathAnim);
+		me->setStatus(MAKE_OBJECT_STATUS_MASK4(OBJECT_STATUS_UNSELECTABLE, OBJECT_STATUS_MASKED, OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_BFME_NOT_IN_WORLD));
+		me->setModelConditionState(MODELCONDITION_HIDDEN);
+		m_state = STATE_DEAD;
+		m_stateFrame = now;
+		const RespawnRule r = currentRule();
+		Player* p = me->getControllingPlayer();
+		// computer players revive their heroes as soon as they can pay (until fortress revive is wired to their AI)
+		if (r.m_autoSpawn || (p && p->getPlayerType() == PLAYER_COMPUTER))
+			return UPDATE_SLEEP(max(1u, r.m_time));
+		return UPDATE_SLEEP_FOREVER;
+	}
+	if (m_state == STATE_DEAD)
+	{
+		const RespawnRule r = currentRule();
+		Player* p = me->getControllingPlayer();
+		if (!r.m_autoSpawn && p)
+		{
+			if (p->getMoney()->countMoney() < (UnsignedInt)max(0, r.m_cost))
+				return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND * 5);
+			p->getMoney()->withdraw(max(0, r.m_cost));
+		}
+		// AutoRespawnAtObjectFilter: come back at the nearest matching building of ours
+		const Coord3D* where = nullptr;
+		if (!d->m_autoRespawnAt.isEmpty())
+		{
+			Real best = 0.0f;
+			for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+			{
+				if (o == me || o->getControllingPlayer() != p || o->isEffectivelyDead() || !d->m_autoRespawnAt.matches(o, me))
+					continue;
+				const Real dx = o->getPosition()->x - me->getPosition()->x, dy = o->getPosition()->y - me->getPosition()->y;
+				if (where == nullptr || dx * dx + dy * dy < best)
+				{
+					where = o->getPosition();
+					best = dx * dx + dy * dy;
+				}
+			}
+		}
+		revive(where);
+		return UPDATE_SLEEP_FOREVER;
+	}
+	return UPDATE_SLEEP_FOREVER;
+}
+
+Object* RespawnUpdate::revive(const Coord3D* pos)
+{
+	const RespawnUpdateModuleData* d = getRespawnUpdateModuleData();
+	Object* me = getObject();
+	if (m_state == STATE_ALIVE)
+		return me;
+	const RespawnRule r = currentRule();
+	Coord3D at = pos ? *pos : *me->getPosition();
+	at.z = TheTerrainLogic->getGroundHeight(at.x, at.y);
+
+	me->clearStatus(MAKE_OBJECT_STATUS_MASK4(OBJECT_STATUS_UNSELECTABLE, OBJECT_STATUS_MASKED, OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_BFME_NOT_IN_WORLD));
+	me->clearModelConditionState(MODELCONDITION_HIDDEN);
+	if (d->m_deathAnim.any())
+		me->clearModelConditionFlags(d->m_deathAnim);
+	me->setPosition(&at);
+	BodyModuleInterface* body = me->getBodyModule();
+	if (body)
+		body->internalChangeHealth(body->getMaxHealth() * max(0.01f, r.m_health) - body->getHealth());
+	m_state = STATE_ALIVE;
+	m_stateFrame = TheGameLogic->getFrame();
+	if (d->m_respawnAnim.any())
+		TheAttributeModifierStore->applyTimedModelConditions(me, d->m_respawnAnim, max(1u, d->m_respawnAnimationTime));
+	if (d->m_respawnFX)
+		FXList::doFXObj(d->m_respawnFX, me);
+	if (getenv("BFME_DEBUG_RESPAWN"))
+		printf("[respawn] #%u %s revived at %.0f,%.0f\n", me->getID(), me->getTemplate()->getName().str(), at.x, at.y);
+
+	if (d->m_respawnAsTemplate.isNotEmpty())
+	{
+		const ThingTemplate* t = TheThingFactory->findTemplate(d->m_respawnAsTemplate);
+		if (t)
+			return bfmeReplaceObject(me, t, nullptr);
+	}
+	return me;
 }

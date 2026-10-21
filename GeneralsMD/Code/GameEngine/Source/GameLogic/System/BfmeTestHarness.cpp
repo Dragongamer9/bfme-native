@@ -16,6 +16,7 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Money.h"
+#include "GameLogic/Module/BfmeModules.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/PlayerTemplate.h"
@@ -319,6 +320,38 @@ void run(const TestCmd& c)
 			else
 				m->doSpecialPower(0);
 			printf("[BFMETEST] power: #%u used %s on #%u\n", o->getID(), c.args[3].c_str(), best ? best->getID() : 0);
+		}
+	}
+	else if (op == "kill" && c.args.size() >= 3)
+	{
+		// kill PLAYER TEMPLATE : lethal damage to the player's objects of that template
+		Player* a = findPlayer(c.args[1]);
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+			if (o->getControllingPlayer() == a && !o->isEffectivelyDead() && o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) == 0)
+			{
+				o->kill();
+				printf("[BFMETEST] killed #%u %s dead=%d\n", o->getID(), c.args[2].c_str(), (int)o->isEffectivelyDead());
+			}
+	}
+	else if (op == "revive" && c.args.size() >= 3)
+	{
+		// revive PLAYER TEMPLATE [X Y] : bring a fallen hero back (as a fortress would)
+		Player* a = findPlayer(c.args[1]);
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		{
+			RespawnUpdate* r = RespawnUpdate::findOn(o);
+			if (o->getControllingPlayer() != a || r == nullptr || !r->isFallen() || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0)
+				continue;
+			Coord3D pos;
+			if (c.args.size() >= 5)
+			{
+				pos.x = (Real)atof(c.args[3].c_str());
+				pos.y = (Real)atof(c.args[4].c_str());
+				pos.z = 0.0f;
+			}
+			Object* n = r->revive(c.args.size() >= 5 ? &pos : nullptr);
+			printf("[BFMETEST] revived #%u as %s\n", n ? n->getID() : 0, n ? n->getTemplate()->getName().str() : "-");
+			break;
 		}
 	}
 	else if (op == "money")
