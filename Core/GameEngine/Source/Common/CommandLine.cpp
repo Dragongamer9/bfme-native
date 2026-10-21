@@ -699,6 +699,21 @@ static Int bfmeParseFile(char *args[], int num)
 	return 2;
 }
 
+// bfme-native: "-skirmish <map> <faction1> <faction2>" -- a 1v1 skirmish (you vs a computer player)
+static Int bfmeParseSkirmish(char *args[], int num)
+{
+	if (num > 3)
+	{
+		TheWritableGlobalData->m_initialFile = args[1];
+		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_initialFile);
+		TheWritableGlobalData->m_bfmeSkirmishFactions[0] = args[2];
+		TheWritableGlobalData->m_bfmeSkirmishFactions[1] = args[3];
+		TheWritableGlobalData->m_bfmeSkirmish = TRUE;
+		return 4;
+	}
+	return 1;
+}
+
 #if defined(RTS_DEBUG)
 Int parseDisplayDebug(char *args[], int)
 {
@@ -1266,6 +1281,7 @@ static CommandLineParam paramsForEngineInit[] =
 #endif
 	// bfme-native: run a map directly (used by the headless logic tests), available in release builds
 	{ "-file", bfmeParseFile },
+	{ "-skirmish", bfmeParseSkirmish },
 
 #ifdef DEBUG_CRC
 	// TheSuperHackers @info helmutbuhler 04/09/2025

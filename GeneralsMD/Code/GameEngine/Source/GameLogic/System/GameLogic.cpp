@@ -547,6 +547,8 @@ static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateNam
 	DEBUG_ASSERTCRASH(btt, ("TheThingFactory didn't find a template in placeObjectAtPosition()") );
 
 	Object *obj = TheThingFactory->newObject( btt, pPlayer->getDefaultTeam() );
+	fprintf(stderr, "[bfme] start object %s for slot %d player %p team %p -> owner %s\n", objectTemplateName.str(), slotNum, (void*)pPlayer,
+		(void*)pPlayer->getDefaultTeam(), obj && obj->getControllingPlayer() ? TheNameKeyGenerator->keyToName(obj->getControllingPlayer()->getPlayerNameKey()).str() : "-");
 	DEBUG_ASSERTCRASH(obj, ("TheThingFactory didn't give me a valid Object for player %d's (%ls) starting building",
 		slotNum, pTemplate->getDisplayName().str()));
 	if (obj)
