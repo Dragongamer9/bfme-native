@@ -1,0 +1,7 @@
+deps
+engine/
+work/
+tests/out/
+tests/*.obj
+tests/*.exe
+__pycache__/

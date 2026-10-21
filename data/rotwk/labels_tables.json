@@ -1,0 +1,5399 @@
+[
+ {
+  "va": 8948581,
+  "name": "INI::parseCrateTemplateDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 12610008,
+  "name": "BlockParse_CrateData",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 4460666,
+  "name": "INI::parseAudioSettingsDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14256828,
+  "name": "BlockParse_AudioSettings",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6129306,
+  "name": "INI::parseAIDataDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277080,
+  "name": "BlockParse_AIData",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6130975,
+  "name": "INI::parseArmorDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277408,
+  "name": "BlockParse_Armor",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6136079,
+  "name": "INI::parseMusicTrackDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277556,
+  "name": "BlockParse_MusicTrack",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6136153,
+  "name": "INI::parseAudioEventDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277568,
+  "name": "BlockParse_AudioEvent",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6136227,
+  "name": "INI::parseDialogDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277580,
+  "name": "BlockParse_DialogEvent",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6136301,
+  "name": "INI::parseAmbientStreamDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14277592,
+  "name": "BlockParse_AmbientStream",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6136375,
+  "name": "INI::parseStreamedSoundDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14277604,
+  "name": "BlockParse_StreamedSound",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6134893,
+  "name": "INI::parseMultisoundDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14277616,
+  "name": "BlockParse_Multisound",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6137415,
+  "name": "INI::parseTerrainBridgeDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277688,
+  "name": "BlockParse_Bridge",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6137617,
+  "name": "INI::parseCommandButtonDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277736,
+  "name": "BlockParse_CommandButton",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6139206,
+  "name": "INI::parseMetaMapDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277824,
+  "name": "BlockParse_CommandMap",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6138995,
+  "name": "INI::parseDebugCommandMapDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14277836,
+  "name": "BlockParse_DebugCommandMap",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 7472569,
+  "name": "INI::parseCommandSetDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277884,
+  "name": "BlockParse_CommandSet",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6139440,
+  "name": "INI::parseControlBarSchemeDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277932,
+  "name": "BlockParse_ControlBarScheme",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6550463,
+  "name": "INI::parseControlBarResizerDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277980,
+  "name": "BlockParse_ControlBarResizer",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 7728246,
+  "name": "INI::parseCrateTemplateDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14277992,
+  "name": "BlockParse_CrateData",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6143427,
+  "name": "INI::parseWindowTransitions",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278040,
+  "name": "BlockParse_WindowTransition",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 7743385,
+  "name": "INI::parseDamageFXDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278088,
+  "name": "BlockParse_DamageFX",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6145011,
+  "name": "INI::parseDrawGroupNumberDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278100,
+  "name": "BlockParse_DrawGroupInfo",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6152618,
+  "name": "INI::parsePredefinedEvaEventDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14278172,
+  "name": "BlockParse_PredefinedEvaEvent",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6155073,
+  "name": "INI::parseNewEvaEventDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14278184,
+  "name": "BlockParse_NewEvaEvent",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6155708,
+  "name": "INI::parseEvaEventForwardReferenceDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14278196,
+  "name": "BlockParse_EvaEventForwardReference",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6145859,
+  "name": "INI::parseMiscEvaDataDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14278208,
+  "name": "BlockParse_MiscEvaData",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6169880,
+  "name": "INI::parseFXListDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278280,
+  "name": "BlockParse_FXList",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6570312,
+  "name": "INI::parseGameDataDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278308,
+  "name": "BlockParse_GameData",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6193782,
+  "name": "INI::parseLocomotorTemplateDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278712,
+  "name": "BlockParse_Locomotor",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6200278,
+  "name": "INI::parseLanguageDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278732,
+  "name": "BlockParse_Language",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6212793,
+  "name": "INI::parseLinearCampaignDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14278804,
+  "name": "BlockParse_LinearCampaign",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6212981,
+  "name": "INI::parseMappedImageDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278840,
+  "name": "BlockParse_MappedImage",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6213159,
+  "name": "INI::parseMiscAudio",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14278852,
+  "name": "BlockParse_MiscAudio",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6220292,
+  "name": "INI::parseMouseCursorDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279148,
+  "name": "BlockParse_MouseCursor",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6215561,
+  "name": "INI::parseMouseDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279160,
+  "name": "BlockParse_Mouse",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6220467,
+  "name": "INI::parseMultiplayerSettingsDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279172,
+  "name": "BlockParse_MultiplayerSettings",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6220555,
+  "name": "INI::parseMultiplayerColorDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279184,
+  "name": "BlockParse_MultiplayerColor",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6220737,
+  "name": "INI::parseOnlineChatColorDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279232,
+  "name": "BlockParse_OnlineChatColors",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6223638,
+  "name": "INI::parseObjectDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279420,
+  "name": "BlockParse_Object",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6223718,
+  "name": "INI::parseObjectReskinDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279432,
+  "name": "BlockParse_ObjectReskin",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6223836,
+  "name": "INI::parseChildObjectDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14279444,
+  "name": "BlockParse_ChildObject",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6227042,
+  "name": "INI::parseObjectCreationListDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279672,
+  "name": "BlockParse_ObjectCreationList",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6277083,
+  "name": "INI::parseFXParticleSystemDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14279744,
+  "name": "BlockParse_FXParticleSystem",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6285394,
+  "name": "INI::parsePlayerTemplateDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279792,
+  "name": "BlockParse_PlayerTemplate",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6286062,
+  "name": "INI::parseTerrainRoadDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279864,
+  "name": "BlockParse_Road",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6289370,
+  "name": "INI::parseScienceDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279912,
+  "name": "BlockParse_Science",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6290602,
+  "name": "INI::parseRankDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14279984,
+  "name": "BlockParse_Rank",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 8069423,
+  "name": "INI::parseSpecialPowerDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280024,
+  "name": "BlockParse_SpecialPower",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6292246,
+  "name": "INI::parseShellMenuSchemeDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280072,
+  "name": "BlockParse_ShellMenuScheme",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6292471,
+  "name": "INI::parseTerrainDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280084,
+  "name": "BlockParse_Terrain",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6292604,
+  "name": "INI::parseWaterTextureListDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14280096,
+  "name": "BlockParse_WaterTextureList",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6749402,
+  "name": "INI::parseUpgradeDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280108,
+  "name": "BlockParse_Upgrade",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6292836,
+  "name": "INI::parseWaterSettingDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280120,
+  "name": "BlockParse_WaterSet",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6293597,
+  "name": "INI::parseWaterTransparencyDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280132,
+  "name": "BlockParse_WaterTransparency",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6293852,
+  "name": "INI::parseAerialPathfindNoFlyZoneDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14280204,
+  "name": "BlockParse_AerialPathfindNoFlyZone",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6296051,
+  "name": "INI::parseWeatherDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280252,
+  "name": "BlockParse_Weather",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 7138661,
+  "name": "INI::parseWeaponTemplateDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280300,
+  "name": "BlockParse_Weapon",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6297128,
+  "name": "INI::parseHeaderTemplateDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280312,
+  "name": "BlockParse_HeaderTemplate",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6297551,
+  "name": "parseReallyLowMHz",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280692,
+  "name": "BlockParse_ReallyLowMHz",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6297594,
+  "name": "INI::parseAudioLowMHzDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14280704,
+  "name": "BlockParse_AudioLowMHz",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6299727,
+  "name": "INI::parseBenchProfile",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280716,
+  "name": "BlockParse_BenchProfile",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6301598,
+  "name": "INI::parseLODPreset",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280728,
+  "name": "BlockParse_LODPreset",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6300973,
+  "name": "INI::parseStaticGameLODDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280740,
+  "name": "BlockParse_StaticGameLOD",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6301824,
+  "name": "INI::parseDynamicGameLODDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280752,
+  "name": "BlockParse_DynamicGameLOD",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6301957,
+  "name": "INI::parseAudioLODDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14280764,
+  "name": "BlockParse_AudioLOD",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 6318132,
+  "name": "ScriptEngine::parseScriptAction",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280836,
+  "name": "BlockParse_ScriptAction",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6318232,
+  "name": "ScriptEngine::parseScriptCondition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 14280848,
+  "name": "BlockParse_ScriptCondition",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.95
+ },
+ {
+  "va": 6345662,
+  "name": "INI::parseSkyboxTextureSetDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14280960,
+  "name": "BlockParse_SkyboxTextureSet",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 7386932,
+  "name": "INI::parseGlowEffectDefinition",
+  "kind": "function",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 14280972,
+  "name": "BlockParse_GlowEffect",
+  "kind": "data",
+  "source": "block-entry",
+  "confidence": 0.5
+ },
+ {
+  "va": 4384088,
+  "name": "INI::parseBool",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4384116,
+  "name": "INI::parseBitInInt32",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4384158,
+  "name": "INI::parseAsciiStringVectorAppend",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.79
+ },
+ {
+  "va": 4384832,
+  "name": "INI::parseBitString32",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4385110,
+  "name": "INI::parseIndexList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.89
+ },
+ {
+  "va": 4385142,
+  "name": "INI::parseByteSizedIndexList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4385207,
+  "name": "INI::parseLookupList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4385653,
+  "name": "INI::parseUnsignedByte",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4385809,
+  "name": "INI::parseUnsignedShort",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.75
+ },
+ {
+  "va": 4385886,
+  "name": "INI::parseInt",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.98
+ },
+ {
+  "va": 4385970,
+  "name": "INI::parseUnsignedInt",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.79
+ },
+ {
+  "va": 4386048,
+  "name": "INI::parseReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.98
+ },
+ {
+  "va": 4386076,
+  "name": "INI::parsePositiveNonZeroReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4386325,
+  "name": "INI::parseAngleReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4386398,
+  "name": "INI::parseAsciiString",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.96
+ },
+ {
+  "va": 4386458,
+  "name": "INI::parseQuotedAsciiString",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4386554,
+  "name": "INI::parsePercentToReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.89
+ },
+ {
+  "va": 4386650,
+  "name": "INI::parseBitString8",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4386713,
+  "name": "INI::parseRGBColor",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.99
+ },
+ {
+  "va": 4386879,
+  "name": "INI::parseRGBAColorInt",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4387134,
+  "name": "INI::parseColorInt",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4387399,
+  "name": "INI::parseCoord3D",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.98
+ },
+ {
+  "va": 4387480,
+  "name": "INI::parseCoord2D",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.75
+ },
+ {
+  "va": 4387578,
+  "name": "INI::parseICoord2D",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4387636,
+  "name": "parsePitchShift",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4387714,
+  "name": "parseDelay",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4941242,
+  "name": "parseAsciiStringLC",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 4993403,
+  "name": "parseWeaponBoneName",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 5015616,
+  "name": "W3DModelDrawModuleData::parseConditionState",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6137037,
+  "name": "INI::parseSoundsList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6144643,
+  "name": "GameWindowTransitionsHandler::parseWindow",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6144921,
+  "name": "parseInt",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6144967,
+  "name": "parsePercentToReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6157085,
+  "name": "parseScorchType",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6163377,
+  "name": "SoundFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6163501,
+  "name": "RayEffectFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6163625,
+  "name": "LightPulseFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6164140,
+  "name": "ViewShakeFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6164388,
+  "name": "TerrainScorchFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6164636,
+  "name": "FXListAtBonePosFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6168279,
+  "name": "ParticleSystemFXNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6202699,
+  "name": "GlobalLanguage::parseFontFileName",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6227384,
+  "name": "FireWeaponNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6227437,
+  "name": "AttackNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6227518,
+  "name": "ApplyRandomForceNugget::parse",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6236522,
+  "name": "GenericObjectCreationNugget::parseObject",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6237100,
+  "name": "parseAnimSet",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6237273,
+  "name": "GenericObjectCreationNugget::parseDebris",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6277342,
+  "name": "PlayerTemplate::parseStartMoney",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6281100,
+  "name": "PlayerTemplate::parseProductionCostChange",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6281177,
+  "name": "PlayerTemplate::parseProductionTimeChange",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6281281,
+  "name": "PlayerTemplate::parseProductionVeterancyLevel",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6291924,
+  "name": "ShellMenuSchemeManager::parseImagePart",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6292005,
+  "name": "ShellMenuSchemeManager::parseLinePart",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6632321,
+  "name": "parseInitialRoster",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 6644967,
+  "name": "KindOfMaskType::parseFromINI",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.93
+ },
+ {
+  "va": 6747651,
+  "name": "INI::parseAsciiStringVector",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.86
+ },
+ {
+  "va": 7110579,
+  "name": "WeaponTemplateSet::parseWeapon",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7110630,
+  "name": "WeaponTemplateSet::parseAutoChoose",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7117137,
+  "name": "WeaponSetFlags::parseFromINI",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7117153,
+  "name": "WeaponTemplateSet::parsePreferredAgainst",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7117978,
+  "name": "parsePerVetLevelFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7118044,
+  "name": "parseAllVetLevelsFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7118084,
+  "name": "parsePerVetLevelPSys",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7118150,
+  "name": "parseAllVetLevelsPSys",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7118233,
+  "name": "WeaponTemplate::parseShotDelay",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7124313,
+  "name": "WeaponBonusSet::parseWeaponBonusSetPtr",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7124395,
+  "name": "WeaponTemplate::parseWeaponBonusSet",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7140415,
+  "name": "WeaponTemplate::parseScatterTarget",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7177031,
+  "name": "Anim2DTemplate::parseNumImages",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7177282,
+  "name": "Anim2DTemplate::parseImage",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7177320,
+  "name": "Anim2DTemplate::parseImageSequence",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7184089,
+  "name": "Image::parseImageCoords",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7184348,
+  "name": "Image::parseImageStatus",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7192882,
+  "name": "parseTransitionToOCL",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7193121,
+  "name": "parseTransitionToFX",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7337639,
+  "name": "AI::parseSkillSet",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7340319,
+  "name": "AI::parseSideInfo",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7340507,
+  "name": "AI::parseSkirmishBuildList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7476201,
+  "name": "ControlBarSchemeManager::parseAnimatingPartImage",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7478004,
+  "name": "ControlBarSchemeManager::parseImagePart",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7478085,
+  "name": "ControlBarSchemeManager::parseAnimatingPart",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7546812,
+  "name": "RadiusDecalTemplate::parseRadiusDecalTemplate",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7578326,
+  "name": "INI::parseAngularVelocityReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7578370,
+  "name": "INI::parseFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7578472,
+  "name": "INI::parseObjectCreationList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7578518,
+  "name": "INI::parseGameClientRandomVariable",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.92
+ },
+ {
+  "va": 7578627,
+  "name": "INI::parseDurationReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7578665,
+  "name": "INI::parseDurationUnsignedInt",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.98
+ },
+ {
+  "va": 7578735,
+  "name": "INI::parseDurationUnsignedShort",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7578806,
+  "name": "INI::parseVelocityReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.86
+ },
+ {
+  "va": 7578844,
+  "name": "INI::parseAccelerationReal",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7579081,
+  "name": "INI::parseDamageTypeFlags",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7579274,
+  "name": "INI::parseDeathTypeFlags",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7580098,
+  "name": "INI::parseMappedImage",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7580935,
+  "name": "INI::parseDynamicAudioEventRTS",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7581305,
+  "name": "INI::parseWeaponTemplate",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7581387,
+  "name": "INI::parseParticleSystemTemplate",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7581503,
+  "name": "INI::parseDamageFX",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7581577,
+  "name": "INI::parseUpgradeTemplate",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.83
+ },
+ {
+  "va": 7581667,
+  "name": "INI::parseScience",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7582098,
+  "name": "INI::parseAndTranslateLabel",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 0.95
+ },
+ {
+  "va": 7582255,
+  "name": "INI::parseSpecialPowerTemplate",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7582880,
+  "name": "INI::parseScienceVector",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7584637,
+  "name": "INI::parseAudioEventRTS",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7585475,
+  "name": "ThingTemplate::parseAddModule",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7585559,
+  "name": "ThingTemplate::parseInheritableModule",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7592347,
+  "name": "ArmorSetFlags::parseFromINI",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7595798,
+  "name": "ThingTemplate::parseRemoveModule",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7596013,
+  "name": "ThingTemplate::parseReplaceModule",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7597337,
+  "name": "ThingTemplate::parseWeaponTemplateSet",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7598669,
+  "name": "ThingTemplate::parseModuleName",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7599537,
+  "name": "ThingTemplate::parsePerUnitFX",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7599748,
+  "name": "ThingTemplate::parsePerUnitSounds",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7600836,
+  "name": "ThingTemplate::parseArmorTemplateSet",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7603213,
+  "name": "parsePrerequisiteUnit",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7603331,
+  "name": "parsePrerequisiteScience",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7603579,
+  "name": "ThingTemplate::parsePrerequisites",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7719735,
+  "name": "CommandButton::parseCommand",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7727535,
+  "name": "CrateTemplate::parseCrateCreationEntry",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7742225,
+  "name": "parseAmount",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7742346,
+  "name": "parseMajorFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7742460,
+  "name": "parseMinorFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7742574,
+  "name": "parseTime",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 7834771,
+  "name": "GlobalLanguage::parseFontDesc",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8068700,
+  "name": "ObjectStatusMaskType::parseFromINI",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8761627,
+  "name": "parseFX",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8761797,
+  "name": "parseOCL",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8782382,
+  "name": "parseWeapon",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8918657,
+  "name": "parseRiderInfo",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8955052,
+  "name": "BoneFXUpdateModuleData::parseFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8955227,
+  "name": "BoneFXUpdateModuleData::parseObjectCreationList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 8955402,
+  "name": "BoneFXUpdateModuleData::parseParticleSystem",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9049856,
+  "name": "DisabledMaskType::parseFromINI",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9057843,
+  "name": "parseAppendQuantityModifier",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9083691,
+  "name": "parseAngleFX",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9165749,
+  "name": "TransitionDamageFXModuleData::parseFXList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9165857,
+  "name": "TransitionDamageFXModuleData::parseObjectCreationList",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9165964,
+  "name": "TransitionDamageFXModuleData::parseParticleSystem",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9202462,
+  "name": "parseCashHackUpgradePair",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9206415,
+  "name": "parseOCLUpgradePair",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9290255,
+  "name": "parseTWS",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9290316,
+  "name": "TurretAIData::parseTurretSweep",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9290367,
+  "name": "TurretAIData::parseTurretSweepSpeed",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9680101,
+  "name": "parseSupplyPositionCoord3D",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9680146,
+  "name": "parseTechPositionsCoord3D",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9869432,
+  "name": "ParticleSystemTemplate::parseRandomKeyframe",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 9871240,
+  "name": "ParticleSystemTemplate::parseRGBColorKeyframe",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 10252554,
+  "name": "CreditsManager::parseBlank",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 10252906,
+  "name": "CreditsManager::parseText",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 11348784,
+  "name": "GeometryInfo::parseGeometryIsSmall",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 11348832,
+  "name": "GeometryInfo::parseGeometryHeight",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 11348928,
+  "name": "GeometryInfo::parseGeometryMajorRadius",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 11349008,
+  "name": "GeometryInfo::parseGeometryMinorRadius",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 11354176,
+  "name": "GeometryInfo::parseGeometryType",
+  "kind": "function",
+  "source": "fieldparse-vote",
+  "confidence": 1.0
+ },
+ {
+  "va": 12416664,
+  "name": "FieldParseTable_UseDigital_00BD7698",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12438048,
+  "name": "FieldParseTable_AllowMultipleModels_00BDCA20",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12438216,
+  "name": "FieldParseTable_MapSize_00BDCAC8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12453048,
+  "name": "FieldParseTable_AnimationName_00BE04B8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12453608,
+  "name": "FieldParseTable_Bone_00BE06E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12454520,
+  "name": "FieldParseTable_Model_00BE0A78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12456736,
+  "name": "W3DModelDrawModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.722
+ },
+ {
+  "va": 12457880,
+  "name": "W3DLaserDrawModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12458624,
+  "name": "FieldParseTable_LeftFrontFootBone_00BE1A80",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12460728,
+  "name": "W3DTruckDrawModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12462440,
+  "name": "W3DTankDrawModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12463744,
+  "name": "W3DTreeDrawModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.944
+ },
+ {
+  "va": 12464524,
+  "name": "FieldParseTable_ModelName_00BE318C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12464960,
+  "name": "FieldParseTable_ModelName_00BE3340",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12465480,
+  "name": "FieldParseTable_StaticModelLODMode_00BE3548",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12466680,
+  "name": "FieldParseTable_Length_00BE39F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12466992,
+  "name": "FieldParseTable_MaxRotationDegrees_00BE3B30",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12467908,
+  "name": "FieldParseTable_ModelName_00BE3EC4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12468112,
+  "name": "W3DProjectileStreamDrawModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12468528,
+  "name": "FieldParseTable_DecalTemplate_00BE4130",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12507008,
+  "name": "FieldParseTable_InitFile_00BED780",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12516760,
+  "name": "FieldParseTable_DamageScalar_00BEFD98",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12516848,
+  "name": "AudioEventInfo::m_audioEventInfo",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.8
+ },
+ {
+  "va": 12517284,
+  "name": "FieldParseTable_Control_00BEFFA4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12521072,
+  "name": "TheMetaMapFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12524736,
+  "name": "ControlBarResizer::m_controlBarResizerParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12524868,
+  "name": "GameWindowTransitionsHandler::m_gameWindowTransitionsFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12525352,
+  "name": "FieldParseTable_WinName_00BF1F28",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12525448,
+  "name": "DrawGroupInfo::s_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12526016,
+  "name": "FieldParseTable_Side_00BF21C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12526064,
+  "name": "FieldParseTable_Priority_00BF21F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12527072,
+  "name": "FieldParseTable_EnemySightedMaxVoicePositionScanRange_00BF25E0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12527768,
+  "name": "FXNugget::TheFXListFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.875
+ },
+ {
+  "va": 12528528,
+  "name": "FieldParseTable_ObjectFilter_00BF2B90",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12528720,
+  "name": "FieldParseTable_EvaEventOwner_00BF2C50",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12528848,
+  "name": "FXNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12528976,
+  "name": "FXNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12529264,
+  "name": "FieldParseTable_DecalName_00BF2E70",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12529720,
+  "name": "FieldParseTable_BuffType_00BF3038",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12530008,
+  "name": "FieldParseTable_LaserName_00BF3158",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12530112,
+  "name": "FieldParseTable_Radius_00BF31C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12530328,
+  "name": "FieldParseTable_Modelname_00BF3298",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12530680,
+  "name": "FieldParseTable_Color_00BF33F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12530808,
+  "name": "FXNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12531112,
+  "name": "FXNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.929
+ },
+ {
+  "va": 12531584,
+  "name": "FieldParseTable_Anim2DTemplateName_00BF3780",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12532256,
+  "name": "FXNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12534904,
+  "name": "LocomotorTemplate::TheFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.833
+ },
+ {
+  "va": 12536800,
+  "name": "FieldParseTable_Speed_00BF4BE0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12536864,
+  "name": "TheGlobalLanguageDataFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.917
+ },
+ {
+  "va": 12538472,
+  "name": "FieldParseTable_Map_00BF5268",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12538712,
+  "name": "FieldParseTable_CampaignDisplayNameLabel_00BF5358",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12538960,
+  "name": "MiscAudio::m_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12543400,
+  "name": "GameSpyColorFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12544368,
+  "name": "ObjectCreationNugget::TheObjectCreationListFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12545616,
+  "name": "ObjectCreationNugget::commonFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.8
+ },
+ {
+  "va": 12546648,
+  "name": "ObjectCreationNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12546728,
+  "name": "ObjectCreationNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12547320,
+  "name": "ObjectCreationNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12547648,
+  "name": "ObjectCreationNugget::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12550568,
+  "name": "PlayerTemplate::TheFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.711
+ },
+ {
+  "va": 12552072,
+  "name": "ScienceStore::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12552648,
+  "name": "RankInfoStore::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.75
+ },
+ {
+  "va": 12553044,
+  "name": "ShellMenuSchemeManager::m_shellMenuSchemeFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12553128,
+  "name": "ShellMenuSchemeManager::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12553224,
+  "name": "ShellMenuSchemeManager::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12553584,
+  "name": "WeatherSetting::m_weatherSettingFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.769
+ },
+ {
+  "va": 12554744,
+  "name": "HeaderTemplateManager::m_headerFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12555368,
+  "name": "StaticGameLODInfo::TheDynamicGameLODFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12556904,
+  "name": "AttackPriorityInfo::TheTemplateFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12559040,
+  "name": "FieldParseTable_Region_00BFA2C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12560048,
+  "name": "FieldParseTable_Territory_00BFA6B0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12560440,
+  "name": "FieldParseTable_MapObject_00BFA838",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12564136,
+  "name": "FieldParseTable_CloudTexture_00BFB6A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12565864,
+  "name": "FieldParseTable_FlagObj_00BFBD68",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12569560,
+  "name": "FieldParseTable_CreateAHeroBling_00BFCBD8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12570176,
+  "name": "FieldParseTable_Name_00BFCE40",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12570268,
+  "name": "FieldParseTable_HeroFilter_00BFCE9C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12570440,
+  "name": "FieldParseTable_Title_00BFCF48",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12570704,
+  "name": "FieldParseTable_DefaultOpenAudio_00BFD050",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12580224,
+  "name": "GlobalData::s_GlobalDataFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.657
+ },
+ {
+  "va": 12600384,
+  "name": "FieldParseTable_AudioRoot_00C04440",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12603112,
+  "name": "FieldParseTable_FleeRange_00C04EE8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12603408,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.833
+ },
+ {
+  "va": 12603604,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12603752,
+  "name": "FieldParseTable_WeaponTemplate_00C05168",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12603952,
+  "name": "FieldParseTable_WhichSpecialPower_00C05230",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12604144,
+  "name": "FieldParseTable_HeroAttributeModifier_00C052F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12604264,
+  "name": "FieldParseTable_WeaponsetEffectDuration_00C05368",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12604424,
+  "name": "FieldParseTable_SpecialWeapon_00C05408",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12604592,
+  "name": "FieldParseTable_BusyForDuration_00C054B0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12604780,
+  "name": "FieldParseTable_FlingPassengerVelocity_00C0556C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12605272,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.8
+ },
+ {
+  "va": 12605480,
+  "name": "FieldParseTable_WildBeast_00C05828",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12605640,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.889
+ },
+ {
+  "va": 12605976,
+  "name": "FieldParseTable_OpacityTarget_00C05A18",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12606152,
+  "name": "FieldParseTable_SoundDeploy_00C05AC8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12606200,
+  "name": "FieldParseTable_WhichSpecialPower_00C05AF8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12606480,
+  "name": "FieldParseTable_OpacityTarget_00C05C10",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12606648,
+  "name": "FieldParseTable_ReplaceObject_00C05CB8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12607052,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12607160,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12607360,
+  "name": "FieldParseTable_PorterChance_00C05F80",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12607852,
+  "name": "FieldParseTable_SpecialWeapon_00C0616C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12608312,
+  "name": "FieldParseTable_RepairHealthPercentPerSecond_00C06338",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12608664,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.909
+ },
+ {
+  "va": 12609176,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12609440,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12609720,
+  "name": "FieldParseTable_PillageAmount_00C068B8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12609944,
+  "name": "FieldParseTable_UpgradeRequired_00C06998",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12610304,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12610424,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12610604,
+  "name": "FieldParseTable_CollapsingTime_00C06C2C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12612592,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12614352,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12614920,
+  "name": "FieldParseTable_OpenByDefault_00C07D08",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12615320,
+  "name": "FieldParseTable_SpecialEnemyFilter_00C07E98",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12615640,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.6
+ },
+ {
+  "va": 12616024,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12616944,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.538
+ },
+ {
+  "va": 12617256,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12617320,
+  "name": "FieldParseTable_AttachToTargetBone_00C08668",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12617384,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12619024,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12621296,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12623728,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12645680,
+  "name": "FieldParseTable_Turret_00C0F530",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12650488,
+  "name": "UpgradeTemplate::m_upgradeFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.875
+ },
+ {
+  "va": 12654416,
+  "name": "FieldParseTable_MaxCellsBurning_00C11750",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12655600,
+  "name": "FieldParseTable_RequiredExperience_00C11BF0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12657680,
+  "name": "InGameUI::s_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.556
+ },
+ {
+  "va": 12676384,
+  "name": "WeaponTemplateSet::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12676568,
+  "name": "WeaponTemplate::TheWeaponTemplateFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.697
+ },
+ {
+  "va": 12686720,
+  "name": "Anim2DTemplate::s_anim2DFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12688000,
+  "name": "Image::m_imageFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12688768,
+  "name": "TerrainRoadType::m_terrainRoadFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12688832,
+  "name": "TerrainRoadType::m_terrainBridgeFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12691112,
+  "name": "FieldParseTable_BuildingNugget_00C1A6A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12692600,
+  "name": "FieldParseTable_Faction_00C1AC78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12693104,
+  "name": "FieldParseTable_PlayerTemplate_00C1AE70",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12700448,
+  "name": "AISideBuildList::TheAIFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.867
+ },
+ {
+  "va": 12703704,
+  "name": "AI::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12703980,
+  "name": "FieldParseTable_Default_00C1D8EC",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12706976,
+  "name": "WaterSetting::m_waterSettingFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12707184,
+  "name": "WaterTransparencySetting::m_waterTransparencySettingFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.6
+ },
+ {
+  "va": 12707760,
+  "name": "WaterTransparencySetting::m_waterTransparencySettingFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12707856,
+  "name": "FieldParseTable_GlowEnabled_00C1E810",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12708032,
+  "name": "FieldParseTable_Scale_00C1E8C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12708224,
+  "name": "FieldParseTable_Scale_00C1E980",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12708808,
+  "name": "FieldParseTable_TerrainFireSystem_00C1EBC8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12724768,
+  "name": "TerrainType::m_terrainTypeFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12725516,
+  "name": "FieldParseTable_WeatherSound_00C22D0C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12727296,
+  "name": "ControlBarSchemeManager::m_controlBarSchemeFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.985
+ },
+ {
+  "va": 12729752,
+  "name": "ControlBarSchemeManager::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12729856,
+  "name": "ControlBarSchemeManager::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12730360,
+  "name": "BuildListInfo::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12731000,
+  "name": "RadiusDecalTemplate::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12735032,
+  "name": "ThingTemplate::s_objectReskinFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.8
+ },
+ {
+  "va": 12740384,
+  "name": "ThingTemplate::s_objectFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.5
+ },
+ {
+  "va": 12741552,
+  "name": "ArmorTemplateSet::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12743360,
+  "name": "ThingTemplate::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12761800,
+  "name": "CommandButton::s_commandButtonFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12765480,
+  "name": "CrateTemplate::TheCrateTemplateFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12765872,
+  "name": "FieldParseTable_StartFrame_00C2CAB0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12766008,
+  "name": "FieldParseTable_StartFrame_00C2CB38",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12766236,
+  "name": "FieldParseTable_StartFrame_00C2CC1C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12766656,
+  "name": "FieldParseTable_StartFrame_00C2CDC0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12766784,
+  "name": "FieldParseTable_FadeImage_00C2CE40",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12766896,
+  "name": "FieldParseTable_FadeImage_00C2CEB0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12767104,
+  "name": "DamageFX::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12769424,
+  "name": "FieldParseTable_MuzzleParticleSystem_00C2D890",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12771360,
+  "name": "FieldParseTable_AttackLocomotorType_00C2E020",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12773736,
+  "name": "StealthUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.682
+ },
+ {
+  "va": 12776560,
+  "name": "FieldParseTable_ThingTemplate_00C2F470",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12777112,
+  "name": "MultiplayerColorDefinition::m_colorFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12777224,
+  "name": "MultiplayerSettings::m_multiplayerSettingsFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12780856,
+  "name": "FieldParseTable_TumbleRandomly_00C30538",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12782184,
+  "name": "FieldParseTable_CampDestroyedOwnerEvaEvent_00C30A68",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12784376,
+  "name": "FieldParseTable_CastleToUnpackForFaction_00C312F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12785760,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12786024,
+  "name": "FieldParseTable_WeaponName_00C31968",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12795064,
+  "name": "FieldParseTable_IntrinsicSciencePurchasePoints_00C33CB8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12895696,
+  "name": "FieldParseTable_Size_00C4C5D0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12896416,
+  "name": "FieldParseTable_MapName_00C4C8A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12899192,
+  "name": "FieldParseTable_Buildings_00C4D378",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12899436,
+  "name": "FieldParseTable_Region_00C4D46C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12900464,
+  "name": "FieldParseTable_Task_00C4D870",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12900608,
+  "name": "FieldParseTable_Audio_00C4D900",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12901120,
+  "name": "FieldParseTable_PupilAnimObject_00C4DB00",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12901408,
+  "name": "FieldParseTable_OnSelectedSound_00C4DC20",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12901768,
+  "name": "FieldParseTable_ObjectType_00C4DD88",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12901840,
+  "name": "FieldParseTable_Position_00C4DDD0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12902768,
+  "name": "FieldParseTable_Model_00C4E170",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12904472,
+  "name": "FieldParseTable_OnSelectedSound_00C4E818",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12904672,
+  "name": "FieldParseTable_OnSelectedSound_00C4E8E0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12905200,
+  "name": "FieldParseTable_Modifier_00C4EAF0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12905464,
+  "name": "FieldParseTable_AllyDeathScaleFactor_00C4EBF8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12905560,
+  "name": "FieldParseTable_CellSize_00C4EC58",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12909104,
+  "name": "FieldParseTable_ObjectAward_00C4FA30",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12909400,
+  "name": "FieldParseTable_Name_00C4FB58",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12912568,
+  "name": "FieldParseTable_ForbiddenConditions_00C507B8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12914352,
+  "name": "FieldParseTable_GUIDisplayedLevel_00C50EB0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12914624,
+  "name": "FieldParseTable_MinSciencePurchasePointsForBonus_00C50FC0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12914752,
+  "name": "FieldParseTable_Sides_00C51040",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12915616,
+  "name": "FieldParseTable_MinResourceBonus_00C513A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12915712,
+  "name": "FieldParseTable_Sides_00C51400",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12916032,
+  "name": "FieldParseTable_EvaEvent_00C51540",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12916812,
+  "name": "FieldParseTable_Weight_00C5184C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12917536,
+  "name": "FieldParseTable_BaseTexture_00C51B20",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12917624,
+  "name": "FieldParseTable_MinLevel_00C51B78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12917840,
+  "name": "FieldParseTable_Affects_00C51C50",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12918224,
+  "name": "FieldParseTable_HitpointsAtLevel_00C51DD0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12918760,
+  "name": "FieldParseTable_DamagePerRound_00C51FE8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12923048,
+  "name": "FieldParseTable_DesiredSoldierRatio_00C530A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12923584,
+  "name": "FieldParseTable_Name_00C532C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12924904,
+  "name": "FieldParseTable_MissionObjectiveTag_00C537E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12933040,
+  "name": "FieldParseTable_SacrificeFilter_00C557B0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12934976,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.941
+ },
+ {
+  "va": 12936960,
+  "name": "FieldParseTable_SegmentTemplateName_00C56700",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12937928,
+  "name": "FieldParseTable_WorkerName_00C56AC8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12939120,
+  "name": "FieldParseTable_NightWindowName_00C56F70",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12940088,
+  "name": "BridgeBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12940968,
+  "name": "FieldParseTable_RampageHealthThreshold_00C576A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12941600,
+  "name": "FieldParseTable_HitReactionLifeTimer1_00C57920",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12942120,
+  "name": "FieldParseTable_ClickReactionTimer_00C57B28",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12943040,
+  "name": "FieldParseTable_SpecialAbility_00C57EC0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12943496,
+  "name": "FieldParseTable_SwitchWeaponOnCloseRangeDistance_00C58088",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12943736,
+  "name": "FieldParseTable_AimLowThreshold_00C58178",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12944232,
+  "name": "DumbProjectileBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.923
+ },
+ {
+  "va": 12945320,
+  "name": "InstantDeathBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12946072,
+  "name": "SlowDeathBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.933
+ },
+ {
+  "va": 12948000,
+  "name": "FieldParseTable_BonePrefix_00C59220",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12948216,
+  "name": "FieldParseTable_AllowEnemies_00C592F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12948528,
+  "name": "FieldParseTable_FXHitGround_00C59430",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12949144,
+  "name": "FieldParseTable_RunToLocation_00C59698",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12951344,
+  "name": "OpenContainModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12954744,
+  "name": "FieldParseTable_ExitDelay_00C5AC78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12958544,
+  "name": "FieldParseTable_ThisFormationIsTheMainFormation_00C5BB50",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12962208,
+  "name": "FieldParseTable_ExitDelay_00C5C9A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12963408,
+  "name": "FieldParseTable_FrequencyScale_00C5CE50",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12965264,
+  "name": "FieldParseTable_CrewFilter_00C5D590",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12971112,
+  "name": "FieldParseTable_SpawnDelayTime_00C5EC68",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12971824,
+  "name": "FieldParseTable_Radius_00C5EF30",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12972008,
+  "name": "FieldParseTable_CashBackPercent_00C5EFE8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12972160,
+  "name": "FieldParseTable_StatusForRingEntry_00C5F080",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12974904,
+  "name": "PropagandaTowerBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12975480,
+  "name": "FieldParseTable_Radius_00C5FD78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12976436,
+  "name": "PoisonedBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12977184,
+  "name": "SupplyWarehouseCripplingBehaviorModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12977552,
+  "name": "FieldParseTable_ClearanceGeometry_00C60590",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12978496,
+  "name": "FieldParseTable_StartsActive_00C60940",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12978680,
+  "name": "FieldParseTable_RemoveUpgrade_00C609F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12979064,
+  "name": "FieldParseTable_EffectRadius_00C60B78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12980512,
+  "name": "FieldParseTable_CreationList_00C61120",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12981208,
+  "name": "FieldParseTable_CreationList_00C613D8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12981944,
+  "name": "RebuildHoleExposeDieModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12982432,
+  "name": "AssistedTargetingUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12983984,
+  "name": "DozerAIUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12985928,
+  "name": "DynamicShroudClearingRangeUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12986408,
+  "name": "FireSpreadUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12986608,
+  "name": "FieldParseTable_WeaponName_00C628F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12986944,
+  "name": "FieldParseTable_FireWeaponNugget_00C62A40",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12987096,
+  "name": "FieldParseTable_BreadcrumbName_00C62AD8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12987952,
+  "name": "FlammableUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12988544,
+  "name": "FieldParseTable_MemberTemplateName_00C63080",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12988888,
+  "name": "FieldParseTable_FloodMember_00C631D8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12990456,
+  "name": "HeightDieUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12990936,
+  "name": "HordeUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.75
+ },
+ {
+  "va": 12992536,
+  "name": "FieldParseTable_Radius_00C64018",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12992880,
+  "name": "FieldParseTable_ModelConditionFlags_00C64170",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12993464,
+  "name": "FieldParseTable_ObjectFilter_00C643B8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12994048,
+  "name": "FieldParseTable_SkirmishAIOnly_00C64600",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12996016,
+  "name": "SpecialPowerModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12996768,
+  "name": "FieldParseTable_Duration_00C650A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12997536,
+  "name": "AutoFindHealingUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12997624,
+  "name": "CommandButtonHuntUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 12998016,
+  "name": "DemoTrapUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 12999520,
+  "name": "FieldParseTable_ScanDelayTime_00C65B60",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 12999872,
+  "name": "FieldParseTable_ScanDelayTime_00C65CC0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13000848,
+  "name": "FieldParseTable_IdleSpawnRate_00C66090",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13002240,
+  "name": "BattlePlanUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13003544,
+  "name": "FieldParseTable_SpecialObjectName_00C66B18",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13005856,
+  "name": "OCLUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.8
+ },
+ {
+  "va": 13006400,
+  "name": "FieldParseTable_BonusName_00C67640",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13007344,
+  "name": "FieldParseTable_InitiallyActive_00C679F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13007576,
+  "name": "FieldParseTable_GiveUpgradeEffect_00C67AD8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13008056,
+  "name": "FieldParseTable_RequiredUpgrade_00C67CB8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13009192,
+  "name": "ProductionUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13010040,
+  "name": "FieldParseTable_ValueMultiplier_00C68478",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13010652,
+  "name": "FieldParseTable_DockableObjectFilter_00C686DC",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13011832,
+  "name": "StealthDetectorUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13012144,
+  "name": "FieldParseTable_AllowKindOf_00C68CB0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13012568,
+  "name": "FieldParseTable_InvisibilityNugget_00C68E58",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13013560,
+  "name": "StructureCollapseUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13014024,
+  "name": "StructureCollapseUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13014656,
+  "name": "StructureToppleUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13016768,
+  "name": "MissileAIUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.909
+ },
+ {
+  "va": 13017436,
+  "name": "SupplyWarehouseDockUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13018256,
+  "name": "ToppleUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13022080,
+  "name": "FieldParseTable_TimeBetweenUpdatesMin_00C6B380",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13022744,
+  "name": "FieldParseTable_StartRainTime_00C6B618",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13023300,
+  "name": "FieldParseTable_StartTime_00C6B844",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13023480,
+  "name": "FieldParseTable_Texture_00C6B8F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13023816,
+  "name": "FieldParseTable_BonusRadius_00C6BA48",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13024232,
+  "name": "FieldParseTable_BonusRadius_00C6BBE8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13026024,
+  "name": "FieldParseTable_RiderSubObjects_00C6C2E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13028992,
+  "name": "FieldParseTable_DeathAnim_00C6CE80",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13029572,
+  "name": "FieldParseTable_TriggerWidthX_00C6D0C4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13030480,
+  "name": "FieldParseTable_TauntAndPointDistance_00C6D450",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13031056,
+  "name": "FieldParseTable_ScanDelayTime_00C6D690",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13031704,
+  "name": "FieldParseTable_TargetObjectFilter_00C6D918",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13032144,
+  "name": "FieldParseTable_CommandButtonName_00C6DAD0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13033144,
+  "name": "FieldParseTable_BuildingTemplateName_00C6DEB8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13033628,
+  "name": "FieldParseTable_LevelsToGain_00C6E09C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13034232,
+  "name": "FieldParseTable_UpgradeObject_00C6E2F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13034868,
+  "name": "StatusBitsUpgradeModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13035444,
+  "name": "FieldParseTable_GetUpgradeCommandButtonName_00C6E7B4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13035816,
+  "name": "SubObjectsUpgradeModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13036380,
+  "name": "FieldParseTable_SpecialPowerTemplate_00C6EB5C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13037384,
+  "name": "FieldParseTable_ObjectFilter_00C6EF48",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13037776,
+  "name": "FieldParseTable_Percentage_00C6F0D0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13038156,
+  "name": "MaxHealthUpgradeModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13038496,
+  "name": "FieldParseTable_AddConditionFlags_00C6F3A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13038884,
+  "name": "FieldParseTable_Upgrade_00C6F524",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13038968,
+  "name": "FieldParseTable_ShowGeometry_00C6F578",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13039336,
+  "name": "FieldParseTable_ReplaceWith_00C6F6E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13039768,
+  "name": "ScienceStore::myFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13040120,
+  "name": "FieldParseTable_SoundToPlay_00C6F9F8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13040384,
+  "name": "FieldParseTable_UpgradeToRemove_00C6FB00",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13041056,
+  "name": "FieldParseTable_CommandPoints_00C6FDA0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13041392,
+  "name": "FieldParseTable_UnitName_00C6FEF0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13042008,
+  "name": "GrantUpgradeCreateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13042284,
+  "name": "FieldParseTable_LevelToGrant_00C7026C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13042656,
+  "name": "FieldParseTable_Radius_00C703E0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13044008,
+  "name": "FieldParseTable_DamageTypesToReflect_00C70928",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13044360,
+  "name": "FieldParseTable_WeaponThatCausesEvacuation_00C70A88",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13044776,
+  "name": "FieldParseTable_DamageTypes_00C70C28",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13045320,
+  "name": "FireWeaponCollideModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13045928,
+  "name": "FieldParseTable_SmallFXList_00C710A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13046672,
+  "name": "CrateCollideModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13049192,
+  "name": "FieldParseTable_MaxHealth_00C71D68",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13050876,
+  "name": "FieldParseTable_PermanentlyKilledByFilter_00C723FC",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13053464,
+  "name": "FieldParseTable_DamageWeaponTemplate_00C72E18",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13054184,
+  "name": "FieldParseTable_InvisibilityNugget_00C730E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13054884,
+  "name": "CashHackSpecialPowerModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13055312,
+  "name": "FieldParseTable_Experience_00C73550",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13055520,
+  "name": "FieldParseTable_NumberOfFrames_00C73620",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13056576,
+  "name": "OCLSpecialPowerModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.6
+ },
+ {
+  "va": 13057176,
+  "name": "FieldParseTable_ElvenGroveObject_00C73C98",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13057392,
+  "name": "FieldParseTable_FlagsUsedForToggle_00C73D70",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13058048,
+  "name": "FieldParseTable_CloudBreakRadius_00C74000",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13058464,
+  "name": "FieldParseTable_TaintObject_00C741A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13058888,
+  "name": "FieldParseTable_FreezingRainRadius_00C74348",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13059144,
+  "name": "FieldParseTable_DarknessRadius_00C74448",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13059380,
+  "name": "FieldParseTable_GrabRadius_00C74534",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13060072,
+  "name": "FieldParseTable_LowerDelay_00C747E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13060928,
+  "name": "FieldParseTable_FleeDistance_00C74B40",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13061824,
+  "name": "FieldParseTable_HealAmount_00C74EC0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13062144,
+  "name": "FieldParseTable_Radius_00C75000",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13063744,
+  "name": "FieldParseTable_FX_00C75640",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13064132,
+  "name": "BeaconClientUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13064424,
+  "name": "FieldParseTable_AnnouncementEventEnemy_00C758E8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13065364,
+  "name": "FieldParseTable_AnimationSound_00C75C94",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13065540,
+  "name": "FieldParseTable_UnitSpecificSounds_00C75D44",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13065760,
+  "name": "FieldParseTable_UnitSpecificSounds_00C75E20",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13066056,
+  "name": "FieldParseTable_Chance_00C75F48",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13066856,
+  "name": "FieldParseTable_DominateRadius_00C76268",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13067328,
+  "name": "FieldParseTable_TriggerFX_00C76440",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13067504,
+  "name": "FieldParseTable_CommandButton_00C764F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13068048,
+  "name": "FieldParseTable_Radius_00C76710",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13069016,
+  "name": "dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.6
+ },
+ {
+  "va": 13069272,
+  "name": "DieMuxData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.75
+ },
+ {
+  "va": 13069384,
+  "name": "FieldParseTable_TimeBetweenUpdatesMS_00C76C48",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13072328,
+  "name": "TurretAIData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.947
+ },
+ {
+  "va": 13074384,
+  "name": "FieldParseTable_CopyFrom_00C77FD0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13075328,
+  "name": "FieldParseTable_Icon_00C78380",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13075696,
+  "name": "FieldParseTable_ArmyScriptingName_00C784F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13075780,
+  "name": "FieldParseTable_ArmyScriptingName_00C78544",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13075968,
+  "name": "FieldParseTable_DelayFromActStart_00C78600",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13076128,
+  "name": "FieldParseTable_DelayFromActStart_00C786A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13076392,
+  "name": "FieldParseTable_Region_00C787A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13076640,
+  "name": "FieldParseTable_Player_00C788A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13076776,
+  "name": "FieldParseTable_DelayFromActStart_00C78928",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13076904,
+  "name": "FieldParseTable_DelayFromActStart_00C789A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13077060,
+  "name": "FieldParseTable_AnimObjectName_00C78A44",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13077656,
+  "name": "FieldParseTable_DelayFromActStart_00C78C98",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13078056,
+  "name": "FieldParseTable_Opacity_00C78E28",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13082588,
+  "name": "FieldParseTable_QueueSize_00C79FDC",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13083176,
+  "name": "FieldParseTable_Teams_00C7A228",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13083288,
+  "name": "FieldParseTable_Teams_00C7A298",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13083480,
+  "name": "FieldParseTable_Teams_00C7A358",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13084024,
+  "name": "FieldParseTable_DisplayName_00C7A578",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13084432,
+  "name": "FieldParseTable_DisplayObjectives_00C7A710",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13085304,
+  "name": "FieldParseTable_Position_00C7AA78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13085464,
+  "name": "FieldParseTable_Intensity_00C7AB18",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13086208,
+  "name": "FieldParseTable_RequiredUpgradeNames_00C7AE00",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13086640,
+  "name": "FieldParseTable_Damage_00C7AFB0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13087048,
+  "name": "FieldParseTable_AttributeModifier_00C7B148",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13087276,
+  "name": "FieldParseTable_ModelConditionNames_00C7B22C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13087416,
+  "name": "FieldParseTable_Radius_00C7B2B8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13087608,
+  "name": "FieldParseTable_WeaponTemplateName_00C7B378",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13087944,
+  "name": "FieldParseTable_WarheadTemplateName_00C7B4C8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13088424,
+  "name": "FieldParseTable_ShockWaveAmount_00C7B6A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13088992,
+  "name": "FieldParseTable_ContainTargetOnEffect_00C7B8E0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13089296,
+  "name": "FieldParseTable_KillCount_00C7BA10",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13089464,
+  "name": "FieldParseTable_DamageInterval_00C7BAB8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13089664,
+  "name": "FieldParseTable_EmotionType_00C7BB80",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13089916,
+  "name": "FieldParseTable_ClosestMemberOnly_00C7BC7C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13090080,
+  "name": "FieldParseTable_ObjectTargetFilter_00C7BD20",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13090248,
+  "name": "FieldParseTable_LuaEvent_00C7BDC8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13090584,
+  "name": "FieldParseTable_LogicType_00C7BF18",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13105304,
+  "name": "FieldParseTable_AddPlayer_00C7F898",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13105896,
+  "name": "MapMetaDataReader::m_mapFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.955
+ },
+ {
+  "va": 13106552,
+  "name": "FieldParseTable_Human_00C7FD78",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13108656,
+  "name": "FieldParseTable_Weapon_00C805B0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13108792,
+  "name": "FieldParseTable_Armor_00C80638",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13118000,
+  "name": "FieldParseTable_OffsetX_00C82A30",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13118416,
+  "name": "FieldParseTable_MultiRenderObjects_00C82BD0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13118736,
+  "name": "FieldParseTable_FramesPerRow_00C82D10",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13119040,
+  "name": "FieldParseTable_StartSizeX_00C82E40",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13119576,
+  "name": "ParticleSystemTemplate::m_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.583
+ },
+ {
+  "va": 13119952,
+  "name": "FieldParseTable_X_00C831D0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13120180,
+  "name": "FieldParseTable_Radial_00C832B4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13120436,
+  "name": "FieldParseTable_Speed_00C833B4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13120656,
+  "name": "FieldParseTable_IsHollow_00C83490",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13120904,
+  "name": "FieldParseTable_IsHollow_00C83588",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13121132,
+  "name": "FieldParseTable_IsHollow_00C8366C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13121384,
+  "name": "FieldParseTable_IsHollow_00C83768",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13121728,
+  "name": "FieldParseTable_StartPoint_00C838C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13122016,
+  "name": "FieldParseTable_Xoffset_00C839E0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13122160,
+  "name": "ParticleSystemTemplate::m_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13122368,
+  "name": "ParticleSystemTemplate::m_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13122592,
+  "name": "ParticleSystemTemplate::m_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.6
+ },
+ {
+  "va": 13122736,
+  "name": "ParticleSystemTemplate::m_fieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.556
+ },
+ {
+  "va": 13122976,
+  "name": "FieldParseTable_EventTime_00C83DA0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13123144,
+  "name": "FieldParseTable_HeightOffset_00C83E48",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13123632,
+  "name": "FieldParseTable_EnableRegion_00C84030",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13124296,
+  "name": "FieldParseTable_Sound_00C842C8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13125576,
+  "name": "FieldParseTable_VisibleArmySizes_00C847C8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13126040,
+  "name": "FieldParseTable_Model_00C84998",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13126656,
+  "name": "FieldParseTable_Clickable_00C84C00",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13126880,
+  "name": "FieldParseTable_Clickable_00C84CE0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13129788,
+  "name": "FieldParseTable_Title_00C8583C",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13132816,
+  "name": "FieldParseTable_ItemFont_00C86410",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13136072,
+  "name": "FieldParseTable_FollowLeader_00C870C8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13136424,
+  "name": "FieldParseTable_FacingBonus_00C87228",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13137288,
+  "name": "SpecialPowerModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13137524,
+  "name": "DockUpdateModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 13141568,
+  "name": "FieldParseTable_Buildings_00C88640",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13141672,
+  "name": "FieldParseTable_Armies_00C886A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13141808,
+  "name": "FieldParseTable_Regions_00C88730",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13141952,
+  "name": "FieldParseTable_Regions_00C887C0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13154168,
+  "name": "CreditsManager::m_creditsFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 13157632,
+  "name": "FieldParseTable_Type_00C8C500",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13157872,
+  "name": "FieldParseTable_StrengtheningRange_00C8C5F0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13158084,
+  "name": "FieldParseTable_NumUpgradesPerTurn_00C8C6C4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13159808,
+  "name": "FieldParseTable_BuildPlotsTitle_00C8CD80",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13161328,
+  "name": "FieldParseTable_StartingAutoResolveBattleMessageDuration_00C8D370",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13172744,
+  "name": "FieldParseTable_Image_00C90008",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13174004,
+  "name": "FieldParseTable_ProgressOverlayColor_00C904F4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13618816,
+  "name": "FieldParseTable_FontName_00CFCE80",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 13619944,
+  "name": "VideoPlayer::m_videoFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.667
+ },
+ {
+  "va": 14262112,
+  "name": "FieldParseTable_Animation_00D99F60",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14282248,
+  "name": "FieldParseTable_CloseUpPitch_00D9EE08",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14282632,
+  "name": "FieldParseTable_GroupName_00D9EF88",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14282712,
+  "name": "FieldParseTable_BlingUpgradeName_00D9EFD8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14282792,
+  "name": "FieldParseTable_GroupName_00D9F028",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14282888,
+  "name": "FieldParseTable_BlingUpgrades_00D9F088",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14283160,
+  "name": "FieldParseTable_UpgradeName_00D9F198",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14284976,
+  "name": "FieldParseTable_KillArmorUpgrade_00D9F8B0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14288808,
+  "name": "FieldParseTable_Color_00DA07A8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14302712,
+  "name": "ThingTemplate::s_objectFieldParseTable",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.574
+ },
+ {
+  "va": 14311384,
+  "name": "SpecialPowerTemplate::m_specialPowerFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 0.769
+ },
+ {
+  "va": 14313032,
+  "name": "FieldParseTable_RegionObject_00DA6648",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14315428,
+  "name": "FieldParseTable_Stat_00DA6FA4",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14315480,
+  "name": "FieldParseTable_StatName_00DA6FD8",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14315656,
+  "name": "FieldParseTable_AwardName_00DA7088",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14347896,
+  "name": "RiderChangeContainModuleData::dataFieldParse",
+  "kind": "data",
+  "source": "table-match",
+  "confidence": 1.0
+ },
+ {
+  "va": 14299808,
+  "name": "FieldParseTable_NAME_00DA32A0",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ },
+ {
+  "va": 14300192,
+  "name": "FieldParseTable_LAYOUTINIT_00DA3420",
+  "kind": "data",
+  "source": "table-shape",
+  "confidence": 0.5
+ }
+]
