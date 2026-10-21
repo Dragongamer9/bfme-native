@@ -831,7 +831,9 @@ Bool AIUpdateInterface::chooseLocomotorSet(LocomotorSetType wst)
 // it does no sanity checking; it just jams it in.
 Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 {
-	const LocomotorTemplateVector* set = getAIUpdateModuleData()->findLocomotorTemplateVector(wst);
+	const LocomotorTemplateVector* set = getObject()->getTemplate()->bfmeFindLocomotors(wst);	// bfme-native: RotWK LocomotorSet
+	if (set == nullptr && !getObject()->getTemplate()->bfmeHasLocomotors())
+		set = getAIUpdateModuleData()->findLocomotorTemplateVector(wst);
 	if (set)
 	{
 		m_locomotorSet.clear();

@@ -136,6 +136,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "FenceXOffset",					INI::parseReal,												nullptr,		offsetof( ThingTemplate, m_fenceXOffset ) },
 	{ "IsBridge",							INI::parseBool,												nullptr,		offsetof( ThingTemplate, m_isBridge ) },
 	{ "ArmorSet",							ThingTemplate::parseArmorTemplateSet, nullptr, 0},
+	{ "LocomotorSet",					ThingTemplate::parseBfmeLocomotorSet, nullptr, 0},	// bfme-native
 	{ "WeaponSet",						ThingTemplate::parseWeaponTemplateSet,nullptr, 0},
 	{ "VisionRange",					INI::parseReal,												nullptr,		offsetof( ThingTemplate, m_visionRange ) },
 	{ "ShroudClearingRange",	INI::parseReal,												nullptr,		offsetof( ThingTemplate, m_shroudClearingRange ) },
@@ -974,6 +975,36 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 #endif
 	self->m_armorTemplateSets.push_back(ws);
 	self->m_armorTemplateSetFinder.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
+void ThingTemplate::parseBfmeLocomotorSet( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+{
+	// LocomotorSet
+	//   Locomotor = RohanLegolasLocomotor
+	//   Condition = SET_NORMAL
+	//   Speed     = 50
+	// End
+	static const FieldParse fp[] =
+	{
+		{ "Locomotor",	INI::parseAsciiString,	nullptr, offsetof(BfmeLocomotorSet, m_locomotor) },
+		{ "Condition",	INI::parseAsciiString,	nullptr, offsetof(BfmeLocomotorSet, m_condition) },
+		{ "Speed",			INI::parseReal,					nullptr, offsetof(BfmeLocomotorSet, m_speed) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	ThingTemplate* self = (ThingTemplate*)instance;
+	BfmeLocomotorSet ls;
+	ls.m_speed = 0.0f;
+	ini->initFromINI(&ls, fp);
+	for (size_t i = 0; i < self->m_bfmeLocomotorSets.size(); ++i)
+	{
+		if (self->m_bfmeLocomotorSets[i].m_condition.compareNoCase(ls.m_condition) == 0)
+		{
+			self->m_bfmeLocomotorSets[i] = ls;	// a ChildObject redefines the parent's set
+			return;
+		}
+	}
+	self->m_bfmeLocomotorSets.push_back(ls);
 }
 
 //-------------------------------------------------------------------------------------------------

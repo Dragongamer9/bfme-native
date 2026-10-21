@@ -30,6 +30,7 @@
 #pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+#include <map>
 #include "Lib/BaseType.h"
 
 #include "Common/AudioEventRTS.h"
@@ -50,6 +51,7 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class AIUpdateModuleData;
+class LocomotorTemplate;	// bfme-native
 class Image;
 class Object;
 class Drawable;
@@ -647,6 +649,7 @@ protected:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	static void parseArmorTemplateSet( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	static void parseBfmeLocomotorSet( INI* ini, void *instance, void *store, const void* /*userData*/ );	// bfme-native
 	static void parseWeaponTemplateSet( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	static void parsePrerequisites( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 	static void parseModuleName(INI* ini, void *instance, void* /*store*/, const void* userData);
@@ -715,6 +718,25 @@ private:
 	WeaponTemplateSetVector							m_weaponTemplateSets;					///< our weaponsets
 	WeaponTemplateSetFinder							m_weaponTemplateSetFinder;		///< helper to allow us to find the best sets, quickly
 	ArmorTemplateSetVector							m_armorTemplateSets;	///< our armorsets
+public:
+	struct BfmeLocomotorSet	///< bfme-native: RotWK object-level "LocomotorSet" block
+	{
+		AsciiString m_locomotor;
+		AsciiString m_condition;
+		Real m_speed;
+	};
+	const std::vector<BfmeLocomotorSet>& getBfmeLocomotorSets() const { return m_bfmeLocomotorSets; }
+	/// resolved per-template locomotors (RotWK speeds are per object), by LocomotorSetType
+	const std::vector<const LocomotorTemplate*>* bfmeFindLocomotors(Int setType) const
+	{
+		std::map<Int, std::vector<const LocomotorTemplate*> >::const_iterator it = m_bfmeLocomotors.find(setType);
+		return it == m_bfmeLocomotors.end() ? nullptr : &it->second;
+	}
+	Bool bfmeHasLocomotors() const { return !m_bfmeLocomotors.empty(); }
+	void friend_bfmeSetLocomotors(Int setType, const std::vector<const LocomotorTemplate*>& v) { m_bfmeLocomotors[setType] = v; }
+private:
+	std::vector<BfmeLocomotorSet>				m_bfmeLocomotorSets;
+	std::map<Int, std::vector<const LocomotorTemplate*> > m_bfmeLocomotors;
 	ArmorTemplateSetFinder							m_armorTemplateSetFinder;		///< helper to allow us to find the best sets, quickly
 	PerUnitSoundMap											m_perUnitSounds;					///< An additional set of sounds that only apply for this template.
 	PerUnitFXMap												m_perUnitFX;									///< An additional set of fx that only apply for this template.

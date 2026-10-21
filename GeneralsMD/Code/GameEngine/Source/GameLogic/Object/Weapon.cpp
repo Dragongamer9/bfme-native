@@ -70,6 +70,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponNugget.h"	// bfme-native
+#include "GameLogic/Module/HordeContain.h"	// bfme-native
 
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
@@ -505,6 +506,20 @@ void WeaponTemplate::bfmeDealNuggets(Object* source, Object* primaryVictim, cons
 	// a projectile weapon's impact is its warhead's nuggets
 	const WeaponTemplate* wt = (isProjectileDetonation && m_bfmeWarhead) ? m_bfmeWarhead : this;
 	Object* firer = source;
+	// hits on a horde land on its soldiers (the horde itself is an immortal leader object)
+	if (primaryVictim && primaryVictim->isKindOf(KINDOF_HORDE))
+	{
+		HordeContain* hc = HordeContain::findOn(primaryVictim);
+		if (hc)
+		{
+			Object* member = hc->getMemberClosestTo(source ? source->getPosition() : primaryVictim->getPosition());
+			if (member)
+			{
+				primaryVictim = member;
+				pos = member->getPosition();
+			}
+		}
+	}
 	for (size_t i = 0; i < wt->m_bfmeNuggets.size(); ++i)
 	{
 		const WeaponNugget* n = wt->m_bfmeNuggets[i].get();

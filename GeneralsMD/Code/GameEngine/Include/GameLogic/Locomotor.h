@@ -129,6 +129,7 @@ class LocomotorTemplate : public Overridable
 	friend class Locomotor;
 
 public:
+	void bfmeSetSpeed(Real perFrame) { m_maxSpeed = perFrame; m_maxSpeedDamaged = perFrame; }	// bfme-native: RotWK LocomotorSet Speed
 
 	LocomotorTemplate();
 
@@ -512,6 +513,10 @@ public:
 	// locoTemplate is who we're overriding
 	LocomotorTemplate *newOverride(LocomotorTemplate *locoTemplate);
 
+	/// bfme-native: RotWK gives the speed in the object's LocomotorSet, not in the Locomotor.
+	/// Returns a (cached) copy of 'base' running at 'speedPerSecond'.
+	const LocomotorTemplate* bfmeSpeedVariant(const LocomotorTemplate* base, Real speedPerSecond);
+
 
 	static void parseLocomotorTemplateDefinition(INI* ini);
 
@@ -522,6 +527,7 @@ private:
 	typedef std::map< NameKeyType, LocomotorTemplate*, std::less<NameKeyType>/**/> LocomotorTemplateMap;
 
 	LocomotorTemplateMap m_locomotorTemplates;
+	std::map< std::pair<const LocomotorTemplate*, Int>, LocomotorTemplate* > m_bfmeSpeedVariants;	///< bfme-native
 
 };
 

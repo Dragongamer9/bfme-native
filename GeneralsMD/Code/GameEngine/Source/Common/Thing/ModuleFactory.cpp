@@ -214,6 +214,7 @@
 #include "GameLogic/Module/AttributeModifierUpgrade.h"	// bfme-native
 #include "GameLogic/Module/AttributeModifierAuraUpdate.h"	// bfme-native
 #include "GameLogic/Module/BfmeGenericSpecialPower.h"	// bfme-native
+#include "GameLogic/Module/HordeContain.h"	// bfme-native
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
 // create includes
@@ -495,6 +496,17 @@ void ModuleFactory::init()
 	addModule( MaxHealthUpgrade );
 	addModule( AttributeModifierUpgrade );	// bfme-native
 	addModule( AttributeModifierAuraUpdate );	// bfme-native
+	addModule( HordeContain );	// bfme-native
+	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("HorseHordeContain"), HordeContain::getInterfaceMask() );
+	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("CitadelSlaughterHordeContain"), HordeContain::getInterfaceMask() );
+	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("SlaughterHordeContain"), HordeContain::getInterfaceMask() );
+	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("AODHordeContain"), HordeContain::getInterfaceMask() );
+	// bfme-native: RotWK AI variants on the generic AI for now
+	addModuleInternal( AIUpdateInterface::friend_newModuleInstance, AIUpdateInterface::friend_newModuleData, AIUpdateInterface::getModuleType(), AsciiString("HordeAIUpdate"), AIUpdateInterface::getInterfaceMask() );
+	addModuleInternal( AIUpdateInterface::friend_newModuleInstance, AIUpdateInterface::friend_newModuleData, AIUpdateInterface::getModuleType(), AsciiString("AnimalAIUpdate"), AIUpdateInterface::getInterfaceMask() );
+	addModuleInternal( AIUpdateInterface::friend_newModuleInstance, AIUpdateInterface::friend_newModuleData, AIUpdateInterface::getModuleType(), AsciiString("GiantBirdAIUpdate"), AIUpdateInterface::getInterfaceMask() );
+	addModuleInternal( AIUpdateInterface::friend_newModuleInstance, AIUpdateInterface::friend_newModuleData, AIUpdateInterface::getModuleType(), AsciiString("FoundationAIUpdate"), AIUpdateInterface::getInterfaceMask() );
+	addModuleInternal( AIUpdateInterface::friend_newModuleInstance, AIUpdateInterface::friend_newModuleData, AIUpdateInterface::getModuleType(), AsciiString("SiegeAIUpdate"), AIUpdateInterface::getInterfaceMask() );
 	addModuleInternal( BfmeGenericSpecialPower::friend_newModuleInstance, BfmeGenericSpecialPower::friend_newModuleData,
 		BfmeGenericSpecialPower::getModuleType(), AsciiString("SpecialPowerModule"), BfmeGenericSpecialPower::getInterfaceMask() );	// bfme-native
 
