@@ -215,6 +215,7 @@
 #include "GameLogic/Module/AttributeModifierAuraUpdate.h"	// bfme-native
 #include "GameLogic/Module/BfmeGenericSpecialPower.h"	// bfme-native
 #include "GameLogic/Module/HordeContain.h"	// bfme-native
+#include "GameLogic/Module/BfmeModules.h"	// bfme-native
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
 // create includes
@@ -497,6 +498,13 @@ void ModuleFactory::init()
 	addModule( AttributeModifierUpgrade );	// bfme-native
 	addModule( AttributeModifierAuraUpdate );	// bfme-native
 	addModule( HordeContain );	// bfme-native
+	addModule( LevelUpUpgrade );	// bfme-native
+	addModule( RemoveUpgradeUpgrade );	// bfme-native
+	addModule( ReplaceSelfUpgrade );	// bfme-native
+	addModule( PassiveAreaEffectBehavior );	// bfme-native
+	addModule( LargeGroupBonusUpdate );	// bfme-native
+	addModule( HordeMemberCollide );	// bfme-native
+	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("RespawnBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO hero respawn
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("HorseHordeContain"), HordeContain::getInterfaceMask() );
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("CitadelSlaughterHordeContain"), HordeContain::getInterfaceMask() );
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("SlaughterHordeContain"), HordeContain::getInterfaceMask() );

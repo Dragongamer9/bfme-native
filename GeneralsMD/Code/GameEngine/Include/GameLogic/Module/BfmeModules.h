@@ -1,0 +1,136 @@
+// bfme-native: small RotWK modules (one file to keep the boilerplate down).
+//   LevelUpUpgrade, RemoveUpgradeUpgrade, ReplaceSelfUpgrade   (upgrade modules)
+//   PassiveAreaEffectBehavior, LargeGroupBonusUpdate            (update modules)
+//   HordeMemberCollide                                          (collide; behaviour lives in HordeContain)
+#pragma once
+
+#include "GameLogic/Module/CollideModule.h"
+#include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/Module/UpgradeModule.h"
+#include "GameLogic/ObjectFilter.h"
+
+class FXList;
+
+//-------------------------------------------------------------------------------------------------
+class LevelUpUpgradeModuleData : public UpgradeModuleData
+{
+public:
+	LevelUpUpgradeModuleData() : m_levelsToGain(1), m_levelCap(0) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Int m_levelsToGain;
+	Int m_levelCap;
+};
+
+class LevelUpUpgrade : public UpgradeModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LevelUpUpgrade, "LevelUpUpgrade" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( LevelUpUpgrade, LevelUpUpgradeModuleData );
+public:
+	LevelUpUpgrade( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+};
+
+//-------------------------------------------------------------------------------------------------
+class RemoveUpgradeUpgradeModuleData : public UpgradeModuleData
+{
+public:
+	RemoveUpgradeUpgradeModuleData() : m_removeFromAllPlayerObjects(FALSE), m_suppressEva(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	std::vector<AsciiString> m_upgradesToRemove;
+	Bool m_removeFromAllPlayerObjects;
+	Bool m_suppressEva;
+};
+
+class RemoveUpgradeUpgrade : public UpgradeModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RemoveUpgradeUpgrade, "RemoveUpgradeUpgrade" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RemoveUpgradeUpgrade, RemoveUpgradeUpgradeModuleData );
+public:
+	RemoveUpgradeUpgrade( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+};
+
+//-------------------------------------------------------------------------------------------------
+class ReplaceSelfUpgradeModuleData : public UpgradeModuleData
+{
+public:
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_replaceWith;
+	AsciiString m_andThenAddA;
+};
+
+class ReplaceSelfUpgrade : public UpgradeModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ReplaceSelfUpgrade, "ReplaceSelfUpgrade" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ReplaceSelfUpgrade, ReplaceSelfUpgradeModuleData );
+public:
+	ReplaceSelfUpgrade( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+};
+
+//-------------------------------------------------------------------------------------------------
+class PassiveAreaEffectBehaviorModuleData : public UpdateModuleData
+{
+public:
+	PassiveAreaEffectBehaviorModuleData();
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Real m_effectRadius;
+	UnsignedInt m_pingDelay;
+	ObjectFilter m_allowFilter;
+	std::vector<AsciiString> m_modifierNames;
+	std::vector<AsciiString> m_upgradeRequired;
+	Real m_healPercentPerSecond;
+	const FXList* m_healFX;
+	Bool m_nonStackable;
+	AsciiString m_antiCategories;
+};
+
+class PassiveAreaEffectBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PassiveAreaEffectBehavior, "PassiveAreaEffectBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PassiveAreaEffectBehavior, PassiveAreaEffectBehaviorModuleData )
+public:
+	PassiveAreaEffectBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+};
+
+//-------------------------------------------------------------------------------------------------
+class LargeGroupBonusUpdateModuleData : public UpdateModuleData
+{
+public:
+	LargeGroupBonusUpdateModuleData();
+	static void buildFieldParse(MultiIniFieldParse& p);
+	UnsignedInt m_updateRate;
+	ObjectFilter m_hordeMemberFilter;
+	Int m_count;
+	Real m_radius;
+	Real m_rubOffRadius;
+	Bool m_alliesOnly;
+	AsciiString m_attributeModifier;
+	std::vector<AsciiString> m_flagSubObjectNames;
+};
+
+class LargeGroupBonusUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LargeGroupBonusUpdate, "LargeGroupBonusUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( LargeGroupBonusUpdate, LargeGroupBonusUpdateModuleData )
+public:
+	LargeGroupBonusUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+};
+
+//-------------------------------------------------------------------------------------------------
+class HordeMemberCollide : public CollideModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HordeMemberCollide, "HordeMemberCollide" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HordeMemberCollide, CollideModuleData )
+public:
+	HordeMemberCollide( Thing *thing, const ModuleData* moduleData );
+	virtual void onCollide( Object * /*other*/, const Coord3D * /*loc*/, const Coord3D * /*normal*/ ) override {}
+};
