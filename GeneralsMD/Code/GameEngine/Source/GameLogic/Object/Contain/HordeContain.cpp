@@ -320,6 +320,9 @@ UpdateSleepTime HordeContain::update()
 	Object* me = getObject();
 	if (!m_spawned)
 		spawnMembers();
+	// a container that is not a horde (citadel/ring "slaughter" containers on heroes and buildings)
+	if (getHordeContainModuleData()->m_initialPayload.empty() && !me->isKindOf(KINDOF_HORDE))
+		return UPDATE_SLEEP_FOREVER;
 
 	// drop the dead; the horde goes when its last member does
 	for (size_t i = 0; i < m_members.size(); )

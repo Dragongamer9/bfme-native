@@ -6,6 +6,8 @@
 // tables at 0xD8AF70 / 0xD9FA68.
 #pragma once
 
+#include <functional>
+
 #include "Common/AsciiString.h"
 #include "Common/GameType.h"
 #include "Common/ModelState.h"
@@ -140,6 +142,9 @@ public:
 	/// set model conditions on obj for 'frames' frames, then clear them again
 	void applyTimedModelConditions(Object* obj, const ModelConditionFlags& flags, UnsignedInt frames);
 
+	/// run 'fn' on obj after 'frames' frames (skipped if the object is gone by then)
+	void schedule(Object* obj, UnsignedInt frames, const std::function<void(Object*)>& fn);
+
 private:
 	struct Active
 	{
@@ -162,6 +167,14 @@ private:
 		UnsignedInt m_expireFrame;
 	};
 	std::vector<TimedConditions> m_timedConditions;
+
+	struct Timer
+	{
+		ObjectID m_id;
+		UnsignedInt m_frame;
+		std::function<void(Object*)> m_fn;
+	};
+	std::vector<Timer> m_timers;
 };
 
 extern AttributeModifierStore* TheAttributeModifierStore;

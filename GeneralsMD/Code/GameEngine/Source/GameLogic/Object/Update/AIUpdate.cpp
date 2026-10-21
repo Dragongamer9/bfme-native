@@ -813,6 +813,9 @@ Bool AIUpdateInterface::chooseLocomotorSet(LocomotorSetType wst)
 	DEBUG_ASSERTCRASH(wst != LOCOMOTORSET_NORMAL_UPGRADED, ("never pass LOCOMOTORSET_NORMAL_UPGRADED here"));
 	if (wst == LOCOMOTORSET_NORMAL && m_upgradedLocomotors)
 		wst = LOCOMOTORSET_NORMAL_UPGRADED;
+	// bfme-native: a mounted hero keeps riding
+	if (wst == LOCOMOTORSET_NORMAL && getObject()->testWeaponSetFlag(WEAPONSET_BFME_MOUNTED) && getObject()->getTemplate()->bfmeFindLocomotors(LOCOMOTORSET_MOUNTED))
+		wst = LOCOMOTORSET_MOUNTED;
 
 	if (wst == m_curLocomotorSet)
 		return TRUE;

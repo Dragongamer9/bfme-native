@@ -1996,6 +1996,13 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 					bfmeRecordSkip("field", s_bfmeCurrentBlock.str(), field);
 					if (isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals))
 						bfmeSkipBlock();
+					else
+					{
+						// "AddEmotion = OVERRIDE X ... End" (EmotionTracker) opens a block too
+						const char* v1 = getNextTokenOrNull();
+						if (v1 && stricmp(v1, "OVERRIDE") == 0)
+							bfmeSkipBlock();
+					}
 				}
 
 			}

@@ -209,7 +209,7 @@ protected:
 	void createViewObject( const Coord3D *location );
 	void resolveSpecialPower();
 	void aboutToDoSpecialPower( const Coord3D *location );
-	void bfmeOnTrigger( const Coord3D *location );	///< bfme-native: RotWK base-class trigger effects
+	virtual void bfmeOnTrigger( const Coord3D *location );	///< bfme-native: RotWK base-class trigger effects
 
 	UnsignedInt m_availableOnFrame;			///< on this frame, this special power is available
 	Int m_pausedCount;									///< Reference count of sources pausing me

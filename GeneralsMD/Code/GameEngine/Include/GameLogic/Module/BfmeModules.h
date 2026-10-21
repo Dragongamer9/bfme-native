@@ -55,6 +55,28 @@ protected:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** DoCommandUpgrade: when triggered, carry out a command button on this object (free upgrades,
+	special abilities such as ring-hero switches). */
+class DoCommandUpgradeModuleData : public UpgradeModuleData
+{
+public:
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_getUpgradeCommandButtonName;
+	AsciiString m_removeUpgradeCommandButtonName;
+};
+
+class DoCommandUpgrade : public UpgradeModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DoCommandUpgrade, "DoCommandUpgrade" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DoCommandUpgrade, DoCommandUpgradeModuleData );
+public:
+	DoCommandUpgrade( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+};
+
+//-------------------------------------------------------------------------------------------------
 class ReplaceSelfUpgradeModuleData : public UpgradeModuleData
 {
 public:
@@ -198,7 +220,7 @@ class AutoAbilityBehaviorModuleData : public UpdateModuleData
 {
 public:
 	AutoAbilityBehaviorModuleData() : m_maxScanRange(0.0f), m_minScanRange(0.0f), m_allowSelf(FALSE), m_startsActive(FALSE),
-		m_adjustAttackMeleePosition(FALSE), m_idleTime(0), m_baseMaxRangeFromStartPos(0.0f) {}
+		m_adjustAttackMeleePosition(FALSE), m_idleTime(0), m_baseMaxRangeFromStartPos(FALSE) {}
 	static void buildFieldParse(MultiIniFieldParse& p);
 	static void parseQuery(INI* ini, void* instance, void* store, const void* userData);
 	AsciiString m_specialAbility;
@@ -208,7 +230,7 @@ public:
 	Bool m_startsActive;
 	Bool m_adjustAttackMeleePosition;
 	UnsignedInt m_idleTime;
-	Real m_baseMaxRangeFromStartPos;
+	Bool m_baseMaxRangeFromStartPos;
 	ObjectStatusMaskType m_forbiddenStatus;
 	std::vector<AutoAbilityQuery> m_queries;
 };
