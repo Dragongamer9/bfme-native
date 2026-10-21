@@ -1,0 +1,9 @@
+# Drauglin uses "Meister der Jagd" (a WeaponFireSpecialAbilityUpdate) on an Uruk
+1   spawn AngmarDrauglin player1 800 1100 0
+1   spawn IsengardFighter player2 900 1100 180
+1   spawn IsengardFighter player2 920 1120 180
+5   summary
+20  power player1 AngmarDrauglin SpecialAbilityDrauglinMeisterderJagd player2
+120 summary
+120 dump
+121 quit
