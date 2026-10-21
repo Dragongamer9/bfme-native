@@ -16,6 +16,8 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Money.h"
+#include "GameLogic/Module/ProductionUpdate.h"
+#include "Common/BuildAssistant.h"
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/ExperienceLevel.h"
 #include "GameLogic/Module/BfmeModules.h"
@@ -373,6 +375,26 @@ void run(const TestCmd& c)
 			if (x && o->getAI() && !o->isEffectivelyDead())
 				printf("[BFMETEST] xp #%u %s rank=%d exp=%d award=%d hasLevel2=%d\n", o->getID(), o->getTemplate()->getName().str(), x->getBfmeRank(),
 					x->getCurrentExperience(), (TheExperienceLevelStore && TheExperienceLevelStore->getLevel(o->getTemplate(), x->getBfmeRank())) ? TheExperienceLevelStore->getLevel(o->getTemplate(), x->getBfmeRank())->m_experienceAward : -1, (int)(TheUpgradeCenter->findUpgrade("Upgrade_Level_2") && o->hasUpgrade(TheUpgradeCenter->findUpgrade("Upgrade_Level_2"))));
+		}
+	}
+	else if (op == "produce" && c.args.size() >= 4)
+	{
+		// produce PLAYER FACTORYTEMPLATE UNITTEMPLATE : queue a unit as the player's UI would (cost, limits checked)
+		Player* a = findPlayer(c.args[1]);
+		const ThingTemplate* t = TheThingFactory->findTemplate(c.args[3].c_str());
+		for (Object* o = TheGameLogic->getFirstObject(); o && a && t; o = o->getNextObject())
+		{
+			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0)
+				continue;
+			ProductionUpdateInterface* pu = o->getProductionUpdateInterface();
+			const CanMakeType can = TheBuildAssistant->canMakeUnit(o, t);
+			Bool queued = FALSE;
+			if (pu && can == CANMAKE_OK)
+			{
+				queued = pu->queueCreateUnit(t, pu->requestUniqueUnitID());	// charges the cost
+			}
+			printf("[BFMETEST] produce %s at #%u: canMake=%d queued=%d (build time %d frames)\n", c.args[3].c_str(), o->getID(), (int)can, (int)queued, t->calcTimeToBuild(a));
+			break;
 		}
 	}
 	else if (op == "money")
