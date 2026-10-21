@@ -556,6 +556,14 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 
 	}
 
+	// bfme-native: module classes this engine does not implement yet are skipped and reported
+	if (TheModuleFactory->findModuleInterfaceMask(tokenStr, type == 999 ? MODULETYPE_BEHAVIOR : type) == 0)
+	{
+		ini->bfmeRecordUnknownModule(tokenStr.str());
+		ini->bfmeSkipBlock();
+		return;
+	}
+
 	Int interfaceMask;
 
 	// ugh -- special case for "Body".
@@ -600,9 +608,20 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 //    if (self->getName().compare("GLAVehicleQuadCannon"))
 //      DEBUG_CRASH( ("WE ARE CLEARING DEFAULT MODULES FROM A QUAD CANNON.") );
 
-		self->m_behaviorModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
-		self->m_drawModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
-		self->m_clientUpdateModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
+		if (self->m_bfmeChildParsing)
+		{
+			// bfme-native: ChildObject - a module with an inherited tag replaces that module only
+			AsciiString cleared;
+			self->m_behaviorModuleInfo.clearModuleDataWithTag(moduleTagStr, cleared);
+			self->m_drawModuleInfo.clearModuleDataWithTag(moduleTagStr, cleared);
+			self->m_clientUpdateModuleInfo.clearModuleDataWithTag(moduleTagStr, cleared);
+		}
+		else
+		{
+			self->m_behaviorModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
+			self->m_drawModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
+			self->m_clientUpdateModuleInfo.clearCopiedFromDefaultEntries(interfaceMask, tokenStr, self );
+		}
 	}
 
 	if (self->m_moduleParsingMode == MODULEPARSE_ADD_REMOVE_REPLACE &&

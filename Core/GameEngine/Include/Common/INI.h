@@ -198,6 +198,7 @@ public:
 	// data type parsing (the highest level of what type of thing we're parsing)
 	static void parseObjectDefinition( INI *ini );
 	static void parseObjectReskinDefinition( INI *ini );
+	static void parseChildObjectDefinition( INI *ini );	///< bfme-native: "ChildObject Name Parent"
 	static void parseWeaponTemplateDefinition( INI *ini );
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );

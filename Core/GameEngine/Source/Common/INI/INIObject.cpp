@@ -51,6 +51,15 @@ void INI::parseObjectDefinition( INI* ini )
 //-------------------------------------------------------------------------------------------------
 /** Parse Object entry */
 //-------------------------------------------------------------------------------------------------
+/** bfme-native: RotWK "ChildObject <name> <parent>": a full copy of the parent object, then any
+	field may be overridden and a module redeclared with an existing ModuleTag replaces it. */
+void INI::parseChildObjectDefinition( INI* ini )
+{
+	AsciiString name = ini->getNextToken();
+	AsciiString parent = ini->getNextToken();
+	ThingFactory::parseChildObjectDefinition(ini, name, parent);
+}
+
 void INI::parseObjectReskinDefinition( INI* ini )
 {
 	AsciiString name = ini->getNextToken();

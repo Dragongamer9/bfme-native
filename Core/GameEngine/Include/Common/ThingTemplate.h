@@ -596,6 +596,7 @@ public:
 	const AsciiString& getDefaultOwningSide() const { return m_defaultOwningSide; }
 
 	/// get us the table to parse the fields for thing templates
+	void friend_setBfmeChildParsing(Bool b) { m_bfmeChildParsing = b; }	///< bfme-native
 	const FieldParse* getFieldParse() const { return s_objectFieldParseTable; }
 	const FieldParse* getReskinFieldParse() const { return s_objectReskinFieldParseTable; }
 
@@ -775,6 +776,7 @@ private:
 	Byte					m_structureRubbleHeight;
 	Byte					m_shadowType;								///< settings which determine the type of shadow rendered
 	Byte					m_moduleParsingMode;
+	Bool					m_bfmeChildParsing = FALSE;	///< bfme-native: parsing a ChildObject body (modules replace by tag)
 	UnsignedByte	m_crusherLevel;							///< crusher > crushable level to actually crush
 	UnsignedByte	m_crushableLevel;						///< Specifies the level of crushability (must be hit by a crusher greater than this to crush me).
 
