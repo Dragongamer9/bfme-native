@@ -218,6 +218,7 @@
 #include "GameLogic/Module/BfmeModules.h"	// bfme-native
 #include "GameLogic/Module/WeaponFireSpecialAbilityUpdate.h"	// bfme-native
 #include "GameLogic/Module/ToggleMountedSpecialAbilityUpdate.h"	// bfme-native
+#include "GameLogic/Stances.h"	// bfme-native
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
 // create includes
@@ -522,6 +523,7 @@ void ModuleFactory::init()
 	addModule( RefundDie );	// bfme-native
 	addModule( AttachUpdate );	// bfme-native
 	addModule( DualWeaponBehavior );	// bfme-native
+	addModule( StancesBehavior );	// bfme-native
 	addModule( PlayerHealSpecialPower );	// bfme-native
 	addModule( PlayerUpgradeSpecialPower );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
@@ -531,7 +533,6 @@ void ModuleFactory::init()
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("AudioLoopUpgrade"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("HitReactionBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("BuildingBehavior"), BfmeInertBehavior::getInterfaceMask() );
-	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("StancesBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("CastleMemberBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("PickupStuffUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("AISpecialPowerUpdate"), BfmeInertBehavior::getInterfaceMask() );

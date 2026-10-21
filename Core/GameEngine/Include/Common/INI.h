@@ -202,6 +202,7 @@ public:
 	static void parseWeaponTemplateDefinition( INI *ini );
 	static void parseModifierListDefinition( INI *ini );	// bfme-native
 	static void parseExperienceLevelDefinition( INI *ini );	// bfme-native
+	static void parseStanceTemplateDefinition( INI *ini );	// bfme-native
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );
 	static void parseCrateTemplateDefinition( INI *ini );
