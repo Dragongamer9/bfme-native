@@ -80,8 +80,7 @@ void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 		{
 			if (foundNormal || foundAddOrSub)
 			{
-				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
-				throw INI_INVALID_NAME_LIST;
+				DEBUG_LOG(("mixing normal and +- ops in a bitstring list"));	// bfme-native: tolerated
 			}
 			clear();
 			break;
@@ -91,37 +90,37 @@ void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 		{
 			if (foundNormal)
 			{
-				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
-				throw INI_INVALID_NAME_LIST;
+				DEBUG_LOG(("mixing normal and +- ops in a bitstring list"));	// bfme-native: tolerated
 			}
-			Int bitIndex = INI::scanIndexList(token+1, s_bitNameList);	// this throws if the token is not found
-			set(bitIndex, 1);
+			Int bitIndex;	// bfme-native: unknown names are recorded and ignored
+			if (INI::scanIndexListTolerant(token+1, s_bitNameList, bitIndex))
+				set(bitIndex, 1);
 			foundAddOrSub = true;
 		}
 		else if (token[0] == '-')
 		{
 			if (foundNormal)
 			{
-				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
-				throw INI_INVALID_NAME_LIST;
+				DEBUG_LOG(("mixing normal and +- ops in a bitstring list"));	// bfme-native: tolerated
 			}
-			Int bitIndex = INI::scanIndexList(token+1, s_bitNameList);	// this throws if the token is not found
-			set(bitIndex, 0);
+			Int bitIndex;
+			if (INI::scanIndexListTolerant(token+1, s_bitNameList, bitIndex))
+				set(bitIndex, 0);
 			foundAddOrSub = true;
 		}
 		else
 		{
 			if (foundAddOrSub)
 			{
-				DEBUG_CRASH(("you may not mix normal and +- ops in bitstring lists"));
-				throw INI_INVALID_NAME_LIST;
+				DEBUG_LOG(("mixing normal and +- ops in a bitstring list"));	// bfme-native: tolerated
 			}
 
 			if (!foundNormal)
 				clear();
 
-			Int bitIndex = INI::scanIndexList(token, s_bitNameList);	// this throws if the token is not found
-			set(bitIndex, 1);
+			Int bitIndex;
+			if (INI::scanIndexListTolerant(token, s_bitNameList, bitIndex))
+				set(bitIndex, 1);
 			foundNormal = true;
 		}
 	}
@@ -141,7 +140,9 @@ template <size_t NUMBITS, typename TAG>
 /*static*/ void BitFlags<NUMBITS, TAG>::parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
 {
 	const char *token = ini->getNextToken();
-	Int bitIndex = INI::scanIndexList(token, s_bitNameList);	// this throws if the token is not found
+	Int bitIndex = 0;	// bfme-native: unknown names are recorded and leave the value unchanged
+	if (!INI::scanIndexListTolerant(token, s_bitNameList, bitIndex))
+		return;
 
 	Int *storeAsInt = (Int*)store;
 	*storeAsInt = bitIndex;
