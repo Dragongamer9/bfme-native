@@ -563,7 +563,8 @@ ArchiveFile * BIGFileSystem::openArchiveFile(const Char *filename) {
 	char buffer[_MAX_PATH];
 	fp->read(buffer, 4); // read the "BIG" at the beginning of the file.
 	buffer[4] = 0;
-	if (strcmp(buffer, BIGFileIdentifier) != 0) {
+	// bfme-native: BFME2/RotWK and their mods also ship "BIG4" archives (same layout)
+	if (strcmp(buffer, BIGFileIdentifier) != 0 && strcmp(buffer, "BIG4") != 0) {
 		DEBUG_CRASH(("Error reading BIG file identifier in file %s", filename));
 		fp->close();
 		fp = nullptr;
