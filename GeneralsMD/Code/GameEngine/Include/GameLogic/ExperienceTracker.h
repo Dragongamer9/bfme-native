@@ -56,6 +56,12 @@ public:
 	Bool gainExpForLevel(Int levelsToGain, Bool canScaleForBonus = TRUE );			  ///< Gain enough exp to gain a level. return false if can't gain a level.
 	Bool canGainExpForLevel(Int levelsToGain) const;															///< return same value as gainExpForLevel, but don't change anything
 	void setExperienceAndLevel(Int experienceIn, Bool provideFeedback = TRUE );
+
+	// bfme-native: RotWK ranks (ExperienceLevels.ini); 0 when the unit type has none
+	Int getBfmeRank() const { return m_bfmeRank; }
+	void bfmeInitRank();												///< grant rank 1 at creation
+	void bfmeSetRank(Int rank, Bool provideFeedback = TRUE);	///< at least this rank (ExperienceLevelCreate, level-up upgrades)
+	void bfmeUpdateRank(Bool provideFeedback);
 	void setExperienceSink( ObjectID sink );											///< My experience actually goes to this person (loose couple)
 	ObjectID getExperienceSink() const;
 
@@ -74,4 +80,5 @@ private:
 	ObjectID					m_experienceSink;										///< ID of object I have pledged my experience point gains to
 	Real							m_experienceScalar;									///< Scales any experience gained by this multiplier.
 	Bool							m_isTrainable;											///< Can I gain experience?
+	Int								m_bfmeRank;													///< bfme-native: RotWK rank
 };

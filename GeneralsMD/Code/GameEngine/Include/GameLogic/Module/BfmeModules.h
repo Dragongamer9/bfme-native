@@ -5,6 +5,7 @@
 #pragma once
 
 #include "GameLogic/Module/CollideModule.h"
+#include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 #include "GameLogic/ObjectFilter.h"
@@ -310,6 +311,30 @@ private:
 
 /// called by ActiveBody when health reaches 0; TRUE when a RespawnUpdate took over
 Bool bfmeRespawnInterceptDeath(Object* obj, DamageInfo* damageInfo);
+
+//-------------------------------------------------------------------------------------------------
+/** ExperienceLevelCreate: the object starts at rank LevelToGrant. */
+class ExperienceLevelCreateModuleData : public BehaviorModuleData
+{
+public:
+	ExperienceLevelCreateModuleData() : m_levelToGrant(1), m_mpOnly(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Int m_levelToGrant;
+	Bool m_mpOnly;
+};
+
+class ExperienceLevelCreate : public BehaviorModule, public CreateModuleInterface
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ExperienceLevelCreate, "ExperienceLevelCreate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ExperienceLevelCreate, ExperienceLevelCreateModuleData )
+public:
+	ExperienceLevelCreate( Thing *thing, const ModuleData* moduleData );
+	static Int getInterfaceMask() { return MODULEINTERFACE_CREATE; }
+	virtual CreateModuleInterface* getCreate() override { return this; }
+	virtual void onCreate() override;
+	virtual void onBuildComplete() override {}
+	virtual Bool shouldDoOnBuildComplete() const override { return FALSE; }
+};
 
 //-------------------------------------------------------------------------------------------------
 /** A RotWK module that is parsed but has no behaviour yet (audio/animation polish, or logic still to

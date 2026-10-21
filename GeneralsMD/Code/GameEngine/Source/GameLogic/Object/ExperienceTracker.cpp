@@ -32,6 +32,7 @@
 #include "Common/Xfer.h"
 #include "Common/ThingTemplate.h"
 #include "GameLogic/ExperienceTracker.h"
+#include "GameLogic/ExperienceLevel.h"	// bfme-native
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
@@ -45,6 +46,7 @@ ExperienceTracker::ExperienceTracker(Object *parent) :
 	m_experienceScalar( 1.0f ),
 	m_currentExperience(0)
 {
+	m_bfmeRank = 0;
 	resetTrainable();
 }
 
@@ -60,6 +62,13 @@ Int ExperienceTracker::getExperienceValue( const Object* killer ) const
 	if( killer->getRelationship( m_parent ) == ALLIES )
 		return 0;
 
+	// bfme-native: RotWK awards by rank
+	if (m_bfmeRank > 0 && TheExperienceLevelStore)
+	{
+		const ExperienceLevel* l = TheExperienceLevelStore->getLevel(m_parent->getTemplate(), m_bfmeRank);
+		if (l)
+			return l->m_experienceAward;
+	}
 	return m_parent->getTemplate()->getExperienceValue(m_currentLevel);
 }
 
@@ -187,6 +196,7 @@ void ExperienceTracker::addExperiencePoints( Int experienceGain, Bool canScaleFo
 
 	Int levelIndex = 0;
 	while( ( (levelIndex + 1) < LEVEL_COUNT) &&
+		m_parent->getTemplate()->getExperienceRequired(levelIndex + 1) > 0 &&	// bfme-native: RotWK types leave these out
 		m_currentExperience >= m_parent->getTemplate()->getExperienceRequired(levelIndex + 1)
 		)
 	{
@@ -201,6 +211,7 @@ void ExperienceTracker::addExperiencePoints( Int experienceGain, Bool canScaleFo
 		// Edge trigger special level gain effects.
 		m_parent->onVeterancyLevelChanged( oldLevel, m_currentLevel );
 	}
+	bfmeUpdateRank(TRUE);	// bfme-native
 
 }
 //-------------------------------------------------------------------------------------------------
@@ -227,6 +238,7 @@ void ExperienceTracker::setExperienceAndLevel( Int experienceIn, Bool provideFee
 
 	Int levelIndex = 0;
 	while( ( (levelIndex + 1) < LEVEL_COUNT) &&
+		m_parent->getTemplate()->getExperienceRequired(levelIndex + 1) > 0 &&	// bfme-native: RotWK types leave these out
 		m_currentExperience >= m_parent->getTemplate()->getExperienceRequired(levelIndex + 1)
 		)
 	{
@@ -241,6 +253,7 @@ void ExperienceTracker::setExperienceAndLevel( Int experienceIn, Bool provideFee
 		// Edge trigger special level gain effects.
 		m_parent->onVeterancyLevelChanged( oldLevel, m_currentLevel, provideFeedback ); //<<== paradox! this may be a level lost!
 	}
+	bfmeUpdateRank(provideFeedback);	// bfme-native
 
 }
 
@@ -268,7 +281,7 @@ void ExperienceTracker::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
 #else
-	XferVersion currentVersion = 2;
+	XferVersion currentVersion = 3;	// bfme-native: 3 adds the RotWK rank
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -290,6 +303,8 @@ void ExperienceTracker::xfer( Xfer *xfer )
 
 	if (version >= 2)
 		xfer->xferBool(&m_isTrainable);
+	if (version >= 3)
+		xfer->xferInt(&m_bfmeRank);	// bfme-native
 }
 
 //-----------------------------------------------------------------------------
@@ -298,3 +313,46 @@ void ExperienceTracker::loadPostProcess()
 
 }
 
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK ranks
+void ExperienceTracker::bfmeInitRank()
+{
+	if (TheExperienceLevelStore == nullptr || m_bfmeRank > 0)
+		return;
+	const std::vector<const ExperienceLevel*>& v = TheExperienceLevelStore->getLevels(m_parent->getTemplate());
+	if (v.empty())
+		return;
+	const Int rank = max(v.front()->m_rank, TheExperienceLevelStore->rankForExperience(m_parent->getTemplate(), m_currentExperience));
+	m_bfmeRank = rank;
+	TheExperienceLevelStore->onRankGained(m_parent, 0, rank, FALSE);
+}
+
+void ExperienceTracker::bfmeUpdateRank(Bool provideFeedback)
+{
+	if (TheExperienceLevelStore == nullptr || m_bfmeRank <= 0)
+		return;
+	const Int rank = TheExperienceLevelStore->rankForExperience(m_parent->getTemplate(), m_currentExperience);
+	if (rank > m_bfmeRank)
+	{
+		const Int old = m_bfmeRank;
+		m_bfmeRank = rank;
+		TheExperienceLevelStore->onRankGained(m_parent, old, rank, provideFeedback);
+	}
+}
+
+void ExperienceTracker::bfmeSetRank(Int rank, Bool provideFeedback)
+{
+	if (TheExperienceLevelStore == nullptr)
+		return;
+	if (m_bfmeRank <= 0)
+		bfmeInitRank();
+	const ExperienceLevel* l = TheExperienceLevelStore->getLevel(m_parent->getTemplate(), min(rank, TheExperienceLevelStore->getMaxRank(m_parent->getTemplate())));
+	if (l == nullptr || l->m_rank <= m_bfmeRank)
+		return;
+	if (m_currentExperience < l->m_requiredExperience)
+		m_currentExperience = l->m_requiredExperience;
+	const Int old = m_bfmeRank;
+	m_bfmeRank = l->m_rank;
+	TheExperienceLevelStore->onRankGained(m_parent, old, m_bfmeRank, provideFeedback);
+}

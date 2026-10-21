@@ -201,6 +201,7 @@ public:
 	static void parseChildObjectDefinition( INI *ini );	///< bfme-native: "ChildObject Name Parent"
 	static void parseWeaponTemplateDefinition( INI *ini );
 	static void parseModifierListDefinition( INI *ini );	// bfme-native
+	static void parseExperienceLevelDefinition( INI *ini );	// bfme-native
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );
 	static void parseCrateTemplateDefinition( INI *ini );

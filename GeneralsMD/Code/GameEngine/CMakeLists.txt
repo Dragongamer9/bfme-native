@@ -492,6 +492,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Weapon.h
     Include/GameLogic/ObjectFilter.h
     Include/GameLogic/AttributeModifier.h
+    Include/GameLogic/ExperienceLevel.h
     Include/GameLogic/Module/AttributeModifierUpgrade.h
     Include/GameLogic/Module/AttributeModifierAuraUpdate.h
     Include/GameLogic/Module/BfmeGenericSpecialPower.h
@@ -1081,6 +1082,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Weapon.cpp
     Source/GameLogic/Object/ObjectFilter.cpp
     Source/GameLogic/Object/AttributeModifier.cpp
+    Source/GameLogic/Object/ExperienceLevel.cpp
     Source/GameLogic/Object/Upgrade/AttributeModifierUpgrade.cpp
     Source/GameLogic/Object/Update/AttributeModifierAuraUpdate.cpp
     Source/GameLogic/Object/SpecialPower/BfmeGenericSpecialPower.cpp
