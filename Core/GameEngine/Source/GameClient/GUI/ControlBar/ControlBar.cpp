@@ -1078,6 +1078,7 @@ void ControlBar::init()
 
 	// load the command sets
 	ini.loadFileDirectory( "Data\\INI\\CommandSet", INI_LOAD_OVERWRITE, nullptr );
+	INI::bfmeReplayDeferred("CommandSet");	// bfme-native: CommandSets met inside object files
 
 	// post process step after loading the command buttons and command sets
 	postProcessCommands();
@@ -2018,6 +2019,16 @@ CommandButton *ControlBar::newCommandButtonOverride( CommandButton *buttonToOver
 	// read the name
 	const char* c = ini->getNextToken();
 	name.set( c );
+
+	// bfme-native: RotWK/Edain define CommandSets inside object files, which load before the
+	// control bar exists. Keep the block and parse it when the control bar initializes.
+	if (TheControlBar == nullptr)
+	{
+		AsciiString header;
+		header.format("CommandSet %s", c);
+		ini->bfmeDeferBlock("CommandSet", header.str());
+		return;
+	}
 
 	// find existing item if present
 	commandSet = TheControlBar->findNonConstCommandSet( name );

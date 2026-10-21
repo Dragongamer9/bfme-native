@@ -268,6 +268,11 @@ public:
 	static Bool scanIndexListTolerant(const char* token, ConstCharPtrArray nameList, Int& out);
 	/// bfme-native: note a module class the engine does not implement (BFME_INI_REPORT)
 	static void bfmeRecordUnknownModule(const char* moduleName);
+	/// bfme-native: copy the rest of the current block (header line + body + End) for later parsing.
+	/// Used for blocks whose store does not exist yet when they are met (CommandSet inside object files).
+	void bfmeDeferBlock(const char* blockType, const char* headerLine);
+	/// bfme-native: parse every block deferred under blockType, then forget them.
+	static void bfmeReplayDeferred(const char* blockType);
 	static const char *getSepsPercent() { return " \n\r\t=%%"; } ///< default delimiters & percent delimiter
 	static const char *getSepsColon()   { return " \n\r\t=:"; }  ///< default delimiters & colon delimiter
 	static const char *getSepsQuote()   { return "\"\n="; }      ///< delimiters to represent a quoted ascii string
