@@ -1,0 +1,6 @@
+# Getting the ring turns Theoden into his ring-hero form (DoCommandUpgrade -> ToggleMounted with MountedTemplate)
+1    spawn RohanTheoden_mod player1 800 1100 0
+5    dump
+10   upgrade player1 Upgrade_RingHero RohanTheoden_mod
+100  dump
+101  quit

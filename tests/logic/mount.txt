@@ -1,0 +1,9 @@
+# Theoden starts mounted (TriggerInstantlyOnCreate), dismounts and remounts with the toggle
+1    spawn RohanTheoden_mod player1 800 1100 0
+5    state
+5    dump
+10   power player1 RohanTheoden_mod SpecialAbilityToggleMounted none
+200  state
+210  power player1 RohanTheoden_mod SpecialAbilityToggleMounted none
+400  state
+401  quit
