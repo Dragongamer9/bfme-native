@@ -207,6 +207,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "RefundDie", 256, 64 },	// bfme-native
 	{ "AttachUpdate", 256, 64 },	// bfme-native
 	{ "DualWeaponBehavior", 512, 128 },	// bfme-native
+	{ "StancesBehavior", 2048, 512 },	// bfme-native
 	{ "PlayerHealSpecialPower", 128, 32 },	// bfme-native
 	{ "PlayerUpgradeSpecialPower", 128, 32 },	// bfme-native
 	{ "BfmeInertBehavior", 8192, 2048 },	// bfme-native

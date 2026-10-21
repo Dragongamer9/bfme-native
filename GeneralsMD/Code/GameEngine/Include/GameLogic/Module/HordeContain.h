@@ -74,6 +74,7 @@ public:
 
 	/// members still alive
 	Int getMemberCount() const;
+	const std::vector<ObjectID>& getMembers() const { return m_members; }
 	/// the member nearest to 'pos' (to redirect hits on the horde), or null
 	Object* getMemberClosestTo(const Coord3D* pos) const;
 

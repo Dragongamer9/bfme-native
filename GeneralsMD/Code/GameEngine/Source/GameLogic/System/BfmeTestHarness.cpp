@@ -16,6 +16,7 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Money.h"
+#include "GameLogic/Stances.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "Common/BuildAssistant.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -395,6 +396,19 @@ void run(const TestCmd& c)
 			}
 			printf("[BFMETEST] produce %s at #%u: canMake=%d queued=%d (build time %d frames)\n", c.args[3].c_str(), o->getID(), (int)can, (int)queued, t->calcTimeToBuild(a));
 			break;
+		}
+	}
+	else if (op == "stance" && c.args.size() >= 4)
+	{
+		// stance PLAYER TEMPLATE STANCE|none
+		Player* a = findPlayer(c.args[1]);
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		{
+			StancesBehavior* sb = StancesBehavior::findOn(o);
+			if (sb == nullptr || o->getControllingPlayer() != a || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0)
+				continue;
+			const Bool ok = sb->setStance(c.args[3] == "none" ? AsciiString::TheEmptyString : AsciiString(c.args[3].c_str()));
+			printf("[BFMETEST] stance #%u %s -> %s ok=%d\n", o->getID(), c.args[2].c_str(), c.args[3].c_str(), (int)ok);
 		}
 	}
 	else if (op == "money")
