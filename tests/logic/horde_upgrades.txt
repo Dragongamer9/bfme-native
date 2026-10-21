@@ -1,0 +1,12 @@
+# Heavy armor and forged blades bought for a Gondor horde reach its soldiers; compare with horde_fight
+1   spawn GondorFighterHorde player1 800 1100 0
+1   spawn IsengardFighterHorde player2 1300 1100 180
+5   upgrade player1 Upgrade_GondorHeavyArmor GondorFighterHorde
+5   upgrade player1 Upgrade_GondorForgedBlades GondorFighterHorde
+5   summary
+60  attack player1 player2
+60  attack player2 player1
+300 summary
+600 summary
+900 summary
+901 quit
