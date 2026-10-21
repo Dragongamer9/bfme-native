@@ -66,7 +66,9 @@ def main():
     ap.add_argument('out')
     ap.add_argument('--size', type=int, default=256, help='cells per side incl. border')
     ap.add_argument('--border', type=int, default=30)
-    ap.add_argument('--height', type=int, default=20, help='8-bit terrain height')
+    ap.add_argument('--height', type=int, default=20, help='terrain height in Generals 8-bit units (x16 in v5 maps)')
+    ap.add_argument('--bfme-sides', action='store_true', help='BFME layout: SidesList v5 + separate Teams chunk')
+    ap.add_argument('--hm-version', type=int, default=4, help='HeightMapData version: 4 = 8-bit (Generals), 5 = 16-bit (BFME/RotWK)')
     ap.add_argument('--player', action='append', default=[], help='NAME:FACTION:human|ai')
     ap.add_argument('--object', action='append', default=[], help='TEMPLATE:OWNER:X:Y[:ANGLE]')
     a = ap.parse_args()
@@ -80,8 +82,11 @@ def main():
     # HeightMapData v4
     hm = struct.pack('<iii', w, h, b)
     hm += struct.pack('<i', 1) + struct.pack('<ii', w - 2 * b, h - 2 * b)
-    hm += struct.pack('<i', w * h) + bytes([a.height]) * (w * h)
-    body = chunk(names, 'HeightMapData', 4, hm)
+    if a.hm_version >= 5:
+        hm += struct.pack('<i', w * h) + struct.pack('<H', a.height * 16) * (w * h)
+    else:
+        hm += struct.pack('<i', w * h) + bytes([a.height]) * (w * h)
+    body = chunk(names, 'HeightMapData', a.hm_version, hm)
 
     body += chunk(names, 'WorldInfo', 1, dict_(names, [('weather', 'int', 0)]))
 
@@ -100,14 +105,18 @@ def main():
             ('playerAllies', 'ascii', ''),
         ])
         sl += struct.pack('<i', 0)  # build list
-    sl += struct.pack('<i', len(sides))
+    teams = struct.pack('<i', len(sides))
     for name, _, _ in sides:
-        sl += dict_(names, [
+        teams += dict_(names, [
             ('teamName', 'ascii', 'team' + name),
             ('teamOwner', 'ascii', name),
             ('teamIsSingleton', 'bool', True),
         ])
-    body += chunk(names, 'SidesList', 3, sl)
+    if a.bfme_sides:
+        body += chunk(names, 'SidesList', 5, sl)
+        body += chunk(names, 'Teams', 1, teams)
+    else:
+        body += chunk(names, 'SidesList', 3, sl + teams)
 
     # ObjectsList: start waypoints along the middle, then requested objects
     objs = b''
