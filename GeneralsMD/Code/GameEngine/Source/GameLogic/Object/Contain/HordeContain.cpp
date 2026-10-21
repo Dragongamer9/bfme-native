@@ -93,6 +93,15 @@ void HordeContainModuleData::parseLine(INI* ini, void* /*instance*/, void* /*sto
 	while (ini->getNextTokenOrNull()) {}
 }
 
+void HordeContainModuleData::parseSubBlock(INI* ini, void* /*instance*/, void* /*store*/, const void* /*userData*/)
+{
+	// "MeleeBehavior = Amoeba ... End": a nested block we don't use yet
+	while (ini->getNextTokenOrNull()) {}
+	static const FieldParse none[] = { { nullptr, nullptr, nullptr, 0 } };
+	char dummy[16];
+	ini->initFromINI(dummy, none);
+}
+
 void HordeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	UpdateModuleData::buildFieldParse(p);
@@ -142,7 +151,7 @@ void HordeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "FrontAngle",											parseLine,						nullptr, 0 },
 		{ "FlankedDelay",										parseLine,						nullptr, 0 },
 		{ "FlankedDuration",								parseLine,						nullptr, 0 },
-		{ "MeleeBehavior",									parseLine,						nullptr, 0 },
+		{ "MeleeBehavior",									parseSubBlock,				nullptr, 0 },
 		{ "VisionRearOverride",							parseLine,						nullptr, 0 },
 		{ "VisionSideOverride",							parseLine,						nullptr, 0 },
 		{ "LivingWorldOverloadTemplate",		parseLine,						nullptr, 0 },
@@ -254,6 +263,11 @@ void HordeContain::spawnMembers()
 		}
 	}
 	m_spawned = TRUE;
+
+	// the horde is a leader object standing among its own soldiers: it must not wait for them to
+	// get out of its way
+	if (me->getAI())
+		me->getAI()->setCanPathThroughUnits(TRUE);
 }
 
 Int HordeContain::getMemberCount() const
@@ -336,8 +350,13 @@ UpdateSleepTime HordeContain::update()
 					target = enemyHorde->getMemberClosestTo(m->getPosition());
 				if (target)
 					mai->aiAttackObject(target, NO_MAX_SHOTS_LIMIT, CMD_FROM_AI);
+				if (getenv("BFME_DEBUG_HORDE"))
+					fprintf(stderr, "[horde] #%u member #%u -> target #%u (victim #%u, enemyHorde=%d) attacking=%d idle=%d\n", me->getID(), m->getID(),
+						target ? target->getID() : 0, victim->getID(), enemyHorde != nullptr, (int)mai->isAttacking(), (int)mai->isIdle());
 			}
-			continue;
+			if (mai->isAttacking())
+				continue;
+			// the target isn't attackable yet (out of sight): keep formation while the horde closes in
 		}
 
 		if (mai->isAttacking() && !hordeMoving)

@@ -480,6 +480,7 @@ public:
 	void bfmeSetProjectile(const AsciiString& projectileName, const AsciiString& warheadName);
 	Bool bfmeHasNuggets() const { return !m_bfmeNuggets.empty() || !m_bfmeWarheadName.isEmpty(); }
 	void bfmeComputeAggregates();
+	static void bfmeSetStoredTarget(ObjectID id);	///< the projectile's intended victim, for the detonation that follows
 
 protected:
 

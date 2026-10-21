@@ -68,6 +68,7 @@ DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() :
 	m_garrisonHitKillFX(nullptr),
 	m_flightPathAdjustDistPerFrame(0.0f)
 {
+	m_bfmeWaitForLaunch = FALSE;	// bfme-native
 }
 
 //-----------------------------------------------------------------------------
@@ -108,6 +109,7 @@ void DumbProjectileBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 DumbProjectileBehavior::DumbProjectileBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
+	m_bfmeLaunched = FALSE;	// bfme-native
 	m_launcherID = INVALID_ID;
 	m_victimID = INVALID_ID;
 	m_detonationWeaponTmpl = nullptr;
@@ -330,6 +332,8 @@ void DumbProjectileBehavior::projectileLaunchAtObjectOrPosition(
 	const ParticleSystemTemplate* exhaustSysOverride
 )
 {
+	m_bfmeLaunched = TRUE;	// bfme-native
+	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	const DumbProjectileBehaviorModuleData* d = getDumbProjectileBehaviorModuleData();
 
 	DEBUG_ASSERTCRASH(specificBarrelToUse>=0, ("specificBarrelToUse must now be explicit"));
@@ -536,7 +540,9 @@ void DumbProjectileBehavior::detonate()
 	Object* obj = getObject();
 	if (m_detonationWeaponTmpl)
 	{
+		WeaponTemplate::bfmeSetStoredTarget(m_victimID);	// bfme-native
 		TheWeaponStore->handleProjectileDetonation(m_detonationWeaponTmpl, obj, obj->getPosition(), m_extraBonusFlags);
+		WeaponTemplate::bfmeSetStoredTarget(INVALID_ID);
 
 		if ( getDumbProjectileBehaviorModuleData()->m_detonateCallsKill )
 		{
@@ -579,6 +585,8 @@ void DumbProjectileBehavior::detonate()
 UpdateSleepTime DumbProjectileBehavior::update()
 {
 	const DumbProjectileBehaviorModuleData* d = getDumbProjectileBehaviorModuleData();
+	if (d->m_bfmeWaitForLaunch && !m_bfmeLaunched)
+		return UPDATE_SLEEP_FOREVER;	// bfme-native
 
 	if (m_lifespanFrame != 0 && TheGameLogic->getFrame() >= m_lifespanFrame)
 	{
@@ -832,3 +840,10 @@ void DumbProjectileBehavior::loadPostProcess()
 	}
 
 }
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: BezierProjectileBehavior (see header)
+BezierProjectileBehavior::~BezierProjectileBehavior() {}
+void BezierProjectileBehavior::crc( Xfer *xfer ) { DumbProjectileBehavior::crc( xfer ); }
+void BezierProjectileBehavior::xfer( Xfer *xfer ) { XferVersion cv = 1; XferVersion v = cv; xfer->xferVersion( &v, cv ); DumbProjectileBehavior::xfer( xfer ); xfer->xferBool( &m_bfmeLaunched ); }
+void BezierProjectileBehavior::loadPostProcess() { DumbProjectileBehavior::loadPostProcess(); }

@@ -71,6 +71,7 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponNugget.h"	// bfme-native
 #include "GameLogic/Module/HordeContain.h"	// bfme-native
+#include "GameLogic/Module/DumbProjectileBehavior.h"	// bfme-native
 
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
@@ -502,11 +503,31 @@ void WeaponTemplate::bfmeComputeAggregates()
 		m_primaryDamageRadius = radius;
 }
 
+static ObjectID s_bfmeStoredTarget = INVALID_ID;
+void WeaponTemplate::bfmeSetStoredTarget(ObjectID id)
+{
+	s_bfmeStoredTarget = id;
+}
+
 void WeaponTemplate::bfmeDealNuggets(Object* source, Object* primaryVictim, const Coord3D* pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
 {
 	// a projectile weapon's impact is its warhead's nuggets
 	const WeaponTemplate* wt = (isProjectileDetonation && m_bfmeWarhead) ? m_bfmeWarhead : this;
-	Object* firer = source;
+
+	// RotWK arrows have no blast radius: the warhead hits the target the projectile was fired at
+	// (HitStoredTarget) when it lands on or near it
+	if (primaryVictim == nullptr && isProjectileDetonation && s_bfmeStoredTarget != INVALID_ID && pos)
+	{
+		Object* stored = TheGameLogic->findObjectByID(s_bfmeStoredTarget);
+		if (stored && !stored->isEffectivelyDead())
+		{
+			const Real reach = stored->getGeometryInfo().getBoundingCircleRadius() + 15.0f;
+			const Real dx = stored->getPosition()->x - pos->x, dy = stored->getPosition()->y - pos->y;
+			if (dx * dx + dy * dy <= reach * reach)
+				primaryVictim = stored;
+		}
+	}
+
 	// hits on a horde land on its soldiers (the horde itself is an immortal leader object)
 	if (primaryVictim && primaryVictim->isKindOf(KINDOF_HORDE))
 	{
@@ -521,12 +542,19 @@ void WeaponTemplate::bfmeDealNuggets(Object* source, Object* primaryVictim, cons
 			}
 		}
 	}
+
+	static const Bool s_debug = getenv("BFME_DEBUG_DAMAGE") != nullptr;
+	if (s_debug)
+		fprintf(stderr, "[dmg] %s det=%d -> %s nuggets=%d src=#%u victim=#%u pos=%.0f,%.0f\n", getName().str(), (int)isProjectileDetonation,
+			wt->getName().str(), (int)wt->m_bfmeNuggets.size(), source ? source->getID() : 0, primaryVictim ? primaryVictim->getID() : 0,
+			pos ? pos->x : 0.0f, pos ? pos->y : 0.0f);
+
 	for (size_t i = 0; i < wt->m_bfmeNuggets.size(); ++i)
 	{
 		const WeaponNugget* n = wt->m_bfmeNuggets[i].get();
 		if (n->isProjectileNugget())
 			continue;
-		if (!n->isAllowed(firer))
+		if (!n->isAllowed(source))
 			continue;
 		n->trigger(wt, source, primaryVictim, pos, bonus);
 	}
@@ -1290,6 +1318,10 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			{
 				//With a scatter radius, don't follow the victim (overriding the intent).
 				pui->projectileLaunchAtObjectOrPosition( nullptr, &projectileDestination, sourceObj, wslot, specificBarrelToUse, this, m_projectileExhausts[v] );
+				// bfme-native: RotWK warheads hit the stored target when the scattered shot lands near it
+				DumbProjectileBehavior* dpb = dynamic_cast<DumbProjectileBehavior*>(pui);
+				if (dpb && victimObj && bfmeHasNuggets())
+					dpb->bfmeSetIntendedVictim(victimObj->getID());
 			}
 			else
 			{

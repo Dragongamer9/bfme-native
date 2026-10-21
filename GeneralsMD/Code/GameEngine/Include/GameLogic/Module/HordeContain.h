@@ -58,6 +58,7 @@ public:
 	static void parseRankInfo(INI* ini, void* instance, void* store, const void* userData);
 	static void parseRandomOffset(INI* ini, void* instance, void* store, const void* userData);
 	static void parseLine(INI* ini, void* instance, void* store, const void* userData);
+	static void parseSubBlock(INI* ini, void* instance, void* store, const void* userData);
 };
 
 class HordeContain : public UpdateModule
