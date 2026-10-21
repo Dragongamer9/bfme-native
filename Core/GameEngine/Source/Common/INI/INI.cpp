@@ -471,53 +471,67 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 #include <set>
 #include <string>
 
-static const char* const kBfmeSubBlockKeywords[] = {
-	"AIEconomyAssigment", "AddModule", "Animation", "AnimationState", "ArmorSet", "ArmyEntry",
-	"ArmyMemberDefinition", "ArmyToSpawn", "Attribute", "AttributeModifierNugget", "AudioEvent",
-	"AutoResolveArmor", "AutoResolveWeapon", "Behavior", "BonusForLevel", "BuffNugget",
-	"BuildingNugget", "CameraShakerVolume", "ColorIntensityControlPoint", "CombatChainDefinition",
-	"CreateAHeroBling", "CreateAHeroBlingBinder", "CreateDebris", "CreateObject", "DOTNugget",
-	"DamageNugget", "DecalTemplate", "DefaultModelConditionState", "DynamicDecal",
-	"EmotionWeaponNugget", "EnableRegion", "EvaEvent", "EyeTowerPoints", "FXList", "FXListAtBonePos",
-	"FireLogicNugget", "FireWeaponNugget", "Flammability", "FloodMember", "FormationPreviewDecal",
-	"FormationPreviewItemDecal", "FormationSelection", "FormationTemplate", "GrabNugget",
-	"IdleAnimationState", "ImagePart", "InheritableModule", "InvisibilityNugget", "LocomotorSet",
-	"LuaEventNugget", "MetaImpactNugget", "Mission", "ModelConditionState", "MoveArmy", "MoveCamera",
-	"Object", "ObjectAward", "OpenGateNugget", "OwnershipSet", "ParalyzeNugget", "ParticleSystem",
-	"Phase", "PlayerDefeatCondition", "ProductionModifier", "ProjectileNugget", "Region",
-	"ReplaceModule", "ReplaceObject", "RestrictBuildings", "Rows", "Scenario", "SelectionDecal",
-	"Session", "SetPlayerControlOfArmy", "SideInfo", "SideSound", "Sound", "SpawnAndFadeNugget",
-	"SpawnArmies", "SpawnArmy", "SpawnBuildings", "SpecialModelConditionNugget", "Stance",
-	"StartingRestriction", "Structure", "SubClass", "System", "TaskAfterAudio", "TeamDefeatCondition",
-	"TeamVictoryCondition", "TerrainScorch", "ThingStat", "ThreatBreakdown", "Threshold",
-	"TransitionState", "Trigger", "Turret", "UnitCategory", "UnitDefinition", "UnitSpecificSounds",
-	"ViewInfo", "ViewShake", "WeaponOCLNugget", "WeaponSet", "Window", "WorldText",
-	// bare sub-block keywords found in RotWK+Edain data (single word on a line, followed by a body)
-	"TintDrawable", "LightPulse", "AttachedModel", "FireWeapon", "DamageFieldNugget",
-	"HordeAttackNugget", "SlaveAttackNugget", "DamageContainedNugget", "StealMoneyNugget",
+// Fields whose RotWK parser reads a nested block (they call INI::initFromINI) - found by
+// scanning every field parser in game.dat (data/rotwk/block_openers.json). A block with or without "=".
+static const char* const kBfmeBlockFields[] = {
+	"Act", "AddModule", "AddPlayer", "AnimatingPart", "AnimationState", "ApplyRandomForce",
+	"ArmyEntry", "ArmyToSpawn", "AttachModel", "AttachedModel", "Attribute",
+	"AttributeModifierNugget", "AudioEvent", "BonusForLevel", "BuffNugget", "BuildingNugget",
+	"CameraShakerVolume", "ColorIntensityControlPoint", "ConcurrentRegionBonus", "Connection",
+	"ControlPoint", "CreateAHeroBling", "CreateAHeroBlingBinder", "CreateAHeroClass", "CreateDebris",
+	"CreateObject", "CursorParticleSystem", "DOTNugget", "DamageContainedNugget", "DamageFieldNugget",
+	"DamageNugget", "DecalTemplate", "DefaultModelConditionState", "DeliveryDecal", "DynamicDecal",
+	"EmotionWeaponNugget", "EnableRegion", "EyeTower", "EyeTowerPoints", "FXListAtBonePos",
+	"FireLogicNugget", "FireWeaponNugget", "Flammability", "FloodMember", "ForceBattle",
+	"FormationPreviewDecal", "FormationPreviewItemDecal", "GrabNugget", "GridDecalTemplate",
+	"HordeAttackNugget", "IdleAnimationState", "ImagePart", "InheritableModule", "InvisibilityNugget",
+	"Laser", "LightPulse", "LinePart", "LivingWorldVictoryType", "LuaEventNugget", "MeleeBehavior",
+	"MetaImpactNugget", "MoveArmy", "MoveCamera", "ObjectAward", "OpenGateNugget", "OwnershipSet",
+	"ParalyzeNugget", "PlayerDefeatCondition", "PlayerPosition", "Prerequisites",
+	"ProductionModifier", "ProjectileNugget", "RayEffect", "ReplaceModule", "ReplaceObject",
+	"RestrictBuildings", "Scenario", "SelectionDecal", "SetPlayerControlOfArmy", "SideInfo",
+	"SideSound", "SkillSet1", "SkillSet2", "SkillSet3", "SkillSet4", "SkillSet5", "SkirmishBuildList",
+	"SlaveAttackNugget", "SpawnAndFadeNugget", "SpawnArmies", "SpawnArmy", "SpawnBuilding",
+	"SpawnBuildings", "SpecialModelConditionNugget", "SplineCamera", "StartingRestriction",
+	"StealMoneyNugget", "SubClass", "TaskAfterAudio", "TeamDefeatCondition", "TeamVictoryCondition",
+	"TerrainCellType", "TerrainScorch", "ThingStat", "ThreatBreakdown", "TintDrawable",
+	"TransitionState", "Trigger", "Tutorial", "UnitCategory", "UnitSpecificFX", "UnitSpecificSounds",
+	"UpdateAnimObject", "ViewInfo", "ViewShake", "WeaponOCLNugget", "Window", "WorldText",
 };
 
-// "Key = Value" lines that open a block (module declarations and BFME draw states).
-// Ambiguous keys that are plain fields elsewhere (Color, Alpha, Event...) are left out.
+// Open a block only when written without "=" (the same word is a plain field elsewhere).
+static const char* const kBfmeSubBlockKeywords[] = {
+	"AIEconomyAssigment", "Animation", "ArmorSet", "ArmyMemberDefinition", "Attack", "AttackPriority",
+	"AutoResolveArmor", "AutoResolveWeapon", "Behavior", "CombatChainDefinition", "EvaEvent",
+	"FXList", "FireWeapon", "FormationSelection", "FormationTemplate", "LocomotorSet", "Mission",
+	"ModelConditionState", "Object", "ParticleSystem", "Phase", "Region", "Rows", "Session", "Sound",
+	"Stance", "Structure", "System", "Threshold", "Turret", "UnitDefinition", "WeaponSet",
+};
+
+// "Key = Value" lines that open a block: module declarations and BFME draw states.
 static const char* const kBfmeEqBlockKeywords[] = {
-	"Animation", "Behavior", "Body", "Draw", "ClientBehavior", "ClientUpdate", "Update", "Physics",
-	"AnimationState", "ModelConditionState", "TransitionState", "SoundState", "SoundUpgrade",
-	"ThreatBreakdown", "LodOptions", "Wind", "HistoricalScenario", "RadiusCursorTemplate",
+	"Behavior", "Body", "Draw", "ClientBehavior", "ClientUpdate", "Update", "Physics", "Animation",
+	"ModelConditionState", "SoundState", "SoundUpgrade", "LodOptions", "Wind", "HistoricalScenario",
+	"RadiusCursorTemplate",
 };
 
 /// Does this line open a nested block? 'hasEquals' = the line is "Key = Value".
 static Bool isBfmeSubBlockKeyword(const char* tok, Bool hasEquals = FALSE)
 {
-	static std::set<std::string> plain, eq;
+	static std::set<std::string> plain, eq, any;
 	if (plain.empty())
 	{
 		for (const char* k : kBfmeSubBlockKeywords)
 			plain.insert(k);
 		for (const char* k : kBfmeEqBlockKeywords)
 			eq.insert(k);
+		for (const char* k : kBfmeBlockFields)
+			any.insert(k);
 	}
 	if (!tok)
 		return FALSE;
+	if (any.count(tok))
+		return TRUE;
 	if (hasEquals)
 		return eq.count(tok) != 0;
 	if (plain.count(tok))
@@ -584,9 +598,11 @@ void INI::bfmeDeferBlock(const char* blockType, const char* headerLine)
 		const char* t = strtok_r(tmp, " \n\r\t=", &save);
 		if (!t)
 			continue;
+		const char* v1 = strtok_r(nullptr, " \n\r\t=", &save);
+		const Bool overrideBlock = v1 && stricmp(v1, "OVERRIDE") == 0;
 		if (stricmp(t, "End") == 0)
 			--depth;
-		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals))
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals) || overrideBlock)
 			++depth;
 	}
 	bfmeDeferred().push_back(b);
@@ -639,9 +655,12 @@ void INI::bfmeSkipBlock()
 			}
 			continue;
 		}
+		// "AddEmotion = OVERRIDE X" (EmotionTracker) opens a block; the plain form does not
+		const char* v1 = strtok_r(nullptr, " \n\r\t=", &save);
+		const Bool overrideBlock = v1 && stricmp(v1, "OVERRIDE") == 0;
 		if (stricmp(t, "End") == 0 || stricmp(t, "END_END") == 0)
 			--depth;
-		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals))
+		else if (isBfmeSubBlockKeyword(t, m_bfmeLineHasEquals) || overrideBlock)
 			++depth;
 	}
 	if (trace)
@@ -725,7 +744,11 @@ UnsignedInt INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 					// bfme-native: skip and record instead of aborting the whole file
 					DEBUG_LOG( ("[LINE: %d - FILE: '%s'] Unknown block '%s' (skipped)",
 														 getLineNum(), getFilename().str(), token ) );
-					bfmeRecordSkip("block", "-", token);
+					{
+						char where[512];
+						snprintf(where, sizeof(where), "%s:%u", m_filename.str(), m_lineNum);
+						bfmeRecordSkip("block", getenv("BFME_INI_TRACE") ? where : "-", token);
+					}
 					bfmeSkipBlock();
 				}
 
@@ -1903,6 +1926,8 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 					if (parse)
 					{
 						// parse this block and check for parse errors
+						const UnsignedInt fieldLine = m_lineNum;
+						const Bool fieldOpensBlock = isBfmeSubBlockKeyword(field, m_bfmeLineHasEquals);
 						try {
 
 						(*parse)( this, what, (char *)what + offset + parseTableList.getNthExtraOffset(ptIdx), userData );
@@ -1915,6 +1940,9 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 								bfmeRecordSkip("badfield", s_bfmeCurrentBlock.str(), field);
 								fprintf(stderr, "[INI] bad field '%s' (block %s) at %s:%u\n", field,
 									s_bfmeCurrentBlock.str(), INI::getFilename().str(), INI::getLineNum());
+								// the failing field opened a block (e.g. a module) and nothing of it was read: skip it
+								if (fieldOpensBlock && m_lineNum == fieldLine)
+									bfmeSkipBlock();
 							}
 							else
 								throw;
@@ -1927,6 +1955,8 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 								bfmeRecordSkip("badfield", s_bfmeCurrentBlock.str(), field);
 								fprintf(stderr, "[INI] bad field '%s' (block %s) at %s:%u\n", field,
 									s_bfmeCurrentBlock.str(), INI::getFilename().str(), INI::getLineNum());
+								if (fieldOpensBlock && m_lineNum == fieldLine)
+									bfmeSkipBlock();
 							}
 							else
 							{
