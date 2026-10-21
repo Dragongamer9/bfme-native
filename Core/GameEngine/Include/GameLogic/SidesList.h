@@ -144,6 +144,8 @@ public:
 
 	/// Reads sides (including build list info && player dicts.)
 	static Bool ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
+	static Bool ParseBfmeTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);	///< bfme-native
+	static Bool ParseBfmePlayerScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);	///< bfme-native
 	/// Writes sides (including build list info.)
 	static void WriteSidesDataChunk(DataChunkOutput &chunkWriter);
 

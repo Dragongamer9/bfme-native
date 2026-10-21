@@ -500,6 +500,8 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 		PolygonTrigger::deleteTriggers(); // just in case.
 		TheSidesList->emptySides();
 		file.registerParser("SidesList", AsciiString::TheEmptyString,	SidesList::ParseSidesDataChunk );
+		file.registerParser("Teams", AsciiString::TheEmptyString,	SidesList::ParseBfmeTeamsDataChunk );	// bfme-native
+		file.registerParser("PlayerScriptsList", AsciiString::TheEmptyString,	SidesList::ParseBfmePlayerScriptsDataChunk );	// bfme-native
 	}	else {
 		file.registerParser( "HeightMapData", AsciiString::TheEmptyString, ParseHeightMapDataChunk );
 		file.registerParser( "BlendTileData", AsciiString::TheEmptyString, ParseBlendTileDataChunk );
@@ -566,13 +568,14 @@ Bool WorldHeightMap::isTerrainFlat(const IRegion2D& bounds) const
 	if (width <= 0 || height <= 0)
 		return true;
 
-	const UnsignedByte* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
-	const UnsignedByte referenceHeight = firstRow[0];
+	const HeightSampleType* firstRow = m_data + (bounds.lo.y + m_borderSize) * m_width + bounds.lo.x + m_borderSize;
+	const HeightSampleType referenceHeight = firstRow[0];
 	for (Int j = 0; j < height; j++)
 	{
-		const UnsignedByte* row = firstRow + j * m_width;
-		if (memcchr(row, referenceHeight, width) != nullptr)
-			return false;
+		const HeightSampleType* row = firstRow + j * m_width;
+		for (Int i = 0; i < width; i++)
+			if (row[i] != referenceHeight)
+				return false;
 	}
 
 	return true;
@@ -794,6 +797,34 @@ Bool WorldHeightMap::ParseLightingDataChunk(DataChunkInput &file, DataChunkInfo 
 			}
 		}
 
+		if (info->version >= 4) {
+			// bfme-native: BFME/RotWK order per time of day -- terrain, objects, (infantry) for the sun and
+			// each of the two accent lights; layout from OpenSAGE GlobalLightingConfiguration
+			auto readLight = [&](GlobalData::TerrainLighting* l) {
+				GlobalData::TerrainLighting tmp;
+				if (l == nullptr) l = &tmp;
+				l->ambient.red = file.readReal(); l->ambient.green = file.readReal(); l->ambient.blue = file.readReal();
+				l->diffuse.red = file.readReal(); l->diffuse.green = file.readReal(); l->diffuse.blue = file.readReal();
+				l->lightPos.x = file.readReal(); l->lightPos.y = file.readReal(); l->lightPos.z = file.readReal();
+			};
+			for (i=0; i<4; i++) {
+				for (Int j=0; j<3; j++) {
+					readLight(&TheWritableGlobalData->m_terrainLighting[i+TIME_OF_DAY_FIRST][j]);
+					if (info->version < 10) {
+						readLight(&TheWritableGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j]);
+						if (info->version >= 7)
+							readLight(nullptr);	// infantry light: objects use theirs for now
+					} else {
+						TheWritableGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j] = TheWritableGlobalData->m_terrainLighting[i+TIME_OF_DAY_FIRST][j];
+					}
+				}
+			}
+			UnsignedInt shadowColor = file.readInt();
+			if (TheW3DShadowManager) {
+				TheW3DShadowManager->setShadowColor(shadowColor);
+			}
+			return true;	// the rest (bloom/cloud factors) is not used yet
+		}
 		for (i=0; i<4; i++) {
 			TheWritableGlobalData->m_terrainLighting[i+TIME_OF_DAY_FIRST][0].ambient.red = file.readReal();
 			TheWritableGlobalData->m_terrainLighting[i+TIME_OF_DAY_FIRST][0].ambient.green = file.readReal();
@@ -881,9 +912,23 @@ Bool WorldHeightMap::isValidMapSize(Int width, Int height, Int borderSize)
 	return true;
 }
 
-static Bool isValidHeightDataSize(DataChunkInput &file, Int dataSize, Int width, Int height)
+static Bool isValidHeightDataSize(DataChunkInput &file, Int dataSize, Int width, Int height, Int bytesPerSample = 1)
 {
-	return dataSize > 0 && dataSize == width * height && (UnsignedInt)dataSize <= file.getChunkDataSizeLeft();
+	return dataSize > 0 && dataSize == width * height && (UnsignedInt)dataSize * bytesPerSample <= file.getChunkDataSizeLeft();
+}
+
+/// bfme-native: v5+ (BFME/RotWK) stores 16-bit heights; older maps 8-bit, scaled to the 16-bit range
+static void readHeightSamples(DataChunkInput &file, Int version, HeightSampleType* out, Int count)
+{
+	if (version >= 5)
+	{
+		file.readArrayOfBytes((char *)out, count * sizeof(HeightSampleType));
+		return;
+	}
+	std::vector<UnsignedByte> tmp(count);
+	file.readArrayOfBytes((char *)tmp.data(), count);
+	for (Int i = 0; i < count; ++i)
+		out[i] = (HeightSampleType)(tmp[i] * BFME_LEGACY_HEIGHT_FACTOR);
 }
 
 /**
@@ -934,11 +979,11 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
 	}
 
 	m_dataSize = file.readInt();
-	if (!isValidHeightDataSize(file, m_dataSize, m_width, m_height)) {
+	if (!isValidHeightDataSize(file, m_dataSize, m_width, m_height, info->version >= 5 ? 2 : 1)) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
 
-	m_data = MSGNEW("WorldHeightMap_ParseHeightMapData") UnsignedByte[m_dataSize];
+	m_data = MSGNEW("WorldHeightMap_ParseHeightMapData") HeightSampleType[m_dataSize];
 
 	Int numBytesX = (m_width+7)/8;	//how many bytes to fit all bitflags
 	Int numBytesY = m_height;
@@ -949,7 +994,7 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
   fillSeismicZVelocities( 0 );
 
 
-	file.readArrayOfBytes((char *)m_data, m_dataSize);
+	readHeightSamples(file, info->version, m_data, m_dataSize);
 	// Resize me.
 	if (info->version == K_HEIGHT_MAP_VERSION_1) {
 		Int newWidth = (m_width+1)/2;
@@ -1013,12 +1058,12 @@ Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, vo
 	}
 
 	m_dataSize = file.readInt();
-	if (!isValidHeightDataSize(file, m_dataSize, m_width, m_height)) {
+	if (!isValidHeightDataSize(file, m_dataSize, m_width, m_height, info->version >= 5 ? 2 : 1)) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
 
-	m_data = MSGNEW("WorldHeightMap_ParseSizeOnly") UnsignedByte[m_dataSize];
-	file.readArrayOfBytes((char *)m_data, m_dataSize);
+	m_data = MSGNEW("WorldHeightMap_ParseSizeOnly") HeightSampleType[m_dataSize];
+	readHeightSamples(file, info->version, m_data, m_dataSize);
 	// Resize me.
 	if (info->version == K_HEIGHT_MAP_VERSION_1) {
 		Int newWidth = (m_width+1)/2;
@@ -1122,17 +1167,29 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	memset(m_cellFlipState,0,numBytesX*numBytesY);	//clear all flags
 	memset(m_cellCliffState,0,numBytesX*numBytesY);	//clear all flags
 
+	// bfme-native: BFME/RotWK maps (versions 14..23) store the blend/cliff index arrays as 32-bit
+	const Bool wideBlends = info->version >= 14 && info->version < 24;
+	auto readIndexArray = [&](Short* out) {
+		if (!wideBlends) {
+			file.readArrayOfBytes((char*)out, m_dataSize*sizeof(Short));
+			return;
+		}
+		std::vector<Int> tmp(m_dataSize);
+		file.readArrayOfBytes((char*)tmp.data(), m_dataSize*sizeof(Int));
+		for (Int k = 0; k < m_dataSize; ++k)
+			out[k] = (Short)tmp[k];
+	};
 	file.readArrayOfBytes((char*)m_tileNdxes, m_dataSize*sizeof(Short));
-	file.readArrayOfBytes((char*)m_blendTileNdxes, m_dataSize*sizeof(Short));
+	readIndexArray(m_blendTileNdxes);
 	if (info->version >= K_BLEND_TILE_VERSION_6) {
-		file.readArrayOfBytes((char*)m_extraBlendTileNdxes, m_dataSize*sizeof(Short));
+		readIndexArray(m_extraBlendTileNdxes);
 		//Allow clearing of extra blend tiles via ini and resaving of map.
 		//Useful for flushing out initial maps made with buggy 3-way blending.
 		if (!TheGlobalData->m_use3WayTerrainBlends)
 			memset(m_extraBlendTileNdxes,0,m_dataSize*sizeof(Short));
 	}
 	if (info->version >= K_BLEND_TILE_VERSION_5) {
-		file.readArrayOfBytes((char*)m_cliffInfoNdxes, m_dataSize*sizeof(Short));
+		readIndexArray(m_cliffInfoNdxes);
 	}
 	if (info->version >= K_BLEND_TILE_VERSION_7) {
 		if (info->version==K_BLEND_TILE_VERSION_7) {
@@ -1151,6 +1208,21 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	} else {
 		initCliffFlagsFromHeights();
 	}
+	// bfme-native: per-cell layers added after Zero Hour (layout from OpenSAGE BlendTileData)
+	{
+		const Int bitLayer = m_height*m_flipStateWidth;
+		const Int v = info->version;
+		std::vector<char> skip;
+		auto skipBytes = [&](Int n) { skip.resize(n); if (n > 0) file.readArrayOfBytes(skip.data(), n); };
+		if (v >= 10) skipBytes(bitLayer);						// impassability to players
+		if (v >= 11) skipBytes(bitLayer);						// passage widths
+		if (v >= 14 && v < 25) skipBytes(bitLayer);	// taintability
+		if (v >= 15) skipBytes(bitLayer);						// extra passability
+		if (v >= 16 && v < 25) skipBytes(m_dataSize);	// flammability, a byte per cell
+		if (v >= 17) skipBytes(bitLayer);						// visibility
+		if (v >= 24) skipBytes(3*bitLayer);					// buildability, air impassability, tiberium
+		if (v >= 25) skipBytes(m_dataSize);					// shrubbery density
+	}
 	m_numBitmapTiles = file.readInt();
 	DEBUG_ASSERTCRASH(m_numBitmapTiles>0 && m_numBitmapTiles<2048, ("Unlikely numBitmapTiles."));
 	m_numBlendedTiles = file.readInt();
@@ -1160,9 +1232,15 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	} else {
 		m_numCliffInfo = 1;	// cliffInfo[0] is the default info.
 	}
+	if (m_numBlendedTiles > NUM_BLEND_TILES || m_numCliffInfo > NUM_CLIFF_INFO || m_numBitmapTiles > NUM_SOURCE_TILES) {
+		fprintf(stderr, "[bfme] map terrain tables too large: %d blends, %d cliffs, %d tiles\n", m_numBlendedTiles, m_numCliffInfo, m_numBitmapTiles);
+		throw ERROR_CORRUPT_FILE_FORMAT;
+	}
 // --> file loading here
 	m_numTextureClasses	= file.readInt();
 	DEBUG_ASSERTCRASH(m_numTextureClasses>0 && m_numTextureClasses<200, ("Unlikely m_numTextureClasses."));
+	if (m_numTextureClasses < 0 || m_numTextureClasses > NUM_TEXTURE_CLASSES)
+		throw ERROR_CORRUPT_FILE_FORMAT;	// bfme-native
 	for (i=0; i<m_numTextureClasses; i++) {
 		m_textureClasses[i].globalTextureClass = -1;
 		m_textureClasses[i].firstTile = file.readInt();
@@ -1289,7 +1367,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	loc.z = file.readReal();
 
 	Real minZ = -100*MAP_XY_FACTOR;
-	Real maxZ = (255*10)*MAP_HEIGHT_SCALE;
+	Real maxZ = (65535*10)*MAP_HEIGHT_SCALE;	// bfme-native: 16-bit heights
 
 	if (info->version <= K_OBJECTS_VERSION_2) {
 		loc.z = 0;

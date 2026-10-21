@@ -400,7 +400,7 @@ void W3DTerrainVisual::handleSeismicSimulations()
           {
             if ( ! m_clientHeightMap->getSeismicUpdateFlag( x, y ) )
             {
-              UnsignedByte heightOfOriginal = m_logicHeightMap->getHeight( x, y ); // LOGIC, YES DEFINITELY THE LOGIC
+              HeightSampleType heightOfOriginal = m_logicHeightMap->getHeight( x, y ); // LOGIC, YES DEFINITELY THE LOGIC
 
               Real oldSpeed = m_clientHeightMap->getSeismicZVelocity( x, y );
               Real newSpeed = ssn->applyGravity( oldSpeed );// - 0.5f;
@@ -419,8 +419,8 @@ void W3DTerrainVisual::handleSeismicSimulations()
               {
                 ++fallCount;
 
-                if ( heightToUse > 255 )
-                  heightToUse = 255;
+                if ( heightToUse > K_MAX_HEIGHT )
+                  heightToUse = K_MAX_HEIGHT;
 
               }
     			    m_clientHeightMap->setRawHeight( x, y, heightToUse );
@@ -1226,7 +1226,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 
 	// Write out the terrain height data.
 	if (version >= 2) {
-		UnsignedByte *data = m_logicHeightMap->getDataPtr();
+		HeightSampleType *data = m_logicHeightMap->getDataPtr();
 		Int len = m_logicHeightMap->getXExtent()*m_logicHeightMap->getYExtent();
 		Int xferLen = len;
 		xfer->xferInt(&xferLen);
@@ -1236,7 +1236,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 				len = xferLen;
 			}
 		}
-		xfer->xferUser(data, len);
+		xfer->xferUser(data, len * sizeof(HeightSampleType));	// bfme-native: 16-bit heights
 		if (xfer->getXferMode() == XFER_LOAD)
     {
 			// Update the display height map.
