@@ -1,0 +1,5 @@
+# Wide view toward the horizon to check sky and water
+5   reveal
+48  camera 1800 1500 1.6 0.35
+50  screenshot
+60  quit
