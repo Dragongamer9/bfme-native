@@ -1,0 +1,4 @@
+1   reveal
+200 state
+400 state
+410 quit
