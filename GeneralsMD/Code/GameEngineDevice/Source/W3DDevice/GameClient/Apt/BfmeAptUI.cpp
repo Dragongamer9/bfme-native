@@ -26,6 +26,8 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/Image.h"
 #include "GameLogic/Object.h"
+#include "Common/MessageStream.h"
+#include "GameLogic/Module/BodyModule.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
 
@@ -107,7 +109,25 @@ public:
 		// sub-movies report in; the game decides what is visible
 		if (c == "aptpalantir::onhelpboxloaded") deferred.push_back("helpBox.Hide()");
 		else if (c == "aptpalantir::onplanningmodeuiloaded") deferred.push_back("planningModeUI.Close()");
-		else if (c == "aptpalantir::onheroselectloaded") deferred.push_back("FactionFrameUI.Hide()");
+		else if (c == "aptpalantir::onheroselectloaded")
+		{
+			deferred.push_back("FactionFrameUI.SetFaction(" + localSide() + ")");
+			deferred.push_back("FactionFrameUI.Hide()");
+			heroBarShown = false;
+			heroCount = -1;
+		}
+		else if (c == "_level0.factionframeui_onbttnheroselect")
+		{
+			// args: the button's name, "HeroN"
+			const int n = atoi(args.c_str() + (args.size() > 4 ? 4 : args.size())) - 1;
+			if (n >= 0 && n < (int)heroes.size()) selectHero(heroes[n]);
+			return;
+		}
+		else if (c == "_level0.factionframeui_onbttnselectallheroes")
+		{
+			for (size_t i = 0; i < heroes.size(); ++i) selectHero(heroes[i], i > 0);
+			return;
+		}
 		else if (c == "onaptingamesidecommandbarloaded") deferred.push_back("SideCommandBar.FadeOut()");
 		else if (c == "aptpalantir::oninitialized")
 		{
@@ -156,6 +176,104 @@ public:
 		// "_level0.Movie_Thing" ids are filled by the game; nothing yet
 		if (key.find('.') != std::string::npos || (!key.empty() && key[0] == '_')) return std::string();
 		return key;
+	}
+
+	// ---- hero bar (FactionFrame.apt: Hero1..Hero16) ----
+	std::vector<ObjectID> heroes;
+	int heroCount = -1;
+	bool heroBarShown = false;
+	std::vector<Int> heroHealth;
+	std::vector<bool> heroSelected;
+
+	static std::string localSide()
+	{
+		Player *p = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		return p ? std::string(p->getSide().str()) : std::string("Men");
+	}
+
+	void selectHero(ObjectID id, bool add = false)
+	{
+		Object *o = TheGameLogic ? TheGameLogic->findObjectByID(id) : nullptr;
+		if (!o || !o->getDrawable() || !TheInGameUI) return;
+		if (!add) TheInGameUI->deselectAllDrawables();
+		GameMessage *group = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP);
+		group->appendBooleanArgument(add ? FALSE : TRUE);
+		group->appendObjectIDArgument(id);
+		TheInGameUI->selectDrawable(o->getDrawable());
+		// clicking the selected hero again centres the view on it (like a double click)
+		static ObjectID s_last = INVALID_ID;
+		static UnsignedInt s_lastFrame = 0;
+		const UnsignedInt now = TheGameLogic->getFrame();
+		if (!add && s_last == id && now - s_lastFrame < 20 && TheTacticalView) TheTacticalView->lookAt(o->getPosition());
+		s_last = id; s_lastFrame = now;
+	}
+
+	void refreshHeroes(Apt::Player &player)
+	{
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		std::vector<ObjectID> now;
+		for (Object *o = TheGameLogic ? TheGameLogic->getFirstObject() : nullptr; o && local; o = o->getNextObject())
+			if (o->getControllingPlayer() == local && o->isKindOf(KINDOF_HERO) && !o->isEffectivelyDead() && now.size() < 16)
+				now.push_back(o->getID());
+		std::sort(now.begin(), now.end());
+		if (!player.find("FactionFrameUI")) return;
+		if ((int)now.size() != heroCount || now != heroes)
+		{
+			heroes = now;
+			heroCount = (int)now.size();
+			heroHealth.assign(16, -1);
+			heroSelected.assign(16, false);
+			for (int i = 0; i < 16; ++i)
+			{
+				std::vector<Apt::Value> a = { Apt::Value::number(i + 1), Apt::Value::string(i < heroCount ? "_up" : "_unused") };
+				player.call("FactionFrameUI.SetButtonState", a);
+			}
+			const bool show = heroCount > 0;
+			if (show != heroBarShown)
+			{
+				heroBarShown = show;
+				player.call(show ? "FactionFrameUI.Show" : "FactionFrameUI.Hide", {});
+			}
+		}
+		for (int i = 0; i < heroCount; ++i)
+		{
+			Object *o = TheGameLogic->findObjectByID(heroes[i]);
+			if (!o) continue;
+			const BodyModuleInterface *body = o->getBodyModule();
+			Int pct = body && body->getMaxHealth() > 0 ? (Int)(100.0f * body->getHealth() / body->getMaxHealth() + 0.5f) : 100;
+			if (pct < 1) pct = 1;
+			if (pct != heroHealth[i])
+			{
+				heroHealth[i] = pct;
+				std::vector<Apt::Value> a = { Apt::Value::number(i + 1), Apt::Value::number(pct) };
+				player.call("FactionFrameUI.SetButtonHealthBar", a);
+			}
+			const bool sel = o->getDrawable() && o->getDrawable()->isSelected();
+			if (sel != heroSelected[i])
+			{
+				heroSelected[i] = sel;
+				std::vector<Apt::Value> a = { Apt::Value::number(i + 1), Apt::Value::string(sel ? "_show" : "_hide") };
+				player.call("FactionFrameUI.SetButtonSelectedHighlightState", a);
+			}
+			// portrait into the button's render-image clip
+			char path[64];
+			snprintf(path, sizeof(path), "FactionFrameUI.Hero%d", i + 1);
+			std::shared_ptr<Apt::Instance> b = player.find(path);
+			Apt::Instance *img = b ? b->findChild("~Enabled") : nullptr;
+			if (img && !img->customDraw)
+			{
+				GameHost *self = this;
+				img->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
+					if (i >= (int)self->heroes.size()) return;
+					Object *o = TheGameLogic ? TheGameLogic->findObjectByID(self->heroes[i]) : nullptr;
+					const Image *pic = o ? o->getTemplate()->getButtonImage() : nullptr;
+					float x0, y0, x1, y1;
+					if (!pic || !TheDisplay || !inst.bounds(x0, y0, x1, y1, world)) return;
+					Apt::renderFlush();
+					TheDisplay->drawImage(pic, (Int)x0, (Int)y0, (Int)x1, (Int)y1, GameMakeColor(255, 255, 255, (UnsignedByte)(255 * (cx.mul.a < 1 ? cx.mul.a : 1))));
+				};
+			}
+		}
 	}
 
 	static bool localIsGood()
@@ -492,6 +610,7 @@ void draw()
 	s_host.refresh();
 	s_host.refreshCommands(*s_player);
 	s_host.refreshTooltip(*s_player);
+	s_host.refreshHeroes(*s_player);
 	s_host.attachTooltipText(*s_player);
 	// the in-palantir video panel is only shown while a movie plays (none yet)
 	if (std::shared_ptr<Apt::Instance> mp = s_player->find("MoviePlayback"))
