@@ -1718,6 +1718,38 @@ InvisibilityUpdate::InvisibilityUpdate( Thing *thing, const ModuleData* moduleDa
 }
 BFME_TRIVIAL_SNAPSHOT(InvisibilityUpdate, UpdateModule)
 
+// map trees, for camouflage (AWAY_FROM_TREES): a coarse grid of tree positions
+static std::map<Int, std::vector<Coord2D> > s_bfmeTrees;
+static UnsignedInt s_bfmeTreesFrame = 0;
+static Int treeCell(Real x, Real y) { return ((Int)floorf(y / 100.0f) << 16) ^ ((Int)floorf(x / 100.0f) & 0xffff); }
+void bfmeRegisterTree(const Coord3D* pos)
+{
+	if (TheGameLogic && TheGameLogic->getFrame() == 0 && s_bfmeTreesFrame != 0)
+		s_bfmeTrees.clear();
+	s_bfmeTreesFrame = TheGameLogic ? TheGameLogic->getFrame() : 0;
+	Coord2D c;
+	c.x = pos->x;
+	c.y = pos->y;
+	s_bfmeTrees[treeCell(pos->x, pos->y)].push_back(c);
+}
+static Bool bfmeNearTree(const Coord3D* pos, Real r)
+{
+	for (Int dy = -1; dy <= 1; ++dy)
+		for (Int dx = -1; dx <= 1; ++dx)
+		{
+			std::map<Int, std::vector<Coord2D> >::const_iterator it = s_bfmeTrees.find(treeCell(pos->x + dx * 100.0f, pos->y + dy * 100.0f));
+			if (it == s_bfmeTrees.end())
+				continue;
+			for (size_t i = 0; i < it->second.size(); ++i)
+			{
+				const Real ox = it->second[i].x - pos->x, oy = it->second[i].y - pos->y;
+				if (ox * ox + oy * oy <= r * r)
+					return TRUE;
+			}
+		}
+	return FALSE;
+}
+
 UpdateSleepTime InvisibilityUpdate::update()
 {
 	const InvisibilityUpdateModuleData* d = getInvisibilityUpdateModuleData();
@@ -1742,7 +1774,7 @@ UpdateSleepTime InvisibilityUpdate::update()
 			want = FALSE;
 	const UnsignedInt now = TheGameLogic->getFrame();
 	AIUpdateInterface* ai = me->getAI();
-	if (want && (d->m_forbidden & BFME_STEALTH_AWAY_FROM_TREES))
+	if (want && (d->m_forbidden & BFME_STEALTH_AWAY_FROM_TREES) && !bfmeNearTree(me->getPosition(), 60.0f))
 		want = FALSE;
 	if (want && (d->m_forbidden & BFME_STEALTH_MOVING) && ai && ai->isMoving())
 		want = FALSE;
