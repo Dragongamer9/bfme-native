@@ -404,6 +404,8 @@ inline Int64 getPerformanceCounterFrequency()
 static Int s_bfmePendingShots = 0;	// bfme-native
 static ScreenshotFormat s_bfmePendingFormat = SCREENSHOT_PNG;
 extern void (*g_bfmePrePresentHook)();
+/// bfme-native: APT UI draw hook (set by W3DInGameUI)
+void (*g_bfmeAptDrawHook)() = nullptr;
 static void bfmeTakePendingShot()
 {
 	g_bfmePrePresentHook = nullptr;
@@ -2331,6 +2333,9 @@ AGAIN:
 				// draw the user interface
 				if (!getenv("BFME_NO_UI"))
 					TheInGameUI->DRAW();
+				// bfme-native: APT interface movies
+				if (g_bfmeAptDrawHook)
+					g_bfmeAptDrawHook();
 
 				// end of video example code
 

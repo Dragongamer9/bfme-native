@@ -142,6 +142,12 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/Shadow/W3DVolumetricShadow.cpp
 #    Source/W3DDevice/GameClient/TerrainTex.cpp
 #    Source/W3DDevice/GameClient/TileData.cpp
+    Source/W3DDevice/GameClient/Apt/AptData.cpp
+    Source/W3DDevice/GameClient/Apt/AptVM.cpp
+    Source/W3DDevice/GameClient/Apt/AptPlayer.cpp
+    Source/W3DDevice/GameClient/Apt/AptBuiltins.cpp
+    Source/W3DDevice/GameClient/Apt/AptRender.cpp
+    Source/W3DDevice/GameClient/Apt/BfmeAptUI.cpp
     Source/W3DDevice/GameClient/W3DAssetManager.cpp
     Source/W3DDevice/GameClient/W3DAssetManagerExposed.cpp
     Source/W3DDevice/GameClient/W3DBibBuffer.cpp
