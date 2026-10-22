@@ -82,8 +82,8 @@ SDL_Window* TheSDL3Window = nullptr;
 // GameText.cpp uses these paths to load CSF and STR files (game localization)
 // Format %s is replaced with language code in GameTextManager::init()
 // GeneralsX @bugfix BenderAI 13/02/2026 - Fix case-sensitivity on Linux (generals.csf vs Generals.csf)
-const Char *g_csfFile = "data/%s/generals.csf";  ///< CSF file path (lowercase for Linux compatibility)
-const Char *g_strFile = "data/Generals.str";     ///< STR file path
+const Char *g_csfFile = "data/%s/lotr.csf";  ///< bfme-native: RotWK string table (CSF)
+const Char *g_strFile = "data/lotr.str";     ///< bfme-native: RotWK/Edain string table (STR)
 
 // Extern declarations (from GameMain.cpp)
 extern Int GameMain();
