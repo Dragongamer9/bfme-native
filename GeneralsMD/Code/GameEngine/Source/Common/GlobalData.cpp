@@ -96,6 +96,16 @@ static void parseBfmeCommandPoints(INI* ini, void* instance, void* /*store*/, co
 	v[1] = t ? INI::scanInt(t) : v[0];
 }
 
+// bfme-native: DefaultCameraMaxHeight is both the start height and the maximum
+static void parseBfmeCameraMaxHeight(INI* ini, void* instance, void*, const void*)
+{
+	GlobalData* gd = (GlobalData*)instance;
+	gd->m_maxCameraHeight = INI::scanReal(ini->getNextToken());
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	gd->m_cameraHeight = gd->m_maxCameraHeight;
+#endif
+}
+
 /*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] =
 {
 	{ "Windowed",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_windowed ) },
@@ -241,6 +251,11 @@ static void parseBfmeCommandPoints(INI* ini, void* instance, void* /*store*/, co
 #endif
 	{ "MaxCameraHeight",						INI::parseReal,				nullptr,			offsetof( GlobalData, m_maxCameraHeight ) },
 	{ "MinCameraHeight",						INI::parseReal,				nullptr,			offsetof( GlobalData, m_minCameraHeight ) },
+	// bfme-native: RotWK names for the camera settings
+	{ "DefaultCameraPitchAngle",		INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraPitch ) },
+	{ "DefaultCameraYawAngle",			INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraYaw ) },
+	{ "DefaultCameraMaxHeight",			parseBfmeCameraMaxHeight,	nullptr,	0 },
+	{ "DefaultCameraMinHeight",			INI::parseReal,				nullptr,			offsetof( GlobalData, m_minCameraHeight ) },
 	{ "TerrainDrawDistanceScale",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_terrainDrawDistanceScale ) },
 	{ "TerrainHeightAtEdgeOfMap",					INI::parseReal,				nullptr,			offsetof( GlobalData, m_terrainHeightAtEdgeOfMap ) },
 	{ "UnitDamagedThreshold",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_unitDamagedThresh ) },
