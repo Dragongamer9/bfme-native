@@ -10,7 +10,7 @@ export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA" SDL_VIDEODRIVER=of
 export LD_LIBRARY_PATH="$B/_deps/dxvk-src/lib:$B/_deps/sdl3-build:$B/_deps/sdl3_image-build:${LD_LIBRARY_PATH:-}"
 T="$(mktemp -d)"
 # run a copy, so rebuilding the engine meanwhile does not break the sweep
-cp "$EXE" "$T/GeneralsXZH" && EXE="$T/GeneralsXZH"; echo "logs: $T"
+cp "$EXE" "$T/GeneralsXZH_sweep" && EXE="$T/GeneralsXZH_sweep"; echo "logs: $T"	# own name: runtests.sh kills stray GeneralsXZH
 export BFME_DEBUG_ABILITY=1 BFME_DEBUG_SKIRMISH_AI=1
 printf '1 reveal\n%d state\n%d players\n%d quit\n' "$((FRAMES-5))" "$((FRAMES-4))" "$FRAMES" > "$T/s.txt"
 cd "$DATA"
