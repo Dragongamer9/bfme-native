@@ -13,7 +13,13 @@ Personal project. It needs your own installed copy of the game; no EA files are 
 ./play.sh maps        # skirmish maps
 ```
 
-A 1v1 skirmish against a computer opponent. Esc opens the menu. What works and what doesn't yet is in `PROGRESS.md`.
+A 1v1 skirmish against a computer opponent. Any of the 27 Edain/Völker sides works for either
+player (`./play.sh factions`). Maps with Edain camp flags (Umbar, Harlindon, The Heubris, Fall Back
+4p horde...) start you in your faction's camp: select the keep for heroes (its hero page), the
+build plots for buildings, and take the economy plots around the map with your units. Maps
+without flags start in free build with porters. Esc opens the menu.
+
+What works and what doesn't yet is in `PROGRESS.md`.
 
 ## Approach
 
