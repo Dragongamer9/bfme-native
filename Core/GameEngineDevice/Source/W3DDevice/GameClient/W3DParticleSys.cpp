@@ -29,6 +29,7 @@
 #include "Common/GlobalData.h"
 #include "GameClient/Color.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"
+#include "GameLogic/GameLogic.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/HeightMap.h"
@@ -116,6 +117,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 	if (m_readyToRender == false)
 		return;
+	{ static int s_pd2 = 0; if (getenv("BFME_DEBUG_PARTICLES") && s_pd2++ < 3) fprintf(stderr, "[psys] doParticles systems=%d\n", (int)TheParticleSystemManager->getAllParticleSystems().size()); }
 
 	// external mechanism must tell us when it's OK to render again...
 	m_readyToRender = false;
@@ -192,6 +194,19 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		// Particle system has no particles on screen
 		if (particleCount == 0)
 			continue;
+		{
+			static const char *skipSys = getenv("BFME_SKIP_PSYS");
+			const char *tn = sys->getTemplate() ? sys->getTemplate()->getName().str() : "?";
+			static int s_pdbg = 0; if (getenv("BFME_DEBUG_PARTICLES") && s_pdbg++ < 40)
+			{
+				Particle *fp = sys->getFirstParticle();
+				fprintf(stderr, "[psys] %s tex=%s n=%u streak=%d shader=%d size=%.1f pos=%.0f,%.0f,%.0f\n", tn, sys->getParticleTypeName().str(), particleCount,
+					(int)sys->isUsingStreak(), (int)sys->getShaderType(), fp ? fp->getSize() : 0.0f,
+					fp ? fp->getPosition()->x : 0.0f, fp ? fp->getPosition()->y : 0.0f, fp ? fp->getPosition()->z : 0.0f);
+			}
+			if (skipSys && strstr(tn, skipSys))
+				continue;
+		}
 
 		// Handle smudge type particles
 		if (sys->isUsingSmudge())

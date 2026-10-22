@@ -843,6 +843,8 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 //DECLARE_PERF_TIMER(translucentRender)
 
 /**Draw everything that was submitted from this scene*/
+static bool BSKIP(const char *x) { static const char *skip = getenv("BFME_SKIP"); return skip && strstr(skip, x) != nullptr; }
+
 void RTS3DScene::Flush(RenderInfoClass & rinfo)
 {
 	// TheSuperHackers @bugfix Now always prepares shadows to guarantee correct state before doing any
@@ -851,9 +853,9 @@ void RTS3DScene::Flush(RenderInfoClass & rinfo)
 
 	//don't draw shadows in this mode because they interfere with destination alpha or are invisible (wireframe)
 	if (m_customPassMode == SCENE_PASS_DEFAULT && Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_DISABLE)
-		DoShadows(rinfo, false);	//draw all non-stencil shadows (decals) since they fall under other objects.
+		if (!BSKIP("decal")) DoShadows(rinfo, false);	//draw all non-stencil shadows (decals) since they fall under other objects.
 
-	TheDX8MeshRenderer.Flush();	//draw all non-translucent objects.
+	if (!BSKIP("mesh")) TheDX8MeshRenderer.Flush();	//draw all non-translucent objects.
 
 	//draw all non-translucent objects which were separated because they are hidden and need custom rendering.
 #ifdef USE_NON_STENCIL_OCCLUSION
@@ -867,25 +869,25 @@ void RTS3DScene::Flush(RenderInfoClass & rinfo)
 	SHD_FLUSH;
 
 	// Draw the trees last so they alpha blend onto everything correctly.
-	DoTrees(rinfo);
+	if (!BSKIP("trees")) DoTrees(rinfo);
 
 	//don't draw shadows in this mode because they interfere with destination alpha
 	if (m_customPassMode == SCENE_PASS_DEFAULT && Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_DISABLE)
-		DoShadows(rinfo, true);	//draw all stencil shadows
+		if (!BSKIP("stencil")) DoShadows(rinfo, true);	//draw all stencil shadows
 
-	WW3D::Render_And_Clear_Static_Sort_Lists(rinfo);	//draws things like water
+	if (!BSKIP("static")) WW3D::Render_And_Clear_Static_Sort_Lists(rinfo);	//draws things like water
 
 	if (m_customPassMode == SCENE_PASS_DEFAULT && Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_DISABLE)
-		flushTranslucentObjects(rinfo);	//draw all translucent meshes which don't need per-polygon sorting.
+		if (!BSKIP("transl")) flushTranslucentObjects(rinfo);	//draw all translucent meshes which don't need per-polygon sorting.
 
 	{
 		//USE_PERF_TIMER(translucentRender)
 
 		//don't draw transparent in this mode because they interfere with destination alpha
 		if (m_customPassMode == SCENE_PASS_DEFAULT && Get_Extra_Pass_Polygon_Mode() == EXTRA_PASS_DISABLE)
-			DoParticles(rinfo);	//queue up particles for rendering.
+			if (!BSKIP("particles")) DoParticles(rinfo);	//queue up particles for rendering.
 
-		SortingRendererClass::Flush();	//draw sorted translucent polygons like particles.
+		if (!BSKIP("sorting")) SortingRendererClass::Flush();	//draw sorted translucent polygons like particles.
 	}
 	TheDX8MeshRenderer.Clear_Pending_Delete_Lists();
 }
@@ -1179,6 +1181,17 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 		if (robj->Class_ID() == RenderObjClass::CLASSID_TILEMAP)
 			continue;	//we already rendered terrain
 
+		{
+			static int s_dbgFrames = 0;
+			static const char *s_skip = getenv("BFME_SKIP_ROBJ");
+			if (getenv("BFME_DEBUG_SCENE") && s_dbgFrames < 1 && robj->Is_Really_Visible())
+			{
+				SphereClass sp = robj->Get_Bounding_Sphere();
+				fprintf(stderr, "[scene] class=%d name=%s r=%.0f c=%.0f,%.0f,%.0f\n", robj->Class_ID(), robj->Get_Name() ? robj->Get_Name() : "?", sp.Radius, sp.Center.X, sp.Center.Y, sp.Center.Z);
+			}
+			if (s_skip && robj->Get_Name() && strstr(robj->Get_Name(), s_skip))
+				continue;
+		}
 		if (robj->Is_Really_Visible()) {
 			DrawableInfo *drawInfo = (DrawableInfo *)robj->Get_User_Data();
 			Drawable *draw=nullptr;
@@ -1193,6 +1206,7 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 		}
 	}
 
+	{ static int s_dbgEnd = 0; if (getenv("BFME_DEBUG_SCENE") && s_dbgEnd++ == 0) fprintf(stderr, "[scene] end of first list\n"); }
 	//Tell shadow manager to render shadows at the end of this frame
 	//Don't draw shadows if there is no terrain present.
 	if (TheW3DShadowManager && terrainObject && !ShaderClass::Is_Backface_Culling_Inverted() &&

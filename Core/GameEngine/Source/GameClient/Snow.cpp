@@ -102,6 +102,19 @@ SnowManager::~SnowManager()
 
 OVERRIDE<WeatherSetting> TheWeatherSetting = nullptr;
 
+// bfme-native: RotWK gives the spacing between drops (world units) instead of a density
+static void bfmeParseSnowSpacing(INI *ini, void *, void *store, const void *)
+{
+	Real spacing = INI::scanReal(ini->getNextToken());
+	*(Real *)store = spacing > 0.0f ? 1.0f / spacing : 1.0f;
+}
+
+// bfme-native: RotWK SnowSpeed is world units per second; ZH SnowVelocity is per logic frame
+static void bfmeParseSnowSpeed(INI *ini, void *, void *store, const void *)
+{
+	*(Real *)store = INI::scanReal(ini->getNextToken()) / LOGICFRAMES_PER_SECOND;
+}
+
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] =
 {
@@ -118,6 +131,11 @@ const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] =
 	{ "SnowVelocity",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowVelocity ) },
 	{ "SnowPointSprites",						INI::parseBool,nullptr,			offsetof( WeatherSetting, m_usePointSprites ) },
 	{ "SnowEnabled",							INI::parseBool,nullptr,			offsetof( WeatherSetting, m_snowEnabled ) },
+	// bfme-native: RotWK (BFME rain) names for the same settings
+	{ "IsSnowing",								INI::parseBool,nullptr,			offsetof( WeatherSetting, m_isSnowing ) },
+	{ "SnowBoxHeight",							INI::parseReal,nullptr,			offsetof( WeatherSetting, m_snowBoxDimensions ) },
+	{ "SnowSpacing",							bfmeParseSnowSpacing,nullptr,	offsetof( WeatherSetting, m_snowBoxDensity ) },
+	{ "SnowSpeed",								bfmeParseSnowSpeed,nullptr,		offsetof( WeatherSetting, m_snowVelocity ) },
 	{ nullptr, nullptr, nullptr, 0 },
 };
 

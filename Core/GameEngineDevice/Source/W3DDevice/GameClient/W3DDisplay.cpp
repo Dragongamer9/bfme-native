@@ -403,6 +403,16 @@ inline Int64 getPerformanceCounterFrequency()
 //=============================================================================
 static Int s_bfmePendingShots = 0;	// bfme-native
 static ScreenshotFormat s_bfmePendingFormat = SCREENSHOT_PNG;
+extern void (*g_bfmePrePresentHook)();
+static void bfmeTakePendingShot()
+{
+	g_bfmePrePresentHook = nullptr;
+	if (s_bfmePendingShots > 0)
+	{
+		--s_bfmePendingShots;
+		W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY);
+	}
+}
 
 W3DDisplay::W3DDisplay()
 {
@@ -1162,8 +1172,11 @@ void W3DDisplay::init()
 		init3DScene();
 		W3DShaderManager::init();
 
-		TheW3DPostProcess = NEW W3DPostProcess;
-		TheW3DPostProcess->init();
+		if (!getenv("BFME_NO_POSTPROCESS"))
+		{
+			TheW3DPostProcess = NEW W3DPostProcess;
+			TheW3DPostProcess->init();
+		}
 
 		// Create and initialize the debug display
 		m_nativeDebugDisplay = NEW W3DDebugDisplay();
@@ -1974,7 +1987,8 @@ void W3DDisplay::calculateTerrainLOD()
 			if (WW3D::Begin_Render( true, true, Vector3( 0.0f, 0.0f, 0.0f ) ) == WW3D_ERROR_OK)
 			{
 				// draw all views of the world
-				drawViews();
+				if (!getenv("BFME_NO_VIEWS"))
+					drawViews();
 				// render is all done!
 				WW3D::End_Render();
 			}
@@ -2242,6 +2256,23 @@ AGAIN:
 		}
 
 		viewsUpdated = FALSE;
+		// bfme-native: make sure no pre-render pass left its render target bound
+		if (!getenv("BFME_KEEP_RT"))
+			DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)nullptr);
+		if (getenv("BFME_DEBUG_RENDER") && TheGameLogic->getFrame() % 30 == 0)
+		{
+			IDirect3DDevice8 *dev = DX8Wrapper::_Get_D3D_Device8();
+			IDirect3DSurface8 *rt = nullptr, *bb = nullptr;
+			dev->GetRenderTarget(&rt);
+			dev->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &bb);
+			D3DSURFACE_DESC d; memset(&d, 0, sizeof(d)); if (rt) rt->GetDesc(&d);
+			D3DVIEWPORT8 vp; memset(&vp, 0, sizeof(vp)); dev->GetViewport(&vp);
+			DWORD sc = 0; dev->GetRenderState(D3DRS_COLORWRITEENABLE, &sc);
+			fprintf(stderr, "[render] rt=%p bb=%p rt=%ux%u fmt=%d vp=%u,%u %ux%u z=%.2f-%.2f cw=%lx\n", (void*)rt, (void*)bb, d.Width, d.Height, (int)d.Format,
+				vp.X, vp.Y, vp.Width, vp.Height, vp.MinZ, vp.MaxZ, (unsigned long)sc);
+			if (rt) rt->Release();
+			if (bb) bb->Release();
+		}
 		// Switch to offscreen RT AFTER pre-render (shadows/water) completes, BEFORE main render.
 		DX8Wrapper::Pillarbox_Begin();
 
@@ -2263,7 +2294,7 @@ AGAIN:
 			if (getenv("BFME_DEBUG_RENDER") && TheGameLogic->getFrame() % 30 == 0)
 				fprintf(stderr, "[render] frame %u breakMovie=%d disable=%d loadScreen=%d\n", TheGameLogic->getFrame(),
 					(int)TheGlobalData->m_breakTheMovie, (int)TheGlobalData->m_disableRender, (int)TheGlobalData->m_loadScreenRender);
-			if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render( true, true, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity ) == WW3D_ERROR_OK)
+			if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render( true, true, getenv("BFME_CLEAR_RED") ? Vector3(1.0f,0.0f,0.0f) : Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity ) == WW3D_ERROR_OK)
 			{
 
 				if(TheGlobalData->m_loadScreenRender == TRUE)
@@ -2275,6 +2306,7 @@ AGAIN:
 					continue;
 				}
 				couldRender = true;
+				if (s_bfmePendingShots > 0 && getenv("BFME_SHOT_AT") && atoi(getenv("BFME_SHOT_AT")) == 1) { --s_bfmePendingShots; W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY); }
 				// add the number of verts/polygons drawn before the main scene
 				if (numRenderTargetPolygons || numRenderTargetVertices)
 					Debug_Statistics::Record_DX8_Polys_And_Vertices(numRenderTargetPolygons,numRenderTargetVertices,ShaderClass::_PresetOpaqueShader);
@@ -2286,8 +2318,10 @@ AGAIN:
 				}
 
 				// draw all views of the world
-				drawViews();
+				if (!getenv("BFME_NO_VIEWS"))
+					drawViews();
 
+				if (s_bfmePendingShots > 0 && getenv("BFME_SHOT_AT") && atoi(getenv("BFME_SHOT_AT")) == 2) { --s_bfmePendingShots; W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY); }
 				// GeneralsX @feature fbraz3 08/10/2026 Apply bloom, HDR tone curve, and FXAA before UI drawing
 				if (TheW3DPostProcess)
 				{
@@ -2295,20 +2329,25 @@ AGAIN:
 				}
 
 				// draw the user interface
-				TheInGameUI->DRAW();
+				if (!getenv("BFME_NO_UI"))
+					TheInGameUI->DRAW();
 
 				// end of video example code
 
+				if (s_bfmePendingShots > 0 && getenv("BFME_SHOT_AT") && atoi(getenv("BFME_SHOT_AT")) == 3) { --s_bfmePendingShots; W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY); }
 				// draw the mouse
-				if( TheMouse )
+				if( TheMouse && !getenv("BFME_NO_MOUSE") )
 					TheMouse->DRAW();
 
-				if ( m_videoStream && m_videoBuffer )
+				if (getenv("BFME_DEBUG_RENDER") && TheGameLogic->getFrame() % 30 == 0)
+					fprintf(stderr, "[render] video=%p buf=%p mouse=%p\n", (void*)m_videoStream, (void*)m_videoBuffer, (void*)TheMouse);
+				if ( m_videoStream && m_videoBuffer && !getenv("BFME_NO_MOVIE") )
 				{
 					// TheSuperHackers @bugfix Mauller 20/07/2025 scale videos based on screen size so they are shown in their original aspect
 					drawScaledVideoBuffer( m_videoBuffer, m_videoStream );
 				}
 
+				if (s_bfmePendingShots > 0 && getenv("BFME_SHOT_AT") && atoi(getenv("BFME_SHOT_AT")) == 4) { --s_bfmePendingShots; W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY); }
 				// render letter box before debug display so debug info isn't hidden
 				renderLetterBox(now);
 
@@ -2341,7 +2380,7 @@ AGAIN:
 					m_cinematicTextFrames--;
 				}
 
-				if ( m_debugDisplayCallback )
+				if ( m_debugDisplayCallback && !getenv("BFME_NO_DEBUGDISPLAY") )
 				{
 					// draw the current debug display
 					drawCurrentDebugDisplay();
@@ -2373,12 +2412,9 @@ AGAIN:
 					m_profilerFrameCapture->Capture(getWidth(), getHeight());
 				}
 #endif
-				// bfme-native: grab requested screenshots while the frame is still in the back buffer
+				// bfme-native: grab requested screenshots after the final back-buffer composite
 				if (s_bfmePendingShots > 0)
-				{
-					--s_bfmePendingShots;
-					W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY);
-				}
+					g_bfmePrePresentHook = &bfmeTakePendingShot;
 				// render is all done!
 				WW3D::End_Render();
 			}
