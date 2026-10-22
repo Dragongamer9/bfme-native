@@ -2484,6 +2484,13 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		Matrix3D mtx = *transformMtx;
 		adjustTransformMtx(mtx);
+		// bfme-native: sky domes (KindOf SKYBOX) surround the camera wherever it looks
+		if (getDrawable()->isKindOf(KINDOF_SKYBOX) && TheTacticalView)
+		{
+			const Coord3D cam = TheTacticalView->get3DCameraPosition();
+			Vector3 t = mtx.Get_Translation();
+			mtx.Set_Translation(Vector3(cam.x, cam.y, t.Z));
+		}
 		m_renderObject->Set_Transform(mtx);
 	}
 

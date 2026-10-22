@@ -105,6 +105,8 @@ public:
 	static PolygonTrigger *getFirstPolygonTrigger() {return ThePolygonTriggerListPtr;}
 	static PolygonTrigger *getPolygonTriggerByID(Int triggerID);
 	static Bool ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
+	static Bool ParseBfmeStandingWaterAreasDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);	///< bfme-native
+	static Bool ParseBfmeRiverAreasDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);	///< bfme-native
 	/// Writes Triggers Info
 	static void WritePolygonTriggersDataChunk(DataChunkOutput &chunkWriter);
 	static void deleteTriggers();
