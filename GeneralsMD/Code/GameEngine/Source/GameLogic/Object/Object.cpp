@@ -4724,6 +4724,11 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 	// of the building needs to be made.  This fix has been okayed as the most non-lethal in November.
 	clearScriptStatus(OBJECT_STATUS_SCRIPT_UNSELLABLE);
 
+	// bfme-native: modules triggered by the owner's player upgrades (a captured economy plot gets
+	// its faction's command set from Upgrade_<Faction>Faction)
+	if (oldOwner != newOwner)
+		updateUpgradeModules();
+
 	// mark the command bar to redraw
 	TheControlBar->markUIDirty();
 
