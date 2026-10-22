@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameLogic/Module/SpecialAbilityUpdate.h"
+#include "GameLogic/ObjectFilter.h"
 
 class WeaponTemplate;
 
@@ -75,6 +76,7 @@ public:
 	Real m_unusedReal;
 	Bool m_unusedBool;
 	AsciiString m_unusedString;
+	ObjectFilter m_objectFilter;	// TODO: who the terror pulse affects
 };
 
 class ModelConditionSpecialAbilityUpdate : public SpecialAbilityUpdate

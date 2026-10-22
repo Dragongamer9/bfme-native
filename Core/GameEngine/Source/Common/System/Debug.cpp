@@ -214,6 +214,9 @@ static void TriggerMiniDump()
 
 void ReleaseCrash(const char *reason)
 {
+	// bfme-native: a release crash used to exit silently
+	fprintf(stderr, "[crash] ReleaseCrash: %s\n", reason ? reason : "(null)");
+	fflush(stderr);
 	const DebugCrashHandler crashHandler = DebugGetCrashHandler();
 	if (crashHandler != nullptr)
 	{
@@ -306,6 +309,8 @@ void ReleaseCrash(const char *reason)
 
 void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 {
+	fprintf(stderr, "[crash] ReleaseCrashLocalized: %s / %s\n", p.str(), m.str());	// bfme-native
+	fflush(stderr);
 	if (!TheGameText) {
 		ReleaseCrash(m.str());
 		// This won't ever return
