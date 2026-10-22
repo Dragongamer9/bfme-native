@@ -1,0 +1,14 @@
+# Spell book: click a bought spell in the column, then the battlefield: the power fires there
+1  localplayer SkirmishMen
+5  reveal
+8  spellbook SkirmishMen
+9  science SkirmishMen SCIENCE_HornMen
+10 spawn GondorFighterHorde SkirmishMen 1420 1600 0
+40 camera 1420 1600 0.5
+60 mousemove 24 247
+62 click 24 247
+70 mousemove 512 384
+72 click 512 384
+80 screenshot
+140 screenshot
+150 quit
