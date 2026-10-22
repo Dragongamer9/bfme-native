@@ -1,0 +1,8 @@
+# Saruman dominates (temporarily) a Gondor horde standing near the target point
+1   spawn IsengardSaruman_Mod player1 800 1100 0
+1   spawn GondorFighterHorde player2 950 1100 180
+5   summary
+20  power player1 IsengardSaruman_Mod SpecialAbilityDominateEnemySaruman player2
+150 summary
+900 summary
+901 quit

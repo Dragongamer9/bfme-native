@@ -1,0 +1,9 @@
+# Elven Cloak: Gildor hides (ToggleHiddenSpecialAbilityUpdate -> InvisibilityUpdate), an enemy far away
+# does not see him; a second use takes the cloak off
+1   spawn ImladrisGildor player1 800 1100 0
+1   spawn IsengardFighter player2 1300 1100 180
+20  power player1 ImladrisGildor SpecialAbilityElfCloak none
+90  state player1 ImladrisGildor
+120 power player1 ImladrisGildor SpecialAbilityElfCloak none
+200 state player1 ImladrisGildor
+201 quit

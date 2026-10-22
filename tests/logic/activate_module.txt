@@ -1,0 +1,10 @@
+# Theoden's "Stunde des Ruhms" is an ActivateModuleSpecialPower: it fires the
+# ModuleTag_StundedesRuhmsBuff SpecialPowerModule (buff on allied infantry) at the target point
+1   spawn RohanTheoden_mod player1 800 1100 0
+1   spawn GondorFighter player1 830 1100 0
+1   spawn GondorFighter player1 830 1130 0
+1   spawn IsengardFighter player2 1000 1100 180
+20  power player1 RohanTheoden_mod SpecialAbilityStundedesRuhms none
+60  power player1 RohanTheoden_mod SpecialAbilityStundedesRuhms player2
+300 summary
+301 quit
