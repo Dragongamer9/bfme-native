@@ -3,5 +3,8 @@
 5  reveal
 40 camera 1420 1600 0.5
 60 quitmenu
-90 screenshot
-100 quit
+140 screenshot
+150 mousemove 512 502
+152 click 512 502
+170 screenshot
+180 quit

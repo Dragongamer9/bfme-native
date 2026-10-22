@@ -1,0 +1,9 @@
+# Quit menu Exit -> confirmation -> Yes leaves the game
+1  localplayer SkirmishMen
+60 quitmenu
+150 mousemove 512 445
+152 click 512 445
+190 screenshot
+200 mousemove 423 432
+202 click 423 432
+600 quit
