@@ -1,0 +1,9 @@
+# Spell book: the player's spell book object drives InGameSpellBook (purchased spells on the left)
+1  players
+5  reveal
+8  spellbook PlyrNeutral GondorSpellBook
+9  science PlyrNeutral SCIENCE_HornMen
+9  sciencepoints PlyrNeutral 5
+40 camera 1420 1600 0.5
+90 screenshot
+100 quit

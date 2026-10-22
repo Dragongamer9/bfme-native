@@ -1,0 +1,15 @@
+# Spell store: the palantir's power button opens SpellStore.apt; buy a spell; it appears in the spell book column
+1  localplayer SkirmishMen
+2  players
+5  reveal
+8  spellbook SkirmishMen
+9  science SkirmishMen SCIENCE_HornMen
+9  sciencepoints SkirmishMen 3
+40 camera 1420 1600 0.5
+50 click 79 531
+70 click 463 271
+85 screenshot
+88 click 550 720
+95 click 550 720
+110 screenshot
+120 quit
