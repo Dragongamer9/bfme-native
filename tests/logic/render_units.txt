@@ -1,13 +1,14 @@
-# Units on Fords of Isen, spawned where the camera looks (view pos ~1267,1792)
+# Units on Fords of Isen: spawn at a fixed spot, then aim a close camera at it right before each shot
 1   players
 5   reveal
-5   camera 1500 1500
-10  view
-12  spawn GondorFighterHorde SkirmishMen 1200 1750 0
-12  spawn IsengardFighterHorde SkirmishIsengard 1350 1750 180
-12  spawn GondorAragorn SkirmishMen 1270 1850 90
-40  screenshot
+10  spawn GondorFighterHorde SkirmishMen 1400 1600 0
+10  spawn IsengardFighterHorde SkirmishIsengard 1520 1600 180
+10  spawn GondorAragorn SkirmishMen 1460 1540 90
+48  camera 1460 1600 0.35
+49  view
+50  screenshot
 60  attack SkirmishMen SkirmishIsengard
 60  attack SkirmishIsengard SkirmishMen
+148 camera 1460 1600 0.35
 150 screenshot
 170 quit
