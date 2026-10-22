@@ -1,0 +1,9 @@
+# APT interface over the map: BFME_APT=<movie> selects the movie
+1  players
+5  reveal
+10 spawn GondorFighterHorde SkirmishMen 1400 1600 0
+40 camera 1400 1600 0.5
+45 screenshot
+80 camera 1400 1600 0.5
+85 screenshot
+100 quit
