@@ -651,8 +651,7 @@ protected:
 //-------------------------------------------------------------------------------------------------
 /** InvisibilityUpdate: RotWK stealth and camouflage. While none of the forbidden conditions holds
 	(moving, firing, taking damage, using an ability) the object is stealthed: enemies cannot see or
-	target it unless one of them stands within DetectionRange. AWAY_FROM_TREES counts as always true
-	(no tree test yet), so forest camouflage does not hide anyone. */
+	target it unless one of them stands within DetectionRange. AWAY_FROM_TREES: no map tree within 60. */
 class InvisibilityUpdateModuleData : public UpdateModuleData
 {
 public:

@@ -2030,6 +2030,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 
 			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				createOptimizedTree(thingTemplate, &pos, angle);
+				{ extern void bfmeRegisterTree(const Coord3D*); bfmeRegisterTree(&pos); }	// bfme-native: camouflage
 			}
 		}
 	}
@@ -2081,6 +2082,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 
 			if (thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				createOptimizedTree(thingTemplate, &pos, angle);
+				{ extern void bfmeRegisterTree(const Coord3D*); bfmeRegisterTree(&pos); }	// bfme-native: camouflage
 				continue;
 			}
 
@@ -2108,6 +2110,8 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			Object *obj = TheThingFactory->newObject( thingTemplate, team ); //, OBJECT_STATUS_LOADING_FROM_MAP );
 			if( obj )
 			{
+				if (thingTemplate->isKindOf(KINDOF_SHRUBBERY) || thingTemplate->isKindOf(KINDOF_OPTIMIZED_TREE))
+				{ extern void bfmeRegisterTree(const Coord3D*); bfmeRegisterTree(&pos); }	// bfme-native: camouflage
 				if(pMapObj->getFlag(FLAG_DRAWS_IN_MIRROR) || obj->isKindOf(KINDOF_CAN_CAST_REFLECTIONS))
 				{
 					Drawable* draw = obj->getDrawable();
