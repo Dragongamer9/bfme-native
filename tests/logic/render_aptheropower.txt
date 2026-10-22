@@ -1,0 +1,16 @@
+# Hero powers from the command ring: Boromir (levelled up) blows his horn next to a Mordor horde
+1  localplayer SkirmishMen
+5  reveal
+10 spawn GondorBoromir SkirmishMen 1420 1600 0
+10 spawn MordorFighterHorde SkirmishMordor 1480 1640 0
+20 xp SkirmishMen GondorBoromir 100000
+30 select SkirmishMen GondorBoromir
+40 camera 1420 1600 0.5
+60 screenshot
+70 mousemove 268 635
+72 click 268 635
+80 mousemove 600 420
+82 click 600 420
+100 screenshot
+140 screenshot
+150 quit
