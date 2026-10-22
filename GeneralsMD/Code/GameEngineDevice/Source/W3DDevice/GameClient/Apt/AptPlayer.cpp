@@ -469,6 +469,26 @@ void Player::queueActions(Instance &clip, int frame)
 		if (it.kind == FrameItem::ACTION) queueCode(self, it.code);
 }
 
+void Player::runPendingFrom(size_t first)
+{
+	// run (and remove) the actions queued at index >= first, in order
+	while (m_pendingActions.size() > first)
+	{
+		Pending p = m_pendingActions[first];
+		m_pendingActions.erase(m_pendingActions.begin() + first);
+		std::shared_ptr<Instance> clip = p.clip.lock();
+		if (!clip) continue;
+		if (!p.handler.empty())
+		{
+			Value fn = clipObject(clip)->get(p.handler);
+			std::vector<Value> none;
+			if (fn.isObject()) callFunction(fn.o, clipObject(clip), none);
+		}
+		else
+			execute(p.code, clip);
+	}
+}
+
 void Player::runPending()
 {
 	size_t guard = 0;
@@ -645,7 +665,8 @@ void Player::applyFrame(Instance &clip, int frame, bool runActions)
 	if (!clip.isSprite() || frame < 0 || frame >= clip.totalFrames()) return;
 	clip.currentFrame = frame;
 	const Frame &fr = clip.character->frames[frame];
-	// frame scripts of the parent run before the scripts of clips placed in that frame
+	// the parent's frame script runs before the first-frame scripts of clips placed in this frame
+	// (RotWK buttons define functions their children call from their own first frame)
 	if (runActions) queueActions(clip, frame);
 	for (const FrameItem &it : fr.items)
 	{
@@ -735,7 +756,13 @@ void Player::gotoFrame(Instance &clip, int frame, bool play)
 	if (frame < 0) frame = 0;
 	if (frame >= total) frame = total - 1;
 	clip.playing = play;
-	if (frame == clip.currentFrame) return;
+	if (frame == clip.currentFrame)
+	{
+		// APT re-runs the target frame's script on a goto to the current frame (RotWK: Hide() =
+		// gotoAndPlay("_hide") on a clip already sitting at "_hide", whose script is stop())
+		queueActions(clip, frame);
+		return;
+	}
 	if (frame < clip.currentFrame)
 		rebuildTo(clip, frame);
 	else
@@ -1145,7 +1172,20 @@ void Player::drawText(Instance &inst, const Matrix &m, const ColorTransform &cx)
 	else text = c.content;
 	if (getenv("BFME_DEBUG_APT_TEXT")) fprintf(stderr, "[apt] text %s var='%s' content='%s' set=%d -> '%s'\n", inst.targetPath().c_str(), c.variable.c_str(), c.content.c_str(), (int)inst.textSet, text.c_str());
 	if (text.empty()) return;
-	if (text[0] == '$' && m_host) text = m_host->translate(text.substr(1));
+	unsigned flags = 0;
+	if (text[0] == '$')
+	{
+		// "$<string id>[&flag...]": localised or game-supplied text; flags: dropshadow
+		std::string key = text.substr(1);
+		const size_t amp = key.find('&');
+		if (amp != std::string::npos)
+		{
+			if (lower(key.substr(amp)).find("dropshadow") != std::string::npos) flags |= 0x200;
+			key = key.substr(0, amp);
+		}
+		text = m_host ? m_host->translate(key) : key;
+		if (text.empty()) return;
+	}
 	// strip simple html tags (htmlText)
 	if (text.find('<') != std::string::npos)
 	{
@@ -1161,7 +1201,7 @@ void Player::drawText(Instance &inst, const Matrix &m, const ColorTransform &cx)
 	const float size = c.fontHeight * matScaleY(m);
 	std::string font;
 	if (c.font < c.file->characters.size() && c.file->characters[c.font]) font = c.file->characters[c.font]->fontName;
-	renderText(text, font.c_str(), size, col, std::min(x0, x1), std::min(y0, y1), std::max(x0, x1), std::max(y0, y1), c.alignment | (c.multiline || c.wordWrap ? 0x100 : 0));
+	renderText(text, font.c_str(), size, col, std::min(x0, x1), std::min(y0, y1), std::max(x0, x1), std::max(y0, y1), c.alignment | (c.multiline || c.wordWrap ? 0x100 : 0) | flags);
 }
 
 } // namespace Apt

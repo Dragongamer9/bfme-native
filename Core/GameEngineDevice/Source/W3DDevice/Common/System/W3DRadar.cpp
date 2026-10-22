@@ -110,8 +110,8 @@ void W3DRadar::initializeTextureFormats()
 {
 	const WW3DFormat terrainFormats[] =
 	{
+		WW3D_FORMAT_X8R8G8B8,	// bfme-native: first -- 24-bit R8G8B8 comes out garbled through DXVK
 		WW3D_FORMAT_R8G8B8,
-		WW3D_FORMAT_X8R8G8B8,
 		WW3D_FORMAT_R5G6B5,
 		WW3D_FORMAT_X1R5G5B5,
 		WW3D_FORMAT_UNKNOWN				// keep this one last
@@ -301,8 +301,17 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 	//
 	IRegion2D clipRegion;
 	ICoord2D radarWindowSize, radarWindowScreenPos;
-	m_radarWindow->winGetSize( &radarWindowSize.x, &radarWindowSize.y );
-	m_radarWindow->winGetScreenPosition( &radarWindowScreenPos.x, &radarWindowScreenPos.y );
+	if (m_radarWindow)
+	{
+		m_radarWindow->winGetSize( &radarWindowSize.x, &radarWindowSize.y );
+		m_radarWindow->winGetScreenPosition( &radarWindowScreenPos.x, &radarWindowScreenPos.y );
+	}
+	else
+	{
+		// bfme-native: the palantir (APT) draws the radar, there is no radar window
+		radarWindowSize.x = width; radarWindowSize.y = height;
+		radarWindowScreenPos.x = pixelX; radarWindowScreenPos.y = pixelY;
+	}
 	clipRegion.lo.x = radarWindowScreenPos.x;
 	clipRegion.lo.y = radarWindowScreenPos.y;
 	clipRegion.hi.x = radarWindowScreenPos.x + radarWindowSize.x;

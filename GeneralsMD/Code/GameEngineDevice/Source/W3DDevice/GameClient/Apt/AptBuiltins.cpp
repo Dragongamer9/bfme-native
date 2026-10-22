@@ -90,7 +90,9 @@ static std::shared_ptr<Instance> addChild(Player &p, Instance &parent, Character
 		p.fireClipEvent(*child, CLIPEVENT_INITIALIZE);
 		p.fireClipEvent(*child, CLIPEVENT_LOAD);
 		child->currentFrame = -1;
+		const size_t mark = p.pendingCount();
 		p.gotoFrame(*child, 0, true);
+		p.runPendingFrom(mark);	// the new clip's first-frame scripts run before attachMovie returns
 	}
 	return child;
 }
