@@ -599,3 +599,29 @@ class CommandButton;
 /// the hero a REVIVE slot button of this building stands for, or null
 const ThingTemplate* bfmeReviveSlotHero(const Object* building, const CommandButton* button);
 
+//-------------------------------------------------------------------------------------------------
+/** GateOpenAndCloseBehavior: castle gates. Our pathfinder has no gates, so a gate never blocks paths
+	(units inside a castle would be trapped); it opens (DOOR_1_OPENING/WAITING_OPEN) while friendly
+	units are near and closes after ResetTimeInMilliseconds. */
+class GateOpenAndCloseBehaviorModuleData : public UpdateModuleData
+{
+public:
+	GateOpenAndCloseBehaviorModuleData() : m_resetTime(LOGICFRAMES_PER_SECOND * 4), m_openByDefault(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	UnsignedInt m_resetTime;
+	Bool m_openByDefault;
+};
+
+class GateOpenAndCloseBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( GateOpenAndCloseBehavior, "GateOpenAndCloseBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( GateOpenAndCloseBehavior, GateOpenAndCloseBehaviorModuleData )
+public:
+	GateOpenAndCloseBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+private:
+	Bool m_removedFromPathing;
+	Bool m_open;
+	UnsignedInt m_closeAt;
+};
+

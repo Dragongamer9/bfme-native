@@ -69,6 +69,8 @@ void W3DModuleFactory::init()
 		W3DModelDraw::getModuleType(), AsciiString("W3DHordeModelDraw"), W3DModelDraw::getInterfaceMask() );
 	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
 		W3DModelDraw::getModuleType(), AsciiString("W3DFloorDraw"), W3DModelDraw::getInterfaceMask() );
+	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
+		W3DModelDraw::getModuleType(), AsciiString("W3DSailModelDraw"), W3DModelDraw::getInterfaceMask() );	// sails do not billow yet
 	addModule( W3DLaserDraw );
 	addModule( W3DOverlordTankDraw );
 #if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
