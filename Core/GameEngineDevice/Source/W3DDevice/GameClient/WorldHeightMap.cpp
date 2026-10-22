@@ -1238,6 +1238,17 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	} else {
 		m_numCliffInfo = 1;	// cliffInfo[0] is the default info.
 	}
+	// bfme-native: big RotWK maps (Dagorlad) have more blends than our table; keep the first ones and
+	// draw the cells using the rest unblended
+	const Int fileBlendedTiles = m_numBlendedTiles;
+	if (m_numBlendedTiles > NUM_BLEND_TILES && m_numCliffInfo <= NUM_CLIFF_INFO && m_numBitmapTiles <= NUM_SOURCE_TILES) {
+		fprintf(stderr, "[bfme] %d terrain blends, keeping %d\n", m_numBlendedTiles, NUM_BLEND_TILES);
+		m_numBlendedTiles = NUM_BLEND_TILES;
+		for (Int c = 0; c < m_dataSize; ++c) {
+			if (m_blendTileNdxes[c] < 0 || m_blendTileNdxes[c] >= NUM_BLEND_TILES) m_blendTileNdxes[c] = 0;
+			if (m_extraBlendTileNdxes && (m_extraBlendTileNdxes[c] < 0 || m_extraBlendTileNdxes[c] >= NUM_BLEND_TILES)) m_extraBlendTileNdxes[c] = 0;
+		}
+	}
 	if (m_numBlendedTiles > NUM_BLEND_TILES || m_numCliffInfo > NUM_CLIFF_INFO || m_numBitmapTiles > NUM_SOURCE_TILES) {
 		fprintf(stderr, "[bfme] map terrain tables too large: %d blends, %d cliffs, %d tiles\n", m_numBlendedTiles, m_numCliffInfo, m_numBitmapTiles);
 		throw ERROR_CORRUPT_FILE_FORMAT;
@@ -1274,7 +1285,15 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 			readTexClass(&m_edgeTextureClasses[i], m_edgeTiles);
 		}
 	}
-	for (i=1; i<m_numBlendedTiles; i++) {
+	for (i=1; i<fileBlendedTiles; i++) {
+		if (i >= NUM_BLEND_TILES) {
+			// past our table: read and drop (blendNdx, 5 flags, long diagonal, edge class, flag)
+			file.readInt(); for (Int b = 0; b < 5; ++b) file.readByte();
+			if (info->version >= K_BLEND_TILE_VERSION_3) file.readByte();
+			if (info->version >= K_BLEND_TILE_VERSION_4) file.readInt();
+			if (file.readInt() != FLAG_VAL) throw ERROR_CORRUPT_FILE_FORMAT;
+			continue;
+		}
 		Int flag;
 		m_blendedTiles[i].blendNdx = file.readInt();
 		m_blendedTiles[i].horiz = file.readByte();
