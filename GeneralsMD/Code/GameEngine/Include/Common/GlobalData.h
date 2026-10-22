@@ -37,6 +37,7 @@
 #include "GameClient/Color.h"
 #include "Common/STLTypedefs.h"
 #include "Common/Money.h"
+#include "GameLogic/ObjectFilter.h"	// bfme-native
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
@@ -411,6 +412,8 @@ public:
 	Real m_bfmeTerrainResourceCellSize;
 	Bool m_bfmeSkirmish;									///< bfme-native: -skirmish on the command line
 	AsciiString m_bfmeSkirmishFactions[2];
+	ObjectFilter m_bfmeVictoryStructureFilter;	///< bfme-native: VictoryConditionStructureObjectFilter
+	ObjectFilter m_bfmeVictoryUnitFilter;				///< bfme-native: VictoryConditionUnitObjectFilter
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
 	WeaponBonusSet* m_weaponBonusSet;

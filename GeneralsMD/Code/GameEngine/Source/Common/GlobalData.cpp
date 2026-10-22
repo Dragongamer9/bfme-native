@@ -466,6 +466,8 @@ static void parseBfmeCameraMaxHeight(INI* ini, void* instance, void*, const void
 
 	{ "AttributeModifierArmorMaxBonus",	INI::parsePercentToReal,	nullptr,			offsetof( GlobalData, m_attributeModifierArmorMaxBonus ) },	// bfme-native
 	{ "GoodCommandPoints",	parseBfmeCommandPoints,	(void*)0,	0 },	// bfme-native
+	{ "VictoryConditionStructureObjectFilter",	ObjectFilter::parseFromINI,	nullptr,	offsetof( GlobalData, m_bfmeVictoryStructureFilter ) },	// bfme-native
+	{ "VictoryConditionUnitObjectFilter",	ObjectFilter::parseFromINI,	nullptr,	offsetof( GlobalData, m_bfmeVictoryUnitFilter ) },	// bfme-native
 	{ "GoodCommandPointsAI",	parseBfmeCommandPoints,	(void*)1,	0 },	// bfme-native
 	{ "GoodCommandPointsMP2",	parseBfmeCommandPoints,	(void*)2,	0 },	// bfme-native
 	{ "GoodCommandPointsMP3",	parseBfmeCommandPoints,	(void*)3,	0 },	// bfme-native

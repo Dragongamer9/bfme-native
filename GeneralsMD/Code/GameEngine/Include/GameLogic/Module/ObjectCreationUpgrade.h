@@ -30,6 +30,7 @@
 #pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+#include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -38,8 +39,10 @@ class Player;
 class ObjectCreationList;
 
 //-------------------------------------------------------------------------------------------------
+/** bfme-native: RotWK's ObjectCreationUpgrade also spawns a ThingToSpawn at an Offset/Angle,
+	after an optional Delay, and grants or removes upgrades (object or player ones). */
 //-------------------------------------------------------------------------------------------------
-class ObjectCreationUpgradeModuleData : public UpgradeModuleData
+class ObjectCreationUpgradeModuleData : public UpdateModuleData
 {
 
 public:
@@ -48,14 +51,25 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
+	UpgradeMuxData m_upgradeMuxData;
 	const ObjectCreationList *m_ocl;			///< the object creation list to make
+	AsciiString m_thingToSpawn;
+	Coord3D m_offset;
+	Real m_angle;													///< radians, added to the owner's orientation
+	UnsignedInt m_delay;									///< frames
+	UnsignedInt m_fadeInTime;
+	std::vector<AsciiString> m_grantUpgrades;
+	std::vector<AsciiString> m_removeUpgrades;
+	Bool m_destroyWhenSold;
+	Bool m_useBuildingProduction;
+	AsciiString m_deathAnimAndDuration;
 
 };
 
 //-------------------------------------------------------------------------------------------------
 /** The OCL upgrade module */
 //-------------------------------------------------------------------------------------------------
-class ObjectCreationUpgrade : public UpgradeModule
+class ObjectCreationUpgrade : public UpdateModule, public UpgradeMux
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ObjectCreationUpgrade, "ObjectCreationUpgrade" )
@@ -66,11 +80,37 @@ public:
 	ObjectCreationUpgrade( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
 
+	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | MODULEINTERFACE_UPGRADE; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 	virtual void onDelete() override;																///< we have some work to do when this module goes away
+	virtual UpdateSleepTime update() override;
 
 protected:
 
 	virtual void upgradeImplementation() override; ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
+	{
+		getObjectCreationUpgradeModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
+	}
+	virtual void performUpgradeFX() override
+	{
+		getObjectCreationUpgradeModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
+	}
+	virtual void processUpgradeRemoval() override
+	{
+		getObjectCreationUpgradeModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
+	}
+	virtual Bool requiresAllActivationUpgrades() const override
+	{
+		return getObjectCreationUpgradeModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
+	}
+
+private:
+
+	void doCreation();
+
+	UnsignedInt m_pendingFrame;		///< 0 = nothing pending
+	ObjectID m_spawnedID;
 
 };

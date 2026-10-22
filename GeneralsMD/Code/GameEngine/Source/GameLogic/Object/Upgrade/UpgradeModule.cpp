@@ -161,8 +161,10 @@ void UpgradeMux::giveSelfUpgrade()
 	// If I have an activation condition, and I haven't activated, and this key matches my condition.
 	performUpgradeFX();
 	processUpgradeRemoval();// Need to execute removals first, to prevent both being on for a moment.
-	upgradeImplementation();
+	// bfme-native: mark first -- RotWK upgrades grant further upgrades, which re-enter the object's
+	// upgrade modules (this one included) before upgradeImplementation returns
 	setUpgradeExecuted(true);
+	upgradeImplementation();
 }
 
 //-------------------------------------------------------------------------------------------------
