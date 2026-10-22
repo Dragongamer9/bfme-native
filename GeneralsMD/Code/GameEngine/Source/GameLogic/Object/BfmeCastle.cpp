@@ -615,6 +615,14 @@ static Int reviveAvailability(const CommandButton* b, Object* building)
 	const ThingTemplate* hero = bfmeReviveSlotHero(building, b);
 	if (hero == nullptr)
 		return COMMAND_HIDDEN;
+	// "Fake" slots need an upgrade the side only gets in special cases
+	if (BitIsSet(b->getOptions(), NEED_UPGRADE) && b->getUpgradeTemplate())
+	{
+		const UpgradeTemplate* ut = b->getUpgradeTemplate();
+		const Player* owner = building->getControllingPlayer();
+		if (!building->hasUpgrade(ut) && !(owner && owner->hasUpgradeComplete(ut)))
+			return COMMAND_HIDDEN;
+	}
 	Player* p = building->getControllingPlayer();
 	Bool fallen = FALSE;
 	Object* h = findHero(p, hero, &fallen);
