@@ -186,6 +186,12 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   ArrowStormUpdate (Legolas, Nar, Óin... volleys at every enemy around the target) and
   ToggleHiddenSpecialAbilityUpdate (Elven Cloak, spirit form: switch a unit's stealth on and off).
   Location-less abilities with a view object no longer crash.
+  LevelGrantSpecialPower (King's Favour: experience for units around the target) and
+  TeleportSpecialAbilityUpdate (dragon/wyrm repositioning).
+- Effects: BuffNugget FX draw the buff models on units (leadership rings, heal glows, curse marks;
+  they last as long as the modifier that started them) and DynamicDecal FX lay terrain decals with
+  their fade curve (stomp craters, oil and magma puddles, cloud shadows). Compiled TGA textures
+  are found (before, only DDS were).
 - Command points: CommandPointsUpgrade (bought upgrades that raise the limit), COMMAND_POINT_BONUS
   attribute modifiers, and the AI buys Edain's CP "economy units" at its keep when its army is at
   the limit and it has money left over (before, it stopped at 500 and hoarded gold).

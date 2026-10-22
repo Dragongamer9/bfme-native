@@ -1,0 +1,11 @@
+# LevelGrantSpecialPower (Saruman's King's Favour on Uruks) and TeleportSpecialAbilityUpdate (Wyrm)
+1   spawn IsengardSaruman_Mod player1 800 1100 0
+1   spawn IsengardFighter player1 840 1100 0
+1   spawn IsengardFighter player1 840 1130 0
+1   spawn Wyrm player1 600 900 0
+1   spawn GondorFighter player2 1200 1100 180
+20  power player1 IsengardSaruman_Mod SpecialAbilityKingsFavor player1
+20  power player1 Wyrm SpecialAbilityWyrmReposition player2
+200 xp
+201 objects Wyrm
+202 quit

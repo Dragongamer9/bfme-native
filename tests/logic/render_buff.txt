@@ -1,0 +1,12 @@
+# Buff models (BuffNugget): Theoden's "Stunde des Ruhms" marks the soldiers around him
+1  localplayer player1
+5  reveal
+10 spawn RohanTheoden_mod player1 800 1100 0
+10 spawn GondorFighter player1 830 1100 0
+10 spawn GondorFighter player1 830 1130 0
+10 spawn GondorFighter player1 800 1140 0
+10 spawn GondorFighter player1 770 1120 0
+20 power player1 RohanTheoden_mod SpecialAbilityStundedesRuhms none
+30 camera 800 1110 0.35
+90 screenshot
+100 quit
