@@ -498,6 +498,8 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 		freeListOfMapObjects(); // just in case.
 		file.registerParser( "PolygonTriggers", AsciiString::TheEmptyString, PolygonTrigger::ParsePolygonTriggersDataChunk );
 		PolygonTrigger::deleteTriggers(); // just in case.
+		file.registerParser( "StandingWaterAreas", AsciiString::TheEmptyString, PolygonTrigger::ParseBfmeStandingWaterAreasDataChunk );	// bfme-native
+		file.registerParser( "RiverAreas", AsciiString::TheEmptyString, PolygonTrigger::ParseBfmeRiverAreasDataChunk );	// bfme-native
 		TheSidesList->emptySides();
 		file.registerParser("SidesList", AsciiString::TheEmptyString,	SidesList::ParseSidesDataChunk );
 		file.registerParser("Teams", AsciiString::TheEmptyString,	SidesList::ParseBfmeTeamsDataChunk );	// bfme-native

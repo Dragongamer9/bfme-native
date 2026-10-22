@@ -33,6 +33,7 @@
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/Xfer.h"
 #include "GameLogic/PolygonTrigger.h"
+#include <vector>
 #include "GameLogic/TerrainLogic.h"
 
 /* ********* PolygonTrigger class ****************************/
@@ -126,6 +127,125 @@ PolygonTrigger *PolygonTrigger::getPolygonTriggerByID(Int triggerID)
 }
 
 /**
+* bfme-native: BFME2 / RotWK maps keep water out of the polygon triggers, in "StandingWaterAreas"
+* and "RiverAreas" chunks. They become ZH water-area polygon triggers so the logic (pathing,
+* water height) and the W3D water renderer pick them up.
+*
+* StandingWaterArea v2: id, name, layer, uvScroll, additive, bumpTex, skyTex,
+*   numPoints, (x,y) floats, height u32, fxShader, depthColors
+* RiverArea v2: id, name, layer, uvScroll, additive, riverTex, noiseTex, alphaEdgeTex, sparkleTex,
+*   rgb + pad, alpha, height u32, (string), numLines, lines of (x,y,x,y) bank pairs
+*/
+static Int s_bfmeWaterTriggerID = 100000;
+
+Bool PolygonTrigger::ParseBfmeStandingWaterAreasDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
+{
+	if (info->version < 2 || info->version > 3)
+	{
+		DEBUG_LOG(("StandingWaterAreas v%d not supported", info->version));
+		return true;
+	}
+	Int count = file.readInt();
+	while (count-- > 0)
+	{
+		Int id = file.readInt();
+		AsciiString name = file.readAsciiString();
+		file.readAsciiString();	// layer
+		file.readReal();			// uv scroll
+		file.readByte();			// additive
+		file.readAsciiString();	// bump texture
+		file.readAsciiString();	// sky texture
+		Int numPoints = file.readInt();
+		std::vector<Coord2D> pts(numPoints > 0 ? numPoints : 0);
+		for (Int i = 0; i < numPoints; ++i)
+		{
+			pts[i].x = file.readReal();
+			pts[i].y = file.readReal();
+		}
+		Int height = file.readInt();
+		file.readAsciiString();	// fx shader
+		file.readAsciiString();	// depth colours
+		if (numPoints < 3)
+			continue;
+		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints + 1);
+		pTrig->setTriggerName(name);
+		pTrig->setWaterArea(true);
+		pTrig->m_triggerID = s_bfmeWaterTriggerID + id;
+		for (Int i = 0; i < numPoints; ++i)
+		{
+			ICoord3D loc;
+			loc.x = REAL_TO_INT(pts[i].x);
+			loc.y = REAL_TO_INT(pts[i].y);
+			loc.z = height;
+			pTrig->addPoint(loc);
+		}
+		if (getenv("BFME_DEBUG_WATER"))
+			fprintf(stderr, "[water] standing '%s' %d points at height %d\n", name.str(), numPoints, height);
+		addPolygonTrigger(pTrig);
+	}
+	return true;
+}
+
+Bool PolygonTrigger::ParseBfmeRiverAreasDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
+{
+	if (info->version < 2 || info->version > 3)
+	{
+		DEBUG_LOG(("RiverAreas v%d not supported", info->version));
+		return true;
+	}
+	Int count = file.readInt();
+	while (count-- > 0)
+	{
+		Int id = file.readInt();
+		AsciiString name = file.readAsciiString();
+		file.readAsciiString();	// layer
+		file.readReal();			// uv scroll
+		file.readByte();			// additive
+		file.readAsciiString();	// river texture
+		file.readAsciiString();	// noise texture
+		file.readAsciiString();	// alpha edge texture
+		file.readAsciiString();	// sparkle texture
+		file.readByte(); file.readByte(); file.readByte(); file.readByte();	// rgb + pad
+		file.readReal();			// alpha
+		Int height = file.readInt();
+		file.readAsciiString();	// (minimum water lod / river type)
+		Int numLines = file.readInt();
+		std::vector<Coord2D> left(numLines > 0 ? numLines : 0), right(numLines > 0 ? numLines : 0);
+		for (Int i = 0; i < numLines; ++i)
+		{
+			left[i].x = file.readReal();
+			left[i].y = file.readReal();
+			right[i].x = file.readReal();
+			right[i].y = file.readReal();
+		}
+		if (numLines < 2)
+			continue;
+		// ZH river layout: points loop round the river, riverStart sits on the first bank pair:
+		// [L(n-1) .. L(0), R(0) .. R(n-1)], riverStart = n-1
+		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(2 * numLines + 1);
+		pTrig->setTriggerName(name);
+		pTrig->setWaterArea(true);
+		pTrig->setRiver(true);
+		pTrig->setRiverStart(numLines - 1);
+		pTrig->m_triggerID = s_bfmeWaterTriggerID + 50000 + id;
+		for (Int i = numLines - 1; i >= 0; --i)
+		{
+			ICoord3D loc = { REAL_TO_INT(left[i].x), REAL_TO_INT(left[i].y), height };
+			pTrig->addPoint(loc);
+		}
+		for (Int i = 0; i < numLines; ++i)
+		{
+			ICoord3D loc = { REAL_TO_INT(right[i].x), REAL_TO_INT(right[i].y), height };
+			pTrig->addPoint(loc);
+		}
+		if (getenv("BFME_DEBUG_WATER"))
+			fprintf(stderr, "[water] river '%s' %d sections at height %d\n", name.str(), numLines, height);
+		addPolygonTrigger(pTrig);
+	}
+	return true;
+}
+
+/**
 * PolygonTrigger::ParsePolygonTriggersDataChunk - read a polygon triggers chunk.
 * Format is the newer CHUNKY format.
 *	See PolygonTrigger::WritePolygonTriggersDataChunk for the writer.
@@ -165,11 +285,12 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			isRiver = file.readByte();
 			riverStart = file.readInt();
 		}
+		AsciiString bfmeTex[6];
 		if (info->version >= 5) {
 			// bfme-native: BFME/RotWK water look (river/noise/alpha-edge/sparkle/bump/sky textures,
 			// additive blend, RGB colour, pad, UV scroll, alpha) -- not used by the logic yet
 			for (Int t = 0; t < 6; ++t)
-				file.readAsciiString();
+				bfmeTex[t] = file.readAsciiString();
 			file.readByte();
 			file.readByte(); file.readByte(); file.readByte();
 			file.readByte();
@@ -178,6 +299,8 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		}
 
 		numPoints = file.readInt();
+		if (getenv("BFME_DEBUG_WATER") && (isWater || isRiver))
+			fprintf(stderr, "[water] poly '%s' water=%d river=%d riverStart=%d points=%d tex0='%s'\n", triggerName.str(), (int)isWater, (int)isRiver, riverStart, numPoints, bfmeTex[0].str());
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);
 		pTrig->setTriggerName(triggerName);
 		if (info->version >= K_TRIGGERS_VERSION_4) {
@@ -196,6 +319,8 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			loc.y = file.readInt();
 			loc.z = file.readInt();
 			pTrig->addPoint(loc);
+			if (getenv("BFME_DEBUG_WATER") && (isWater || isRiver) && i < 3)
+				fprintf(stderr, "[water]   pt %d,%d,%d\n", loc.x, loc.y, loc.z);
 		}
 #if !(RTS_GENERALS && RETAIL_COMPATIBLE_CRC)
 		if (numPoints<2) {
