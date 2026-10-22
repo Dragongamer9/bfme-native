@@ -169,6 +169,7 @@ Bool (*g_bfmeFoundationConstructHook)(Object*, const ThingTemplate*) = nullptr;
 Int (*g_bfmeReviveAvailabilityHook)(const CommandButton*, Object*) = nullptr;
 Bool (*g_bfmeReviveHook)(Object*, const CommandButton*) = nullptr;
 const Image* (*g_bfmeReviveImageHook)(Object*, const CommandButton*) = nullptr;
+const ThingTemplate* (*g_bfmeReviveHeroHook)(const Object*, const CommandButton*) = nullptr;
 
 CBCommandStatus ControlBar::bfmeExecuteCommand( const CommandButton *commandButton, Drawable *source, Bool multiSelect )
 {

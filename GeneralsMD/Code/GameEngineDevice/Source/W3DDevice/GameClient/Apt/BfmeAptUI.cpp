@@ -51,6 +51,7 @@ extern Bool (*g_bfmeAptMouseHook)(Int kind, Int x, Int y);
 extern Bool (*g_bfmeAptQuitMenuHook)();
 
 extern const Image* (*g_bfmeReviveImageHook)(Object*, const CommandButton*);	// bfme-native: BfmeCastle.cpp
+extern const ThingTemplate* (*g_bfmeReviveHeroHook)(const Object*, const CommandButton*);
 
 namespace BfmeApt
 {
@@ -691,6 +692,22 @@ public:
 		t.erase(std::remove(t.begin(), t.end(), '&'), t.end());
 		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
 		Int cost = 0;
+		// hero slots: "Revive %s" with the hero's name, or recruit it if it never came
+		if (b->getCommandType() == GUI_COMMAND_BFME_REVIVE && g_bfmeReviveHeroHook)
+		{
+			Drawable *src = TheGameClient ? TheGameClient->findDrawableByID(source) : nullptr;
+			const ThingTemplate *hero = (src && src->getObject()) ? g_bfmeReviveHeroHook(src->getObject(), b) : nullptr;
+			if (hero)
+			{
+				AsciiString name; name.translate(hero->getDisplayName());
+				const size_t ps = t.find("%s");
+				if (ps != std::string::npos) t.replace(ps, 2, name.str());
+				else t = name.str();
+				if (local) cost = hero->calcCostToBuild(local);
+				if (cost > 0) { char buf[32]; snprintf(buf, sizeof(buf), "  (%d)", cost); t += buf; }
+				return t;
+			}
+		}
 		if (b->getThingTemplate() && local) cost = b->getThingTemplate()->calcCostToBuild(local);
 		else if (b->getUpgradeTemplate() && local) cost = b->getUpgradeTemplate()->calcCostToBuild(local);
 		if (cost > 0) { char buf[32]; snprintf(buf, sizeof(buf), "  (%d)", cost); t += buf; }
