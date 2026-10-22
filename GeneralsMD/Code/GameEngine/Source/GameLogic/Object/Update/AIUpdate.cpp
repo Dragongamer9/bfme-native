@@ -2638,6 +2638,12 @@ void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
+	// bfme-native: BFME_DEBUG_AICMD=<template substring> traces the commands an object gets
+	static const char *s_traceAi = getenv("BFME_DEBUG_AICMD");
+	if (s_traceAi && strstr(getObject()->getTemplate()->getName().str(), s_traceAi))
+		fprintf(stderr, "[aicmd] #%u %s frame %u cmd %d source %d pos %.0f,%.0f obj %u\n", getObject()->getID(), getObject()->getTemplate()->getName().str(),
+			TheGameLogic->getFrame(), (int)parms->m_cmd, (int)parms->m_cmdSource, parms->m_pos.x, parms->m_pos.y, parms->m_obj ? parms->m_obj->getID() : 0);
+
 #ifdef ALLOW_SURRENDER
 	// surrendered items have very limited options, and only via AI cmds
 	if (isSurrendered())
