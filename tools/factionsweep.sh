@@ -16,10 +16,12 @@ printf '1 reveal\n%d state\n%d players\n%d quit\n' "$((FRAMES-5))" "$((FRAMES-4)
 cd "$DATA"
 for f in "${FACTIONS[@]}"; do
   ai="${BFME_AI:-Mordor}"; [ "$f" = "$ai" ] && ai=Men
-  BFME_TEST="$T/s.txt" timeout ${BFME_TIMEOUT:-900} "$EXE" -win -headless -skirmish "$MAP" "$f" "$ai" -noshellmap -quickstart > "$T/$f.log" 2>&1
+  # BFME_SWAP=1: the computer plays the faction (you are the other side)
+  if [ -n "${BFME_SWAP:-}" ]; then p1="$ai"; p2="$f"; else p1="$f"; p2="$ai"; fi
+  BFME_TEST="$T/s.txt" timeout ${BFME_TIMEOUT:-900} "$EXE" -win -headless -skirmish "$MAP" "$p1" "$p2" -noshellmap -quickstart > "$T/$f.log" 2>&1
   rc=$?
   q=$(grep -ac "quit at frame" "$T/$f.log")
-  echo "== $f vs $ai: exit $rc $([ "$q" -gt 0 ] && echo ok || echo FAIL)"
+  echo "== $p1 vs $p2 (AI): exit $rc $([ "$q" -gt 0 ] && echo ok || echo FAIL)"
   echo "   AI abilities used: $(grep -ac '\[ability\] AI' "$T/$f.log")  AI trains: $(grep -ac '\[skirmishai\].*trains' "$T/$f.log")  attacks: $(grep -ac '\[skirmishai\].*attacks' "$T/$f.log")"
   grep -aE "\[BFMETEST\] player [0-9]+ name=.player|\[crash\]|FATAL|Segmentation|free build|unknown faction" "$T/$f.log" | cut -c1-160 | head -${BFME_LINES:-8}
 done
