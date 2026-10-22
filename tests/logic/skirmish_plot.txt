@@ -1,0 +1,11 @@
+# Building on a camp plot: a Gondor barracks rises on a build plot by itself
+1    reveal
+200  money
+210  command player0 GondorBuildingFoundation_Lager Command_ConstructGondorBarracks
+220  objects GondorBarracks
+220  money
+900  objects GondorBarracks
+900  conditions GondorBarracks
+920  camera 2560 508 0.9 0.35
+960  screenshot
+980  quit

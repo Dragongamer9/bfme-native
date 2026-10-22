@@ -1,0 +1,12 @@
+# Heroes from the camp keep: the hero page of the keep recruits the side's heroes
+1    reveal
+5    money
+200  select player0 GondorCampBaseKeep
+205  command player0 GondorCampBaseKeep Command_PurchaseGondorAnorien
+400  command player0 GondorCampBaseKeep Command_GenericReviveSlot1
+402  money
+420  command player0 GondorCampBaseKeep Command_SelectRevivablesGondorCBK
+440  camera 2560 508 0.9 0.35
+480  screenshot
+700  objects Pippin
+720  quit
