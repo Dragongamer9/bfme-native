@@ -1,0 +1,11 @@
+# Palantir: select a barracks, click slot 1 (soldiers): a horde gets queued and built
+1  players
+5  reveal
+10 spawn GondorBarracks PlyrNeutral 1400 1600 0
+40 select PlyrNeutral GondorBarracks
+45 camera 1400 1600 0.6
+50 click 216 580
+60 screenshot
+700 screenshot
+800 summary
+810 quit
