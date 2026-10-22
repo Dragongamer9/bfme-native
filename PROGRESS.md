@@ -96,8 +96,34 @@ Rendering under SDL offscreen + Mesa lavapipe, screenshots in `docs/screens/`.
 Known: sky above the horizon is black (reflection-only dome), pale squares under Uruk-hai,
 TriggerAreas chunk format still unknown (empty on Fords of Isen).
 
+## Session 5 — the APT interface (2026-10-22)
+RotWK's UI is EA "APT" (binary Flash). A runtime for it now lives in the engine
+(`GameEngineDevice/.../Apt/`): movie loader (.apt/.const/.dat/_geometry), ActionScript VM
+(AVM1 + EA opcodes; validated on all 2396 action blocks by `tools/aptdis.py --check`),
+timeline player, builtins (MovieClip, Array, String, Math, Color, Mouse, setInterval,
+`extern`), Render2DClass/DisplayString renderer, and the game bridge (`BfmeAptUI.cpp`).
+- Palantir.apt runs in every game (BFME_NO_APT to disable) with the Edain/Völker movies,
+  sub-movies (spell book, hero bar, help box, planning mode, side bar) load through
+  loadMovie.
+- Bridge: _global.InGame, extern values, game strings ($PalantirResources ...), palantir
+  good/evil frame, minimap (W3DRadar in the globe, click to move the view), resources and
+  command points, command ring (CommandSet slots 1-6 -> CommandButton content with icons,
+  states, click runs the command via ControlBar::bfmeExecuteCommand), tooltips in the help
+  box, hero bar (portraits, health, selection, click selects), spell book (in progress).
+- APT semantics learnt the hard way: SetStringVar/Member's inline string is the value;
+  a goto to the current frame re-runs its script; attachMovie runs frame 1 at once; plain
+  shapes don't block buttons below; geometry image ids are characters (imported images
+  come from the exporting movie).
+- Tools: aptview.py (PNG preview), aptdis.py (disassembler/validator), bigls.py,
+  bigextract.py (game priority). Debug: BFME_DEBUG_APT(_CALLS/_TEXT/_IMG/_MOUSE),
+  BFME_APT_TREE=<frame>, BFME_APT_DUMP, BFME_APT_CALLS="path(args);...".
+- Harness: click/rclick/mousemove X Y, select PLAYER TEMPLATE, spellbook, science,
+  sciencepoints; 'players' marks the local player; the mouse is parked mid-screen.
+- Tests: tests/logic/render_apt*.txt (map arg: Maps/FordsIsen.map).
+
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
 2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
 3. Port gameplay modules in docs/SCOPE.md order (hordes, special powers, attribute modifiers...)
-4. Map loading for RotWK maps, then the APT (Flash) UI
+4. Spell store (purchase screen), side command bar (slots 7+), stances/formations logic
+5. Shell: main menu / skirmish setup in APT
