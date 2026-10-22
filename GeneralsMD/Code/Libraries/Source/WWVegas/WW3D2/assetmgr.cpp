@@ -723,6 +723,8 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 		** chunk.
 		*/
 		newproto = loader->Load_W3D(cload);
+		if (newproto == nullptr && getenv("BFME_DEBUG_W3D"))
+			fprintf(stderr, "[w3d] chunk %#x failed to load\n", chunk_id);	// bfme-native
 
 	} else {
 
@@ -825,6 +827,8 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 			if (++warning_count <= 20) {
 				WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 			}
+			if (getenv("BFME_DEBUG_W3D"))
+				fprintf(stderr, "[w3d] no render object '%s'\n", name);	// bfme-native
 			AssetStatusClass::Peek_Instance()->Report_Missing_RObj(name);
 		}
 		return nullptr;		// Failed to find a prototype

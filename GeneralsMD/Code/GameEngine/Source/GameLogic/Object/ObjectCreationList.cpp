@@ -40,6 +40,7 @@
 #include "Common/GlobalData.h"
 #include "Common/INI.h"
 #include "Common/Player.h"
+#include "Common/Upgrade.h"
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
@@ -884,6 +885,9 @@ public:
 			{ "MinHealth",					INI::parsePercentToReal, nullptr, offsetof(GenericObjectCreationNugget, m_minHealth) },
 			{ "MaxHealth",					INI::parsePercentToReal, nullptr, offsetof(GenericObjectCreationNugget, m_maxHealth) },
 			{ "RequiresLivePlayer",	INI::parseBool, nullptr, offsetof(GenericObjectCreationNugget, m_requiresLivePlayer) },
+			// bfme-native: RotWK upgrade conditions on the source (object or player upgrades)
+			{ "RequiredUpgrades",		INI::parseAsciiStringVectorAppend, nullptr, offsetof(GenericObjectCreationNugget, m_bfmeRequiredUpgrades) },
+			{ "ForbiddenUpgrades",	INI::parseAsciiStringVectorAppend, nullptr, offsetof(GenericObjectCreationNugget, m_bfmeForbiddenUpgrades) },
 			{ nullptr, nullptr, nullptr, 0 }
 		};
 
@@ -1334,6 +1338,12 @@ protected:
 
 		if (m_requiresLivePlayer && (!sourceObj || !sourceObj->getControllingPlayer() || !sourceObj->getControllingPlayer()->isPlayerActive()))
 			return nullptr; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
+		for (size_t u = 0; u < m_bfmeRequiredUpgrades.size(); ++u)
+			if (!bfmeSourceHasUpgrade(sourceObj, m_bfmeRequiredUpgrades[u]))
+				return nullptr;
+		for (size_t u = 0; u < m_bfmeForbiddenUpgrades.size(); ++u)
+			if (bfmeSourceHasUpgrade(sourceObj, m_bfmeForbiddenUpgrades[u]))
+				return nullptr;
 
 		// Object type debris might need this information to process visual UpgradeModules.
 		Team *debrisOwner = ThePlayerList->getNeutralPlayer() ? ThePlayerList->getNeutralPlayer()->getDefaultTeam() : nullptr;
@@ -1516,6 +1526,18 @@ private:
 	Int												m_objectCount; // how many objects will there be?
 	AudioEventRTS							m_bounceSound;
 	Bool											m_requiresLivePlayer;
+	std::vector<AsciiString>	m_bfmeRequiredUpgrades;
+	std::vector<AsciiString>	m_bfmeForbiddenUpgrades;
+	static Bool bfmeSourceHasUpgrade(const Object* src, const AsciiString& name)
+	{
+		const UpgradeTemplate* ut = TheUpgradeCenter ? TheUpgradeCenter->findUpgrade(name) : nullptr;
+		if (ut == nullptr || src == nullptr)
+			return FALSE;
+		if (src->hasUpgrade(ut))
+			return TRUE;
+		const Player* p = src->getControllingPlayer();
+		return p && p->hasUpgradeComplete(ut);
+	}
 	Bool											m_containInsideSourceObject; ///< The created stuff will be added to the Contain module of the SourceObject
 	Bool											m_preserveLayer;
 	Bool											m_nameAreObjects;

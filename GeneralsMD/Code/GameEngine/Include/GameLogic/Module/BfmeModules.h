@@ -549,3 +549,47 @@ private:
 	Int m_kind;	///< -1 not classified yet
 };
 
+//-------------------------------------------------------------------------------------------------
+/** CastleBehavior: a castle or camp site (RotWK castle maps, Edain camp flags). The site goes to
+	the player whose start position it stands on; unpacking it (CASTLE_UNPACK, paid) builds the
+	faction's base from bases/<name>/<name>.bse: the keep, walls, and the build plots that
+	FOUNDATION_CONSTRUCT turns into buildings. See BfmeCastle.cpp. */
+struct BfmeCastleEntry
+{
+	AsciiString m_faction;
+	AsciiString m_base;
+	Int m_cost;
+};
+
+class CastleBehaviorModuleData : public UpdateModuleData
+{
+public:
+	CastleBehaviorModuleData() : m_maxCastleRadius(0.0f), m_instantUnpack(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	static void parseCastleEntry(INI* ini, void* instance, void* store, const void* userData);
+	std::vector<BfmeCastleEntry> m_castles;
+	Real m_maxCastleRadius;
+	Bool m_instantUnpack;
+};
+
+class CastleBehavior : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CastleBehavior, "CastleBehavior" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CastleBehavior, CastleBehaviorModuleData )
+public:
+	CastleBehavior( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+
+	Bool isUnpacked() const { return m_unpacked; }
+	const BfmeCastleEntry* entryFor(const Player* p) const;
+	Bool unpack(Bool pay);		///< build the base; FALSE if unaffordable or no base for the owner
+	static CastleBehavior* findOn(const Object* obj);
+private:
+	Bool m_unpacked;
+};
+
+/// FOUNDATION_CONSTRUCT: start a building on a build plot; FALSE if it can't be done
+Bool bfmeFoundationConstruct(Object* foundation, const ThingTemplate* what);
+/// is a building standing (or rising) on this plot
+Bool bfmeFoundationOccupied(const Object* foundation);
+

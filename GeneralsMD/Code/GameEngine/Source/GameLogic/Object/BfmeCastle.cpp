@@ -1,0 +1,425 @@
+// bfme-native: RotWK castles and camps (CastleBehavior) and building on their plots
+// (FOUNDATION_CONSTRUCT). See BfmeModules.h.
+#include "PreRTS.h"
+
+#include "Common/BuildAssistant.h"
+#include "Common/DataChunk.h"
+#include "Common/MapReaderWriterInfo.h"
+#include "Common/Money.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
+#include "Common/PlayerTemplate.h"
+#include "Common/ThingFactory.h"
+#include "Common/ThingTemplate.h"
+#include "Common/Xfer.h"
+#include "GameClient/Drawable.h"
+#include "GameClient/TerrainVisual.h"
+#include "GameLogic/AI.h"
+#include "GameLogic/AIPathfind.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/Module/BfmeModules.h"
+#include "GameLogic/Module/BodyModule.h"
+#include "GameLogic/Module/CreateModule.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/TerrainLogic.h"
+
+static Bool debugCastle() { static const Bool d = getenv("BFME_DEBUG_CASTLE") != nullptr; return d; }
+
+//=================================================================================================
+// base files
+//=================================================================================================
+struct BfmeBaseEntry
+{
+	AsciiString m_template;
+	Coord3D m_offset;
+	Real m_angle;
+};
+
+static std::vector<BfmeBaseEntry>* s_readBase = nullptr;
+
+static Bool parseCastleTemplatesChunk(DataChunkInput &file, DataChunkInfo *info, void *)
+{
+	file.readInt();	// property key
+	const Int count = file.readInt();
+	for (Int i = 0; i < count && !file.atEndOfChunk(); ++i)
+	{
+		BfmeBaseEntry e;
+		file.readAsciiString();	// entry name
+		e.m_template = file.readAsciiString();
+		e.m_offset.x = file.readReal();
+		e.m_offset.y = file.readReal();
+		e.m_offset.z = file.readReal();
+		e.m_angle = file.readReal();
+		file.readInt();	// priority
+		file.readInt();	// phase
+		s_readBase->push_back(e);
+	}
+	return true;
+}
+
+static const std::vector<BfmeBaseEntry>* loadBase(const AsciiString& name)
+{
+	static std::map<std::string, std::vector<BfmeBaseEntry> > cache;
+	std::map<std::string, std::vector<BfmeBaseEntry> >::iterator it = cache.find(name.str());
+	if (it != cache.end())
+		return &it->second;
+	std::vector<BfmeBaseEntry>& entries = cache[name.str()];
+	AsciiString path;
+	path.format("bases\\%s\\%s.bse", name.str(), name.str());
+	CachedFileInputStream stream;
+	if (stream.open(path))
+	{
+		DataChunkInput file(&stream);
+		file.registerParser("CastleTemplates", AsciiString::TheEmptyString, parseCastleTemplatesChunk);
+		s_readBase = &entries;
+		file.parse(nullptr);
+		s_readBase = nullptr;
+	}
+	if (debugCastle())
+		fprintf(stderr, "[castle] base %s: %d entries\n", path.str(), (int)entries.size());
+	return &entries;
+}
+
+//=================================================================================================
+// CastleBehavior
+//=================================================================================================
+static void parseCastleIgnore(INI* ini, void*, void*, const void*)
+{
+	while (ini->getNextTokenOrNull() != nullptr) {}
+}
+
+void CastleBehaviorModuleData::parseCastleEntry(INI* ini, void* instance, void*, const void*)
+{
+	CastleBehaviorModuleData* self = (CastleBehaviorModuleData*)instance;
+	BfmeCastleEntry e;
+	e.m_faction = ini->getNextToken();
+	e.m_base = ini->getNextToken();
+	const char* cost = ini->getNextTokenOrNull();
+	e.m_cost = cost ? INI::scanInt(cost) : 0;
+	self->m_castles.push_back(e);
+}
+
+void CastleBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "CastleToUnpackForFaction",		parseCastleEntry,	nullptr, 0 },
+		{ "MaxCastleRadius",						INI::parseReal,		nullptr, offsetof( CastleBehaviorModuleData, m_maxCastleRadius ) },
+		{ "InstantUnpack",							INI::parseBool,		nullptr, offsetof( CastleBehaviorModuleData, m_instantUnpack ) },
+		{ "FilterValidOwnedEntries",		parseCastleIgnore,	nullptr, 0 },
+		{ "ScanDistance",								parseCastleIgnore,	nullptr, 0 },
+		{ "EvaEnemyCastleSightedEvent",	parseCastleIgnore,	nullptr, 0 },
+		{ "FadeTime",										parseCastleIgnore,	nullptr, 0 },
+		{ "KeepDeathKillsEverything",		parseCastleIgnore,	nullptr, 0 },
+		{ "PreBuiltList",								parseCastleIgnore,	nullptr, 0 },
+		{ "PreBuiltPlyr",								parseCastleIgnore,	nullptr, 0 },
+		{ "UnpackDelayTime",						parseCastleIgnore,	nullptr, 0 },
+		{ "FilterCrew",									parseCastleIgnore,	nullptr, 0 },
+		{ "CrewReleaseFX",							parseCastleIgnore,	nullptr, 0 },
+		{ "CrewPrepareFX",							parseCastleIgnore,	nullptr, 0 },
+		{ "CrewPrepareInterval",				parseCastleIgnore,	nullptr, 0 },
+		{ "Summoned",										parseCastleIgnore,	nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+CastleBehavior::CastleBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_unpacked(FALSE)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 2));
+}
+
+CastleBehavior::~CastleBehavior() {}
+void CastleBehavior::crc( Xfer *xfer ) { UpdateModule::crc(xfer); }
+void CastleBehavior::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1, v = cv;
+	xfer->xferVersion(&v, cv);
+	UpdateModule::xfer(xfer);
+	xfer->xferBool(&m_unpacked);
+}
+void CastleBehavior::loadPostProcess() { UpdateModule::loadPostProcess(); }
+
+CastleBehavior* CastleBehavior::findOn(const Object* obj)
+{
+	if (obj == nullptr)
+		return nullptr;
+	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+		if (CastleBehavior* c = dynamic_cast<CastleBehavior*>(*m))
+			return c;
+	return nullptr;
+}
+
+static Bool isRealPlayer(const Player* p)
+{
+	return p && p->isPlayableSide() && (p->getPlayerType() == PLAYER_HUMAN || p->getPlayerType() == PLAYER_COMPUTER) &&
+		p->getPlayerTemplate() != nullptr;
+}
+
+const BfmeCastleEntry* CastleBehavior::entryFor(const Player* p) const
+{
+	if (p == nullptr)
+		return nullptr;
+	const CastleBehaviorModuleData* d = getCastleBehaviorModuleData();
+	for (size_t i = 0; i < d->m_castles.size(); ++i)
+		if (d->m_castles[i].m_faction.compareNoCase(p->getSide()) == 0)
+			return &d->m_castles[i];
+	return nullptr;
+}
+
+/// the player whose start position this site stands on
+static Player* startOwnerOf(const Object* site)
+{
+	if (ThePlayerList == nullptr || TheTerrainLogic == nullptr)
+		return nullptr;
+	Player* best = nullptr;
+	Real bestD = 300.0f * 300.0f;
+	for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
+	{
+		Player* p = ThePlayerList->getNthPlayer(i);
+		if (!isRealPlayer(p) || p->getMpStartIndex() < 0)
+			continue;
+		AsciiString wp;
+		wp.format("Player_%d_Start", p->getMpStartIndex() + 1);
+		Waypoint* w = TheTerrainLogic->getWaypointByName(wp);
+		if (w == nullptr)
+			continue;
+		const Real dx = w->getLocation()->x - site->getPosition()->x, dy = w->getLocation()->y - site->getPosition()->y;
+		if (dx * dx + dy * dy < bestD)
+		{
+			bestD = dx * dx + dy * dy;
+			best = p;
+		}
+	}
+	return best;
+}
+
+UpdateSleepTime CastleBehavior::update()
+{
+	Object* me = getObject();
+	if (me->isEffectivelyDead() || m_unpacked)
+		return UPDATE_SLEEP_FOREVER;
+	Player* owner = me->getControllingPlayer();
+	if (!isRealPlayer(owner))
+	{
+		// a site on a start position belongs to that player
+		Player* p = startOwnerOf(me);
+		if (p && p->getDefaultTeam())
+		{
+			me->setTeam(p->getDefaultTeam());
+			owner = p;
+			if (debugCastle())
+				fprintf(stderr, "[castle] #%u %s goes to %s\n", me->getID(), me->getTemplate()->getName().str(),
+					TheNameKeyGenerator->keyToName(p->getPlayerNameKey()).str());
+		}
+		else
+			return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
+	}
+	// castles, the start camp (a player starts with the base on his start position) and the
+	// computer's camps unpack by themselves
+	if (getCastleBehaviorModuleData()->m_instantUnpack || TheGameLogic->getFrame() < 10 * LOGICFRAMES_PER_SECOND)
+		unpack(FALSE);
+	else if (owner->getPlayerType() == PLAYER_COMPUTER)
+		unpack(TRUE);
+	return m_unpacked ? UPDATE_SLEEP_FOREVER : UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
+}
+
+static void completeConstruction(Object* obj, Object* builder)
+{
+	obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION));
+	obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_RECONSTRUCTING));
+	obj->clearModelConditionFlags(MAKE_MODELCONDITION_MASK3(MODELCONDITION_AWAITING_CONSTRUCTION,
+		MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED));
+	obj->setConstructionPercent(CONSTRUCTION_COMPLETE);
+	if (BodyModuleInterface* body = obj->getBodyModule())
+		body->evaluateVisualCondition();
+	if (Player* player = obj->getControllingPlayer())
+	{
+		player->onStructureConstructionComplete(builder, obj, FALSE);
+		for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+			if (CreateModuleInterface* create = (*m)->getCreate())
+				create->onBuildComplete();
+	}
+	obj->handlePartitionCellMaintenance();
+	obj->updateUpgradeModules();
+}
+
+Bool CastleBehavior::unpack(Bool pay)
+{
+	Object* me = getObject();
+	Player* owner = me->getControllingPlayer();
+	if (m_unpacked || !isRealPlayer(owner))
+		return FALSE;
+	const BfmeCastleEntry* e = entryFor(owner);
+	if (e == nullptr)
+		return FALSE;
+	const std::vector<BfmeBaseEntry>* base = loadBase(e->m_base);
+	if (base->empty())
+		return FALSE;
+	if (pay)
+	{
+		if ((Int)owner->getMoney()->countMoney() < e->m_cost)
+			return FALSE;
+		owner->getMoney()->withdraw(e->m_cost);
+	}
+	m_unpacked = TRUE;
+	const Real a = me->getOrientation();
+	const Real c = Cos(a), s = Sin(a);
+	Int made = 0;
+	for (size_t i = 0; i < base->size(); ++i)
+	{
+		const BfmeBaseEntry& be = (*base)[i];
+		const ThingTemplate* t = TheThingFactory->findTemplate(be.m_template);
+		if (t == nullptr)
+			continue;
+		Coord3D pos;
+		pos.x = me->getPosition()->x + be.m_offset.x * c - be.m_offset.y * s;
+		pos.y = me->getPosition()->y + be.m_offset.x * s + be.m_offset.y * c;
+		pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);
+		const Real angle = normalizeAngle(be.m_angle + a);
+		if (t->isKindOf(KINDOF_PROP))
+		{
+			if (TheTerrainVisual)
+				TheTerrainVisual->addProp(t, &pos, angle);
+			continue;
+		}
+		Object* obj = TheThingFactory->newObject(t, owner->getDefaultTeam());
+		if (obj == nullptr)
+			continue;
+		obj->setPosition(&pos);
+		obj->setOrientation(angle);
+		obj->setProducer(me);
+		if (obj->isKindOf(KINDOF_STRUCTURE))
+		{
+			TheAI->pathfinder()->addObjectToPathfindMap(obj);
+			owner->onStructureCreated(me, obj);
+			completeConstruction(obj, me);
+		}
+		++made;
+	}
+	// the flag itself steps aside for the keep
+	me->setModelConditionState(MODELCONDITION_USER_3);
+	me->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNSELECTABLE));
+	if (debugCastle())
+		fprintf(stderr, "[castle] #%u %s unpacked %s for %s: %d objects\n", me->getID(), me->getTemplate()->getName().str(),
+			e->m_base.str(), TheNameKeyGenerator->keyToName(owner->getPlayerNameKey()).str(), made);
+	return TRUE;
+}
+
+//=================================================================================================
+// build plots
+//=================================================================================================
+struct BfmePlotBuild
+{
+	ObjectID m_plot;
+	ObjectID m_building;
+};
+static std::vector<BfmePlotBuild> s_plotBuilds;
+
+Bool bfmeFoundationOccupied(const Object* foundation)
+{
+	for (size_t i = 0; i < s_plotBuilds.size(); ++i)
+		if (s_plotBuilds[i].m_plot == foundation->getID())
+		{
+			const Object* b = TheGameLogic->findObjectByID(s_plotBuilds[i].m_building);
+			if (b && !b->isEffectivelyDead())
+				return TRUE;
+		}
+	return FALSE;
+}
+
+Bool bfmeFoundationConstruct(Object* foundation, const ThingTemplate* what)
+{
+	if (foundation == nullptr || what == nullptr || foundation->isEffectivelyDead() || bfmeFoundationOccupied(foundation))
+		return FALSE;
+	Player* owner = foundation->getControllingPlayer();
+	if (owner == nullptr || owner->getDefaultTeam() == nullptr)
+		return FALSE;
+	const Int cost = what->calcCostToBuild(owner);
+	if ((Int)owner->getMoney()->countMoney() < cost)
+		return FALSE;
+	owner->getMoney()->withdraw(cost);
+
+	Object* obj = TheThingFactory->newObject(what, owner->getDefaultTeam(), MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION));
+	if (obj == nullptr)
+		return FALSE;
+	obj->setProducer(foundation);
+	obj->setBuilder(foundation);
+	Coord3D pos = *foundation->getPosition();
+	pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);
+	obj->setPosition(&pos);
+	obj->setOrientation(foundation->getOrientation());
+	TheAI->pathfinder()->addObjectToPathfindMap(obj);
+	owner->onStructureCreated(foundation, obj);
+	obj->setConstructionPercent(0.0f);
+	if (BodyModuleInterface* body = obj->getBodyModule())
+		body->internalChangeHealth(-body->getHealth() + 1.0f);
+	obj->clearAndSetModelConditionFlags(
+		MAKE_MODELCONDITION_MASK2(MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED),
+		MAKE_MODELCONDITION_MASK(MODELCONDITION_AWAITING_CONSTRUCTION));
+
+	// the plot hides under its building
+	foundation->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNSELECTABLE));
+	if (Drawable* d = foundation->getDrawable())
+		d->setDrawableHidden(TRUE);
+	BfmePlotBuild pb;
+	pb.m_plot = foundation->getID();
+	pb.m_building = obj->getID();
+	s_plotBuilds.push_back(pb);
+	if (debugCastle())
+		fprintf(stderr, "[castle] plot #%u: %s builds %s (#%u)\n", foundation->getID(),
+			TheNameKeyGenerator->keyToName(owner->getPlayerNameKey()).str(), what->getName().str(), obj->getID());
+	return TRUE;
+}
+
+/// per logic frame: plot buildings rise by themselves; a plot comes back when its building falls
+void bfmeCastleUpdate()
+{
+	if (TheGameLogic->getFrame() == 0)
+		s_plotBuilds.clear();
+	for (size_t i = 0; i < s_plotBuilds.size(); )
+	{
+		Object* plot = TheGameLogic->findObjectByID(s_plotBuilds[i].m_plot);
+		Object* b = TheGameLogic->findObjectByID(s_plotBuilds[i].m_building);
+		if (b == nullptr || b->isEffectivelyDead())
+		{
+			if (plot && !plot->isEffectivelyDead())
+			{
+				plot->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNSELECTABLE));
+				if (Drawable* d = plot->getDrawable())
+					d->setDrawableHidden(FALSE);
+			}
+			s_plotBuilds.erase(s_plotBuilds.begin() + i);
+			continue;
+		}
+		if (b->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		{
+			const Int frames = max(1, b->getTemplate()->calcTimeToBuild(b->getControllingPlayer()));
+			b->setConstructionPercent(b->getConstructionPercent() + 100.0f / (Real)frames);
+			if (BodyModuleInterface* body = b->getBodyModule())
+				body->internalChangeHealth(body->getMaxHealth() / (Real)frames);
+			if (b->getConstructionPercent() >= 100.0f)
+				completeConstruction(b, plot);
+		}
+		++i;
+	}
+}
+
+// the control bar (Core) reaches these through hooks
+extern Bool (*g_bfmeCastleUnpackHook)(Object*);
+extern Bool (*g_bfmeFoundationConstructHook)(Object*, const ThingTemplate*);
+static Bool castleUnpackHook(Object* o)
+{
+	CastleBehavior* c = CastleBehavior::findOn(o);
+	return c && c->unpack(TRUE);
+}
+static struct BfmeCastleHooks
+{
+	BfmeCastleHooks()
+	{
+		g_bfmeCastleUnpackHook = castleUnpackHook;
+		g_bfmeFoundationConstructHook = bfmeFoundationConstruct;
+	}
+} s_bfmeCastleHooks;

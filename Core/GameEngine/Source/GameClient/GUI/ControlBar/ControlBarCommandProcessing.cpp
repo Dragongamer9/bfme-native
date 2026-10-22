@@ -163,6 +163,10 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 /** bfme-native: run a command button for the palantir (APT) interface, which has no WND gadget.
 	* 'source' drives the context (the first selected drawable), like m_currentSelectedDrawable. */
 //-------------------------------------------------------------------------------------------------
+// bfme-native: castle unpacking and plot building live in GameLogic (BfmeCastle.cpp)
+Bool (*g_bfmeCastleUnpackHook)(Object*) = nullptr;
+Bool (*g_bfmeFoundationConstructHook)(Object*, const ThingTemplate*) = nullptr;
+
 CBCommandStatus ControlBar::bfmeExecuteCommand( const CommandButton *commandButton, Drawable *source, Bool multiSelect )
 {
 	if( commandButton == nullptr )
@@ -255,6 +259,24 @@ CBCommandStatus ControlBar::processCommandButton( const CommandButton *commandBu
 	{
 
 		//---------------------------------------------------------------------------------------------
+		case GUI_COMMAND_BFME_CASTLE_UNPACK:
+		{
+			if (obj && g_bfmeCastleUnpackHook && !g_bfmeCastleUnpackHook(obj))
+			{
+				TheEva->setShouldPlay(EVA_InsufficientFunds);
+				TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
+			}
+			break;
+		}
+		case GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT:
+		{
+			if (obj && g_bfmeFoundationConstructHook && !g_bfmeFoundationConstructHook(obj, commandButton->getThingTemplate()))
+			{
+				TheEva->setShouldPlay(EVA_InsufficientFunds);
+				TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
+			}
+			break;
+		}
 		case GUI_COMMAND_DOZER_CONSTRUCT:
 		{
 
