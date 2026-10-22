@@ -14,6 +14,13 @@
 #include "GameClient/GameText.h"
 #include "GameLogic/GameLogic.h"
 #include "Common/GlobalData.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
+#include "Common/Money.h"
+#include "Common/Radar.h"
+
+#include <map>
+#include <vector>
 
 #include <chrono>
 #include <cstdio>
@@ -24,12 +31,28 @@
 namespace BfmeApt
 {
 
+static Apt::Player *s_player = nullptr;
+
 class GameHost : public Apt::Host
 {
 public:
+	std::map<std::string, std::string> dynamicText;	///< lower-case id -> text (game-supplied strings)
+	std::vector<std::string> deferred;			///< script calls to make after the current update
+
 	void onFSCommand(Apt::Player &, const std::string &cmd, const std::string &args) override
 	{
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] fscommand %s %s\n", cmd.c_str(), args.c_str());
+		const std::string c = Apt::lower(cmd);
+		// sub-movies report in; the game decides what is visible
+		if (c == "aptpalantir::onhelpboxloaded") deferred.push_back("helpBox.Hide()");
+		else if (c == "aptpalantir::onplanningmodeuiloaded") deferred.push_back("planningModeUI.Close()");
+		else if (c == "aptpalantir::onheroselectloaded") deferred.push_back("FactionFrameUI.Hide()");
+		else if (c == "onaptingamesidecommandbarloaded") deferred.push_back("SideCommandBar.FadeOut()");
+		else if (c == "aptpalantir::oninitialized")
+		{
+			deferred.push_back(std::string("SetPalantirFrameState(") + (localIsGood() ? "_good" : "_evil") + ")");
+			deferred.push_back("HideCommandInterface()");
+		}
 	}
 	Apt::Value onGameCall(Apt::Player &, const std::string &object, const std::string &method, std::vector<Apt::Value> &args) override
 	{
@@ -43,6 +66,9 @@ public:
 	}
 	Apt::Value getExtern(Apt::Player &, const std::string &name) override
 	{
+		const std::string n = Apt::lower(name);
+		if (n == "ingame") return Apt::Value::boolean(true);
+		if (n == "minlod" || n == "palantirminlod") return Apt::Value::boolean(false);
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] extern get %s\n", name.c_str());
 		return Apt::Value();
 	}
@@ -52,11 +78,12 @@ public:
 	}
 	std::string translate(const std::string &key) override
 	{
-		if (!TheGameText) return key;
-		for (const char *prefix : { "APT:", "" })
+		auto d = dynamicText.find(Apt::lower(key));
+		if (d != dynamicText.end()) return d->second;
+		if (TheGameText)
 		{
 			Bool exists = FALSE;
-			const std::string label = std::string(prefix) + key;
+			const std::string label = "APT:" + key;
 			UnicodeString u = TheGameText->fetch(label.c_str(), &exists);
 			if (exists)
 			{
@@ -64,12 +91,39 @@ public:
 				return a.str();
 			}
 		}
+		// "_level0.Movie_Thing" ids are filled by the game; nothing yet
+		if (key.find('.') != std::string::npos || (!key.empty() && key[0] == '_')) return std::string();
 		return key;
+	}
+
+	static bool localIsGood()
+	{
+		Player *p = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		if (!p) return true;
+		const std::string side = Apt::lower(p->getSide().str());
+		return !(side.find("mordor") != std::string::npos || side.find("isengard") != std::string::npos ||
+			side.find("wild") != std::string::npos || side.find("angmar") != std::string::npos);
+	}
+
+	/// per-frame game values shown by the palantir
+	void refresh()
+	{
+		Player *p = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		if (!p) return;
+		char buf[64];
+		snprintf(buf, sizeof(buf), "%u", (unsigned)p->getMoney()->countMoney());
+		dynamicText["palantirresources"] = buf;
+		const Int used = p->bfmeCommandPointsUsed(), limit = p->bfmeCommandPointLimit();
+		if (limit > 0) snprintf(buf, sizeof(buf), "%d/%d", used, limit);
+		else snprintf(buf, sizeof(buf), "%d", used);
+		dynamicText["palantircommandpoints"] = buf;
+		dynamicText["palantirresourcemultiplier"] = "";
+		snprintf(buf, sizeof(buf), "%d", 1);
+		dynamicText["playerrank"] = buf;
 	}
 };
 
 static GameHost s_host;
-static Apt::Player *s_player = nullptr;
 static bool s_tried = false;
 static std::chrono::steady_clock::time_point s_last;
 
@@ -104,7 +158,7 @@ static void runCalls(const char *spec)
 			}
 		}
 		Apt::Value r = s_player->call(path, args);
-		fprintf(stderr, "[aptui] call %s -> %s\n", call.c_str(), r.toString().c_str());
+		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] call %s -> %s\n", call.c_str(), r.toString().c_str());
 	}
 }
 
@@ -119,6 +173,34 @@ static Apt::Matrix viewMatrix()
 	return m;
 }
 
+static void dumpTree(Apt::Instance &inst, int depth, const Apt::Matrix &parent)
+{
+	if (depth > 5) return;
+	const Apt::Matrix w = inst.matrix.then(parent);
+	float x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+	inst.bounds(x0, y0, x1, y1, w);
+	fprintf(stderr, "[apttree] %*s%s [%d] type=%d vis=%d frame=%d/%d bounds=(%.0f,%.0f)-(%.0f,%.0f)\n", depth * 2, "", inst.name.empty() ? "-" : inst.name.c_str(), inst.depth,
+		inst.character ? (int)inst.character->type : -1, (int)inst.visible, inst.currentFrame, inst.totalFrames(), x0, y0, x1, y1);
+	for (auto &kv : inst.children) if (kv.second) dumpTree(*kv.second, depth + 1, w);
+}
+
+static void dumpFunctions(Apt::Instance &inst, int depth)
+{
+	if (depth > 6) return;
+	if (inst.object)
+	{
+		std::string fns;
+		for (const std::string &k : inst.object->order)
+		{
+			auto it = inst.object->props.find(k);
+			if (it != inst.object->props.end() && it->second.value.isObject() && it->second.value.o->kind == Apt::Object::FUNCTION && !it->second.value.o->native)
+				fns += " " + it->second.name;
+		}
+		if (!fns.empty()) fprintf(stderr, "[aptui] %s:%s\n", inst.targetPath().c_str(), fns.c_str());
+	}
+	for (auto &kv : inst.children) if (kv.second) dumpFunctions(*kv.second, depth + 1);
+}
+
 void draw()
 {
 	if (getenv("BFME_NO_APT")) return;
@@ -129,6 +211,9 @@ void draw()
 		s_tried = true;
 		s_player = new Apt::Player();
 		s_player->setHost(&s_host);
+		// movies run test code (fake heroes, factions ...) unless they know they are in the game
+		s_player->global()->set("InGame", Apt::Value::boolean(true));
+		s_player->global()->set("MinLOD", Apt::Value::boolean(false));
 		if (!s_player->load(movie))
 		{
 			delete s_player;
@@ -149,7 +234,30 @@ void draw()
 		s_last = now;
 		if (ms > 250) ms = 250;
 	}
+	s_host.refresh();
+	// the in-palantir video panel is only shown while a movie plays (none yet)
+	if (std::shared_ptr<Apt::Instance> mp = s_player->find("MoviePlayback"))
+		if (!mp->customDraw)
+			mp->customDraw = [](Apt::Instance &, const Apt::Matrix &, const Apt::ColorTransform &) {};
+	// the minimap draws in place of the palantir's radar placeholder
+	if (std::shared_ptr<Apt::Instance> radar = s_player->find("Radar"))
+		if (!radar->customDraw)
+			radar->customDraw = [](Apt::Instance &self, const Apt::Matrix &world, const Apt::ColorTransform &) {
+				float x0, y0, x1, y1;
+				if (!self.bounds(x0, y0, x1, y1, world) || !TheRadar) return;
+				Apt::renderFlush();
+				TheRadar->draw((Int)x0, (Int)y0, (Int)(x1 - x0), (Int)(y1 - y0));
+			};
 	s_player->update(ms);
+	for (size_t i = 0; i < s_host.deferred.size() && i < 64; ++i)
+	{
+		const std::string call = s_host.deferred[i];
+		runCalls(call.c_str());
+	}
+	s_host.deferred.clear();
+	static int s_frames = 0;
+	if (++s_frames == 30 && getenv("BFME_APT_DUMP")) dumpFunctions(*s_player->root(), 0);
+	if (s_frames == 30 && getenv("BFME_APT_TREE")) dumpTree(*s_player->root(), 0, Apt::Matrix());
 	s_player->render(viewMatrix());
 }
 

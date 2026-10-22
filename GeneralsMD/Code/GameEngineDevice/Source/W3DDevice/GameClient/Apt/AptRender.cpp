@@ -195,8 +195,15 @@ void renderText(const std::string &text, const char *font, float size, const Col
 	}
 	const float y = y0 + ((y1 - y0) - h) * 0.5f;
 	auto b = [](float v) { int i = (int)(v * 255.0f + 0.5f); return (UnsignedByte)(i < 0 ? 0 : i > 255 ? 255 : i); };
-	e.ds->draw((Int)x, (Int)(y > y0 ? y : y0), GameMakeColor(b(color.r), b(color.g), b(color.b), b(color.a)), GameMakeColor(0, 0, 0, b(color.a * 0.6f)));
+	const ::Color drop = (align & 0x200) ? GameMakeColor(0, 0, 0, b(color.a * 0.8f)) : GameMakeColor(0, 0, 0, 0);
+	e.ds->draw((Int)x, (Int)(y > y0 ? y : y0), GameMakeColor(b(color.r), b(color.g), b(color.b), b(color.a)), drop);
 	// resume triangles with whatever state comes next
+	s_current = nullptr;
+}
+
+void renderFlush()
+{
+	flush();
 	s_current = nullptr;
 }
 

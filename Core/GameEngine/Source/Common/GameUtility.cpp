@@ -61,7 +61,8 @@ bool localPlayerHasRadar()
 	if (TheRadar->isRadarForced(index))
 		return true;
 
-	if (!TheRadar->isRadarHidden(index) && player->hasRadar())
+	// bfme-native: every BFME player has the palantir minimap (no radar building / upgrade)
+	if (!TheRadar->isRadarHidden(index))
 		return true;
 
 	return false;

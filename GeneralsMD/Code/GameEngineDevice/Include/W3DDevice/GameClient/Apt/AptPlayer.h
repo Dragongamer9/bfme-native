@@ -223,6 +223,8 @@ public:
 	bool gotoLabel(Instance &clip, const std::string &label, bool play);
 	std::shared_ptr<Instance> loadMovieInto(Instance &target, const std::string &movie);
 	void queueActions(Instance &clip, int frame);
+	size_t pendingCount() const { return m_pendingActions.size(); }
+	void runPendingFrom(size_t first);
 	void queueCode(const std::shared_ptr<Instance> &clip, const Code &code);
 	void queueHandler(const std::shared_ptr<Instance> &clip, const std::string &handler);
 	void fireClipEvent(Instance &inst, unsigned flag);
@@ -272,5 +274,7 @@ void renderBegin();
 void renderTriangles(File *file, int image, const float *xy, const float *uv, int count, const Color &color, bool textured);
 void renderText(const std::string &text, const char *font, float size, const Color &color, float x0, float y0, float x1, float y1, unsigned align);
 void renderEnd();
+/// draw everything batched so far (before the game draws into the UI directly)
+void renderFlush();
 
 } // namespace Apt

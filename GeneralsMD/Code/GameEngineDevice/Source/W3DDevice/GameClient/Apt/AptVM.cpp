@@ -441,6 +441,7 @@ static Value callMethod(Context &ctx, const Value &objv, const std::string &name
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[apt] no method %s on %s\n", name.c_str(), objv.toString().c_str());
 		return Value();
 	}
+	if (getenv("BFME_DEBUG_APT_CALLS")) fprintf(stderr, "[apt] -> %s.%s\n", objv.toString().c_str(), name.c_str());
 	return ctx.player.callFunction(fn.o, o, args, ctx.depth + 1);
 }
 
@@ -452,6 +453,7 @@ static Value callNamedFunction(Context &ctx, const std::string &name, std::vecto
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[apt] no function %s\n", name.c_str());
 		return Value();
 	}
+	if (getenv("BFME_DEBUG_APT_CALLS")) fprintf(stderr, "[apt] -> %s()\n", name.c_str());
 	return ctx.player.callFunction(fn.o, ctx.self, args, ctx.depth + 1);
 }
 
@@ -938,8 +940,9 @@ void runCode(Context &ctx, const Code &code, unsigned endOffset)
 		case 0xA3: { const unsigned i = rd16(); ctx.push(i < ctx.pool.size() ? ctx.pool[i] : Value()); break; }
 		case 0xA4: { align(); std::string n = f->cstr(rd32()); ctx.push(ctx.getVariable(n)); break; }
 		case 0xA5: { align(); std::string n = f->cstr(rd32()); Value o = ctx.pop(); ctx.push(getMember(ctx, o, n)); break; }
-		case 0xA6: { align(); std::string n = f->cstr(rd32()); Value v = ctx.pop(); ctx.setVariable(n, v); break; }
-		case 0xA7: { align(); std::string n = f->cstr(rd32()); Value v = ctx.pop(); ObjRef o = toObject(ctx, ctx.pop()); if (o) o->set(n, v); break; }
+		// EA_SetStringVar / EA_SetStringMember: the inline string is the VALUE; names come off the stack
+		case 0xA6: { align(); Value v = Value::string(f->cstr(rd32())); std::string n = ctx.pop().toString(); ctx.setVariable(n, v); break; }
+		case 0xA7: { align(); Value v = Value::string(f->cstr(rd32())); std::string n = ctx.pop().toString(); ObjRef o = toObject(ctx, ctx.pop()); if (o) o->set(n, v); break; }
 		case 0xAE: { const unsigned i = rd8(); ctx.push(ctx.getVariable(poolStr(i))); break; }
 		case 0xAF: { const unsigned i = rd8(); Value o = ctx.pop(); ctx.push(getMember(ctx, o, poolStr(i))); break; }
 		case 0xB0: case 0xB1:	// CallNamedFuncPop / CallNamedFunc
