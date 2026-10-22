@@ -1,0 +1,10 @@
+# Palantir hero bar: the player's heroes get buttons with portraits and health bars; clicking one selects it
+1  players
+5  reveal
+10 spawn GondorAragorn PlyrNeutral 1400 1600 0
+10 spawn GondorBoromir PlyrNeutral 1420 1600 0
+10 spawn GondorFaramir PlyrNeutral 1440 1600 0
+40 camera 1420 1600 0.5
+60 click 316 728
+90 screenshot
+100 quit
