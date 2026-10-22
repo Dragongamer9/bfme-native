@@ -62,6 +62,47 @@
 #include "hrawanim.h"
 #include "motchan.h"
 #include "ww3d.h"
+#include "assetmgr.h"
+#include <map>
+#include <string>
+#include <vector>
+
+/*
+** bfme-native: BFME animations are shared between skeletons (e.g. GUManMocap_SKL anims on
+** soldier skeletons) and are bound to bones by name. WW3D binds by pivot index, so for an
+** animation made for another hierarchy we map our pivots to the animation's pivots by name.
+** Returns nullptr when the animation targets this hierarchy (index binding is correct).
+*/
+static const std::vector<int> *bfme_Pivot_Map(const HTreeClass *tree, HAnimClass *motion)
+{
+	const char *animTree = motion->Get_HName();
+	if (animTree == nullptr || stricmp(animTree, tree->Get_Name()) == 0)
+		return nullptr;
+	static std::map<std::string, std::vector<int> > s_maps;
+	std::string key = std::string(tree->Get_Name()) + "|" + animTree;
+	for (char &c : key) c = (char)toupper((unsigned char)c);
+	std::map<std::string, std::vector<int> >::iterator it = s_maps.find(key);
+	if (it != s_maps.end())
+		return it->second.empty() ? nullptr : &it->second;
+
+	std::vector<int> &map = s_maps[key];
+	HTreeClass *other = WW3DAssetManager::Get_Instance()->Get_HTree(animTree);
+	if (other == nullptr)
+		return nullptr;	// unknown skeleton: keep index binding
+	map.resize(tree->Num_Pivots(), -1);
+	bool identity = tree->Num_Pivots() == other->Num_Pivots();
+	for (int i = 0; i < tree->Num_Pivots(); ++i) {
+		const char *bone = tree->Get_Bone_Name(i);
+		for (int j = 0; j < other->Num_Pivots(); ++j) {
+			const char *ob = other->Get_Bone_Name(j);
+			if (bone && ob && stricmp(bone, ob) == 0) { map[i] = j; break; }
+		}
+		if (map[i] != i) identity = false;
+	}
+	if (identity)
+		map.clear();	// same layout under another name
+	return map.empty() ? nullptr : &map;
+}
 
 /***********************************************************************************************
  * HTreeClass::HTreeClass -- constructor                                                       *
@@ -566,6 +607,7 @@ void HTreeClass::Anim_Update(const Matrix3D & root,HAnimClass * motion,float fra
 	Pivot[0].IsVisible = true;
 
 	int num_anim_pivots = motion->Get_Num_Pivots ();
+	const std::vector<int> *pivotMap = bfme_Pivot_Map(this, motion);
 
 	for (int piv_idx=1; piv_idx < NumPivots; piv_idx++) {
 		pivot = &Pivot[piv_idx];
@@ -574,16 +616,17 @@ void HTreeClass::Anim_Update(const Matrix3D & root,HAnimClass * motion,float fra
 		assert(pivot->Parent != nullptr);
 		Matrix3D::Multiply(pivot->Parent->Transform, pivot->BaseTransform, &(pivot->Transform));
 
+		const int anim_idx = pivotMap ? (*pivotMap)[piv_idx] : piv_idx;
 		// Don't update this pivot if the HTree doesn't have animation data for it...
-		if (piv_idx < num_anim_pivots) {
+		if (anim_idx > 0 && anim_idx < num_anim_pivots) {
 
 			// animation
 			Vector3 trans;
-			motion->Get_Translation(trans,piv_idx,frame);
+			motion->Get_Translation(trans,anim_idx,frame);
 			pivot->Transform.Translate(trans * ScaleFactor);
 
 			Quaternion q;
-			motion->Get_Orientation(q,piv_idx,frame);
+			motion->Get_Orientation(q,anim_idx,frame);
 			::Build_Matrix3D(q,mtx);
 
 #ifdef ALLOW_TEMPORARIES
@@ -593,7 +636,7 @@ void HTreeClass::Anim_Update(const Matrix3D & root,HAnimClass * motion,float fra
 #endif
 
 			// visibility
-			pivot->IsVisible = motion->Get_Visibility(piv_idx,frame);
+			pivot->IsVisible = motion->Get_Visibility(anim_idx,frame);
 		}
 
 		if (pivot->Is_Captured())
@@ -613,6 +656,13 @@ void HTreeClass::Anim_Update_Without_Interpolation(const Matrix3D & root,HRawAni
 		// TheSuperHackers @tweak Keep the animation frame step in sync with the ww3d frame step if they can align.
 		// @todo This needs improving if the WWSyncPerSecond is changed or the animation frame rates can be larger.
 		static_assert(WWSyncPerSecond == 30, "This is currently catered to a 30 fps sync");
+		return;
+	}
+
+	if (bfme_Pivot_Map(this, motion) != nullptr)
+	{
+		// bfme-native: animation from another skeleton, bind by bone name
+		Anim_Update(root, motion, (float)WWMath::Float_To_Long(frame));
 		return;
 	}
 
@@ -718,7 +768,9 @@ void HTreeClass::Blend_Update
 	Pivot[0].Transform = root;
 	Pivot[0].IsVisible = true;
 
-	int num_anim_pivots = MIN( motion0->Get_Num_Pivots (), motion1->Get_Num_Pivots () );
+	const std::vector<int> *map0 = bfme_Pivot_Map(this, motion0);
+	const std::vector<int> *map1 = bfme_Pivot_Map(this, motion1);
+	int num_anim_pivots = (map0 || map1) ? NumPivots : MIN( motion0->Get_Num_Pivots (), motion1->Get_Num_Pivots () );
 
 	for (int piv_idx=1; piv_idx < NumPivots; piv_idx++) {
 
@@ -727,20 +779,22 @@ void HTreeClass::Blend_Update
 		assert(pivot->Parent != nullptr);
 		Matrix3D::Multiply(pivot->Parent->Transform,pivot->BaseTransform,&(pivot->Transform));
 
-		if (piv_idx < num_anim_pivots) {
+		const int a0 = map0 ? (*map0)[piv_idx] : piv_idx;
+		const int a1 = map1 ? (*map1)[piv_idx] : piv_idx;
+		if (piv_idx < num_anim_pivots && a0 > 0 && a0 < motion0->Get_Num_Pivots() && a1 > 0 && a1 < motion1->Get_Num_Pivots()) {
 			// interpolated translation
 			Vector3 trans0;
-			motion0->Get_Translation(trans0,piv_idx,frame0);
+			motion0->Get_Translation(trans0,a0,frame0);
 			Vector3 trans1;
-			motion1->Get_Translation(trans1,piv_idx,frame1);
+			motion1->Get_Translation(trans1,a1,frame1);
 			Vector3 lerped = (1.0 - percentage) * trans0 + (percentage) * trans1;
 			pivot->Transform.Translate(lerped * ScaleFactor);
 
 			// interpolated rotation
 			Quaternion q0;
-			motion0->Get_Orientation(q0,piv_idx,frame0);
+			motion0->Get_Orientation(q0,a0,frame0);
 			Quaternion q1;
-			motion1->Get_Orientation(q1,piv_idx,frame1);
+			motion1->Get_Orientation(q1,a1,frame1);
 			Quaternion q;
 			Fast_Slerp(q,q0,q1,percentage);
 #ifdef ALLOW_TEMPORARIES
@@ -749,7 +803,7 @@ void HTreeClass::Blend_Update
 			pivot->Transform.postMul(Build_Matrix3D(q,mtx));
 #endif
 
-			pivot->IsVisible = (motion0->Get_Visibility(piv_idx,frame0) || motion1->Get_Visibility(piv_idx,frame1));
+			pivot->IsVisible = (motion0->Get_Visibility(a0,frame0) || motion1->Get_Visibility(a1,frame1));
 		}
 
 		if (pivot->Is_Captured())
