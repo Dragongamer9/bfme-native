@@ -1,0 +1,9 @@
+# APT palantir input: minimap click moves the camera; clicks on the interface don't reach the world
+1  players
+5  reveal
+30 screenshot
+40 click 120 640
+50 screenshot
+60 click 60 610
+70 screenshot
+80 quit
