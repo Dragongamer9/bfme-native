@@ -345,10 +345,14 @@ void GameLogic::prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rank
 	{
 		m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");
 		DEBUG_ASSERTCRASH(m_background,("We Couldn't Load Menus/BlankWindow.wnd"));
-		m_background->hide(FALSE);
-		m_background->bringForward();
+		if (m_background)	// bfme-native: RotWK has no Menus/BlankWindow.wnd
+		{
+			m_background->hide(FALSE);
+			m_background->bringForward();
+		}
 	}
-	m_background->getFirstWindow()->winClearStatus(WIN_STATUS_IMAGE);
+	if (m_background && m_background->getFirstWindow())
+		m_background->getFirstWindow()->winClearStatus(WIN_STATUS_IMAGE);
 	setGameMode( gameMode );
 	if (!TheGlobalData->m_pendingFile.isEmpty())
 	{

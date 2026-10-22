@@ -3457,7 +3457,11 @@ void operator delete[](void * p, const char *, int)
 void *operator new(size_t size, std::align_val_t alignment)
 {
 	void *p = nullptr;
-	if (::posix_memalign(&p, static_cast<size_t>(alignment), size) != 0)
+	// bfme-native: posix_memalign rejects alignments below sizeof(void*) (LLVM asks for 4)
+	size_t align = static_cast<size_t>(alignment);
+	if (align < sizeof(void*))
+		align = sizeof(void*);
+	if (::posix_memalign(&p, align, size ? size : 1) != 0)
 		throw std::bad_alloc();
 	return p;
 }
@@ -3465,7 +3469,11 @@ void *operator new(size_t size, std::align_val_t alignment)
 void *operator new[](size_t size, std::align_val_t alignment)
 {
 	void *p = nullptr;
-	if (::posix_memalign(&p, static_cast<size_t>(alignment), size) != 0)
+	// bfme-native: posix_memalign rejects alignments below sizeof(void*) (LLVM asks for 4)
+	size_t align = static_cast<size_t>(alignment);
+	if (align < sizeof(void*))
+		align = sizeof(void*);
+	if (::posix_memalign(&p, align, size ? size : 1) != 0)
 		throw std::bad_alloc();
 	return p;
 }

@@ -2035,7 +2035,11 @@ void InGameUI::update()
 //
 //	}  // end if
 	Player* moneyPlayer = TheControlBar->getCurrentlyViewedPlayer();
-	if( moneyPlayer)
+	if( moneyWin == nullptr || powerWin == nullptr )
+	{
+		// bfme-native: RotWK has no ControlBar.wnd money/power windows (APT UI)
+	}
+	else if( moneyPlayer)
 	{
 		Money *money = moneyPlayer->getMoney();
 		Bool wantShowIncome = TheGlobalData->m_showMoneyPerMinute;

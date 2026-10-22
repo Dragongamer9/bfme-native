@@ -401,6 +401,9 @@ inline Int64 getPerformanceCounterFrequency()
 // W3DDisplay::W3DDisplay =====================================================
 /** */
 //=============================================================================
+static Int s_bfmePendingShots = 0;	// bfme-native
+static ScreenshotFormat s_bfmePendingFormat = SCREENSHOT_PNG;
+
 W3DDisplay::W3DDisplay()
 {
 	Int i;
@@ -2257,6 +2260,9 @@ AGAIN:
 		{
 			//USE_PERF_TIMER(BigAssRenderLoop)
 			static Bool couldRender = true;
+			if (getenv("BFME_DEBUG_RENDER") && TheGameLogic->getFrame() % 30 == 0)
+				fprintf(stderr, "[render] frame %u breakMovie=%d disable=%d loadScreen=%d\n", TheGameLogic->getFrame(),
+					(int)TheGlobalData->m_breakTheMovie, (int)TheGlobalData->m_disableRender, (int)TheGlobalData->m_loadScreenRender);
 			if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render( true, true, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity ) == WW3D_ERROR_OK)
 			{
 
@@ -2367,6 +2373,12 @@ AGAIN:
 					m_profilerFrameCapture->Capture(getWidth(), getHeight());
 				}
 #endif
+				// bfme-native: grab requested screenshots while the frame is still in the back buffer
+				if (s_bfmePendingShots > 0)
+				{
+					--s_bfmePendingShots;
+					W3D_TakeCompressedScreenshot(s_bfmePendingFormat, DEFAULT_JPEG_QUALITY);
+				}
 				// render is all done!
 				WW3D::End_Render();
 			}
@@ -3356,7 +3368,9 @@ void W3DDisplay::toggleMovieCapture()
 
 void W3DDisplay::takeScreenShot(ScreenshotFormat format, Int jpegQuality)
 {
-	W3D_TakeCompressedScreenshot(format, jpegQuality);
+	// bfme-native: taken at the end of the next drawn frame (after Present the back buffer is gone)
+	s_bfmePendingFormat = format;
+	++s_bfmePendingShots;
 }
 
 

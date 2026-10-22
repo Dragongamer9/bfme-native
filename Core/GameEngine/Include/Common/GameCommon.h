@@ -105,20 +105,17 @@ inline Real ConvertAngularVelocityInDegreesPerSecToRadsPerFrame(Real degPerSec)
 // ----------------------------------------------------------------------------------------------
 enum
 {
-	MAX_PLAYER_COUNT = 16											///< max number of Players.
+	MAX_PLAYER_COUNT = 32											///< max number of Players. bfme-native: RotWK maps carry 16 sides plus the observer
 };
 
 // ----------------------------------------------------------------------------------------------
 /**
 	a bitmask that can uniquely represent each player.
 */
-#if MAX_PLAYER_COUNT <= 16
-	typedef UnsignedShort PlayerMaskType;
-	const PlayerMaskType PLAYERMASK_ALL = 0xffff;
+	typedef UnsignedInt PlayerMaskType;	// bfme-native: 32 players
+	const PlayerMaskType PLAYERMASK_ALL = 0xffffffff;
 	const PlayerMaskType PLAYERMASK_NONE = 0x0;
-#else
-	#error "this is the wrong size"
-#endif
+	static_assert(MAX_PLAYER_COUNT <= 32, "PlayerMaskType is 32 bits");
 
 // ----------------------------------------------------------------------------------------------
 enum

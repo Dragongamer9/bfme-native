@@ -77,7 +77,11 @@ static void screenshotThreadFunc(ScreenshotThreadData* data)
 	// to keep the user data root folder tidy.
 	char pathname[_MAX_PATH];
 	strlcpy(pathname, data->userDataDirectory, ARRAY_SIZE(pathname));
+#ifdef _WIN32
 	strlcat(pathname, "Screenshots\\", ARRAY_SIZE(pathname));
+#else
+	strlcat(pathname, "Screenshots/", ARRAY_SIZE(pathname));	// bfme-native
+#endif
 #ifdef _WIN32
 	CreateDirectory(pathname, nullptr);
 #else
@@ -169,6 +173,8 @@ void W3D_UpdateScreenshotMessages()
 	}
 }
 
+static unsigned int s_bfmeShotCounter = 0;
+
 void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 {
 	static constexpr const char* const ScreenshotFormatExtensions[] = { "jpg", "png" };
@@ -181,7 +187,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	sprintf(leafname, "sshot_%04d%02d%02d_%02d%02d%02d_%03d.%s",
-		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
+		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, (int)(s_bfmeShotCounter++ % 1000), extension);	// bfme-native: unique names
 
 	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
 	// Originally this code took the front buffer and tried to lock it. This does not work when the

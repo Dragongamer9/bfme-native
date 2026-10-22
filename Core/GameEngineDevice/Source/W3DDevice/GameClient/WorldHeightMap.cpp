@@ -1115,11 +1115,15 @@ void WorldHeightMap::readTexClass(TXTextureClass *texClass, TileData **tileData)
 		theFile = TheFileSystem->openFile( texturePath, File::READ|File::BINARY);
 	}
 
+	if (getenv("BFME_DEBUG_TERRAIN"))
+		fprintf(stderr, "[terrain] class '%s' file %s (want %d tiles)\n", texClass->name.str(), theFile ? "found" : "MISSING", texClass->numTiles);
 	if (theFile != nullptr) {
 		GDIFileStream theStream(theFile);
 		InputStream *pStr = &theStream;
 		Bool isLegacyGrid = false;
 		Int numTiles = WorldHeightMap::countTiles(pStr, nullptr, texClass->numTiles, &isLegacyGrid);
+		if (getenv("BFME_DEBUG_TERRAIN"))
+			fprintf(stderr, "[terrain]   -> %d tiles in file\n", numTiles);
 		theFile->seek(0, File::START);
 		if (numTiles >= texClass->numTiles) {
 			numTiles = texClass->numTiles;

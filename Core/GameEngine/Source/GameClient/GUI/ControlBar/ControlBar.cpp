@@ -182,6 +182,7 @@ Relationship ControlBar::getCurrentlyViewedPlayerRelationship(const Team* team)
 
 void ControlBar::populatePurchaseScience( Player* player )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 //	TheInGameUI->deselectAllDrawables();
 
 	const CommandSet *commandSet1;
@@ -484,6 +485,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::updateContextPurchaseScience()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	GameWindow *win =nullptr;
 	Player *player = ThePlayerList->getLocalPlayer();
 	win = TheWindowManager->winGetWindowFromId( m_contextParent[ CP_PURCHASE_SCIENCE ], TheNameKeyGenerator->nameToKey( "GeneralsExpPoints.wnd:ProgressBarExperience" ) );
@@ -1112,7 +1114,8 @@ void ControlBar::init()
 
 	//Added this check because the builder uses the ControlBar, but doesn't care about
 	//the GUI.
-	if( TheWindowManager )
+	// bfme-native: RotWK has no ControlBar.wnd (its UI is APT/Flash); skip the Generals control bar
+	if( TheWindowManager && TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ControlBarParent" ) ) )
 	{
 		//
 		// the control bar has several windows that make up our context sensitive interface, we
@@ -1431,6 +1434,7 @@ void ControlBar::reset()
 //-------------------------------------------------------------------------------------------------
 void ControlBar::update()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if (TheGlobalData->m_headless)
 		return;
 	getStarImage();
@@ -1664,6 +1668,7 @@ void ControlBar::update()
 //-------------------------------------------------------------------------------------------------
 void ControlBar::onDrawableSelected( Drawable *draw )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	// set a dirty flag so next time we update we can reconstruct the UI
 	markUIDirty();
@@ -1678,6 +1683,7 @@ void ControlBar::onDrawableSelected( Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::onDrawableDeselected( Drawable *draw )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	// set a dirty flag so next time we update we can reconstruct the UI
 	markUIDirty();
@@ -1738,6 +1744,7 @@ const Image *ControlBar::getStarImage()
 //-------------------------------------------------------------------------------------------------
 void ControlBar::onPlayerRankChanged(const Player *p)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if (!p->isLocalPlayer())
 		return;
 
@@ -1756,6 +1763,7 @@ void ControlBar::onPlayerRankChanged(const Player *p)
 //-------------------------------------------------------------------------------------------------
 void ControlBar::onPlayerSciencePurchasePointsChanged(const Player *p)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if (!p->isLocalPlayer())
 		return;
 	if(!(m_lastFlashedAtPointValue > ThePlayerList->getLocalPlayer()->getSciencePurchasePoints()))
@@ -1776,6 +1784,7 @@ void ControlBar::onPlayerSciencePurchasePointsChanged(const Player *p)
 //-------------------------------------------------------------------------------------------------
 void ControlBar::evaluateContextUI()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	//
 	// the UI has been "evaluated" and is now displaying the most current and correct
@@ -2195,6 +2204,7 @@ CBCommandStatus ControlBar::processContextSensitiveButtonTransition( GameWindow 
 //-------------------------------------------------------------------------------------------------
 void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	// restore the right hud to a plain window
 	setPortraitByObject( nullptr );
@@ -2458,6 +2468,7 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 
 void ControlBar::setCommandBarBorder( GameWindow *button, CommandButtonMappedBorderType type)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!button)
 		return;
 
@@ -2500,6 +2511,7 @@ void ControlBar::setCommandBarBorder( GameWindow *button, CommandButtonMappedBor
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setControlCommand( GameWindow *button, const CommandButton *commandButton )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	// the window must be a gadget button
 	if( button->winGetInputFunc() != GadgetPushButtonInput )
@@ -2610,6 +2622,7 @@ void ControlBar::postProcessCommands()
 void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWindow *parent,
 																		const CommandButton *commandButton )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	UnsignedInt winID = TheNameKeyGenerator->nameToKey( buttonWindowName );
 	GameWindow *win = TheWindowManager->winGetWindowFromId( parent, winID );
 
@@ -2631,6 +2644,7 @@ void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWin
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setPortraitByImage( const Image *image )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	if( image )
 	{
@@ -2664,6 +2678,7 @@ void ControlBar::setPortraitByImage( const Image *image )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::setPortraitByObject( Object *obj )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	if( obj )
 	{
@@ -2766,6 +2781,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 // ------------------------------------------------------------------------------------------------
 void ControlBar::showRallyPoint(const Coord3D* loc)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	// if loc is null, destroy any rally point drawable we have shown
 	if (loc == nullptr)
 	{
@@ -2827,6 +2843,7 @@ void ControlBar::showRallyPoint(const Coord3D* loc)
 // ------------------------------------------------------------------------------------------------
 void ControlBar::setControlBarSchemeByPlayer(Player *p)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_controlBarSchemeManager)
 		m_controlBarSchemeManager->setControlBarSchemeByPlayer(p);
 
@@ -2872,6 +2889,7 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 
 void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_controlBarSchemeManager)
 		m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(pt);
 
@@ -2919,6 +2937,7 @@ void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 
 void ControlBar::setControlBarSchemeByName(const AsciiString& name)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_controlBarSchemeManager)
 		m_controlBarSchemeManager->setControlBarScheme( name );
 		switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
@@ -2933,6 +2952,7 @@ void ControlBar::preloadAssets( TimeOfDay timeOfDay )
 
 void ControlBar::updateBuildQueueDisabledImages( const Image *image )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!image)
 		return;
 	// We have to do this because the build queue data might have been reset
@@ -2973,6 +2993,7 @@ void ControlBar::updateBuildQueueDisabledImages( const Image *image )
 
 void ControlBar::updateRightHUDImage( const Image *image )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!m_rightHUDWindow || !image)
 		return;
 	m_rightHUDWindow->winSetEnabledImage(0, image);
@@ -2981,6 +3002,7 @@ void ControlBar::updateRightHUDImage( const Image *image )
 
 void ControlBar::updateBuildUpClockColor( Color color)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	m_buildUpClockColor = color;
 }
 
@@ -2988,6 +3010,7 @@ void ControlBar::updateBuildUpClockColor( Color color)
 
 void ControlBar::updateCommandBarBorderColors(Color build, Color action, Color upgrade, Color system )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	m_commandButtonBorderBuildColor = build;
 	m_commandButtonBorderActionColor = action;
 	m_commandButtonBorderUpgradeColor = upgrade;
@@ -2998,6 +3021,7 @@ void ControlBar::updateCommandBarBorderColors(Color build, Color action, Color u
 // hides the communicator button
 void ControlBar::hideCommunicator( Bool b )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	//sanity
 	if( m_communicatorButton != nullptr )
 		m_communicatorButton->winHide( b );
@@ -3008,6 +3032,7 @@ void ControlBar::hideCommunicator( Bool b )
 // context
 void ControlBar::updatePurchaseScience()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 //	if(m_generalsScreenAnimate && TheGlobalData->m_animateWindows)
 //	{
 //		Bool wasFinished = m_generalsScreenAnimate->isFinished();
@@ -3019,6 +3044,7 @@ void ControlBar::updatePurchaseScience()
 
 void ControlBar::showPurchaseScience()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 
 	if(TheScriptEngine->isGameEnding())
 		return;
@@ -3036,6 +3062,7 @@ void ControlBar::showPurchaseScience()
 
 void ControlBar::hidePurchaseScience()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_contextParent[ CP_PURCHASE_SCIENCE ]->winIsHidden())
 		return;
 
@@ -3061,6 +3088,7 @@ void ControlBar::hidePurchaseScience()
 
 void ControlBar::togglePurchaseScience()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_contextParent[ CP_PURCHASE_SCIENCE ]->winIsHidden())
 		showPurchaseScience();
 	else
@@ -3069,6 +3097,7 @@ void ControlBar::togglePurchaseScience()
 
 void ControlBar::toggleControlBarStage()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_currentControlBarStage == CONTROL_BAR_STAGE_DEFAULT )
 		switchControlBarStage(CONTROL_BAR_STAGE_LOW);
 	else
@@ -3078,6 +3107,7 @@ void ControlBar::toggleControlBarStage()
 // Functions for repositioning/resizing the control bar
 void ControlBar::switchControlBarStage( ControlBarStages stage )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(stage < CONTROL_BAR_STAGE_DEFAULT || stage >= MAX_CONTROL_BAR_STAGES)
 		return;
 	switch (stage) {
@@ -3100,6 +3130,7 @@ void ControlBar::switchControlBarStage( ControlBarStages stage )
 }
 void ControlBar::setDefaultControlBarConfig()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 //	if(m_currentControlBarStage == CONTROL_BAR_STAGE_SQUISHED)
 //	{
 //		m_controlBarResizer->sizeWindowsDefault();
@@ -3116,6 +3147,7 @@ void ControlBar::setDefaultControlBarConfig()
 
 void ControlBar::setSquishedControlBarConfig()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(m_currentControlBarStage == CONTROL_BAR_STAGE_SQUISHED)
 		return;
 	m_currentControlBarStage = CONTROL_BAR_STAGE_SQUISHED;
@@ -3129,6 +3161,7 @@ void ControlBar::setSquishedControlBarConfig()
 
 void ControlBar::setLowControlBarConfig()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 //	if(m_currentControlBarStage == CONTROL_BAR_STAGE_SQUISHED)
 //	{
 //		m_controlBarResizer->sizeWindowsDefault();
@@ -3148,6 +3181,7 @@ void ControlBar::setLowControlBarConfig()
 
 void ControlBar::setHiddenControlBar()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	m_currentControlBarStage = CONTROL_BAR_STAGE_HIDDEN;
 	m_contextParent[ CP_MASTER ]->winHide(TRUE);
 }
@@ -3165,6 +3199,7 @@ void ControlBar::setHiddenControlBar()
 //
 void ControlBar::updateCommandMarkerImage( const Image *image )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	// removed from multiplayer branch
 
 //	// we don't mind if the image is null, that way we can not draw anything
@@ -3176,6 +3211,7 @@ void ControlBar::updateCommandMarkerImage( const Image *image )
 }
 void ControlBar::updateSlotExitImage( const Image *image )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	//Hardcoding values here Not a good thing but there's no other way right now.
 	if(!image)
 		return;
@@ -3211,6 +3247,7 @@ void ControlBar::updateUpDownImages( const Image *toggleButtonUpIn, const Image 
 																		 const Image *toggleButtonDownIn, const Image *toggleButtonDownOn, const Image *toggleButtonDownPushed,
 																		 const Image *generalButtonEnable, const Image *generalButtonHighlight  )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	m_toggleButtonUpIn = toggleButtonUpIn;
 	m_toggleButtonUpOn = toggleButtonUpOn;
 	m_toggleButtonUpPushed = toggleButtonUpPushed;
@@ -3227,6 +3264,7 @@ void ControlBar::updateUpDownImages( const Image *toggleButtonUpIn, const Image 
 
 void ControlBar::setUpDownImages()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	GameWindow *win= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonLarge" ) );
 	if(!win)
 		return;
@@ -3247,17 +3285,20 @@ void ControlBar::setUpDownImages()
 
 void ControlBar::getForegroundMarkerPos(Int *x, Int *y)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	*x = m_controlBarForegroundMarkerPos.x;
 	*y = m_controlBarForegroundMarkerPos.y;
 }
 void ControlBar::getBackgroundMarkerPos(Int *x, Int *y)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	*x = m_controlBarBackgroundMarkerPos.x;
 	*y = m_controlBarBackgroundMarkerPos.y;
 }
 
 void ControlBar::drawTransitionHandler()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 //	if(m_transitionHandler)
 //		m_transitionHandler->draw();
 }
@@ -3268,6 +3309,7 @@ enum{
 
 void ControlBar::triggerRadarAttackGlow()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!m_radarAttackGlowWindow)
 		return;
 	m_radarAttackGlowOn = TRUE;
@@ -3297,6 +3339,7 @@ void ControlBar::updateRadarAttackGlow ()
 }
 void ControlBar::initSpecialPowershortcutBar( Player *player)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	Int i = 0;
 	for( ; i < MAX_SPECIAL_POWER_SHORTCUTS; ++i )
 	{
@@ -3359,6 +3402,7 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 
 void ControlBar::populateSpecialPowerShortcut( Player *player)
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	const CommandSet *commandSet;
 	Int i;
 	if(!player || !player->getPlayerTemplate() ||
@@ -3641,6 +3685,7 @@ Bool ControlBar::canShowSpecialPowerShortcut() const
 //-------------------------------------------------------------------------------------------------
 void ControlBar::updateSpecialPowerShortcut()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!m_specialPowerShortcutParent || !m_specialPowerShortcutButtons ||
 	   !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
@@ -3768,6 +3813,7 @@ void ControlBar::updateSpecialPowerShortcut()
 //-------------------------------------------------------------------------------------------------
 void ControlBar::drawSpecialPowerShortcutMultiplierText()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	for( Int i = 0; i < m_currentlyUsedSpecialPowersButtons; i++ )
 	{
 		GameWindow *win;
@@ -3823,6 +3869,7 @@ void ControlBar::drawSpecialPowerShortcutMultiplierText()
 
 void ControlBar::animateSpecialPowerShortcut( Bool isOn )
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!m_specialPowerShortcutParent || !m_animateWindowManagerForGenShortcuts || !m_currentlyUsedSpecialPowersButtons)
 		return;
 	Bool dontAnimate = TRUE;
@@ -3850,6 +3897,7 @@ void ControlBar::animateSpecialPowerShortcut( Bool isOn )
 
 void ControlBar::showSpecialPowerShortcut()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(TheScriptEngine->isGameEnding() || !m_specialPowerShortcutParent ||
 		!m_specialPowerShortcutButtons || !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
@@ -3871,6 +3919,7 @@ void ControlBar::showSpecialPowerShortcut()
 
 void ControlBar::hideSpecialPowerShortcut()
 {
+	if (m_contextParent[ CP_MASTER ] == nullptr) return;	// bfme-native: no Generals control bar (RotWK UI is APT)
 	if(!m_specialPowerShortcutParent)
 		return;
 

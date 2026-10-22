@@ -1386,10 +1386,10 @@ void Radar::xfer( Xfer *xfer )
 	}
 	else
 	{
-		static_assert(sizeof(m_radarHidden) == 16, "Increase version if size changes");
+		static_assert(sizeof(m_radarHidden) == MAX_PLAYER_COUNT, "Increase version if size changes");
 		xfer->xferUser(&m_radarHidden, sizeof(m_radarHidden));
 
-		static_assert(sizeof(m_radarForceOn) == 16, "Increase version if size changes");
+		static_assert(sizeof(m_radarForceOn) == MAX_PLAYER_COUNT, "Increase version if size changes");
 		xfer->xferUser(&m_radarForceOn, sizeof(m_radarForceOn));
 	}
 
