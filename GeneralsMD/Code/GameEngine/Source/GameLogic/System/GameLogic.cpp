@@ -684,6 +684,9 @@ static void placeNetworkBuildingsForPlayer(Int slotNum, const GameSlot *pSlot, P
 // ------------------------------------------------------------------------------------------------
 LoadScreen *GameLogic::getLoadScreen( Bool loadingSaveGame )
 {
+	// bfme-native: the Generals load screens are .wnd layouts RotWK doesn't have (its UI is APT)
+	if (TheWindowManager && TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ControlBarParent" ) ) == nullptr)
+		return nullptr;
 	switch (m_gameMode)
 	{
 	case GAME_SHELL:
@@ -1917,8 +1920,11 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 
 	// reveal the map for the permanent observer
 	Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
-	ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
-	DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
+	if (observerPlayer)	// bfme-native: not every map/game mode creates one
+	{
+		ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
+		DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
+	}
 
 	if (TheGameInfo)
 	{
@@ -2539,6 +2545,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 	HideControlBar();
 #endif
 	TheWritableGlobalData->m_loadScreenRender = FALSE;	///< mark to resume rendering as normal
+	TheWritableGlobalData->m_breakTheMovie = FALSE;	// bfme-native: normally cleared by the (Generals) load screen we skip
 
 	// if we're in a gamespy game, mark us as playing
 	if (TheGameSpyBuddyMessageQueue && TheGameSpyGame && isInInternetGame())

@@ -221,6 +221,33 @@ char const * GameFileClass::Set_Name( char const *filename )
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 	}
 
+	// bfme-native: RotWK keeps art in two-letter subfolders: Art/W3D/xx/name.w3d,
+	// Art/CompiledTextures/xx/name.dds (textures are DDS whatever the model asks for), Art/Terrain/
+	if( m_fileExists == FALSE && strlen(filename) >= 2 && !strchr(filename, '/') && !strchr(filename, '\\') )
+	{
+		char prefix[3] = { (char)tolower((unsigned char)filename[0]), (char)tolower((unsigned char)filename[1]), 0 };
+		if( fileType == FILE_TYPE_W3D )
+		{
+			snprintf(m_filePath, ARRAY_SIZE(m_filePath), "Art/W3D/%s/%s", prefix, filename);
+			m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+		}
+		else if( isImageFileType(fileType) )
+		{
+			char base[_MAX_PATH];
+			strlcpy(base, filename, ARRAY_SIZE(base));
+			char* dot = strrchr(base, '.');
+			if (dot)
+				*dot = 0;
+			snprintf(m_filePath, ARRAY_SIZE(m_filePath), "Art/CompiledTextures/%s/%s.dds", prefix, base);
+			m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+			if( m_fileExists == FALSE )
+			{
+				snprintf(m_filePath, ARRAY_SIZE(m_filePath), "Art/Terrain/%s", filename);
+				m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+			}
+		}
+	}
+
 
 
 	// maintain legacy compatibility directories for now

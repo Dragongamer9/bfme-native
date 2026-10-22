@@ -16,6 +16,8 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Money.h"
+#include "GameClient/View.h"
+#include "GameClient/Display.h"
 #include "GameLogic/Stances.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "Common/BuildAssistant.h"
@@ -409,6 +411,29 @@ void run(const TestCmd& c)
 				continue;
 			const Bool ok = sb->setStance(c.args[3] == "none" ? AsciiString::TheEmptyString : AsciiString(c.args[3].c_str()));
 			printf("[BFMETEST] stance #%u %s -> %s ok=%d\n", o->getID(), c.args[2].c_str(), c.args[3].c_str(), (int)ok);
+		}
+	}
+	else if (op == "screenshot")
+	{
+		// screenshot : PNG of the current frame into the user data dir (rendering builds only)
+		if (TheDisplay)
+		{
+			TheDisplay->takeScreenShot(SCREENSHOT_PNG);
+			printf("[BFMETEST] screenshot frame=%u\n", TheGameLogic->getFrame());
+		}
+	}
+	else if (op == "camera" && c.args.size() >= 3)
+	{
+		// camera X Y [ZOOM] : look at a point
+		if (TheTacticalView)
+		{
+			Coord3D pos;
+			pos.x = (Real)atof(c.args[1].c_str());
+			pos.y = (Real)atof(c.args[2].c_str());
+			pos.z = 0.0f;
+			TheTacticalView->lookAt(&pos);
+			if (c.args.size() >= 4)
+				TheTacticalView->setZoom((Real)atof(c.args[3].c_str()));
 		}
 	}
 	else if (op == "money")
