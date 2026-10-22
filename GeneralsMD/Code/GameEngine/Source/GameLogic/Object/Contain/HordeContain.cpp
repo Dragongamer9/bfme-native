@@ -9,6 +9,9 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/HordeContain.h"
+#include "GameClient/FXList.h"
+#include "GameLogic/ExperienceTracker.h"
+#include "GameLogic/Module/BfmeModules.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/TerrainLogic.h"
@@ -25,11 +28,14 @@ HordeContainModuleData::HordeContainModuleData() :
 	m_meleeAttackLeashDistance(0.0f),
 	m_thisFormationIsTheMainFormation(FALSE),
 	m_minimumHordeSize(0),
+	m_bannerMinLevel(0),
 	m_unusedReal(0.0f),
 	m_unusedBool(FALSE),
 	m_unusedInt(0)
 {
 	m_randomOffset.x = m_randomOffset.y = 0.0f;
+	m_bannerPos.x = -999999.0f;
+	m_bannerPos.y = 0.0f;
 	m_unusedCoord.zero();
 }
 
@@ -106,6 +112,25 @@ void HordeContainModuleData::parseLine(INI* ini, void* /*instance*/, void* /*sto
 	while (ini->getNextTokenOrNull()) {}
 }
 
+/// "BannerCarrierPosition = UnitType:X Pos:X:70.0 Y:0.0" (one per member type; the first one is used)
+void HordeContainModuleData::parseBannerPosition(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
+{
+	HordeContainModuleData* self = (HordeContainModuleData*)instance;
+	Coord2D pos;
+	pos.x = pos.y = 0.0f;
+	for (const char* tok = ini->getNextTokenOrNull(); tok; tok = ini->getNextTokenOrNull())
+	{
+		if (strncmp(tok, "Pos:X:", 6) == 0)
+			pos.x = (Real)atof(tok + 6);
+		else if (strncmp(tok, "X:", 2) == 0)
+			pos.x = (Real)atof(tok + 2);
+		else if (strncmp(tok, "Y:", 2) == 0)
+			pos.y = (Real)atof(tok + 2);
+	}
+	if (self->m_bannerPos.x < -99999.0f)
+		self->m_bannerPos = pos;
+}
+
 void HordeContainModuleData::parseSubBlock(INI* ini, void* /*instance*/, void* /*store*/, const void* /*userData*/)
 {
 	// "MeleeBehavior = Amoeba ... End": a nested block we don't use yet
@@ -134,10 +159,10 @@ void HordeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "AttributeModifiers",							INI::parseAsciiStringVectorAppend, nullptr, offsetof( HordeContainModuleData, m_attributeModifiers ) },
 		{ "BannerCarriersAllowed",					INI::parseAsciiStringVectorAppend, nullptr, offsetof( HordeContainModuleData, m_bannerCarriersAllowed ) },
 		{ "MinimumHordeSize",								INI::parseInt,				nullptr, offsetof( HordeContainModuleData, m_minimumHordeSize ) },
-		{ "BannerCarrierPosition",					parseLine,						nullptr, 0 },
+		{ "BannerCarrierPosition",					parseBannerPosition,	nullptr, 0 },
 		{ "BannerCarrierDestroyHordeOnDeath", INI::parseBool,			nullptr, offsetof( HordeContainModuleData, m_unusedBool ) },
 		{ "BannerCarrierHordeDeathType",		parseLine,						nullptr, 0 },
-		{ "BannerCarrierMinLevel",					parseLine,						nullptr, 0 },
+		{ "BannerCarrierMinLevel",					INI::parseInt,				nullptr, offsetof( HordeContainModuleData, m_bannerMinLevel ) },
 		{ "RanksThatStopAdvance",						parseLine,						nullptr, 0 },
 		{ "ComboHorde",											parseLine,						nullptr, 0 },
 		{ "AlternateFormation",							INI::parseAsciiString,	nullptr, offsetof( HordeContainModuleData, m_unusedString ) },
@@ -175,7 +200,7 @@ void HordeContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 HordeContain::HordeContain( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
-	m_spawned(FALSE)
+	m_spawned(FALSE), m_banner(INVALID_ID), m_lastCombatFrame(0), m_nextReplenishFrame(0), m_bannerLostFrame(0)
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP(1));
 }
@@ -341,6 +366,8 @@ UpdateSleepTime HordeContain::update()
 	}
 	if (m_members.empty())
 	{
+		if (Object* banner = TheGameLogic->findObjectByID(m_banner))
+			banner->kill();
 		TheGameLogic->destroyObject(me);
 		return UPDATE_SLEEP_FOREVER;
 	}
@@ -351,6 +378,15 @@ UpdateSleepTime HordeContain::update()
 	AIUpdateInterface* ai = me->getAI();
 	Object* victim = ai ? ai->getCurrentVictim() : nullptr;
 	const Bool hordeMoving = ai && ai->isMoving();
+
+	Bool inCombat = victim != nullptr;
+	for (size_t i = 0; i < m_members.size() && !inCombat; ++i)
+	{
+		Object* m = TheGameLogic->findObjectByID(m_members[i]);
+		if (m && m->getAI() && m->getAI()->isAttacking())
+			inCombat = TRUE;
+	}
+	updateBanner(inCombat);
 
 	for (size_t i = 0; i < m_members.size(); ++i)
 	{
@@ -408,11 +444,18 @@ void HordeContain::crc( Xfer *xfer )
 
 void HordeContain::xfer( Xfer *xfer )
 {
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 	UpdateModule::xfer( xfer );
 	xfer->xferBool(&m_spawned);
+	if (version >= 2)
+	{
+		xfer->xferObjectID(&m_banner);
+		xfer->xferUnsignedInt(&m_lastCombatFrame);
+		xfer->xferUnsignedInt(&m_nextReplenishFrame);
+		xfer->xferUnsignedInt(&m_bannerLostFrame);
+	}
 	UnsignedShort count = (UnsignedShort)m_members.size();
 	xfer->xferUnsignedShort(&count);
 	if (xfer->getXferMode() == XFER_LOAD)
@@ -457,3 +500,169 @@ void HordeContain::syncUpgrades()
 	}
 	m_syncedUpgrades = now;
 }
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: banner carriers and reinforcement
+//-------------------------------------------------------------------------------------------------
+Int HordeContain::fullSize() const
+{
+	Int n = 0;
+	const HordeContainModuleData* d = getHordeContainModuleData();
+	for (size_t p = 0; p < d->m_initialPayload.size(); ++p)
+		n += d->m_initialPayload[p].m_count;
+	return n;
+}
+
+Bool HordeContain::bfmeReplenishOne(const FXList* fx, Bool atBanner)
+{
+	const HordeContainModuleData* d = getHordeContainModuleData();
+	Object* me = getObject();
+	if (me->isEffectivelyDead() || !m_spawned || m_members.empty())
+		return FALSE;
+	const Int have = getMemberCount();
+	if (have >= fullSize())
+		return FALSE;
+
+	// the payload type that is short (in payload order)
+	const ThingTemplate* tmpl = nullptr;
+	Int seen = 0;
+	for (size_t p = 0; p < d->m_initialPayload.size() && tmpl == nullptr; ++p)
+	{
+		const ThingTemplate* t = TheThingFactory->findTemplate(d->m_initialPayload[p].m_templateName);
+		if (t == nullptr)
+			continue;
+		Int alive = 0;
+		for (size_t i = 0; i < m_members.size(); ++i)
+		{
+			const Object* m = TheGameLogic->findObjectByID(m_members[i]);
+			if (m && !m->isEffectivelyDead() && m->getTemplate()->isEquivalentTo(t))
+				++alive;
+		}
+		if (alive < d->m_initialPayload[p].m_count)
+			tmpl = t;
+		seen += d->m_initialPayload[p].m_count;
+	}
+	if (tmpl == nullptr)
+		return FALSE;
+
+	Object* m = TheThingFactory->newObject(tmpl, me->getTeam());
+	if (m == nullptr)
+		return FALSE;
+	Coord3D pos;
+	const Object* banner = atBanner ? TheGameLogic->findObjectByID(m_banner) : nullptr;
+	if (banner)
+		pos = *banner->getPosition();
+	else
+		slotPosition((Int)m_members.size(), &pos);
+	m->setPosition(&pos);
+	m->setOrientation(me->getOrientation());
+	m->setProducer(me);
+	for (size_t am = 0; am < d->m_attributeModifiers.size(); ++am)
+		TheAttributeModifierStore->apply(m, TheAttributeModifierStore->findList(d->m_attributeModifiers[am]), me->getID(), 0, TRUE);
+	// the newcomer has the horde's rank
+	ExperienceTracker* hx = me->getExperienceTracker();
+	ExperienceTracker* mx = m->getExperienceTracker();
+	if (hx && mx && hx->getBfmeRank() > 0)
+		mx->bfmeSetRank(hx->getBfmeRank(), FALSE);
+	m_members.push_back(m->getID());
+	m_lastOrder.push_back(pos);
+	m_syncedUpgrades.clear();
+	FXList::doFXObj(fx, m);
+	if (getenv("BFME_DEBUG_HORDE"))
+		fprintf(stderr, "[horde] #%u replenished %s (%d/%d)\n", me->getID(), tmpl->getName().str(), have + 1, fullSize());
+	return TRUE;
+}
+
+void HordeContain::updateBanner(Bool inCombat)
+{
+	const HordeContainModuleData* d = getHordeContainModuleData();
+	Object* me = getObject();
+	const UnsignedInt now = TheGameLogic->getFrame();
+	if (inCombat)
+		m_lastCombatFrame = now;
+	if (d->m_bannerCarriersAllowed.empty())
+		return;
+
+	Object* banner = m_banner != INVALID_ID ? TheGameLogic->findObjectByID(m_banner) : nullptr;
+	if (banner && banner->isEffectivelyDead())
+		banner = nullptr;
+	if (banner == nullptr && m_banner != INVALID_ID)
+	{
+		m_banner = INVALID_ID;
+		m_bannerLostFrame = now;
+	}
+
+	if (banner == nullptr)
+	{
+		// a horde gets its banner carrier at rank 2 (basic training) or its own minimum
+		const ExperienceTracker* xp = me->getExperienceTracker();
+		Int rank = xp ? (xp->getBfmeRank() > 0 ? xp->getBfmeRank() : (Int)xp->getVeterancyLevel() + 1) : 1;
+		if (rank < max(2, d->m_bannerMinLevel))
+			return;
+		const ThingTemplate* bt = nullptr;
+		for (size_t i = 0; i < d->m_bannerCarriersAllowed.size() && bt == nullptr; ++i)
+			bt = TheThingFactory->findTemplate(d->m_bannerCarriersAllowed[i]);
+		if (bt == nullptr)
+			return;
+		if (m_bannerLostFrame != 0)
+		{
+			// a fallen banner comes back after a while out of melee
+			const BannerCarrierUpdateModuleData* bd = nullptr;
+			const ModuleInfo& mi = bt->getBehaviorModuleInfo();
+			for (Int i = 0; i < mi.getCount() && bd == nullptr; ++i)
+				bd = dynamic_cast<const BannerCarrierUpdateModuleData*>(mi.getNthData(i));
+			const UnsignedInt wait = bd ? max(bd->m_meleeFreeBannerRespawnTime, bd->m_diedRespawnTime) : LOGICFRAMES_PER_SECOND * 20;
+			if (now < m_lastCombatFrame + wait || now < m_bannerLostFrame + wait)
+				return;
+		}
+		banner = TheThingFactory->newObject(bt, me->getTeam());
+		if (banner == nullptr)
+			return;
+		Coord3D pos;
+		const Real bx = d->m_bannerPos.x < -99999.0f ? -20.0f : d->m_bannerPos.x;
+		const Real a = me->getOrientation();
+		pos.x = me->getPosition()->x + bx * Cos(a) - d->m_bannerPos.y * Sin(a);
+		pos.y = me->getPosition()->y + bx * Sin(a) + d->m_bannerPos.y * Cos(a);
+		pos.z = TheTerrainLogic ? TheTerrainLogic->getGroundHeight(pos.x, pos.y) : me->getPosition()->z;
+		banner->setPosition(&pos);
+		banner->setOrientation(a);
+		banner->setProducer(me);
+		ExperienceTracker* bx2 = banner->getExperienceTracker();
+		const ExperienceTracker* hx = me->getExperienceTracker();
+		if (bx2 && hx && hx->getBfmeRank() > 0)
+			bx2->bfmeSetRank(hx->getBfmeRank(), FALSE);
+		m_banner = banner->getID();
+		m_nextReplenishFrame = now;
+		if (const BannerCarrierUpdateModuleData* bd = BannerCarrierUpdate::findOn(banner))
+			FXList::doFXObj(bd->m_bannerMorphFX, banner);
+		if (getenv("BFME_DEBUG_HORDE"))
+			fprintf(stderr, "[horde] #%u banner carrier %s #%u\n", me->getID(), bt->getName().str(), banner->getID());
+	}
+
+	// the banner keeps its place in the formation
+	AIUpdateInterface* bai = banner->getAI();
+	if (bai && !bai->isAttacking())
+	{
+		const Real bx = d->m_bannerPos.x < -99999.0f ? -20.0f : d->m_bannerPos.x;
+		const Real a = me->getOrientation();
+		Coord3D slot;
+		slot.x = me->getPosition()->x + bx * Cos(a) - d->m_bannerPos.y * Sin(a);
+		slot.y = me->getPosition()->y + bx * Sin(a) + d->m_bannerPos.y * Cos(a);
+		slot.z = TheTerrainLogic ? TheTerrainLogic->getGroundHeight(slot.x, slot.y) : me->getPosition()->z;
+		const Real dx = banner->getPosition()->x - slot.x, dy = banner->getPosition()->y - slot.y;
+		if (dx * dx + dy * dy > 4.0f * 4.0f)
+			bai->aiMoveToPosition(&slot, CMD_FROM_AI);
+		else if (bai->isIdle())
+			banner->setOrientation(a);
+	}
+
+	// reinforcements while out of melee
+	const BannerCarrierUpdateModuleData* bd = BannerCarrierUpdate::findOn(banner);
+	if (bd == nullptr)
+		return;
+	if (now < m_lastCombatFrame + bd->m_meleeFreeUnitSpawnTime || now < m_nextReplenishFrame)
+		return;
+	if (bfmeReplenishOne(bd->m_unitSpawnFX, TRUE))
+		m_nextReplenishFrame = now + max(1u, bd->m_idleSpawnRate);
+}
+

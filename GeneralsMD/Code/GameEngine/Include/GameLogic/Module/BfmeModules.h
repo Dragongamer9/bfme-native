@@ -489,3 +489,36 @@ private:
 	AsciiString m_previous;
 	AsciiString m_applied;
 };
+
+//-------------------------------------------------------------------------------------------------
+/** BannerCarrierUpdate: on a horde's banner carrier, the horde gets its fallen soldiers back while
+	it stays out of melee (HordeContain does the respawning and reads the timings here). On a
+	building with ReplenishNearbyHorde, own hordes near it are refilled the same way. */
+class BannerCarrierUpdateModuleData : public UpdateModuleData
+{
+public:
+	BannerCarrierUpdateModuleData();
+	static void buildFieldParse(MultiIniFieldParse& p);
+	UnsignedInt m_idleSpawnRate;
+	UnsignedInt m_meleeFreeUnitSpawnTime;
+	UnsignedInt m_diedRespawnTime;
+	UnsignedInt m_meleeFreeBannerRespawnTime;
+	const FXList* m_unitSpawnFX;
+	const FXList* m_bannerMorphFX;
+	Bool m_replenishNearbyHorde;
+	Bool m_replenishAllNearbyHordes;
+	Real m_scanHordeDistance;
+	AsciiString m_upgradeRequired;
+};
+
+class BannerCarrierUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BannerCarrierUpdate, "BannerCarrierUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BannerCarrierUpdate, BannerCarrierUpdateModuleData )
+public:
+	BannerCarrierUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+	const BannerCarrierUpdateModuleData* data() const { return getBannerCarrierUpdateModuleData(); }
+	static const BannerCarrierUpdateModuleData* findOn(const Object* obj);
+};
+

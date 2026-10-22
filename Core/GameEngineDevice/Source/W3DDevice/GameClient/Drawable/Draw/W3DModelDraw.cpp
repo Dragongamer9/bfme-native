@@ -1200,6 +1200,12 @@ static void parseAsciiStringLC( INI* ini, void * /*instance*/, void *store, cons
 	asciiString->toLower();
 }
 
+// bfme-native: RotWK fields with no effect here
+static void parseBfmeIgnoreField(INI* ini, void * /*instance*/, void * /*store*/, const void* /*userData*/)
+{
+	while (ini->getNextTokenOrNull() != nullptr) {}
+}
+
 //-------------------------------------------------------------------------------------------------
 void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
@@ -1230,6 +1236,12 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "AttachToBoneInAnotherModule", parseAsciiStringLC, nullptr, offsetof(W3DModelDrawModuleData, m_attachToDrawableBone) },
 		{ "IgnoreConditionStates", ModelConditionFlags::parseFromINI, nullptr, offsetof(W3DModelDrawModuleData, m_ignoreConditionStates) },
 		{ "ReceivesDynamicLights", INI::parseBool, nullptr, offsetof(W3DModelDrawModuleData, m_receivesDynamicLights) },
+		// bfme-native: RotWK W3DFloorDraw (building bibs and floors)
+		{ "ModelName", W3DModelDrawModuleData::parseBfmeFloorModel, nullptr, 0 },
+		{ "HideIfModelConditions", W3DModelDrawModuleData::parseBfmeHideIf, nullptr, 0 },
+		{ "StaticModelLODMode", parseBfmeIgnoreField, nullptr, 0 },
+		{ "WeatherTexture", parseBfmeIgnoreField, nullptr, 0 },
+		{ "ForceToBack", parseBfmeIgnoreField, nullptr, 0 },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
@@ -1842,6 +1854,34 @@ void W3DModelDrawModuleData::parseBfmeAnimationState(INI* ini, void* instance, v
 
 
 //-------------------------------------------------------------------------------------------------
+/** bfme-native: W3DFloorDraw "ModelName = X": the module draws one model in every state. */
+void W3DModelDrawModuleData::parseBfmeFloorModel(INI* ini, void *instance, void * /*store*/, const void* /*userData*/)
+{
+	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
+	ModelConditionInfo info;
+	info.m_modelName = ini->getNextAsciiString();
+	info.m_modelName.toLower();
+	if (info.m_modelName.isNone())
+		info.m_modelName.clear();
+	info.m_conditionsYesVec.clear();
+	info.m_conditionsYesVec.push_back(ModelConditionFlags());
+	if (self->m_defaultState >= 0)
+	{
+		self->m_conditionStates[self->m_defaultState] = info;
+		return;
+	}
+	self->m_defaultState = self->m_conditionStates.size();
+	self->m_conditionStates.push_back(info);
+}
+
+void W3DModelDrawModuleData::parseBfmeHideIf(INI* ini, void *instance, void * /*store*/, const void* /*userData*/)
+{
+	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
+	ModelConditionFlags flags;
+	flags.parse(ini, nullptr);
+	self->m_bfmeHideIf.push_back(flags);
+}
+
 /** bfme-native: RotWK "DefaultModelConditionState" / "ModelConditionState = FLAGS".
 	Same fields as a Generals ConditionState (unknown RotWK ones are tolerated), but with RotWK's
 	looser rules: states may come in any order, a later duplicate is ignored, a state without a
@@ -1945,6 +1985,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	int i;
 	m_animationMode = RenderObjClass::ANIM_MODE_LOOP;
 	m_hideHeadlights = true;
+	m_bfmeCondHidden = false;
 	m_hasHeadlights = false;
 	m_headlightDynamicLight = nullptr;
 	m_pauseAnimation = false;
@@ -2050,7 +2091,7 @@ void W3DModelDraw::doStartOrStopParticleSys()
 void W3DModelDraw::setHidden(Bool hidden)
 {
 	if (m_renderObject)
-		m_renderObject->Set_Hidden(hidden);
+		m_renderObject->Set_Hidden(hidden || m_bfmeCondHidden);
 
 	if (m_shadow)
 		m_shadow->enableShadowRender(!hidden);
@@ -3892,6 +3933,22 @@ void W3DModelDraw::replaceModelConditionState(const ModelConditionFlags& c)
 		setModelState(info);
 
 	hideAllHeadlights(m_hideHeadlights);
+
+	// bfme-native: HideIfModelConditions
+	const std::vector<ModelConditionFlags>& hideIf = getW3DModelDrawModuleData()->m_bfmeHideIf;
+	if (!hideIf.empty())
+	{
+		Bool hide = FALSE;
+		for (const ModelConditionFlags& f : hideIf)
+			if (f.any() && c.testForAll(f))
+				hide = TRUE;
+		if (hide != m_bfmeCondHidden || info)
+		{
+			m_bfmeCondHidden = hide;
+			if (m_renderObject)
+				m_renderObject->Set_Hidden(hide || getDrawable()->isDrawableEffectivelyHidden());
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

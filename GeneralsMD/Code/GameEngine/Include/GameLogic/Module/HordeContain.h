@@ -13,6 +13,7 @@
 #include <vector>
 
 class ThingTemplate;
+class FXList;
 
 struct HordeRankInfo
 {
@@ -46,6 +47,8 @@ public:
 	std::vector<AsciiString> m_attributeModifiers;
 	std::vector<AsciiString> m_bannerCarriersAllowed;
 	Int m_minimumHordeSize;
+	Coord2D m_bannerPos;		///< BannerCarrierPosition (first one), relative to the horde
+	Int m_bannerMinLevel;		///< BannerCarrierMinLevel
 
 	// parsed for completeness, not used yet
 	AsciiString m_unusedString;
@@ -60,6 +63,7 @@ public:
 	static void parseRandomOffset(INI* ini, void* instance, void* store, const void* userData);
 	static void parseLine(INI* ini, void* instance, void* store, const void* userData);
 	static void parseSubBlock(INI* ini, void* instance, void* store, const void* userData);
+	static void parseBannerPosition(INI* ini, void* instance, void* store, const void* userData);
 };
 
 class HordeContain : public UpdateModule
@@ -80,6 +84,9 @@ public:
 
 	static HordeContain* findOn(const Object* obj);
 
+	/// bfme-native: bring back one fallen soldier (banner carrier or a healing building); FALSE if full
+	Bool bfmeReplenishOne(const FXList* fx, Bool atBanner);
+
 private:
 	void spawnMembers();
 	void slotPosition(Int index, Coord3D* out) const;
@@ -89,6 +96,13 @@ private:
 	Bool m_spawned;
 	UpgradeMaskType m_syncedUpgrades;	///< horde object upgrades already handed to the members
 	void syncUpgrades();
+	void updateBanner(Bool inCombat);
+	Int fullSize() const;
+
+	ObjectID m_banner;						///< the horde's banner carrier, once it has the rank for one
+	UnsignedInt m_lastCombatFrame;
+	UnsignedInt m_nextReplenishFrame;
+	UnsignedInt m_bannerLostFrame;
 };
 
 /// the unit type a horde template is made of (first InitialPayload), or null
