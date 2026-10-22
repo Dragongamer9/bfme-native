@@ -4,6 +4,17 @@ A native 64-bit Linux build of **The Lord of the Rings: The Battle for Middle-ea
 
 Personal project. It needs your own installed copy of the game; no EA files are stored here.
 
+## Playing
+
+```bash
+./play.sh build                                   # compile the engine (once; needs cmake, ninja, a C++20 compiler)
+./play.sh setup "/path/to/RotWK" "/path/to/BFME2" # link your game files (Edain + Völker .big files inside RotWK)
+./play.sh --map "map mp argonath" --you Rohan --ai Mordor
+./play.sh maps        # skirmish maps
+```
+
+A 1v1 skirmish against a computer opponent. Esc opens the menu. What works and what doesn't yet is in `PROGRESS.md`.
+
 ## Approach
 
 RotWK runs on EA's SAGE engine, a descendant of the Command & Conquer: Generals engine whose source EA released under GPL-3.0. [GeneralsX](https://github.com/fbraz3/GeneralsX) has already ported that code to native 64-bit Linux (SDL3, DXVK/Vulkan, OpenAL/miniaudio). This project:
