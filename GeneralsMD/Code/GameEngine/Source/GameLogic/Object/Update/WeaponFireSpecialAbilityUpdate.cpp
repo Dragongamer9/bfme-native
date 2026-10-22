@@ -151,7 +151,7 @@ void ModelConditionSpecialAbilityUpdateModuleData::buildFieldParse(MultiIniField
 		{ "MustFinishAbility",					INI::parseBool,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedBool ) },
 		{ "GenerateTerror",							INI::parseBool,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedBool ) },
 		{ "EmotionPulseRadius",					INI::parseReal,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedReal ) },
-		{ "ObjectFilter",								INI::parseAsciiString,	nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedString ) },
+		{ "ObjectFilter",								ObjectFilter::parseFromINI,	nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_objectFilter ) },
 		{ "UnpackingVariation",					INI::parseInt,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedInt ) },
 		{ "DisableWhenWearingTheRing",	INI::parseBool,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedBool ) },
 		{ nullptr, nullptr, nullptr, 0 }

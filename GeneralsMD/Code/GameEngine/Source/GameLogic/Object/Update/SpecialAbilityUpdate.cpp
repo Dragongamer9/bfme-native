@@ -596,6 +596,8 @@ Bool SpecialAbilityUpdate::isPowerCurrentlyInUse( const CommandButton *command )
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::onExit( Bool cleanup )
 {
+  if (getenv("BFME_DEBUG_ABILITY")) fprintf(stderr, "[ability] #%u onExit frame %u\n", getObject()->getID(), TheGameLogic->getFrame());	// bfme-native
+
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
 
   getObject()->clearModelConditionFlags(
@@ -736,6 +738,8 @@ Bool SpecialAbilityUpdate::needToUnpack() const
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::startPacking(Bool success)
 {
+  if (getenv("BFME_DEBUG_ABILITY")) fprintf(stderr, "[ability] #%u startPacking frame %u\n", getObject()->getID(), TheGameLogic->getFrame());	// bfme-native
+
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   m_packingState = STATE_PACKING;
   Real variation = GameLogicRandomValueReal( 1.0f - data->m_packUnpackVariationFactor, 1.0f + data->m_packUnpackVariationFactor );
@@ -789,6 +793,8 @@ void SpecialAbilityUpdate::startPacking(Bool success)
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::startUnpacking()
 {
+  if (getenv("BFME_DEBUG_ABILITY")) fprintf(stderr, "[ability] #%u startUnpacking frame %u\n", getObject()->getID(), TheGameLogic->getFrame());	// bfme-native
+
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   m_packingState = STATE_UNPACKING;
   Real variation = GameLogicRandomValueReal( 1.0f - data->m_packUnpackVariationFactor, 1.0f + data->m_packUnpackVariationFactor );
@@ -983,6 +989,8 @@ Bool SpecialAbilityUpdate::approachTarget()
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::startPreparation()
 {
+  if (getenv("BFME_DEBUG_ABILITY")) fprintf(stderr, "[ability] #%u startPreparation frame %u\n", getObject()->getID(), TheGameLogic->getFrame());	// bfme-native
+
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   const SpecialPowerTemplate *spTemplate = data->m_specialPowerTemplate;
 
@@ -1260,6 +1268,8 @@ Bool SpecialAbilityUpdate::continuePreparation()
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::triggerAbilityEffect()
 {
+  if (getenv("BFME_DEBUG_ABILITY")) fprintf(stderr, "[ability] #%u trigger frame %u\n", getObject()->getID(), TheGameLogic->getFrame());	// bfme-native
+
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   const SpecialPowerTemplate *spTemplate = data->m_specialPowerTemplate;
   Object *object = getObject();
@@ -1760,6 +1770,8 @@ void SpecialAbilityUpdate::validateSpecialObjects()
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::finishAbility()
 {
+  if (getenv("BFME_DEBUG_ABILITY")) fprintf(stderr, "[ability] #%u finish frame %u\n", getObject()->getID(), TheGameLogic->getFrame());	// bfme-native
+
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
 
   m_withinStartAbilityRange = false;

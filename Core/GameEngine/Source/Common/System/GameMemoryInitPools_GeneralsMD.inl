@@ -189,6 +189,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "WeaponFireSpecialAbilityUpdate", 512, 128 },	// bfme-native
 	{ "ToggleMountedSpecialAbilityUpdate", 512, 128 },	// bfme-native
 	{ "HeroModeSpecialAbilityUpdate", 512, 128 },	// bfme-native
+	{ "ModelConditionSpecialAbilityUpdate", 512, 128 },	// bfme-native
 	{ "WeaponModeSpecialPower", 512, 128 },	// bfme-native
 	{ "BezierProjectileBehavior", 4096, 1024 },	// bfme-native
 	{ "LevelUpUpgrade", 512, 128 },	// bfme-native

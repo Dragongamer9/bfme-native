@@ -1881,6 +1881,10 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			}
 		}
 	}
+	// bfme-native: RotWK powers (spells, hero abilities) may target any living object; the
+	// module's own filters decide who it affects
+	if( (Int)spTemplate->getSpecialPowerType() >= (Int)BFME_SPECIAL_FIRST && obj->getSpecialPowerModule( spTemplate ) )
+		return true;
 	return false;
 }
 
@@ -1971,6 +1975,9 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 				//Detonate's any existing charges
 				return true;
 		}
+		// bfme-native: RotWK targetless powers (hero abilities, spells)
+		if( (Int)spTemplate->getSpecialPowerType() >= (Int)BFME_SPECIAL_FIRST )
+			return true;
 	}
 	return false;
 }
