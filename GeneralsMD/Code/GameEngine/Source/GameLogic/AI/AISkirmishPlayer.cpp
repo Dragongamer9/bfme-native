@@ -43,6 +43,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/AISkirmishPlayer.h"
+#include "GameLogic/BfmeSkirmishAI.h"	// bfme-native
 #include "GameLogic/SidesList.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
@@ -75,15 +76,18 @@ m_curLeftFlankRightDefenseAngle(0),
 m_curRightFlankLeftDefenseAngle(0),
 m_curRightFlankRightDefenseAngle(0),
 m_frameToCheckEnemy(0),
-m_currentEnemy(nullptr)
+m_currentEnemy(nullptr),
+m_bfme(nullptr)
 
 {
+	m_bfme = new BfmeSkirmishAI(p);	// bfme-native
 	m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 	p->setCanBuildUnits(true); // turn on ai production by default.
 }
 
 AISkirmishPlayer::~AISkirmishPlayer()
 {
+	delete m_bfme;	// bfme-native
 	clearTeamsInQueue();
 }
 
@@ -954,6 +958,8 @@ void AISkirmishPlayer::doTeamBuilding()
  */
 void AISkirmishPlayer::update()
 {
+	if (m_bfme)
+		m_bfme->update();	// bfme-native
 	AIPlayer::update();
 }
 

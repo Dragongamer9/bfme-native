@@ -1085,6 +1085,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/AttributeModifier.cpp
     Source/GameLogic/Object/ExperienceLevel.cpp
     Source/GameLogic/Object/Stances.cpp
+    Source/GameLogic/AI/BfmeSkirmishAI.cpp
     Source/GameLogic/Object/Upgrade/AttributeModifierUpgrade.cpp
     Source/GameLogic/Object/Update/AttributeModifierAuraUpdate.cpp
     Source/GameLogic/Object/SpecialPower/BfmeGenericSpecialPower.cpp

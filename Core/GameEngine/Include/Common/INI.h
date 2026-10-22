@@ -203,6 +203,8 @@ public:
 	static void parseModifierListDefinition( INI *ini );	// bfme-native
 	static void parseExperienceLevelDefinition( INI *ini );	// bfme-native
 	static void parseStanceTemplateDefinition( INI *ini );	// bfme-native
+	static void parseBfmeArmyDefinition( INI *ini );	// bfme-native: SkirmishAIData.ini
+	static void parseBfmeDozerAssignment( INI *ini );	// bfme-native: SkirmishAIData.ini
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );
 	static void parseCrateTemplateDefinition( INI *ini );

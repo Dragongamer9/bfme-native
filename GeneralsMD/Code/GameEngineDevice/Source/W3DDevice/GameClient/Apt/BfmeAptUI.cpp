@@ -46,6 +46,7 @@
 #include <string>
 
 extern Bool (*g_bfmeAptMouseHook)(Int kind, Int x, Int y);
+extern Bool (*g_bfmeAptQuitMenuHook)();
 
 namespace BfmeApt
 {
@@ -126,6 +127,15 @@ public:
 			heroCount = -1;
 		}
 		else if (c == "aptpalantir::onbttnspellstore") { storeToggle = true; return; }
+		else if (c == "aptpalantir::onbttnoptions") { menuToggle = true; return; }
+		else if (c.compare(0, 13, "aptquitmenu::") == 0 || c == "onbuttonclick")
+		{
+			// the quit menu's buttons: Resume, Exit / ExitMission, Restart, Options, Save, Load
+			const std::string what = Apt::lower(c.compare(0, 13, "aptquitmenu::") == 0 ? c.substr(13) + " " + args : args);
+			if (what.find("resume") != std::string::npos) menuClose = true;
+			else if (what.find("exit") != std::string::npos) menuQuit = true;
+			return;
+		}
 		else if (c.compare(0, 15, "aptspellstore::") == 0)
 		{
 			const std::string what = c.substr(15);
@@ -446,6 +456,7 @@ public:
 	// ---- spell store (SpellStore.apt overlay: purchase spells with spell points) ----
 	enum { NUM_STORE = 32 };
 	bool storeToggle = false, storeClose = false;
+	bool menuToggle = false, menuClose = false, menuQuit = false;	///< in-game quit menu (QuitMenu.apt)
 	std::vector<std::string> storeStates;
 	const CommandButton *storeButtons[NUM_STORE] = {};
 
@@ -791,6 +802,7 @@ public:
 
 static GameHost s_host;
 static Apt::Player *s_store = nullptr;
+static Apt::Player *s_menu = nullptr;	///< QuitMenu overlay (Options button / Esc)
 static Int s_radarRect[4] = { 0, 0, 0, 0 };
 static bool s_draggingRadar = false;
 static bool s_tried = false;
@@ -972,6 +984,52 @@ void draw()
 		s_store->update(ms);
 		s_store->render(viewMatrix());
 	}
+	// in-game quit menu overlay: pauses a game against the computer while open
+	if (s_host.menuToggle)
+	{
+		s_host.menuToggle = false;
+		if (s_menu) s_host.menuClose = true;
+		else
+		{
+			s_menu = new Apt::Player();
+			s_menu->setHost(&s_host);
+			s_menu->global()->set("InGame", Apt::Value::boolean(true));
+			if (!s_menu->load("QuitMenu")) { delete s_menu; s_menu = nullptr; }
+			else if (TheGameLogic && !TheGameLogic->isInInternetGame() && !getenv("BFME_MENU_NOPAUSE"))
+				TheGameLogic->setGamePaused(TRUE);
+		}
+	}
+	if (s_host.menuClose && s_menu)
+	{
+		s_host.menuClose = false;
+		delete s_menu;
+		s_menu = nullptr;
+		if (TheGameLogic)
+			TheGameLogic->setGamePaused(FALSE);
+	}
+	if (s_host.menuQuit)
+	{
+		s_host.menuQuit = false;
+		if (TheGameLogic)
+		{
+			TheGameLogic->setGamePaused(FALSE);
+			TheGameLogic->quit(TRUE);
+		}
+	}
+	if (s_menu)
+	{
+		s_menu->update(ms);
+		s_menu->render(viewMatrix());
+	}
+}
+
+/// Esc / the Options button: show or hide the quit menu (replaces Generals' QuitMenu.wnd)
+static Bool toggleQuitMenu()
+{
+	if (!s_player)
+		return FALSE;
+	s_host.menuToggle = true;
+	return TRUE;
 }
 
 /// minimap click: centre the tactical view on that spot
@@ -1003,7 +1061,12 @@ static Bool mouseHook(Int kind, Int x, Int y)
 	static bool s_left = false;
 	if (kind == 1) s_left = true;
 	else if (kind == 2) s_left = false;
-	// the spell store sits on top and takes the mouse when open
+	// the quit menu and the spell store sit on top and take the mouse when open
+	if (s_menu)
+	{
+		s_menu->mouse((float)x, (float)y, s_left, viewMatrix());
+		return TRUE;	// modal
+	}
 	if (s_store && s_store->mouse((float)x, (float)y, s_left, viewMatrix()))
 		return TRUE;
 	bool used = s_player->mouse((float)x, (float)y, s_left, viewMatrix());
@@ -1026,10 +1089,13 @@ bool mouse(int x, int y, bool down)
 void install()
 {
 	g_bfmeAptMouseHook = &mouseHook;
+	g_bfmeAptQuitMenuHook = &toggleQuitMenu;
 }
 
 void shutdown()
 {
+	delete s_menu;
+	s_menu = nullptr;
 	delete s_store;
 	s_store = nullptr;
 	delete s_player;

@@ -812,6 +812,7 @@ void GameEngine::init()
 
 
 		initSubsystem(TheAI,"TheAI", MSGNEW("GameEngineSubsystem") AI(), &xferCRC,  "Data\\INI\\Default\\AIData", "Data\\INI\\AIData");
+		ini.loadFileDirectory( "Data\\INI\\Default\\SkirmishAIData", INI_LOAD_OVERWRITE, nullptr );	// bfme-native: ArmyDefinition / AIDozerAssignment
 		initSubsystem(TheGameLogic,"TheGameLogic", createGameLogic(), nullptr);
 		initSubsystem(TheTeamFactory,"TheTeamFactory", MSGNEW("GameEngineSubsystem") TeamFactory(), nullptr);
 		initSubsystem(TheCrateSystem,"TheCrateSystem", MSGNEW("GameEngineSubsystem") CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate", "Data\\INI\\Crate");
