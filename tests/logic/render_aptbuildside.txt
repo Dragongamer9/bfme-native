@@ -1,0 +1,17 @@
+# Porter builds from the side command bar: barracks button, then place it on the ground
+1  localplayer SkirmishMen
+1  money SkirmishMen 5000
+5  reveal
+10 spawn FreeBuildMenPorter SkirmishMen 1420 1600 0
+30 select SkirmishMen FreeBuildMenPorter
+40 camera 1420 1600 0.5
+60 mousemove 1005 222
+62 click 1005 222
+70 mousemove 700 300
+72 screenshot
+80 click 700 300
+90 mousemove 512 600
+200 screenshot
+1200 screenshot
+1210 dump
+1220 quit

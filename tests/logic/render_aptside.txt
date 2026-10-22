@@ -1,0 +1,8 @@
+# Side command bar: a porter's command set slots 7-12 show beside the palantir
+1  localplayer SkirmishMen
+5  reveal
+10 spawn FreeBuildMenPorter SkirmishMen 1420 1600 0
+30 select SkirmishMen FreeBuildMenPorter
+40 camera 1420 1600 0.5
+90 screenshot
+100 quit
