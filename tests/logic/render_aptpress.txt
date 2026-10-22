@@ -1,0 +1,10 @@
+# Palantir command ring: clicking slot 1 (stance toggle) and slot 2 (formation) runs the commands
+1  players
+5  reveal
+10 spawn GondorFighterHorde PlyrNeutral 1400 1600 0
+30 select PlyrNeutral GondorFighterHorde
+40 camera 1400 1600 0.5
+50 click 216 580
+60 click 252 596
+80 screenshot
+90 quit
