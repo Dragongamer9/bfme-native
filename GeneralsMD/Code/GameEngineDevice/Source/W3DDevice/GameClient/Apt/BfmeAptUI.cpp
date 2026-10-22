@@ -468,6 +468,7 @@ static Bool mouseHook(Int kind, Int x, Int y)
 	if (kind == 1) s_left = true;
 	else if (kind == 2) s_left = false;
 	bool used = s_player->mouse((float)x, (float)y, s_left, viewMatrix());
+	if (getenv("BFME_DEBUG_APT_MOUSE")) fprintf(stderr, "[aptui] mouse kind=%d %d,%d -> %d\n", (int)kind, (int)x, (int)y, (int)used);
 	if ((kind == 1 || (kind == 0 && s_left && s_draggingRadar)) && radarClick(x, y))
 	{
 		s_draggingRadar = true;

@@ -979,17 +979,16 @@ bool Player::hitTest(Instance &inst, const Matrix &parent, float x, float y, Ins
 	default:
 		break;
 	}
-	// sprites: topmost child first
+	// sprites: topmost child first. Plain shapes do not take the mouse away from buttons below them
+	// (Flash picking), they only make the interface "under the cursor".
+	bool any = false;
 	for (auto it = inst.children.rbegin(); it != inst.children.rend(); ++it)
 	{
 		if (!it->second) continue;
-		if (hitTest(*it->second, world, x, y, button))
-		{
-			if (!button && clipHasMouseHandlers(inst)) button = &inst;
-			return true;
-		}
+		if (hitTest(*it->second, world, x, y, button)) any = true;
 	}
-	return false;
+	if (any && !button && clipHasMouseHandlers(inst)) button = &inst;
+	return any;
 }
 
 bool Player::mouse(float sx, float sy, bool down, const Matrix &view)
