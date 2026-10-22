@@ -1,6 +1,11 @@
 // bfme-native: see BfmeSkirmishAI.h
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"
+#include <map>	// This must go first in EVERY cpp file in the GameEngine
 
+#include "GameLogic/Module/BodyModule.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
+#include "Common/SpecialPower.h"
+#include "Common/Science.h"
 #include "Common/Upgrade.h"
 #include "Common/BuildAssistant.h"
 #include "Common/INI.h"
@@ -578,6 +583,102 @@ static void raiseCommandPoints(Player* player)
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Spell book: buy a power with the points earned (the cheapest first) and cast what is ready:
+	heals on the most hurt unit, untargeted powers at once, the rest on the enemy unit closest to
+	our army (only while there is fighting). */
+static void useSpellBook(Player* player)
+{
+	if (TheScienceStore && player->getSciencePurchasePoints() > 0)
+	{
+		ScienceVec purchasable, potential;
+		TheScienceStore->getPurchasableSciences(player, purchasable, potential);
+		ScienceType best = SCIENCE_INVALID;
+		Int bestCost = 1 << 30;
+		for (size_t i = 0; i < purchasable.size(); ++i)
+		{
+			const Int cost = TheScienceStore->getSciencePurchaseCost(purchasable[i]);
+			if (cost > 0 && (cost < bestCost || (cost == bestCost && GameLogicRandomValue(0, 1))) && player->isCapableOfPurchasingScience(purchasable[i]))
+			{
+				best = purchasable[i];
+				bestCost = cost;
+			}
+		}
+		if (best != SCIENCE_INVALID && player->attemptToPurchaseScience(best) && debugAI())
+			fprintf(stderr, "[skirmishai] %ls learns %s\n", player->getPlayerDisplayName().str(), TheScienceStore->getInternalNameForScience(best).str());
+	}
+	Object* book = player->bfmeGetSpellBook();
+	const CommandSet* cs = book ? commandSetOf(book->getCommandSetString()) : nullptr;
+	if (cs == nullptr)
+		return;
+	// the fight: the enemy unit nearest to one of ours, and our most hurt unit
+	Object* foe = nullptr;
+	Object* hurt = nullptr;
+	Real foeDist = 500.0f * 500.0f, hurtRatio = 0.6f;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != player || !isArmyUnit(o))
+			continue;
+		if (BodyModuleInterface* body = o->getBodyModule())
+			if (body->getMaxHealth() > 0.0f && body->getHealth() / body->getMaxHealth() < hurtRatio)
+			{
+				hurt = o;
+				hurtRatio = body->getHealth() / body->getMaxHealth();
+			}
+		AIUpdateInterface* ai = o->getAI();
+		Object* victim = ai ? ai->getCurrentVictim() : nullptr;
+		if (victim && !victim->isEffectivelyDead() && !victim->isKindOf(KINDOF_STRUCTURE))
+		{
+			const Real dx = victim->getPosition()->x - o->getPosition()->x, dy = victim->getPosition()->y - o->getPosition()->y;
+			if (dx * dx + dy * dy < foeDist)
+			{
+				foe = victim;
+				foeDist = dx * dx + dy * dy;
+			}
+		}
+	}
+	for (Int i = 0; i < MAX_COMMANDS_PER_SET; ++i)
+	{
+		const CommandButton* b = cs->getCommandButton(i);
+		if (b == nullptr || b->getSpecialPowerTemplate() == nullptr ||
+				TheControlBar->getCommandAvailability(b, book, nullptr) != COMMAND_AVAILABLE)
+			continue;
+		SpecialPowerModuleInterface* sp = book->getSpecialPowerModule(b->getSpecialPowerTemplate());
+		if (sp == nullptr || !sp->isReady())
+			continue;
+		// powers without a recharge (map view...) would be cast every turn: give each 90 s of rest
+		static std::map<std::pair<const Player*, const SpecialPowerTemplate*>, UnsignedInt> s_lastCast;
+		UnsignedInt& last = s_lastCast[std::make_pair((const Player*)player, b->getSpecialPowerTemplate())];
+		if (last && TheGameLogic->getFrame() < last + 90 * LOGICFRAMES_PER_SECOND && TheGameLogic->getFrame() >= last)
+			continue;
+		const UnsignedInt opt = b->getOptions();
+		const AsciiString& name = b->getSpecialPowerTemplate()->getName();
+		const Bool heal = strstr(name.str(), "Heal") != nullptr || strstr(name.str(), "heal") != nullptr;
+		Object* target = heal ? hurt : foe;
+		if (opt & (NEED_TARGET_ENEMY_OBJECT | NEED_TARGET_ALLY_OBJECT | NEED_TARGET_NEUTRAL_OBJECT))
+		{
+			if (opt & NEED_TARGET_ALLY_OBJECT)
+				target = hurt;
+			if (target == nullptr)
+				continue;
+			sp->doSpecialPowerAtObject(target, 0);
+		}
+		else if (opt & NEED_TARGET_POS)
+		{
+			if (target == nullptr)
+				continue;
+			sp->doSpecialPowerAtLocation(target->getPosition(), INVALID_ANGLE, 0);
+		}
+		else
+			sp->doSpecialPower(0);
+		last = TheGameLogic->getFrame();
+		if (debugAI())
+			fprintf(stderr, "[skirmishai] %ls casts %s%s\n", player->getPlayerDisplayName().str(), name.str(),
+				target && (opt & (NEED_TARGET_POS | NEED_TARGET_ENEMY_OBJECT | NEED_TARGET_ALLY_OBJECT)) ? " on the battle" : "");
+		return;	// one spell per turn
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Research: once in a while buy one upgrade a building offers (forge upgrades, keep upgrades, the
 	Völker subfaction choice at the keep first), keeping some money for the army. */
 static void buyUpgrades(Player* player)
@@ -633,6 +734,7 @@ void BfmeSkirmishAI::recruitHeroes()
 	m_nextHero = now + 20 * LOGICFRAMES_PER_SECOND;
 	raiseCommandPoints(m_player);
 	buyUpgrades(m_player);
+	useSpellBook(m_player);
 	Int heroes = 0;
 	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
 		if (o->getControllingPlayer() == m_player && isAlive(o) && o->isKindOf(KINDOF_HERO) && !o->isKindOf(KINDOF_STRUCTURE))
