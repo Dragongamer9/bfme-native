@@ -570,8 +570,8 @@ const ThingTemplate* bfmeReviveSlotHero(const Object* building, const CommandBut
 	if (n <= 0)
 		return nullptr;	// the ring hero slot: not modelled
 	const std::vector<AsciiString>& heroes = pt->getBfmeBuildableHeroesMP();
-	if (n - 1 >= (Int)heroes.size())
-		return nullptr;
+	if (n - 1 >= (Int)heroes.size() || heroes[n - 1].compareNoCase("CreateAHero") == 0)
+		return nullptr;	// Create-a-Hero has its own screen
 	return TheThingFactory->findTemplate(heroes[n - 1]);
 }
 

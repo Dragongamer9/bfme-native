@@ -827,6 +827,10 @@ void Player::initFromDict(const Dict* d)
 			}
 		}
 
+		// bfme-native: RotWK's computer players need no skirmish side in the map (the Völker factions
+		// have none): they stay computer players
+		if (!skirmish && m_playerName.startsWith("Player_"))
+			skirmish = true;
 		DEBUG_ASSERTCRASH(skirmish, ("Could not find skirmish player for side %s... quietly making into nonskirmish.", getSide().str()));
 		if (!skirmish)
 			forceHuman = true;

@@ -155,19 +155,58 @@ static Bool isArmyUnit(const Object* o)
 		return FALSE;
 	if (o->isKindOf(KINDOF_INERT) || o->isKindOf(KINDOF_PROJECTILE) || o->isKindOf(KINDOF_UNATTACKABLE))
 		return FALSE;
+	// camp decorations (civilians walking about the camp) are not soldiers
+	const Player* p = o->getControllingPlayer();
+	const AsciiString& side = o->getTemplate()->getDefaultOwningSide();
+	if (p && side.isNotEmpty() && side.compareNoCase(p->getSide()) != 0 && side.compareNoCase("Civilian") == 0)
+		return FALSE;
 	return !isHordeMember(o);
 }
 
 //-------------------------------------------------------------------------------------------------
 BfmeSkirmishAI::BfmeSkirmishAI(Player* player) :
-	m_player(player), m_started(FALSE), m_nextThink(0), m_nextAttack(0), m_startFrame(0), m_placementTry(0), m_nextHero(0), m_nextCapture(0)
+	m_player(player), m_started(FALSE), m_nextThink(0), m_nextAttack(0), m_startFrame(0), m_placementTry(0), m_nextHero(0), m_nextCapture(0), m_fallbackBuilt(FALSE)
 {
 	m_base.zero();
 }
 
-Int BfmeSkirmishAI::phase() const
+/// the side's ArmyDefinition; sides without one (the Völker factions) get every unit their side can
+/// train, in equal parts
+const BfmeArmyDefinition* BfmeSkirmishAI::armyDefinition() const
 {
 	const BfmeArmyDefinition* army = TheBfmeSkirmishAIStore.findArmy(m_player->getSide());
+	if (army || TheControlBar == nullptr)
+		return army;
+	if (!m_fallbackBuilt)
+	{
+		m_fallbackBuilt = TRUE;
+		m_fallback.m_side = m_player->getSide();
+		for (const CommandButton* b = TheControlBar->getCommandButtons(); b; b = b->getNext())
+		{
+			const ThingTemplate* t = b->getThingTemplate();
+			if (b->getCommandType() != GUI_COMMAND_UNIT_BUILD || t == nullptr || t->isKindOf(KINDOF_HERO) || t->isKindOf(KINDOF_DOZER) ||
+					t->isKindOf(KINDOF_STRUCTURE) || t->getDefaultOwningSide().compareNoCase(m_player->getSide()) != 0)
+				continue;
+			Bool dup = FALSE;
+			for (size_t i = 0; i < m_fallback.m_members.size() && !dup; ++i)
+				dup = m_fallback.m_members[i].m_unit == t->getName();
+			if (dup)
+				continue;
+			BfmeArmyMember m;
+			m.m_unit = t->getName();
+			m.m_percent[0] = m.m_percent[1] = m.m_percent[2] = 10.0f;
+			m_fallback.m_members.push_back(m);
+		}
+		if (debugAI())
+			fprintf(stderr, "[skirmishai] %ls (%s) has no ArmyDefinition: %d trainable unit types\n", m_player->getPlayerDisplayName().str(),
+				m_player->getSide().str(), (int)m_fallback.m_members.size());
+	}
+	return &m_fallback;
+}
+
+Int BfmeSkirmishAI::phase() const
+{
+	const BfmeArmyDefinition* army = armyDefinition();
 	const Real seconds = (Real)(TheGameLogic->getFrame() - m_startFrame) / LOGICFRAMES_PER_SECOND;
 	if (army == nullptr || seconds < army->m_phaseRush)
 		return 0;
@@ -219,7 +258,11 @@ void BfmeSkirmishAI::think()
 	{
 		// the base goes where the start units stand (porters hatch a few seconds in)
 		if (dozers.empty())
+		{
+			if (debugAI() && TheGameLogic->getFrame() % (30 * LOGICFRAMES_PER_SECOND) < THINK_INTERVAL)
+				fprintf(stderr, "[skirmishai] %ls (%s) waits for a builder: %d units\n", m_player->getPlayerDisplayName().str(), m_player->getSide().str(), units);
 			return;
+		}
 		m_started = TRUE;
 		m_startFrame = TheGameLogic->getFrame();
 		m_nextAttack = m_startFrame + FIRST_ATTACK;
@@ -341,7 +384,7 @@ Bool BfmeSkirmishAI::placeBuilding(Object* dozer, const ThingTemplate* what)
 
 void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 {
-	const BfmeArmyDefinition* army = TheBfmeSkirmishAIStore.findArmy(m_player->getSide());
+	const BfmeArmyDefinition* army = armyDefinition();
 	Object* dozer = nullptr;
 	for (size_t i = 0; i < dozers.size() && dozer == nullptr; ++i)
 		if (dozers[i]->isKindOf(KINDOF_BASE_FOUNDATION) || dozers[i]->isKindOf(KINDOF_CAPTUREFLAG) || (dozers[i]->getAI() && dozers[i]->getAI()->isIdle()))
@@ -510,7 +553,7 @@ void BfmeSkirmishAI::recruitHeroes()
 //-------------------------------------------------------------------------------------------------
 void BfmeSkirmishAI::trainArmy()
 {
-	const BfmeArmyDefinition* army = TheBfmeSkirmishAIStore.findArmy(m_player->getSide());
+	const BfmeArmyDefinition* army = armyDefinition();
 	if (army == nullptr)
 		return;
 	const Int ph = phase();

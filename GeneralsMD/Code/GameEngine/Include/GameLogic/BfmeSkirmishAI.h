@@ -61,6 +61,7 @@ public:
 
 private:
 	Int phase() const;
+	const BfmeArmyDefinition* armyDefinition() const;
 	void think();
 	void buildBase(std::vector<Object*>& dozers);
 	void trainArmy();
@@ -80,4 +81,6 @@ private:
 	Int m_placementTry;
 	UnsignedInt m_nextHero;
 	UnsignedInt m_nextCapture;
+	mutable BfmeArmyDefinition m_fallback;
+	mutable Bool m_fallbackBuilt;
 };
