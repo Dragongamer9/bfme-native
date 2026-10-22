@@ -1,0 +1,6 @@
+# Skirmish end: the computer player loses everything; the game should declare the victory
+1    reveal
+400  kill player1 *
+420  players
+900  screenshot
+1200 quit
