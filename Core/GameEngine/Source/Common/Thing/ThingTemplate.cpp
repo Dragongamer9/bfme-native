@@ -1622,6 +1622,25 @@ UnsignedInt ThingTemplate::getMaxSimultaneousOfType() const
 
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: an override chain can loop in the RotWK data (a template redefined by a ChildObject of
+// itself); walk it with a limit instead of recursing forever
+static const Overridable* bfmeFinalOverride(const Overridable* o)
+{
+	const Overridable* start = o;
+	for (Int i = 0; i < 64 && o->getNextOverride(); ++i)
+	{
+		o = o->getNextOverride();
+		if (o == start)
+		{
+			static Int s_reported = 0;
+			if (s_reported++ < 5)
+				fprintf(stderr, "[bfme] override loop at %s\n", static_cast<const ThingTemplate*>(start)->getName().str());
+			return start;
+		}
+	}
+	return o;
+}
+
 Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
 {
 	// sanity
@@ -1632,7 +1651,7 @@ Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
 	if (this == tt)
 		return true;
 
-	if (this->getFinalOverride() == tt->getFinalOverride())
+	if (bfmeFinalOverride(this) == bfmeFinalOverride(tt))
 		return true;
 
 	// This reskinned from that?

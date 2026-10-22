@@ -607,7 +607,7 @@ static Bool heroInProduction(const Player* p, const ThingTemplate* hero)
 		ProductionUpdateInterface* pu = o->getProductionUpdateInterface();
 		if (pu && pu->getProductionCount() > 0)
 			for (const ProductionEntry* e = pu->firstProduction(); e; e = pu->nextProduction(e))
-				if (e->getProductionObject() && e->getProductionObject()->isEquivalentTo(hero))
+				if (e->getProductionType() == PRODUCTION_UNIT && e->getProductionObject() && e->getProductionObject()->isEquivalentTo(hero))	// upgrade entries hold no template
 					return TRUE;
 	}
 	return FALSE;
