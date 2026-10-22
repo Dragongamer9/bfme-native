@@ -196,14 +196,22 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   attribute modifiers, and the AI buys Edain's CP "economy units" at its keep when its army is at
   the limit and it has money left over (before, it stopped at 500 and hoarded gold).
 - play.sh launches at 1280x720 by default (--size WxH, --fullscreen).
+- Skirmish AI: buys upgrades (the Völker subfaction at its keep first, then forge and keep
+  upgrades), trains its subfaction's units, tries every build plot (a defence plot first in the list
+  stalled Men camps), buys CP units at the limit, learns spell book powers and casts them on the
+  battle (heals on its hurt units). A template override loop in the data no longer overflows the
+  stack (the AI crashed recruiting heroes around minute 8). tools/factionsweep.sh BFME_SWAP=1 lets the AI play each side.
+- Slow deaths for siege engines, walls and giant birds (ClearanceTesting/GiantBird variants).
 Known: the user's data has no base files for several factions (no fb_fortress_*, rohan_*,
 zwerge_*, lothlorien_* camps/castles...): those starts fall back to camp → free build, which has
 no keep (heroes then come from barracks hero slots). GeometryUpgrade and wall building are not
 implemented.
 
 ## Next
-1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
-2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
-3. Port gameplay modules in docs/SCOPE.md order (hordes, special powers, attribute modifiers...)
-4. Spell store (purchase screen), side command bar (slots 7+), stances/formations logic
-5. Shell: main menu / skirmish setup in APT
+Still skipped, by how much of the data uses them (`BFME_INI_REPORT`, see tools/skip_report.py):
+1. GeometryUpgrade (building footprints that change with level), wall building (WallHubBehavior)
+2. Siege: SiegeDockingBehavior / SlaveWatcherBehavior (ladders, towers, wall trebuchets),
+   HordeTransportContain (ships and battle wagons carrying hordes)
+3. Emotions: RadiateFearUpdate / EmotionTrackerUpdate (fear and terror), BloodthirstyUpdate
+4. Visual polish: W3DStreakDraw (arrow trails), W3DLightDraw, TooltipUpgrade
+5. Shell: main menu / skirmish setup in APT (today a skirmish starts from play.sh)
