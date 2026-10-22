@@ -575,6 +575,10 @@ void CommandButton::parseCommand( INI* ini, void *instance, void *store, const v
 
 			GUICommandType *command = (GUICommandType *)store;
 			*command = (GUICommandType)i;
+			// bfme-native: a spell book button fires a special power of the player's spell book
+			// object, exactly like SPECIAL_POWER does for a selected unit
+			if( *command == GUI_COMMAND_BFME_SPELL_BOOK )
+				*command = GUI_COMMAND_SPECIAL_POWER;
 			return;
 
 		}
@@ -882,6 +886,8 @@ CommandSet::CommandSet(const AsciiString& name) :
 const CommandButton* CommandSet::getCommandButton(Int i) const
 {
 	const CommandButton* button;
+	if (i < 0 || i >= MAX_COMMANDS_PER_SET)
+		return nullptr;	// bfme-native: callers probe past 18 (APT bars have up to 24 buttons)
   // Check for TheGameLogic == null, cause it is in Worldbuilder, and wb gets command bar info. jba.
 	if (TheGameLogic && TheGameLogic->findControlBarOverride(m_name, i, button))
 		return button;

@@ -119,6 +119,7 @@ void RankInfoStore::friend_parseRankDefinition( INI* ini )
 		{
 			{ "RankName", INI::parseAndTranslateLabel, nullptr, offsetof( RankInfo, m_rankName ) },
 			{ "SkillPointsNeeded", INI::parseInt, nullptr, offsetof( RankInfo, m_skillPointsNeeded ) },
+			{ "SkillPointsNeededDefault", INI::parseInt, nullptr, offsetof( RankInfo, m_skillPointsNeeded ) },	// bfme-native: RotWK (per-side overrides ignored)
 			{ "SciencesGranted", INI::parseScienceVector, nullptr, offsetof( RankInfo, m_sciencesGranted ) },
 			{ "SciencePurchasePointsGranted", INI::parseUnsignedInt, nullptr, offsetof( RankInfo, m_sciencePurchasePointsGranted ) },
 			{ nullptr, nullptr, nullptr, 0 }

@@ -2957,6 +2957,44 @@ Int Player::bfmeCommandPointsUsed() const
 	return used;
 }
 
+Object *Player::bfmeGetSpellBook() const
+{
+	if (m_playerTemplate == nullptr)
+		return nullptr;
+	const AsciiString mp = m_playerTemplate->getBfmeSpellBookMP();
+	for (Object *o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		// (spell books have an InactiveBody, which makes them "effectively dead" from birth)
+		if (o->getControllingPlayer() != this || o->isDestroyed()) continue;
+		const AsciiString &n = o->getTemplate()->getName();
+		if ((mp.isNotEmpty() && n.compareNoCase(mp) == 0) || n.endsWithNoCase("SpellBook"))
+			return o;
+	}
+	return nullptr;
+}
+
+Object *Player::bfmeCreateSpellBook(const Coord3D *where)
+{
+	if (m_playerTemplate == nullptr || bfmeGetSpellBook() != nullptr)
+		return bfmeGetSpellBook();
+	AsciiString name = m_playerTemplate->getBfmeSpellBookMP();
+	if (name.isEmpty())
+		return nullptr;
+	const ThingTemplate *tt = TheThingFactory->findTemplate(name);
+	if (tt == nullptr || getDefaultTeam() == nullptr)
+		return nullptr;
+	Object *book = TheThingFactory->newObject(tt, getDefaultTeam());
+	if (book)
+	{
+		Coord3D pos;
+		if (where) pos = *where;
+		else { pos.x = 0; pos.y = 0; pos.z = 0; }
+		book->setPosition(&pos);
+		DEBUG_LOG(("bfme: spell book %s for %s", name.str(), TheNameKeyGenerator->keyToName(getPlayerNameKey()).str()));
+	}
+	return book;
+}
+
 Int Player::bfmeCommandPointLimit() const
 {
 	if (TheGlobalData == nullptr || m_playerTemplate == nullptr)

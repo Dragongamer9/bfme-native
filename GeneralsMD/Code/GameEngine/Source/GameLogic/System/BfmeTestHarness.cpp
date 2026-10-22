@@ -32,6 +32,7 @@
 #include "Common/PlayerList.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/SpecialPower.h"
+#include "Common/Science.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
@@ -466,6 +467,44 @@ void run(const TestCmd& c)
 			++n;
 		}
 		printf("[BFMETEST] select %s %s -> %d\n", c.args[1].c_str(), c.args[2].c_str(), n);
+	}
+	else if (op == "localplayer" && c.args.size() >= 2)
+	{
+		// localplayer PLAYER : play as that player (interface, selection, shroud)
+		Player *a = findPlayer(c.args[1]);
+		if (a) ThePlayerList->setLocalPlayer(a);
+		printf("[BFMETEST] localplayer %s -> %s\n", c.args[1].c_str(), a ? a->getSide().str() : "not found");
+	}
+	else if (op == "spellbook" && c.args.size() >= 2)
+	{
+		// spellbook PLAYER [TEMPLATE] : give the player its spell book object (skirmish start does this)
+		Player *a = findPlayer(c.args[1]);
+		Object *book = nullptr;
+		if (a && c.args.size() >= 3)
+		{
+			const ThingTemplate *tt = TheThingFactory->findTemplate(AsciiString(c.args[2].c_str()));
+			if (tt && a->getDefaultTeam()) { book = TheThingFactory->newObject(tt, a->getDefaultTeam()); Coord3D p; p.x = p.y = p.z = 0; if (book) book->setPosition(&p); }
+		}
+		else if (a)
+			book = a->bfmeCreateSpellBook(nullptr);
+		printf("[BFMETEST] spellbook %s -> %s (found again: %s, dead %d, owner %s)\n", c.args[1].c_str(), book ? book->getTemplate()->getName().str() : "none",
+			a && a->bfmeGetSpellBook() ? "yes" : "no", book ? (int)book->isEffectivelyDead() : -1,
+			book && book->getControllingPlayer() ? TheNameKeyGenerator->keyToName(book->getControllingPlayer()->getPlayerNameKey()).str() : "-");
+	}
+	else if (op == "science" && c.args.size() >= 3)
+	{
+		// science PLAYER SCIENCE : grant a science (a purchased spell)
+		Player *a = findPlayer(c.args[1]);
+		ScienceType st = TheScienceStore ? TheScienceStore->getScienceFromInternalName(AsciiString(c.args[2].c_str())) : SCIENCE_INVALID;
+		Bool ok = a && st != SCIENCE_INVALID && a->grantScience(st);
+		printf("[BFMETEST] science %s %s -> %d\n", c.args[1].c_str(), c.args[2].c_str(), (int)ok);
+	}
+	else if (op == "sciencepoints" && c.args.size() >= 3)
+	{
+		// sciencepoints PLAYER N : grant spell (science purchase) points
+		Player *a = findPlayer(c.args[1]);
+		if (a) a->addSciencePurchasePoints(atoi(c.args[2].c_str()));
+		printf("[BFMETEST] sciencepoints %s -> %d\n", c.args[1].c_str(), a ? a->getSciencePurchasePoints() : -1);
 	}
 	else if (op == "screenshot")
 	{

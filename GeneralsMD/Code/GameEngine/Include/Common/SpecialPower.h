@@ -112,6 +112,7 @@ public:
 	SpecialPowerType getSpecialPowerType() const { return getFO()->m_type; }
 	UnsignedInt getReloadTime() const { return getFO()->m_reloadTime; }
 	ScienceType getRequiredScience() const { return getFO()->m_requiredScience; }
+	static void bfmeParseRequiredSciences( INI *ini, void *instance, void *store, const void *userData );
 	const AudioEventRTS *getInitiateSound() const { return &getFO()->m_initiateSound; }
 	const AudioEventRTS *getInitiateAtTargetSound() const { return &getFO()->m_initiateAtLocationSound; }
 	Bool hasPublicTimer() const { return getFO()->m_publicTimer; }
