@@ -160,7 +160,7 @@ static Bool isArmyUnit(const Object* o)
 
 //-------------------------------------------------------------------------------------------------
 BfmeSkirmishAI::BfmeSkirmishAI(Player* player) :
-	m_player(player), m_started(FALSE), m_nextThink(0), m_nextAttack(0), m_startFrame(0), m_placementTry(0), m_nextHero(0)
+	m_player(player), m_started(FALSE), m_nextThink(0), m_nextAttack(0), m_startFrame(0), m_placementTry(0), m_nextHero(0), m_nextCapture(0)
 {
 	m_base.zero();
 }
@@ -229,6 +229,7 @@ void BfmeSkirmishAI::think()
 			fprintf(stderr, "[skirmishai] %ls starts at %.0f,%.0f with %d builders\n", m_player->getPlayerDisplayName().str(), m_base.x, m_base.y, (int)dozers.size());
 	}
 	buildBase(dozers);
+	captureSites();
 	recruitHeroes();
 	trainArmy();
 	attack();
@@ -423,6 +424,46 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 		if (placeBuilding(dozer, wanted[i]))
 			return;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+/// economy plots and outposts (capture flags with a castle site): send a unit to the nearest free one
+void BfmeSkirmishAI::captureSites()
+{
+	const UnsignedInt now = TheGameLogic->getFrame();
+	if (now < m_nextCapture)
+		return;
+	m_nextCapture = now + 30 * LOGICFRAMES_PER_SECOND;
+	const Object* site = nullptr;
+	Real best = 1600.0f * 1600.0f;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (!o->isKindOf(KINDOF_CAPTUREFLAG) || !isAlive(o) || o->getControllingPlayer() == m_player)
+			continue;
+		CastleBehavior* cb = CastleBehavior::findOn(o);
+		if (cb == nullptr || cb->isUnpacked())
+			continue;
+		const Player* owner = o->getControllingPlayer();
+		if (owner && owner->isPlayableSide() && owner->getPlayerTemplate())
+			continue;	// someone else's: that is war, not expansion
+		const Real dx = o->getPosition()->x - m_base.x, dy = o->getPosition()->y - m_base.y;
+		if (dx * dx + dy * dy < best)
+		{
+			best = dx * dx + dy * dy;
+			site = o;
+		}
+	}
+	if (site == nullptr)
+		return;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		if (o->getControllingPlayer() == m_player && isAlive(o) && isArmyUnit(o) && o->getAI() && o->getAI()->isIdle())
+		{
+			o->getAI()->aiMoveToPosition(site->getPosition(), CMD_FROM_AI);
+			if (debugAI())
+				fprintf(stderr, "[skirmishai] %ls sends %s to take %s\n", m_player->getPlayerDisplayName().str(),
+					o->getTemplate()->getName().str(), site->getTemplate()->getName().str());
+			return;
+		}
 }
 
 //-------------------------------------------------------------------------------------------------
