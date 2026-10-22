@@ -14,6 +14,7 @@
 #include "GameClient/GameText.h"
 #include "GameLogic/GameLogic.h"
 #include "Common/GameEngine.h"
+#include "GameLogic/VictoryConditions.h"
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -804,6 +805,8 @@ public:
 static GameHost s_host;
 static Apt::Player *s_store = nullptr;
 static Apt::Player *s_menu = nullptr;	///< QuitMenu overlay (Options button / Esc)
+static Apt::Player *s_endGame = nullptr;	///< GuiFX.apt: the victory / defeat banner
+static int s_endShown = 0;	///< 0 none, 1 victory, 2 defeat
 static Int s_radarRect[4] = { 0, 0, 0, 0 };
 static bool s_draggingRadar = false;
 static bool s_tried = false;
@@ -1023,6 +1026,46 @@ void draw()
 		s_menu->update(ms);
 		s_menu->render(viewMatrix());
 	}
+	// the end of the game: GuiFX's ShowEndGame banner (good or evil art by the local side)
+	if (s_endShown == 0 && TheVictoryConditions)
+	{
+		const int end = TheVictoryConditions->isLocalAlliedVictory() ? 1 : (TheVictoryConditions->isLocalAlliedDefeat() ? 2 : 0);
+		if (end)
+		{
+			s_endShown = end;
+			// the banner's text; its "GoodW3D"/"EvilW3D" frame is where RotWK renders a 3D scene (not yet)
+			{
+				Bool exists = FALSE;
+				UnicodeString u = TheGameText ? TheGameText->fetch(end == 1 ? "GUI:Victory" : "GUI:Defeat", &exists) : UnicodeString();
+				AsciiString a;
+				if (exists) a.translate(u);
+				s_host.dynamicText[":victorydefeat"] = exists ? a.str() : (end == 1 ? "Victory" : "Defeat");
+			}
+			s_endGame = new Apt::Player();
+			s_endGame->setHost(&s_host);
+			s_endGame->global()->set("InGame", Apt::Value::boolean(true));
+			if (!s_endGame->load("GuiFX")) { delete s_endGame; s_endGame = nullptr; }
+			else
+				s_endGame->call("ShowEndGame", { Apt::Value::boolean(end == 1), Apt::Value(), Apt::Value() });
+			if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] end of game: %s\n", end == 1 ? "victory" : "defeat");
+		}
+	}
+	if (s_endGame)
+	{
+		std::vector<Apt::Instance *> stack = { s_endGame->root().get() };
+		while (!stack.empty())
+		{
+			Apt::Instance *n = stack.back();
+			stack.pop_back();
+			if (n->name == "GoodW3D" || n->name == "EvilW3D")
+				n->visible = false;
+			for (auto &kv : n->children) if (kv.second) stack.push_back(kv.second.get());
+		}
+		s_endGame->update(ms);
+		s_endGame->render(viewMatrix());
+		static int s_endFrames = 0;
+		if (++s_endFrames == 60 && getenv("BFME_APT_TREE_END")) dumpTree(*s_endGame->root(), 0, Apt::Matrix());
+	}
 }
 
 /// Esc / the Options button: show or hide the quit menu (replaces Generals' QuitMenu.wnd)
@@ -1098,6 +1141,9 @@ void shutdown()
 {
 	delete s_menu;
 	s_menu = nullptr;
+	delete s_endGame;
+	s_endGame = nullptr;
+	s_endShown = 0;
 	delete s_store;
 	s_store = nullptr;
 	delete s_player;

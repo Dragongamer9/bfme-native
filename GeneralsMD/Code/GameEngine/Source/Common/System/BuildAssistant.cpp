@@ -669,7 +669,9 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
-		Bool feedbackWithFailure = TRUE;
+		// bfme-native: red "can't build here" bibs are for the local player's placement only; a
+		// computer player's site search would otherwise leave them under every building it tried
+		Bool feedbackWithFailure = (thePlayer == nullptr || thePlayer->getPlayerType() == PLAYER_HUMAN);
 		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
 
 		//Kris: If the object is stealthed and we can't see it, pretend we can build there.
