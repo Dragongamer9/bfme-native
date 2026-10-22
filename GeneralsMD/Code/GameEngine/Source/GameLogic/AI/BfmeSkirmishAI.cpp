@@ -16,6 +16,7 @@
 #include "GameLogic/BfmeSkirmishAI.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/Module/BfmeModules.h"
 #include "GameLogic/Module/HordeContain.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameLogic/Object.h"
@@ -159,7 +160,7 @@ static Bool isArmyUnit(const Object* o)
 
 //-------------------------------------------------------------------------------------------------
 BfmeSkirmishAI::BfmeSkirmishAI(Player* player) :
-	m_player(player), m_started(FALSE), m_nextThink(0), m_nextAttack(0), m_startFrame(0), m_placementTry(0)
+	m_player(player), m_started(FALSE), m_nextThink(0), m_nextAttack(0), m_startFrame(0), m_placementTry(0), m_nextHero(0)
 {
 	m_base.zero();
 }
@@ -194,6 +195,19 @@ void BfmeSkirmishAI::think()
 			continue;
 		if (o->isKindOf(KINDOF_DOZER) && o->getAI())
 			dozers.push_back(o);
+		else if (o->isKindOf(KINDOF_BASE_FOUNDATION) && !o->testStatus(OBJECT_STATUS_UNSELECTABLE) && !bfmeFoundationOccupied(o))
+		{
+			const CommandSet* cs = commandSetOf(o->getCommandSetString());
+			for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
+			{
+				const CommandButton* b = cs->getCommandButton(i);
+				if (b && b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT)
+				{
+					dozers.push_back(o);
+					break;
+				}
+			}
+		}
 		if (!o->isKindOf(KINDOF_STRUCTURE) && o->getAI())
 		{
 			sum.x += o->getPosition()->x;
@@ -215,6 +229,7 @@ void BfmeSkirmishAI::think()
 			fprintf(stderr, "[skirmishai] %ls starts at %.0f,%.0f with %d builders\n", m_player->getPlayerDisplayName().str(), m_base.x, m_base.y, (int)dozers.size());
 	}
 	buildBase(dozers);
+	recruitHeroes();
 	trainArmy();
 	attack();
 }
@@ -239,8 +254,8 @@ const ThingTemplate* BfmeSkirmishAI::producerFor(Object* dozer, const ThingTempl
 	for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
 	{
 		const CommandButton* b = cs->getCommandButton(i);
-		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) && b->getThingTemplate() &&
-				canTrain(b->getThingTemplate(), unit))
+		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT) &&
+				b->getThingTemplate() && canTrain(b->getThingTemplate(), unit))
 			return b->getThingTemplate();
 	}
 	return nullptr;
@@ -251,6 +266,52 @@ Bool BfmeSkirmishAI::placeBuilding(Object* dozer, const ThingTemplate* what)
 	const Int cost = what->calcCostToBuild(m_player);
 	if (m_player->getMoney()->countMoney() < (UnsignedInt)cost)
 		return FALSE;
+	// farms share the land around them (TerrainResourceBehavior): put each one as far from our
+	// other farms as the land allows
+	if (isFarm(what))
+	{
+		std::vector<Coord3D> farms;
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+			if (o->getControllingPlayer() == m_player && isAlive(o) && isFarm(o->getTemplate()))
+				farms.push_back(*o->getPosition());
+		Coord3D best;
+		Real bestScore = -1.0f;
+		for (Int ring = 0; ring < 6; ++ring)
+			for (Int k = 0; k < 12; ++k)
+			{
+				const Real radius = 220.0f + 90.0f * ring;
+				const Real angle = k * (PI / 6.0f) + ring * 0.29f;
+				Coord3D pos;
+				pos.x = m_base.x + radius * Cos(angle);
+				pos.y = m_base.y + radius * Sin(angle);
+				pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);
+				Real nearest = 1.0e9f;
+				for (size_t f = 0; f < farms.size(); ++f)
+				{
+					const Real dx = farms[f].x - pos.x, dy = farms[f].y - pos.y;
+					nearest = min(nearest, sqrtf(dx * dx + dy * dy));
+				}
+				// spread out, but stay near home
+				const Real score = min(nearest, 400.0f) - radius * 0.25f;
+				if (score <= bestScore)
+					continue;
+				if (TheBuildAssistant->isLocationLegalToBuild(&pos, what, angle,
+						BuildAssistant::TERRAIN_RESTRICTIONS | BuildAssistant::CLEAR_PATH | BuildAssistant::NO_OBJECT_OVERLAP, dozer, m_player) != LBC_OK)
+					continue;
+				best = pos;
+				bestScore = score;
+			}
+		if (bestScore > -1.0f)
+		{
+			// the porter's construct() takes the cost
+			if (TheBuildAssistant->buildObjectNow(dozer, what, &best, 0.0f, m_player))
+			{
+				if (debugAI())
+					fprintf(stderr, "[skirmishai] %ls builds %s at %.0f,%.0f\n", m_player->getPlayerDisplayName().str(), what->getName().str(), best.x, best.y);
+				return TRUE;
+			}
+		}
+	}
 	// a spiral of sites around the base, the building facing away from its centre
 	for (Int tries = 0; tries < 48; ++tries, ++m_placementTry)
 	{
@@ -266,13 +327,9 @@ Bool BfmeSkirmishAI::placeBuilding(Object* dozer, const ThingTemplate* what)
 			BuildAssistant::TERRAIN_RESTRICTIONS | BuildAssistant::CLEAR_PATH | BuildAssistant::NO_OBJECT_OVERLAP, dozer, m_player);
 		if (lbc != LBC_OK)
 			continue;
-		m_player->getMoney()->withdraw(cost);
-		Object* site = TheBuildAssistant->buildObjectNow(dozer, what, &pos, facing, m_player);
+		Object* site = TheBuildAssistant->buildObjectNow(dozer, what, &pos, facing, m_player);	// takes the cost
 		if (site == nullptr)
-		{
-			m_player->getMoney()->deposit(cost);
 			continue;
-		}
 		if (debugAI())
 			fprintf(stderr, "[skirmishai] %ls builds %s at %.0f,%.0f\n", m_player->getPlayerDisplayName().str(), what->getName().str(), pos.x, pos.y);
 		++m_placementTry;
@@ -286,10 +343,18 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 	const BfmeArmyDefinition* army = TheBfmeSkirmishAIStore.findArmy(m_player->getSide());
 	Object* dozer = nullptr;
 	for (size_t i = 0; i < dozers.size() && dozer == nullptr; ++i)
-		if (dozers[i]->getAI()->isIdle())
+		if (dozers[i]->isKindOf(KINDOF_BASE_FOUNDATION) || (dozers[i]->getAI() && dozers[i]->getAI()->isIdle()))
 			dozer = dozers[i];
+	// camps: a free build plot builds instead of a porter (one building at a time)
+	const Bool plot = dozer && dozer->isKindOf(KINDOF_BASE_FOUNDATION);
 	if (dozer == nullptr)
 		return;
+	if (plot)
+	{
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+			if (o->getControllingPlayer() == m_player && isAlive(o) && o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+				return;
+	}
 
 	// what we own (sites under construction included)
 	Int farms = 0;
@@ -307,7 +372,8 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 	for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET && farm == nullptr; ++i)
 	{
 		const CommandButton* b = cs->getCommandButton(i);
-		if (b && b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT && b->getThingTemplate() && isFarm(b->getThingTemplate()))
+		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT) &&
+				b->getThingTemplate() && isFarm(b->getThingTemplate()))
 			farm = b->getThingTemplate();
 	}
 
@@ -343,8 +409,61 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 		wanted.push_back(farm);
 
 	for (size_t i = 0; i < wanted.size(); ++i)
+	{
+		if (plot)
+		{
+			if (wanted[i]->calcCostToBuild(m_player) <= (Int)m_player->getMoney()->countMoney() && bfmeFoundationConstruct(dozer, wanted[i]))
+			{
+				if (debugAI())
+					fprintf(stderr, "[skirmishai] %ls builds %s on a plot\n", m_player->getPlayerDisplayName().str(), wanted[i]->getName().str());
+				return;
+			}
+			continue;
+		}
 		if (placeBuilding(dozer, wanted[i]))
 			return;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+/// heroes from the hero slots of our keep and barracks: one more per game phase, when there is
+/// money left for the army
+void BfmeSkirmishAI::recruitHeroes()
+{
+	const UnsignedInt now = TheGameLogic->getFrame();
+	if (now < m_nextHero)
+		return;
+	m_nextHero = now + 20 * LOGICFRAMES_PER_SECOND;
+	Int heroes = 0;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		if (o->getControllingPlayer() == m_player && isAlive(o) && o->isKindOf(KINDOF_HERO) && !o->isKindOf(KINDOF_STRUCTURE))
+			++heroes;
+	if (heroes >= phase() + 1)
+		return;
+	std::vector<std::pair<Object*, const ThingTemplate*> > options;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != m_player || !isAlive(o) || !o->isKindOf(KINDOF_STRUCTURE) ||
+				o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			continue;
+		const CommandSet* cs = commandSetOf(o->getCommandSetString());
+		for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
+		{
+			const CommandButton* b = cs->getCommandButton(i);
+			if (b == nullptr || b->getCommandType() != GUI_COMMAND_BFME_REVIVE)
+				continue;
+			if (TheControlBar->getCommandAvailability(b, o, nullptr) != COMMAND_AVAILABLE)
+				continue;
+			const ThingTemplate* hero = bfmeReviveSlotHero(o, b);
+			if (hero && hero->calcCostToBuild(m_player) + 300 <= (Int)m_player->getMoney()->countMoney())
+				options.push_back(std::make_pair(o, hero));
+		}
+	}
+	if (options.empty())
+		return;
+	const size_t pick = (size_t)GameLogicRandomValue(0, (Int)options.size() - 1);
+	if (bfmeRecruitHero(options[pick].first, options[pick].second) && debugAI())
+		fprintf(stderr, "[skirmishai] %ls recruits hero %s\n", m_player->getPlayerDisplayName().str(), options[pick].second->getName().str());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -373,8 +492,18 @@ void BfmeSkirmishAI::trainArmy()
 			const ThingTemplate* unit = pct > 0.0f ? TheThingFactory->findTemplate(army->m_members[i].m_unit) : nullptr;
 			if (unit == nullptr || !canTrain(o->getTemplate(), unit))
 				continue;
-			if (TheBuildAssistant->canMakeUnit(o, unit) != CANMAKE_OK)
+			const CanMakeType cmt = TheBuildAssistant->canMakeUnit(o, unit);
+			if (cmt != CANMAKE_OK)
+			{
+				if (debugAI() && cmt != CANMAKE_NO_MONEY)
+				{
+					static Int s_reported = 0;
+					if (s_reported++ < 20)
+						fprintf(stderr, "[skirmishai] %ls can't train %s at %s: %d\n", m_player->getPlayerDisplayName().str(),
+							unit->getName().str(), o->getTemplate()->getName().str(), (int)cmt);
+				}
 				continue;
+			}
 			choice.push_back(unit);
 			weight.push_back(pct);
 			total += pct;
@@ -386,11 +515,8 @@ void BfmeSkirmishAI::trainArmy()
 		for (; pick + 1 < choice.size() && roll > weight[pick]; ++pick)
 			roll -= weight[pick];
 		const ThingTemplate* unit = choice[pick];
-		const Int cost = unit->calcCostToBuild(m_player);
-		m_player->getMoney()->withdraw(cost);
-		if (!pu->queueCreateUnit(unit, pu->requestUniqueUnitID()))
-			m_player->getMoney()->deposit(cost);
-		else if (debugAI())
+		// queueCreateUnit takes the cost
+		if (pu->queueCreateUnit(unit, pu->requestUniqueUnitID()) && debugAI())
 			fprintf(stderr, "[skirmishai] %ls trains %s at %s\n", m_player->getPlayerDisplayName().str(), unit->getName().str(), o->getTemplate()->getName().str());
 	}
 }

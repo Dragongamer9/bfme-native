@@ -586,10 +586,16 @@ public:
 	static CastleBehavior* findOn(const Object* obj);
 private:
 	Bool m_unpacked;
+	Bool m_startSite;	///< the site on its owner's start position (unpacks for free)
 };
 
 /// FOUNDATION_CONSTRUCT: start a building on a build plot; FALSE if it can't be done
 Bool bfmeFoundationConstruct(Object* foundation, const ThingTemplate* what);
 /// is a building standing (or rising) on this plot
 Bool bfmeFoundationOccupied(const Object* foundation);
+/// recruit (or revive) one of the side's heroes at a keep; FALSE if not possible now
+Bool bfmeRecruitHero(Object* building, const ThingTemplate* hero);
+class CommandButton;
+/// the hero a REVIVE slot button of this building stands for, or null
+const ThingTemplate* bfmeReviveSlotHero(const Object* building, const CommandButton* button);
 

@@ -126,7 +126,7 @@ void CastleBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 	p.add(fp);
 }
 
-CastleBehavior::CastleBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_unpacked(FALSE)
+CastleBehavior::CastleBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_unpacked(FALSE), m_startSite(FALSE)
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 2));
 }
@@ -139,6 +139,7 @@ void CastleBehavior::xfer( Xfer *xfer )
 	xfer->xferVersion(&v, cv);
 	UpdateModule::xfer(xfer);
 	xfer->xferBool(&m_unpacked);
+	xfer->xferBool(&m_startSite);
 }
 void CastleBehavior::loadPostProcess() { UpdateModule::loadPostProcess(); }
 
@@ -170,7 +171,7 @@ const BfmeCastleEntry* CastleBehavior::entryFor(const Player* p) const
 }
 
 /// the player whose start position this site stands on
-static Player* startOwnerOf(const Object* site)
+static Player* startOwnerOf(const Object* site, Real* distance = nullptr)
 {
 	if (ThePlayerList == nullptr || TheTerrainLogic == nullptr)
 		return nullptr;
@@ -193,6 +194,8 @@ static Player* startOwnerOf(const Object* site)
 			best = p;
 		}
 	}
+	if (distance)
+		*distance = sqrtf(bestD);
 	return best;
 }
 
@@ -205,7 +208,12 @@ UpdateSleepTime CastleBehavior::update()
 	if (!isRealPlayer(owner))
 	{
 		// a site on a start position belongs to that player
-		Player* p = startOwnerOf(me);
+		Real dist = 0.0f;
+		Player* p = startOwnerOf(me, &dist);
+		if (p && dist < 120.0f)
+			m_startSite = TRUE;
+		else
+			p = nullptr;	// other sites are captured (bfmeCastleUpdate)
 		if (p && p->getDefaultTeam())
 		{
 			me->setTeam(p->getDefaultTeam());
@@ -219,7 +227,7 @@ UpdateSleepTime CastleBehavior::update()
 	}
 	// castles, the start camp (a player starts with the base on his start position) and the
 	// computer's camps unpack by themselves
-	if (getCastleBehaviorModuleData()->m_instantUnpack || TheGameLogic->getFrame() < 10 * LOGICFRAMES_PER_SECOND)
+	if (getCastleBehaviorModuleData()->m_instantUnpack || (m_startSite && TheGameLogic->getFrame() < 10 * LOGICFRAMES_PER_SECOND))
 		unpack(FALSE);
 	else if (owner->getPlayerType() == PLAYER_COMPUTER)
 		unpack(TRUE);
@@ -374,11 +382,92 @@ Bool bfmeFoundationConstruct(Object* foundation, const ThingTemplate* what)
 	return TRUE;
 }
 
+//=================================================================================================
+// capture flags (CAPTUREFLAG): economy plots, outposts, map flags
+//=================================================================================================
+struct BfmeCapture
+{
+	ObjectID m_flag;
+	Int m_player;	///< player index taking it
+	UnsignedInt m_since;
+};
+static std::vector<BfmeCapture> s_captures;
+static const UnsignedInt CAPTURE_FRAMES = 3 * LOGICFRAMES_PER_SECOND;
+static const Real CAPTURE_RADIUS = 70.0f;
+
+static void updateCaptures()
+{
+	const UnsignedInt now = TheGameLogic->getFrame();
+	for (Object* flag = TheGameLogic->getFirstObject(); flag; flag = flag->getNextObject())
+	{
+		if (!flag->isKindOf(KINDOF_CAPTUREFLAG) || flag->isEffectivelyDead())
+			continue;
+		CastleBehavior* cb = CastleBehavior::findOn(flag);
+		if (cb && cb->isUnpacked())
+			continue;
+		// who stands at the flag
+		Player* taker = nullptr;
+		Bool contested = FALSE, ownerPresent = FALSE;
+		Player* owner = flag->getControllingPlayer();
+		SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(flag, CAPTURE_RADIUS, FROM_CENTER_2D);
+		MemoryPoolObjectHolder hold(iter);
+		for (Object* o = iter->first(); o; o = iter->next())
+		{
+			if (o->isEffectivelyDead() || o->isKindOf(KINDOF_STRUCTURE) || o->getAI() == nullptr || o->isKindOf(KINDOF_PROJECTILE))
+				continue;
+			if (!(o->isKindOf(KINDOF_INFANTRY) || o->isKindOf(KINDOF_CAVALRY) || o->isKindOf(KINDOF_HERO) || o->isKindOf(KINDOF_MONSTER)))
+				continue;
+			Player* p = o->getControllingPlayer();
+			if (!isRealPlayer(p))
+				continue;
+			if (p == owner)
+				ownerPresent = TRUE;
+			else if (taker == nullptr || taker == p)
+				taker = p;
+			else if (taker->getRelationship(p->getDefaultTeam()) != ALLIES)
+				contested = TRUE;
+		}
+		size_t k = 0;
+		while (k < s_captures.size() && s_captures[k].m_flag != flag->getID())
+			++k;
+		if (taker == nullptr || contested || ownerPresent || (isRealPlayer(owner) && owner->getRelationship(taker->getDefaultTeam()) == ALLIES))
+		{
+			if (k < s_captures.size())
+				s_captures.erase(s_captures.begin() + k);
+			continue;
+		}
+		if (k == s_captures.size() || s_captures[k].m_player != taker->getPlayerIndex())
+		{
+			BfmeCapture c;
+			c.m_flag = flag->getID();
+			c.m_player = taker->getPlayerIndex();
+			c.m_since = now;
+			if (k < s_captures.size())
+				s_captures[k] = c;
+			else
+				s_captures.push_back(c);
+			continue;
+		}
+		if (now - s_captures[k].m_since < CAPTURE_FRAMES || taker->getDefaultTeam() == nullptr)
+			continue;
+		flag->setTeam(taker->getDefaultTeam());
+		s_captures.erase(s_captures.begin() + k);
+		if (debugCastle())
+			fprintf(stderr, "[castle] #%u %s captured by %s\n", flag->getID(), flag->getTemplate()->getName().str(),
+				TheNameKeyGenerator->keyToName(taker->getPlayerNameKey()).str());
+	}
+}
+
 /// per logic frame: plot buildings rise by themselves; a plot comes back when its building falls
 void bfmeCastleUpdate()
 {
 	if (TheGameLogic->getFrame() == 0)
+	{
 		s_plotBuilds.clear();
+		s_captures.clear();
+	}
+	if (TheGameLogic->getFrame() % 10 == 0)
+		updateCaptures();
 	for (size_t i = 0; i < s_plotBuilds.size(); )
 	{
 		Object* plot = TheGameLogic->findObjectByID(s_plotBuilds[i].m_plot);
@@ -423,3 +512,176 @@ static struct BfmeCastleHooks
 		g_bfmeFoundationConstructHook = bfmeFoundationConstruct;
 	}
 } s_bfmeCastleHooks;
+
+//=================================================================================================
+// hero slots (REVIVE buttons on keeps and fortresses)
+//=================================================================================================
+#include "Common/PlayerTemplate.h"
+#include "GameClient/ControlBar.h"
+#include "GameClient/Image.h"
+#include "GameLogic/Module/ProductionUpdate.h"
+
+/// the hero a REVIVE button stands for: the n-th REVIVE button of the building's command set is the
+/// side's ring hero (n = 0) or its n-th BuildableHeroesMP entry
+const ThingTemplate* bfmeReviveSlotHero(const Object* building, const CommandButton* button)
+{
+	const Player* p = building ? building->getControllingPlayer() : nullptr;
+	const PlayerTemplate* pt = p ? p->getPlayerTemplate() : nullptr;
+	const CommandSet* cs = TheControlBar ? TheControlBar->findCommandSet(building->getCommandSetString()) : nullptr;
+	if (pt == nullptr || cs == nullptr)
+		return nullptr;
+	Int n = -1;
+	for (Int i = 0, k = 0; i < MAX_COMMANDS_PER_SET; ++i)
+	{
+		const CommandButton* b = cs->getCommandButton(i);
+		if (b == nullptr || b->getCommandType() != GUI_COMMAND_BFME_REVIVE)
+			continue;
+		if (b == button)
+		{
+			n = k;
+			break;
+		}
+		++k;
+	}
+	if (debugCastle())
+		fprintf(stderr, "[castle] revive slot %s: set %s index %d of %d heroes\n", button->getName().str(), building->getCommandSetString().str(),
+			n, (int)pt->getBfmeBuildableHeroesMP().size());
+	if (n <= 0)
+		return nullptr;	// the ring hero slot: not modelled
+	const std::vector<AsciiString>& heroes = pt->getBfmeBuildableHeroesMP();
+	if (n - 1 >= (Int)heroes.size())
+		return nullptr;
+	return TheThingFactory->findTemplate(heroes[n - 1]);
+}
+
+/// our hero of that type: alive, fallen (waiting to be revived) or none
+static Object* findHero(const Player* p, const ThingTemplate* hero, Bool* fallen)
+{
+	*fallen = FALSE;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != p || o->isDestroyed() || !o->getTemplate()->isEquivalentTo(hero))
+			continue;
+		RespawnUpdate* r = RespawnUpdate::findOn(o);
+		if (r && r->isFallen())
+		{
+			*fallen = TRUE;
+			return o;
+		}
+		if (!o->isEffectivelyDead())
+			return o;
+	}
+	return nullptr;
+}
+
+static Bool heroInProduction(const Player* p, const ThingTemplate* hero)
+{
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != p || o->isEffectivelyDead())
+			continue;
+		ProductionUpdateInterface* pu = o->getProductionUpdateInterface();
+		if (pu && pu->getProductionCount() > 0)
+			for (const ProductionEntry* e = pu->firstProduction(); e; e = pu->nextProduction(e))
+				if (e->getProductionObject() && e->getProductionObject()->isEquivalentTo(hero))
+					return TRUE;
+	}
+	return FALSE;
+}
+
+static Int reviveAvailability(const CommandButton* b, Object* building)
+{
+	const ThingTemplate* hero = bfmeReviveSlotHero(building, b);
+	if (hero == nullptr)
+		return COMMAND_HIDDEN;
+	Player* p = building->getControllingPlayer();
+	Bool fallen = FALSE;
+	Object* h = findHero(p, hero, &fallen);
+	if ((h && !fallen) || heroInProduction(p, hero))
+		return COMMAND_RESTRICTED;
+	if ((Int)p->getMoney()->countMoney() < hero->calcCostToBuild(p))
+		return COMMAND_CANT_AFFORD;
+	return COMMAND_AVAILABLE;
+}
+
+Bool bfmeRecruitHero(Object* building, const ThingTemplate* hero)
+{
+	Player* p = building ? building->getControllingPlayer() : nullptr;
+	if (p == nullptr || hero == nullptr || heroInProduction(p, hero))
+		return FALSE;
+	Bool fallen = FALSE;
+	Object* h = findHero(p, hero, &fallen);
+	if (h && !fallen)
+		return FALSE;
+	const Int cost = hero->calcCostToBuild(p);
+	if (debugCastle())
+		fprintf(stderr, "[castle] recruit %s: cost %d money %u alive=%d fallen=%d production=%d\n", hero->getName().str(), cost,
+			p->getMoney()->countMoney(), (int)(h != nullptr), (int)fallen, (int)(building->getProductionUpdateInterface() != nullptr));
+	if ((Int)p->getMoney()->countMoney() < cost)
+		return FALSE;
+	if (h && fallen)
+	{
+		// a fallen hero comes back at the building
+		Coord3D pos = *building->getPosition();
+		pos.y -= building->getGeometryInfo().getBoundingSphereRadius() + 20.0f;
+		RespawnUpdate* r = RespawnUpdate::findOn(h);
+		if (r == nullptr || r->revive(&pos) == nullptr)
+			return FALSE;
+		p->getMoney()->withdraw(cost);
+		return TRUE;
+	}
+	ProductionUpdateInterface* pu = building->getProductionUpdateInterface();
+	if (debugCastle())
+		fprintf(stderr, "[castle] canMakeUnit %s: %d\n", hero->getName().str(), (int)TheBuildAssistant->canMakeUnit(building, hero));
+	if (pu == nullptr || !pu->queueCreateUnit(hero, pu->requestUniqueUnitID()))	// takes the cost
+		return FALSE;
+	if (debugCastle())
+		fprintf(stderr, "[castle] %s recruits %s at %s\n", TheNameKeyGenerator->keyToName(p->getPlayerNameKey()).str(),
+			hero->getName().str(), building->getTemplate()->getName().str());
+	return TRUE;
+}
+
+static Bool reviveExecute(Object* building, const CommandButton* b)
+{
+	const ThingTemplate* hero = bfmeReviveSlotHero(building, b);
+	const Bool ok = bfmeRecruitHero(building, hero);
+	if (debugCastle())
+		fprintf(stderr, "[castle] %s at %s: hero %s -> %d\n", b->getName().str(), building->getTemplate()->getName().str(),
+			hero ? hero->getName().str() : "none", (int)ok);
+	return ok;
+}
+
+/// the hero's portrait: the image of a button that builds it
+static const Image* reviveImage(Object* building, const CommandButton* b)
+{
+	const ThingTemplate* hero = bfmeReviveSlotHero(building, b);
+	if (hero == nullptr || TheControlBar == nullptr)
+		return nullptr;
+	static std::map<const ThingTemplate*, const Image*> cache;
+	std::map<const ThingTemplate*, const Image*>::iterator it = cache.find(hero);
+	if (it != cache.end())
+		return it->second;
+	const Image* img = nullptr;
+	for (const CommandButton* c = TheControlBar->getCommandButtons(); c && img == nullptr; c = c->getNext())
+		if (c->getThingTemplate() && c->getThingTemplate()->isEquivalentTo(hero) && c->getButtonImage() &&
+				c->getCommandType() == GUI_COMMAND_UNIT_BUILD)
+			img = c->getButtonImage();
+	for (const CommandButton* c = TheControlBar->getCommandButtons(); c && img == nullptr; c = c->getNext())
+		if (c->getThingTemplate() && c->getThingTemplate()->isEquivalentTo(hero) && c->getButtonImage())
+			img = c->getButtonImage();
+	cache[hero] = img;
+	return img;
+}
+
+extern Int (*g_bfmeReviveAvailabilityHook)(const CommandButton*, Object*);
+extern Bool (*g_bfmeReviveHook)(Object*, const CommandButton*);
+extern const Image* (*g_bfmeReviveImageHook)(Object*, const CommandButton*);
+static struct BfmeReviveHooks
+{
+	BfmeReviveHooks()
+	{
+		g_bfmeReviveAvailabilityHook = reviveAvailability;
+		g_bfmeReviveHook = reviveExecute;
+		g_bfmeReviveImageHook = reviveImage;
+	}
+} s_bfmeReviveHooks;

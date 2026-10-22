@@ -494,7 +494,7 @@ private:
 /** Command sets are collections of configurable command buttons.  They are used in the
 	* command context sensitive window in the battle user interface */
 //-------------------------------------------------------------------------------------------------
-enum { MAX_COMMANDS_PER_SET = 18 };  // user interface max is 14 (but internally it's 18 for script only buttons!)
+enum { MAX_COMMANDS_PER_SET = 36 };	// bfme-native: RotWK sets go up to 33 (was 18)  // user interface max is 14 (but internally it's 18 for script only buttons!)
 enum { MAX_RIGHT_HUD_UPGRADE_CAMEOS = 5};
 enum {
 			 MAX_PURCHASE_SCIENCE_RANK_1 = 4,
@@ -529,6 +529,9 @@ private:
 
 	AsciiString m_name;															  ///< name of this command set
 	const CommandButton *m_command[ MAX_COMMANDS_PER_SET ]; ///< the set of command buttons that make this set
+public:
+	Int m_bfmeInitialVisible;	///< bfme-native: RotWK InitialVisible -- buttons past it are a second page (PUSH_VISIBLE_COMMAND_RANGE)
+private:
 
 	CommandSet *m_next;
 
