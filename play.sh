@@ -8,6 +8,7 @@
 #       --you SIDE      your faction (default Men)    - see ./play.sh factions
 #       --ai SIDE       the computer's faction (default Mordor)
 #       --data DIR      data folder (default ~/.local/share/bfme-native/data or $BFME_DATA)
+#       --size WxH      window size (default 1280x720)    --fullscreen   full screen
 #   ./play.sh maps | factions
 #
 # The RotWK folder is the installed Rise of the Witch-king with the Edain and Völker .big files
@@ -74,13 +75,15 @@ PY
     exit 0 ;;
 esac
 
-MAP="map mp umbar"; YOU=Men; AI=Mordor
+MAP="map mp umbar"; YOU=Men; AI=Mordor; SIZE=1280x720; MODE=-win
 while [ $# -gt 0 ]; do
   case "$1" in
     --map) MAP="$2"; shift 2 ;;
     --you) YOU="$2"; shift 2 ;;
     --ai) AI="$2"; shift 2 ;;
     --data) DATA="$2"; shift 2 ;;
+    --size) SIZE="$2"; shift 2 ;;
+    --fullscreen) MODE=-fullscreen; shift ;;
     *) die "unknown option $1 (see the top of play.sh)" ;;
   esac
 done
@@ -91,4 +94,4 @@ B="$ROOT/engine/GeneralsX/build/lin"
 export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA"
 export LD_LIBRARY_PATH="$B/_deps/dxvk-src/lib:$B/_deps/sdl3-build:$B/_deps/sdl3_image-build:${LD_LIBRARY_PATH:-}"
 cd "$DATA"
-exec "$EXE" -win -skirmish "Maps/$MAP.map" "$YOU" "$AI" -noshellmap -quickstart
+exec "$EXE" $MODE -xres "${SIZE%x*}" -yres "${SIZE#*x}" -skirmish "Maps/$MAP.map" "$YOU" "$AI" -noshellmap -quickstart
