@@ -1,0 +1,8 @@
+# Skirmish smoke test: start a 1v1 against the computer and watch the first minutes
+1    reveal
+30   screenshot
+900  screenshot
+1800 screenshot
+3600 screenshot
+3610 players
+3620 quit
