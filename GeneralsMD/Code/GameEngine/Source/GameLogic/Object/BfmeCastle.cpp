@@ -697,6 +697,7 @@ static const Image* reviveImage(Object* building, const CommandButton* b)
 extern Int (*g_bfmeReviveAvailabilityHook)(const CommandButton*, Object*);
 extern Bool (*g_bfmeReviveHook)(Object*, const CommandButton*);
 extern const Image* (*g_bfmeReviveImageHook)(Object*, const CommandButton*);
+extern const ThingTemplate* (*g_bfmeReviveHeroHook)(const Object*, const CommandButton*);
 static struct BfmeReviveHooks
 {
 	BfmeReviveHooks()
@@ -704,5 +705,6 @@ static struct BfmeReviveHooks
 		g_bfmeReviveAvailabilityHook = reviveAvailability;
 		g_bfmeReviveHook = reviveExecute;
 		g_bfmeReviveImageHook = reviveImage;
+		g_bfmeReviveHeroHook = bfmeReviveSlotHero;
 	}
 } s_bfmeReviveHooks;
