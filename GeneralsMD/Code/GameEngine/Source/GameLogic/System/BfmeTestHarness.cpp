@@ -265,6 +265,19 @@ void run(const TestCmd& c)
 				o->isEffectivelyDead() ? " DEAD" : "");
 		}
 	}
+	else if (op == "conditions" && c.args.size() >= 2)
+	{
+		// conditions TEMPLATE : model condition flags and drawable state of every object of that template
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		{
+			if (o->getTemplate()->getName().compareNoCase(c.args[1].c_str()) != 0) continue;
+			Drawable* d = o->getDrawable();
+			AsciiString flags;
+			if (d) d->getModelConditionFlags().buildDescription(&flags);
+			printf("[BFMETEST] conditions #%u %s drawable=%d hidden=%d opacity=%.2f flags=%s\n", o->getID(), o->getTemplate()->getName().str(),
+				d ? 1 : 0, d ? (int)d->isDrawableEffectivelyHidden() : -1, d ? d->getEffectiveOpacity() : 0.0f, flags.str());
+		}
+	}
 	else if (op == "summary")
 	{
 		std::map<std::string, std::pair<int, float> > per;

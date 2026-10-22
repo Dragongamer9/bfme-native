@@ -658,6 +658,20 @@ int MeshClass::Get_Num_Polys() const
 void MeshClass::Render(RenderInfoClass & rinfo)
 {
 	WWPROFILE("Mesh::Render");
+	// bfme-native: BFME_DEBUG_MESH=<name substring> traces why a mesh is or isn't drawn
+	static const char *s_traceMesh = getenv("BFME_DEBUG_MESH");
+	if (s_traceMesh && Get_Name() && strstr(Get_Name(), s_traceMesh))
+	{
+		static int s_traced = 0;
+		if (s_traced++ < 40)
+		{
+			const AABoxClass &box = Get_Bounding_Box();
+			fprintf(stderr, "[mesh] %s hidden=%d sort=%d skin=%d box c=%.0f,%.0f,%.0f e=%.0f,%.0f,%.0f frustum=%d polys=%d verts=%d passes=%d\n", Get_Name(),
+				(int)!Is_Not_Hidden_At_All(), (int)Model->Get_Sort_Level(), (int)Model->Get_Flag(MeshGeometryClass::SKIN),
+				box.Center.X, box.Center.Y, box.Center.Z, box.Extent.X, box.Extent.Y, box.Extent.Z,
+				(int)CollisionMath::Overlap_Test(rinfo.Camera.Get_Frustum(),box), Model->Get_Polygon_Count(), Model->Get_Vertex_Count(), Model->Get_Pass_Count());
+		}
+	}
 	if (Is_Not_Hidden_At_All() == false) {
 		return;
 	}
