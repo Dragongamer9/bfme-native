@@ -1889,6 +1889,8 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *c
 //=============================================================================
 //DECLARE_PERF_TIMER(Terrain_Render)
 
+static bool bfmeTerrainSkip(const char *x) { static const char *k = getenv("BFME_TERRAIN_SKIP"); return k && strstr(k, x) != nullptr; }
+
 void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 {
 	if (getenv("BFME_NO_TERRAIN")) return;
@@ -2093,7 +2095,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 				}
 #endif
 				if (Is_Hidden() == 0) {
-					DX8Wrapper::Draw_Triangles(0, HEIGHTMAP_POLYGON_NUM, 0, HEIGHTMAP_VERTEX_NUM);
+					if (!bfmeTerrainSkip("base")) DX8Wrapper::Draw_Triangles(0, HEIGHTMAP_POLYGON_NUM, 0, HEIGHTMAP_VERTEX_NUM);
 				}
 
 			}
@@ -2108,10 +2110,10 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		if (!ShaderClass::Is_Backface_Culling_Inverted())
 		{
 			//Draw feathered shorelines
-			renderShoreLines(&rinfo.Camera);
+			if (!bfmeTerrainSkip("shore")) renderShoreLines(&rinfo.Camera);
 
 			//Do additional pass over any tiles that have 3 textures blended together.
-			if (TheGlobalData->m_use3WayTerrainBlends)
+			if (TheGlobalData->m_use3WayTerrainBlends && !bfmeTerrainSkip("blend3"))
 				renderExtraBlendTiles();
 		}
 
@@ -2130,13 +2132,13 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 			if (Scene) {
 				RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 				RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
-				m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:nullptr, TheGlobalData->m_useLightMap?m_stageThreeTexture:nullptr,
+				if (!bfmeTerrainSkip("roads")) m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:nullptr, TheGlobalData->m_useLightMap?m_stageThreeTexture:nullptr,
 					m_disableTextures,xCoordMin-m_map->getBorderSizeInline(), xCoordMax-m_map->getBorderSizeInline(), yCoordMin-m_map->getBorderSizeInline(), yCoordMax-m_map->getBorderSizeInline(), &pDynamicLightsIterator);
 			}
 		}
 	#endif
 	if (m_propBuffer) {
-		m_propBuffer->drawProps(rinfo);
+		if (!bfmeTerrainSkip("props")) m_propBuffer->drawProps(rinfo);
 	}
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
@@ -2144,7 +2146,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 
 		// GeneralsX @bugfix fbraz3 08/10/2026 Skip scorches during reflection pass (inverted culling)
 		if (!ShaderClass::Is_Backface_Culling_Inverted()) {
-			drawScorches();
+			if (!bfmeTerrainSkip("scorch")) drawScorches();
 		}
 
 		DX8Wrapper::Set_Texture(0,nullptr);
@@ -2153,7 +2155,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		ShaderClass::Invalidate();
 		DX8Wrapper::Apply_Render_State_Changes();
 
-		m_bridgeBuffer->drawBridges(&rinfo.Camera, m_disableTextures, doCloud?m_stageTwoTexture:nullptr);
+		if (!bfmeTerrainSkip("bridges")) m_bridgeBuffer->drawBridges(&rinfo.Camera, m_disableTextures, doCloud?m_stageTwoTexture:nullptr);
 
 		// GeneralsX @bugfix fbraz3 08/10/2026 Skip terrain tracks during reflection pass (inverted culling)
 		if (TheTerrainTracksRenderObjClassSystem && !ShaderClass::Is_Backface_Culling_Inverted())

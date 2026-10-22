@@ -46,13 +46,13 @@ TileData::TileData()
 // GeneralsX @feature mrkinglollipop 11/07/2026 Bumps this local mip-extent copy to match TileData.h's
 // 8-level chain (128/64/32/16/8/4/2/1); shadows the header's #defines (as it did
 // before this change) -- kept in sync manually.
-#define TILE_PIXEL_EXTENT_MIP1 128
-#define TILE_PIXEL_EXTENT_MIP2 64
-#define TILE_PIXEL_EXTENT_MIP3 32
-#define TILE_PIXEL_EXTENT_MIP4 16
-#define TILE_PIXEL_EXTENT_MIP5 8
-#define TILE_PIXEL_EXTENT_MIP6 4
-#define TILE_PIXEL_EXTENT_MIP7 2
+#define TILE_PIXEL_EXTENT_MIP1 64
+#define TILE_PIXEL_EXTENT_MIP2 32
+#define TILE_PIXEL_EXTENT_MIP3 16
+#define TILE_PIXEL_EXTENT_MIP4 8
+#define TILE_PIXEL_EXTENT_MIP5 4
+#define TILE_PIXEL_EXTENT_MIP6 2
+#define TILE_PIXEL_EXTENT_MIP7 1
 #define TILE_PIXEL_EXTENT_MIP8 1
 
 Bool TileData::hasRGBDataForWidth(Int width)
@@ -97,7 +97,10 @@ void TileData::updateMips()
 	doMip(m_tileDataMip16, TILE_PIXEL_EXTENT_MIP4, m_tileDataMip8);
 	doMip(m_tileDataMip8, TILE_PIXEL_EXTENT_MIP5, m_tileDataMip4);
 	doMip(m_tileDataMip4, TILE_PIXEL_EXTENT_MIP6, m_tileDataMip2);
-	doMip(m_tileDataMip2, TILE_PIXEL_EXTENT_MIP7, m_tileDataMip1);
+	if (TILE_PIXEL_EXTENT_MIP7 > 1)	// bfme-native: chain already ends at 1x1 with 128px tiles
+		doMip(m_tileDataMip2, TILE_PIXEL_EXTENT_MIP7, m_tileDataMip1);
+	else
+		memcpy(m_tileDataMip1, m_tileDataMip2, sizeof(m_tileDataMip1));
 }
 
 

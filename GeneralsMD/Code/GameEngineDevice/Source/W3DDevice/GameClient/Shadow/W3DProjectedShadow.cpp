@@ -57,6 +57,71 @@
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "WWMath/wwmath.h"
+#include "WWLib/ffactory.h"
+#include "WW3D2/surfaceclass.h"
+
+// bfme-native: ZH's default blob shadow textures (shadow.tga / shadowi.tga) don't exist in BFME,
+// so the decal shadows of props rendered with the magenta "missing texture". Build the blob in code.
+static TextureClass *bfmeMakeBlobShadow(bool inverted)
+{
+	const int size = 64;
+	TextureClass *tex = NEW_REF(TextureClass, (size, size, WW3D_FORMAT_A8R8G8B8, MIP_LEVELS_ALL));
+	SurfaceClass *surf = tex->Get_Surface_Level(0);
+	if (surf)
+	{
+		int pitch = 0;
+		unsigned char *bits = (unsigned char *)surf->Lock(&pitch);
+		if (bits)
+		{
+			for (int y = 0; y < size; ++y)
+			{
+				unsigned int *row = (unsigned int *)(bits + y * pitch);
+				for (int x = 0; x < size; ++x)
+				{
+					float dx = (x + 0.5f) / size * 2.0f - 1.0f;
+					float dy = (y + 0.5f) / size * 2.0f - 1.0f;
+					float d = sqrtf(dx * dx + dy * dy);
+					float k = d >= 1.0f ? 0.0f : (1.0f - d * d);	// 1 at centre, 0 at the rim
+					unsigned int shade = (unsigned int)(255.0f - 160.0f * k);	// darkest ~95 in the middle
+					if (inverted) shade = 255 - shade;
+					unsigned int alpha = (unsigned int)(255.0f * k);
+					row[x] = (alpha << 24) | (shade << 16) | (shade << 8) | shade;
+				}
+			}
+			surf->Unlock();
+		}
+		REF_PTR_RELEASE(surf);
+	}
+	tex->Set_Texture_Name(inverted ? "shadowi.tga" : "shadow.tga");
+	return tex;
+}
+
+static TextureClass *bfmeGetDecalTexture(const char *name)
+{
+	const bool isBlob = stricmp(name, "shadow.tga") == 0;
+	const bool isBlobI = stricmp(name, "shadowi.tga") == 0;
+	if (isBlob || isBlobI)
+	{
+		static int s_available[2] = { -1, -1 };
+		int &avail = s_available[isBlobI ? 1 : 0];
+		if (avail < 0)
+		{
+			FileClass *file = _TheFileFactory ? _TheFileFactory->Get_File(name) : nullptr;
+			avail = (file && file->Is_Available()) ? 1 : 0;
+			if (file) _TheFileFactory->Return_File(file);
+		}
+		if (!avail)
+		{
+			static TextureClass *s_blob[2] = { nullptr, nullptr };
+			TextureClass *&blob = s_blob[isBlobI ? 1 : 0];
+			if (blob == nullptr)
+				blob = bfmeMakeBlobShadow(isBlobI);
+			blob->Add_Ref();
+			return blob;
+		}
+	}
+	return WW3DAssetManager::Get_Instance()->Get_Texture(name);
+}
 
 
 /** @todo: We're going to have a pool of a couple rendertargets to use
@@ -1654,7 +1719,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 	if (st == nullptr)
 	{
 		//Adding a new decal texture
-		TextureClass *w3dTexture=WW3DAssetManager::Get_Instance()->Get_Texture(texture_name);
+		TextureClass *w3dTexture=bfmeGetDecalTexture(texture_name);
 		w3dTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
@@ -1761,7 +1826,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 	if (st == nullptr)
 	{
 		//Adding a new decal texture
-		TextureClass *w3dTexture=WW3DAssetManager::Get_Instance()->Get_Texture(texture_name);
+		TextureClass *w3dTexture=bfmeGetDecalTexture(texture_name);
 		w3dTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
@@ -1899,7 +1964,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 				if (st == nullptr)
 				{
 					//need to add this texture without creating it from a real renderobject
-					TextureClass *w3dTexture=WW3DAssetManager::Get_Instance()->Get_Texture(texture_name);
+					TextureClass *w3dTexture=bfmeGetDecalTexture(texture_name);
 					w3dTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 					w3dTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 					w3dTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
@@ -2090,7 +2155,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::createDecalShadow(Shadow::ShadowT
 	if (st == nullptr)
 	{
 		//need to add this texture without creating it from a real renderobject
-		TextureClass *w3dTexture=WW3DAssetManager::Get_Instance()->Get_Texture(texture_name);
+		TextureClass *w3dTexture=bfmeGetDecalTexture(texture_name);
 		w3dTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		w3dTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);

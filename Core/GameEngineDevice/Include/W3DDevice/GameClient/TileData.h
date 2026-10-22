@@ -51,17 +51,19 @@ typedef struct {
 // LEGACY_TILE_PIXEL_EXTENT (see WorldHeightMap.cpp) is the pre-patch 64px grid cell
 // size that unmodified base/custom-map TGAs are still packed in; the loader detects
 // and nearest-neighbor upscales those on read so they keep working unmodified.
-#define TILE_PIXEL_EXTENT 256
+// bfme-native: 128px tiles (BFME art is 64px) so 225 texture classes fit the 8192 atlas;
+// at 256px only 49 classes fit and BFME maps use 60+.
+#define TILE_PIXEL_EXTENT 128
 #define TILE_BYTES_PER_PIXEL 4
 #define DATA_LEN_BYTES TILE_PIXEL_EXTENT*TILE_PIXEL_EXTENT*TILE_BYTES_PER_PIXEL
 #define DATA_LEN_PIXELS TILE_PIXEL_EXTENT*TILE_PIXEL_EXTENT
-#define TILE_PIXEL_EXTENT_MIP1 128
-#define TILE_PIXEL_EXTENT_MIP2 64
-#define TILE_PIXEL_EXTENT_MIP3 32
-#define TILE_PIXEL_EXTENT_MIP4 16
-#define TILE_PIXEL_EXTENT_MIP5 8
-#define TILE_PIXEL_EXTENT_MIP6 4
-#define TILE_PIXEL_EXTENT_MIP7 2
+#define TILE_PIXEL_EXTENT_MIP1 64
+#define TILE_PIXEL_EXTENT_MIP2 32
+#define TILE_PIXEL_EXTENT_MIP3 16
+#define TILE_PIXEL_EXTENT_MIP4 8
+#define TILE_PIXEL_EXTENT_MIP5 4
+#define TILE_PIXEL_EXTENT_MIP6 2
+#define TILE_PIXEL_EXTENT_MIP7 1
 #define TILE_PIXEL_EXTENT_MIP8 1
 #define TEXTURE_WIDTH 8192 // GeneralsX @feature mrkinglollipop 11/07/2026 Bumps atlas TEXTURE_WIDTH 2048->8192 (was 2048). MoltenVK/Metal cap is 16384.
 

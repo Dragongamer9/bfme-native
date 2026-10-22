@@ -76,6 +76,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "meshmdl.h"
+#include <vector>
 #include "aabtree.h"
 #include "matinfo.h"
 #include "vertmaterial.h"
@@ -201,6 +202,20 @@ private:
 	** Record when we load the DIG chunk
 	*/
 	bool															LoadedDIG;
+
+public:
+	// bfme-native: BFME2/RotWK FX shader materials (W3D_CHUNK 0x50..0x53)
+	struct BfmeFxMaterial
+	{
+		BfmeFxMaterial() : Texture(nullptr), AlphaTest(false), Ambient(0.8f,0.8f,0.8f), Diffuse(1.0f,1.0f,1.0f) {}
+		StringClass ShaderName;
+		TextureClass * Texture;
+		bool AlphaTest;
+		Vector3 Ambient;
+		Vector3 Diffuse;
+	};
+	std::vector < BfmeFxMaterial >							BfmeFxMaterials;
+private:
 
 	friend class MeshClass;
 	friend class MeshModelClass;
@@ -547,6 +562,10 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 			case W3D_CHUNK_PRELIT_LIGHTMAP_MULTI_TEXTURE:
 					read_prelit_material (cload, context);
 					break;
+
+			case 0x50:	// bfme-native: W3D_CHUNK_SHADER_MATERIALS
+				error = bfme_read_fx_materials(cload,context);
+				break;
 
 			case W3D_CHUNK_AABTREE:
 					// call up to MeshGeometryClass
@@ -1019,6 +1038,105 @@ WW3DErrorType MeshModelClass::read_textures(ChunkLoadClass & cload,MeshLoadConte
 }
 
 
+
+/*
+** bfme-native: BFME2 / RotWK meshes describe materials with FX shaders (NormalMapped.fx,
+** ObjectsGood.fx, ...). We have no FX runtime, so each FX material becomes a classic
+** fixed-function material: lit vertex material + its diffuse texture, opaque or alpha tested.
+*/
+static void bfme_read_fx_property(ChunkLoadClass & cload, MeshLoadContextClass::BfmeFxMaterial & mat)
+{
+	uint32 type = 0, namelen = 0;
+	cload.Read(&type,sizeof(type));
+	cload.Read(&namelen,sizeof(namelen));
+	char name[256] = { 0 };
+	uint32 toread = namelen < sizeof(name) ? namelen : sizeof(name) - 1;
+	cload.Read(name,toread);
+	if (toread < namelen) cload.Seek(namelen - toread);
+	switch (type) {
+		case 1: {	// string
+			uint32 len = 0;
+			cload.Read(&len,sizeof(len));
+			char value[256] = { 0 };
+			uint32 vr = len < sizeof(value) ? len : sizeof(value) - 1;
+			cload.Read(value,vr);
+			bool isDiffuse = (stricmp(name,"DiffuseTexture") == 0 || stricmp(name,"Texture_0") == 0 || stricmp(name,"Texture") == 0);
+			if (isDiffuse && value[0] && (mat.Texture == nullptr || stricmp(name,"DiffuseTexture") == 0)) {
+				REF_PTR_RELEASE(mat.Texture);
+				mat.Texture = WW3DAssetManager::Get_Instance()->Get_Texture(value);
+			}
+			break;
+		}
+		case 5: {	// float4 colour
+			float v[4] = { 0,0,0,0 };
+			cload.Read(v,sizeof(v));
+			if (stricmp(name,"AmbientColor") == 0) mat.Ambient.Set(v[0],v[1],v[2]);
+			else if (stricmp(name,"DiffuseColor") == 0) mat.Diffuse.Set(v[0],v[1],v[2]);
+			break;
+		}
+		case 7: {	// bool
+			unsigned char b = 0;
+			cload.Read(&b,1);
+			if (stricmp(name,"AlphaTestEnable") == 0) mat.AlphaTest = (b != 0);
+			break;
+		}
+		default:
+			break;	// remaining bytes are skipped by Close_Chunk
+	}
+}
+
+WW3DErrorType MeshModelClass::bfme_read_fx_materials(ChunkLoadClass & cload,MeshLoadContextClass * context)
+{
+	while (cload.Open_Chunk()) {
+		if (cload.Cur_Chunk_ID() == 0x51) {	// one shader material
+			MeshLoadContextClass::BfmeFxMaterial mat;
+			while (cload.Open_Chunk()) {
+				if (cload.Cur_Chunk_ID() == 0x52) {
+					unsigned char ver = 0;
+					char shader[33] = { 0 };
+					cload.Read(&ver,1);
+					cload.Read(shader,32);
+					mat.ShaderName = shader;
+				} else if (cload.Cur_Chunk_ID() == 0x53) {
+					bfme_read_fx_property(cload,mat);
+				}
+				cload.Close_Chunk();
+			}
+			context->BfmeFxMaterials.push_back(mat);
+		}
+		cload.Close_Chunk();
+	}
+	return WW3D_ERROR_OK;
+}
+
+void MeshModelClass::bfme_apply_fx_material(MeshLoadContextClass * context,int fxid)
+{
+	if (fxid < 0 || fxid >= (int)context->BfmeFxMaterials.size())
+		return;
+	MeshLoadContextClass::BfmeFxMaterial & fx = context->BfmeFxMaterials[fxid];
+	const int pass = context->CurPass;
+
+	VertexMaterialClass * vmat = NEW_REF(VertexMaterialClass,());
+	vmat->Set_Lighting(true);
+	vmat->Set_Ambient(fx.Ambient);
+	vmat->Set_Diffuse(fx.Diffuse);
+	vmat->Set_Specular(0.0f,0.0f,0.0f);
+	vmat->Set_Emissive(0.0f,0.0f,0.0f);
+	vmat->Set_Opacity(1.0f);
+	context->Add_Vertex_Material(vmat);
+	DefMatDesc->Set_Single_Material(vmat,pass);
+	vmat->Release_Ref();
+
+	ShaderClass shader = ShaderClass::_PresetOpaqueShader;
+	if (fx.AlphaTest)
+		shader.Set_Alpha_Test(ShaderClass::ALPHATEST_ENABLE);
+	DefMatDesc->Set_Single_Shader(shader,pass);
+
+	if (fx.Texture)
+		DefMatDesc->Set_Single_Texture(fx.Texture,pass,0);
+}
+
+
 /***********************************************************************************************
  * MeshModelClass::read_material_pass -- read a material pass chunk                            *
  *                                                                                             *
@@ -1063,6 +1181,23 @@ WW3DErrorType MeshModelClass::read_material_pass(ChunkLoadClass & cload,MeshLoad
 			case W3D_CHUNK_TEXTURE_STAGE:
 				error = read_texture_stage(cload,context);
 				break;
+
+			case 0x3f:	// bfme-native: shader material id for this pass
+			{
+				uint32 fxid = 0;
+				cload.Read(&fxid,sizeof(fxid));
+				bfme_apply_fx_material(context,(int)fxid);
+				break;
+			}
+
+			case W3D_CHUNK_STAGE_TEXCOORDS:	// bfme-native: FX passes store their uvs directly in the pass
+			{
+				int saved = context->CurTexStage;
+				context->CurTexStage = 0;
+				error = read_stage_texcoords(cload,context);
+				context->CurTexStage = saved;
+				break;
+			}
 		};
 
 		if (error != WW3D_ERROR_OK) {
@@ -1964,6 +2099,9 @@ MeshLoadContextClass::MeshLoadContextClass()
  *=============================================================================================*/
 MeshLoadContextClass::~MeshLoadContextClass()
 {
+	for (int fx = 0; fx < (int)BfmeFxMaterials.size(); ++fx) {
+		REF_PTR_RELEASE(BfmeFxMaterials[fx].Texture);
+	}
 	int i;
 
 	delete TexCoords;

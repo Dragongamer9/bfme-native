@@ -963,6 +963,12 @@ void TextureClass::Apply(unsigned int stage)
 
 	DX8_RECORD_TEXTURE(this);
 
+	if (getenv("BFME_DEBUG_MISSING_TEX") && Is_Missing_Texture())
+	{
+		static int s_n = 0;
+		if (s_n++ < 50)
+			fprintf(stderr, "[TEX_BOUND_MISSING] '%s' stage %u\n", Get_Texture_Name().str(), stage);
+	}
 	// Set texture itself
 	if (WW3D::Is_Texturing_Enabled())
 	{
