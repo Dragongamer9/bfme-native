@@ -514,6 +514,7 @@ void ModuleFactory::init()
 	addModule( PassiveAreaEffectBehavior );	// bfme-native
 	addModule( LargeGroupBonusUpdate );	// bfme-native
 	addModule( MonitorConditionUpdate );	// bfme-native
+	addModule( BannerCarrierUpdate );	// bfme-native
 	addModule( HordeMemberCollide );	// bfme-native
 	addModule( GettingBuiltBehavior );	// bfme-native
 	addModule( TerrainResourceBehavior );	// bfme-native

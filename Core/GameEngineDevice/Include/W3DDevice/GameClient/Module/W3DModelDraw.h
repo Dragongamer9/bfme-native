@@ -296,6 +296,10 @@ public:
 	mutable SparseMatchFinder< ModelConditionInfo, ModelConditionFlags >
 																		m_bfmeAnimStateMap;
 	mutable std::map< std::pair<Int, Int>, ModelConditionInfo > m_bfmeCombinedStates;
+	// bfme-native: RotWK W3DFloorDraw / HideIfModelConditions: hide while all flags of any set are on
+	std::vector<ModelConditionFlags>	m_bfmeHideIf;
+	static void parseBfmeFloorModel(INI* ini, void *instance, void *store, const void* userData);
+	static void parseBfmeHideIf(INI* ini, void *instance, void *store, const void* userData);
 	std::vector<AsciiString>					m_extraPublicBones;
 	AsciiString												m_trackFile;						///< if present, leaves tracks using this texture
 	AsciiString												m_attachToDrawableBone;
@@ -532,6 +536,7 @@ private:
 	ParticleSystemIDVec						m_particleSystemIDs;							///< The ID numbers of the particle systems currently running.
 	std::vector<ModelConditionInfo::HideShowSubObjInfo>		m_subObjectVec;
 	Bool													m_hideHeadlights;
+	Bool													m_bfmeCondHidden;	///< bfme-native: hidden by HideIfModelConditions
 	Bool													m_hasHeadlights;								///< the model has a HEADLIGHT sub-object
 	W3DDynamicLight*										m_headlightDynamicLight;						///< native dynamic light for active headlights
 	Bool													m_pauseAnimation;

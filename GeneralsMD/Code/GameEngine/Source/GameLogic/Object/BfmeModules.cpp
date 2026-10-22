@@ -20,6 +20,7 @@
 #include "GameLogic/ExperienceLevel.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BfmeModules.h"
+#include "GameLogic/Module/HordeContain.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/CreateModule.h"
 #include "GameLogic/Object.h"
@@ -1270,3 +1271,93 @@ UpdateSleepTime MonitorConditionUpdate::update()
 	}
 	return UPDATE_SLEEP(5);
 }
+
+//=================================================================================================
+// BannerCarrierUpdate: horde reinforcement
+//=================================================================================================
+static void parseBannerIgnore(INI* ini, void*, void*, const void*)
+{
+	while (ini->getNextTokenOrNull() != nullptr) {}
+}
+
+BannerCarrierUpdateModuleData::BannerCarrierUpdateModuleData() :
+	m_idleSpawnRate(LOGICFRAMES_PER_SECOND * 10), m_meleeFreeUnitSpawnTime(0), m_diedRespawnTime(0),
+	m_meleeFreeBannerRespawnTime(0), m_unitSpawnFX(nullptr), m_bannerMorphFX(nullptr),
+	m_replenishNearbyHorde(FALSE), m_replenishAllNearbyHordes(FALSE), m_scanHordeDistance(0.0f)
+{
+}
+
+void BannerCarrierUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "IdleSpawnRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( BannerCarrierUpdateModuleData, m_idleSpawnRate ) },
+		{ "MeleeFreeUnitSpawnTime",			INI::parseDurationUnsignedInt,	nullptr, offsetof( BannerCarrierUpdateModuleData, m_meleeFreeUnitSpawnTime ) },
+		{ "DiedRespawnTime",						INI::parseDurationUnsignedInt,	nullptr, offsetof( BannerCarrierUpdateModuleData, m_diedRespawnTime ) },
+		{ "MeleeFreeBannerReSpawnTime",	INI::parseDurationUnsignedInt,	nullptr, offsetof( BannerCarrierUpdateModuleData, m_meleeFreeBannerRespawnTime ) },
+		{ "UnitSpawnFX",								INI::parseFXList,								nullptr, offsetof( BannerCarrierUpdateModuleData, m_unitSpawnFX ) },
+		{ "BannerMorphFX",							INI::parseFXList,								nullptr, offsetof( BannerCarrierUpdateModuleData, m_bannerMorphFX ) },
+		{ "ReplenishNearbyHorde",				INI::parseBool,									nullptr, offsetof( BannerCarrierUpdateModuleData, m_replenishNearbyHorde ) },
+		{ "ReplenishAllNearbyHordes",		INI::parseBool,									nullptr, offsetof( BannerCarrierUpdateModuleData, m_replenishAllNearbyHordes ) },
+		{ "ScanHordeDistance",					INI::parseReal,									nullptr, offsetof( BannerCarrierUpdateModuleData, m_scanHordeDistance ) },
+		{ "UpgradeRequired",						INI::parseAsciiString,					nullptr, offsetof( BannerCarrierUpdateModuleData, m_upgradeRequired ) },
+		{ "MorphCondition",							parseBannerIgnore,							nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+BannerCarrierUpdate::BannerCarrierUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+{
+	const BannerCarrierUpdateModuleData* d = getBannerCarrierUpdateModuleData();
+	if (d->m_replenishNearbyHorde || d->m_replenishAllNearbyHordes)
+		setWakeFrame(getObject(), UPDATE_SLEEP(1 + getObject()->getID() % max(1u, d->m_idleSpawnRate)));
+	else
+		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
+}
+BFME_TRIVIAL_SNAPSHOT(BannerCarrierUpdate, UpdateModule)
+
+const BannerCarrierUpdateModuleData* BannerCarrierUpdate::findOn(const Object* obj)
+{
+	if (obj == nullptr)
+		return nullptr;
+	for (BehaviorModule** m = obj->getBehaviorModules(); *m; ++m)
+	{
+		BannerCarrierUpdate* b = dynamic_cast<BannerCarrierUpdate*>(*m);
+		if (b)
+			return b->data();
+	}
+	return nullptr;
+}
+
+UpdateSleepTime BannerCarrierUpdate::update()
+{
+	const BannerCarrierUpdateModuleData* d = getBannerCarrierUpdateModuleData();
+	const UnsignedInt delay = max(1u, d->m_idleSpawnRate);
+	Object* me = getObject();
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	if (!(d->m_replenishNearbyHorde || d->m_replenishAllNearbyHordes))
+		return UPDATE_SLEEP_FOREVER;
+	if (me->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		return UPDATE_SLEEP(delay);
+	if (d->m_upgradeRequired.isNotEmpty() && !objOrPlayerHasUpgrade(me, d->m_upgradeRequired))
+		return UPDATE_SLEEP(delay);
+
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, d->m_scanHordeDistance, FROM_BOUNDINGSPHERE_2D);
+	MemoryPoolObjectHolder hold(iter);
+	for (Object* o = iter->first(); o; o = iter->next())
+	{
+		if (o->isEffectivelyDead() || !o->isKindOf(KINDOF_HORDE))
+			continue;
+		if (d->m_replenishAllNearbyHordes ? me->getRelationship(o) != ALLIES : o->getControllingPlayer() != me->getControllingPlayer())
+			continue;
+		HordeContain* h = HordeContain::findOn(o);
+		if (h && h->bfmeReplenishOne(d->m_unitSpawnFX, FALSE))
+			if (!d->m_replenishAllNearbyHordes)
+				break;
+	}
+	return UPDATE_SLEEP(delay);
+}
+

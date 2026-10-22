@@ -366,11 +366,12 @@ void run(const TestCmd& c)
 	}
 	else if (op == "kill" && c.args.size() >= 3)
 	{
-		// kill PLAYER TEMPLATE : lethal damage to the player's objects of that template ("*": all of them)
+		// kill PLAYER TEMPLATE [N] : lethal damage to the player's objects of that template ("*": all of them)
 		Player* a = findPlayer(c.args[1]);
-		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		Int left = c.args.size() >= 4 ? atoi(c.args[3].c_str()) : 1 << 30;
+		for (Object* o = TheGameLogic->getFirstObject(); o && left > 0; o = o->getNextObject())
 			if (o->getControllingPlayer() == a && !o->isEffectivelyDead() &&
-					(c.args[2] == "*" || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) == 0))
+					(c.args[2] == "*" || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) == 0) && left-- > 0)
 			{
 				o->kill();
 				printf("[BFMETEST] killed #%u %s dead=%d\n", o->getID(), c.args[2].c_str(), (int)o->isEffectivelyDead());
