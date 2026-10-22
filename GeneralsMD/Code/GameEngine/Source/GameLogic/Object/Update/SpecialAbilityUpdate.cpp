@@ -527,6 +527,8 @@ Bool SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTem
   }
 
   m_active = true;
+  if( bfmeAbilityConditions().any() )	// bfme-native
+    getObject()->setModelConditionFlags( bfmeAbilityConditions() );
 
   //Prevent other mutually exclusive specials from running (kill them now if we're starting something else)
   SpecialAbilityUpdate *disableSA;
@@ -598,6 +600,8 @@ void SpecialAbilityUpdate::onExit( Bool cleanup )
 
   getObject()->clearModelConditionFlags(
     MAKE_MODELCONDITION_MASK4( MODELCONDITION_UNPACKING, MODELCONDITION_PACKING, MODELCONDITION_FIRING_A, MODELCONDITION_RAISING_FLAG ) );
+  if( bfmeAbilityConditions().any() )	// bfme-native
+    getObject()->clearModelConditionFlags( bfmeAbilityConditions() );
   getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
   TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
@@ -1760,6 +1764,8 @@ void SpecialAbilityUpdate::finishAbility()
 
   m_withinStartAbilityRange = false;
   m_packingState = STATE_NONE;
+  if( bfmeAbilityConditions().any() )	// bfme-native
+    getObject()->clearModelConditionFlags( bfmeAbilityConditions() );
 
   //The flee range code is used only if the unit has completed a special ability against a target.
   //If we don't have a valid target, then we don't flee -- the specific example is when Colonel Burton

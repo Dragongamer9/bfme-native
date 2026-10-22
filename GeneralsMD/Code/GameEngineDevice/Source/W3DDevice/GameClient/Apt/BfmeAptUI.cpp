@@ -68,6 +68,7 @@ public:
 		bool ready = false;		///< content reported _OnInitialized
 		const CommandButton *button = nullptr;
 		std::string state;
+		int readyPct = 100;		///< recharge of a special power button
 	};
 	enum { NUM_SLOTS = 6 };
 	Slot slots[NUM_SLOTS];
@@ -402,11 +403,7 @@ public:
 				{
 					GameHost *self = this;
 					timer->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &) {
-						float x0, y0, x1, y1;
-						const int pct = self->spellReady[i];
-						if (pct >= 100 || !TheDisplay || !inst.bounds(x0, y0, x1, y1, world)) return;
-						Apt::renderFlush();
-						TheDisplay->drawRemainingRectClock((Int)x0, (Int)y0, (Int)(x1 - x0), (Int)(y1 - y0), pct, GameMakeColor(0, 0, 0, 190));
+						drawClock(inst, world, self->spellReady[i]);
 					};
 				}
 			for (const char *layer : { "~Enabled", "~Disabled" })
@@ -587,9 +584,13 @@ public:
 				else
 				{
 					any = true;
-					state = (av == COMMAND_AVAILABLE || av == COMMAND_ACTIVE) ? "_up" : (av == COMMAND_CANT_AFFORD ? "_cantAfford" : "_disabled");
+					state = (av == COMMAND_AVAILABLE || av == COMMAND_ACTIVE) ? "_up" : (av == COMMAND_CANT_AFFORD ? "_cantAfford" : (av == COMMAND_NOT_READY ? "_notReady" : "_disabled"));
 				}
 			}
+			sl.readyPct = 100;
+			if (state == "_notReady" && sl.button->getSpecialPowerTemplate())
+				if (SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule(sl.button->getSpecialPowerTemplate()))
+					sl.readyPct = (int)(mod->getPercentReady() * 100);
 			if (getenv("BFME_DEBUG_APT") && state != sl.state)
 				fprintf(stderr, "[aptui] slot %d %s ready=%d state %s\n", i, sl.button ? sl.button->getName().str() : "-", (int)sl.ready, state.c_str());
 			if (sl.ready && state != sl.state)
@@ -689,6 +690,15 @@ public:
 	}
 
 	/// the game draws the button picture into the content's RenderImage clip
+	/// recharge clock: the game draws the remaining time over a "Timer" clip
+	static void drawClock(Apt::Instance &inst, const Apt::Matrix &world, int pct)
+	{
+		float x0, y0, x1, y1;
+		if (pct >= 100 || !TheDisplay || !inst.bounds(x0, y0, x1, y1, world)) return;
+		Apt::renderFlush();
+		TheDisplay->drawRemainingRectClock((Int)x0, (Int)y0, (Int)(x1 - x0), (Int)(y1 - y0), pct, GameMakeColor(0, 0, 0, 190));
+	}
+
 	void attachImage(Apt::Player &player, int i)
 	{
 		std::shared_ptr<Apt::Instance> content = player.find(slots[i].content);
@@ -704,6 +714,13 @@ public:
 		while (!stack.empty())
 		{
 			Apt::Instance *n = stack.back(); stack.pop_back();
+			if (n->name == "Timer" && !n->customDraw)
+			{
+				GameHost *self = this;
+				n->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &) {
+					drawClock(inst, world, self->slots[i].readyPct);
+				};
+			}
 			if (n->character == s_renderImage)
 			{
 				if (!n->customDraw)

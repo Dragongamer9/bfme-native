@@ -31,6 +31,8 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/Damage.h"	// bfme-native: DeathType
+const char *const *bfmeDeathNames();	// bfme-native: TheDeathNames (LifetimeUpdate.cpp)
 
 //-------------------------------------------------------------------------------------------------
 class LifetimeUpdateModuleData : public UpdateModuleData
@@ -38,11 +40,15 @@ class LifetimeUpdateModuleData : public UpdateModuleData
 public:
 	UnsignedInt m_minFrames;
 	UnsignedInt m_maxFrames;
+	Bool m_waitForWakeUp;	// bfme-native: the clock starts only when something sets the lifetime
+	DeathType m_deathType;	// bfme-native
 
 	LifetimeUpdateModuleData()
 	{
 		m_minFrames = 0.0f;
 		m_maxFrames = 0.0f;
+		m_waitForWakeUp = FALSE;
+		m_deathType = DEATH_NORMAL;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -52,6 +58,8 @@ public:
 		{
 			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_minFrames ) },
 			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_maxFrames ) },
+			{ "WaitForWakeUp",				INI::parseBool,										nullptr, offsetof( LifetimeUpdateModuleData, m_waitForWakeUp ) },	// bfme-native
+			{ "DeathType",						INI::parseIndexList,							bfmeDeathNames(), offsetof( LifetimeUpdateModuleData, m_deathType ) },	// bfme-native
 			{ nullptr, nullptr, nullptr, 0 }
 		};
     p.add(dataFieldParse);

@@ -506,6 +506,7 @@ void ModuleFactory::init()
 	addModule( WeaponFireSpecialAbilityUpdate );	// bfme-native
 	addModule( ToggleMountedSpecialAbilityUpdate );	// bfme-native
 	addModule( HeroModeSpecialAbilityUpdate );	// bfme-native
+	addModule( ModelConditionSpecialAbilityUpdate );	// bfme-native
 	addModuleInternal( WeaponModeSpecialPower::friend_newModuleInstance, WeaponModeSpecialPower::friend_newModuleData,
 		WeaponModeSpecialPower::getModuleType(), AsciiString("WeaponModeSpecialPowerUpdate"), WeaponModeSpecialPower::getInterfaceMask() );	// bfme-native
 	addModule( RemoveUpgradeUpgrade );	// bfme-native
@@ -538,6 +539,11 @@ void ModuleFactory::init()
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("AISpecialPowerUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("EmotionTrackerUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("RespawnBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO hero respawn
+	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("DelayedDeathBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO its special rules
+	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("PorcupineFormationBodyModule"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO its special rules
+	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("DetachableRiderBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO its special rules
+	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("FreeLifeBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO its special rules
+	addModuleInternal( StructureBody::friend_newModuleInstance, StructureBody::friend_newModuleData, StructureBody::getModuleType(), AsciiString("SymbioticStructuresBody"), StructureBody::getInterfaceMask() );	// bfme-native: TODO shared damage
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("HorseHordeContain"), HordeContain::getInterfaceMask() );
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("CitadelSlaughterHordeContain"), HordeContain::getInterfaceMask() );
 	addModuleInternal( HordeContain::friend_newModuleInstance, HordeContain::friend_newModuleData, HordeContain::getModuleType(), AsciiString("SlaughterHordeContain"), HordeContain::getInterfaceMask() );
