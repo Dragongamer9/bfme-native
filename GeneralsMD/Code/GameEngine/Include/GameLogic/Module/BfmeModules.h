@@ -522,3 +522,30 @@ public:
 	static const BannerCarrierUpdateModuleData* findOn(const Object* obj);
 };
 
+//-------------------------------------------------------------------------------------------------
+/** AISpecialPowerUpdate: how a computer player's unit uses one of its abilities (the command
+	button), by SpecialPowerAIType: buffs and heals in a fight, unit killers on the nearest enemy,
+	area attacks and summons on the enemy it is fighting. Human players' units ignore it. */
+class AISpecialPowerUpdateModuleData : public UpdateModuleData
+{
+public:
+	AISpecialPowerUpdateModuleData() : m_radius(0.0f), m_range(0.0f), m_randomize(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_commandButtonName;
+	AsciiString m_aiType;
+	Real m_radius;
+	Real m_range;
+	Bool m_randomize;
+};
+
+class AISpecialPowerUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISpecialPowerUpdate, "AISpecialPowerUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AISpecialPowerUpdate, AISpecialPowerUpdateModuleData )
+public:
+	AISpecialPowerUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+private:
+	Int m_kind;	///< -1 not classified yet
+};
+

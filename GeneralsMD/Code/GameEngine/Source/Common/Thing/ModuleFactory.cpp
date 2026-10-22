@@ -538,7 +538,7 @@ void ModuleFactory::init()
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("BuildingBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("CastleMemberBehavior"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("PickupStuffUpdate"), BfmeInertBehavior::getInterfaceMask() );
-	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("AISpecialPowerUpdate"), BfmeInertBehavior::getInterfaceMask() );
+	addModule( AISpecialPowerUpdate );	// bfme-native
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("EmotionTrackerUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("RespawnBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO hero respawn
 	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("DelayedDeathBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO its special rules

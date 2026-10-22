@@ -571,7 +571,7 @@ void PlayerList::assignSlotIndices(const GameInfo& gameInfo)
 		if (!slot || !slot->isOccupied())
 			continue;
 
-		playerName.format("player%d", i);
+		playerName.format("Player_%d", (slot->getStartPos() >= 0 ? slot->getStartPos() : i) + 1);	// bfme-native: see GameLogic
 
 		if (Player* player = findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName)))
 		{

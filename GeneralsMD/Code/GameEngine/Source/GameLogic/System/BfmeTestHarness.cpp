@@ -110,7 +110,13 @@ void loadScript()
 
 Player* findPlayer(const std::string& name)
 {
-	return ThePlayerList ? ThePlayerList->findPlayerWithNameKey(NAMEKEY(name.c_str())) : nullptr;
+	if (ThePlayerList == nullptr)
+		return nullptr;
+	Player* p = ThePlayerList->findPlayerWithNameKey(NAMEKEY(name.c_str()));
+	// skirmish players are Player_N (start position N); "player0" is the first slot
+	if (p == nullptr && name.compare(0, 6, "player") == 0)
+		p = ThePlayerList->getPlayerFromSlotIndex(atoi(name.c_str() + 6));
+	return p;
 }
 
 Bool isUnitOf(const Object* o, const Player* p)
@@ -591,15 +597,32 @@ void run(const TestCmd& c)
 					pl->bfmeCommandPointsUsed(), pl->bfmeCommandPointLimit());
 		}
 	}
+	else if (op == "objects" && c.args.size() >= 2)
+	{
+		// objects SUBSTRING : every object whose template name contains it, with its owner
+		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+		{
+			if (strstr(o->getTemplate()->getName().str(), c.args[1].c_str()) == nullptr)
+				continue;
+			Player* p = o->getControllingPlayer();
+			printf("[BFMETEST] object #%u %s owner=%s name='%s' pos=%.0f,%.0f dead=%d\n", o->getID(), o->getTemplate()->getName().str(),
+				p ? TheNameKeyGenerator->keyToName(p->getPlayerNameKey()).str() : "-", o->getName().str(),
+				o->getPosition()->x, o->getPosition()->y, (int)o->isEffectivelyDead());
+		}
+	}
 	else if (op == "players")
 	{
 		for (Int i = 0; i < ThePlayerList->getPlayerCount(); ++i)
 		{
 			Player* p = ThePlayerList->getNthPlayer(i);
 			AsciiString n = TheNameKeyGenerator->keyToName(p->getPlayerNameKey());
-			printf("[BFMETEST] player %d name='%s' template=%s side=%s%s\n", i, n.str(),
+			Int structures = 0, units = 0;
+			for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+				if (o->getControllingPlayer() == p && !o->isEffectivelyDead() && !o->isKindOf(KINDOF_HORDE))
+					(o->isKindOf(KINDOF_STRUCTURE) ? structures : units)++;
+			printf("[BFMETEST] player %d name='%s' template=%s side=%s%s money=%u structures=%d units=%d\n", i, n.str(),
 				p->getPlayerTemplate() ? p->getPlayerTemplate()->getName().str() : "-", p->getSide().str(),
-				p == ThePlayerList->getLocalPlayer() ? " (local)" : "");
+				p == ThePlayerList->getLocalPlayer() ? " (local)" : "", p->getMoney()->countMoney(), structures, units);
 		}
 	}
 	else if (op == "quit")
