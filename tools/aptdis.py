@@ -122,6 +122,10 @@ def decode(f, start, end=None, out=None):
 
 def blocks(apt):
     """all action entry points of a movie"""
+    for fi, frame in enumerate(apt.movie['frames']):
+        for it in frame:
+            if it and it['kind'] in ('action', 'initaction'):
+                yield ('movie frame %d %s' % (fi, it['kind']), it['code'])
     for idx, c in enumerate(apt.movie['chars']):
         if c is None or c['apt'] is not apt: continue
         if c['type'] in (aptview.MOVIE, aptview.SPRITE):
