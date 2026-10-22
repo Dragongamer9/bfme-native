@@ -1182,9 +1182,10 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 			continue;	//we already rendered terrain
 
 		{
-			static int s_dbgFrames = 0;
 			static const char *s_skip = getenv("BFME_SKIP_ROBJ");
-			if (getenv("BFME_DEBUG_SCENE") && s_dbgFrames < 1 && robj->Is_Really_Visible())
+			// BFME_DEBUG_SCENE=<logic frame>: list the render objects drawn on that frame
+			static const char *s_sceneAt = getenv("BFME_DEBUG_SCENE");
+			if (s_sceneAt && TheGameLogic && (UnsignedInt)atoi(s_sceneAt) == TheGameLogic->getFrame() && robj->Is_Really_Visible())
 			{
 				SphereClass sp = robj->Get_Bounding_Sphere();
 				fprintf(stderr, "[scene] class=%d name=%s r=%.0f c=%.0f,%.0f,%.0f\n", robj->Class_ID(), robj->Get_Name() ? robj->Get_Name() : "?", sp.Radius, sp.Center.X, sp.Center.Y, sp.Center.Z);

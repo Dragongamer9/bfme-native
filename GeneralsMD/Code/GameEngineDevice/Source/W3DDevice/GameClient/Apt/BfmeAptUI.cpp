@@ -70,9 +70,12 @@ public:
 		std::string state;
 		int readyPct = 100;		///< recharge of a special power button
 	};
-	enum { NUM_SLOTS = 6 };
+	/// command set slots 1-6 sit on the palantir ring, 7-18 on the side command bar
+	enum { NUM_RING_SLOTS = 6, NUM_SLOTS = 18 };
 	Slot slots[NUM_SLOTS];
 	bool commandShown = false;
+	int sideShown = -1;					///< side command bar faded in
+	std::string sideStates[NUM_SLOTS];	///< _show/_hide pushed to each side bar frame
 	DrawableID source = INVALID_DRAWABLE_ID;
 
 	static std::string arg(const std::string &args, const char *key)
@@ -89,10 +92,11 @@ public:
 	{
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] fscommand %s %s\n", cmd.c_str(), args.c_str());
 		const std::string c = Apt::lower(cmd);
-		if (c == "palantircommandui::onbuttonframeloaded")
+		const bool side = c == "onaptingamesidecommandbarbuttonframeloaded";
+		if (c == "palantircommandui::onbuttonframeloaded" || side)
 		{
-			const int i = atoi(arg(args, "index").c_str());
-			if (i >= 0 && i < NUM_SLOTS)
+			const int i = atoi(arg(args, "index").c_str()) + (side ? NUM_RING_SLOTS : 0);
+			if (i >= (side ? NUM_RING_SLOTS : 0) && i < (side ? NUM_SLOTS : NUM_RING_SLOTS))
 			{
 				Slot &sl = slots[i];
 				sl = Slot();
@@ -156,7 +160,12 @@ public:
 			for (size_t i = 0; i < heroes.size(); ++i) selectHero(heroes[i], i > 0);
 			return;
 		}
-		else if (c == "onaptingamesidecommandbarloaded") deferred.push_back("SideCommandBar.FadeOut()");
+		else if (c == "onaptingamesidecommandbarloaded")
+		{
+			deferred.push_back("SideCommandBar.FadeOut()");
+			sideShown = 0;
+			for (int i = 0; i < NUM_SLOTS; ++i) sideStates[i].clear();
+		}
 		else if (c == "aptpalantir::oninitialized")
 		{
 			deferred.push_back(std::string("SetPalantirFrameState(") + (localIsGood() ? "_good" : "_evil") + ")");
@@ -571,7 +580,7 @@ public:
 			fprintf(stderr, "[aptui] selection %s commandset '%s' -> %s\n", obj ? obj->getTemplate()->getName().str() : "-",
 				obj ? obj->getCommandSetString().str() : "", cs ? "found" : "none");
 		}
-		bool any = false;
+		bool any = false, anySide = false;
 		for (int i = 0; i < NUM_SLOTS; ++i)
 		{
 			Slot &sl = slots[i];
@@ -583,7 +592,6 @@ public:
 				if (av == COMMAND_HIDDEN) sl.button = nullptr;
 				else
 				{
-					any = true;
 					state = (av == COMMAND_AVAILABLE || av == COMMAND_ACTIVE) ? "_up" : (av == COMMAND_CANT_AFFORD ? "_cantAfford" : (av == COMMAND_NOT_READY ? "_notReady" : "_disabled"));
 				}
 			}
@@ -602,11 +610,29 @@ public:
 			}
 			if (sl.ready)
 				attachImage(player, i);
+			if (i >= NUM_RING_SLOTS)
+			{
+				// side bar frames without a command are hidden
+				const std::string vis = sl.button ? "_show" : "_hide";
+				if (sideShown >= 0 && vis != sideStates[i])
+				{
+					sideStates[i] = vis;
+					player.call("SideCommandBar.SetButtonState", { Apt::Value::number(i - NUM_RING_SLOTS), Apt::Value::string(vis) });
+				}
+				if (sl.button) anySide = true;
+			}
+			else if (sl.button)
+				any = true;
 		}
 		if (any != commandShown)
 		{
 			commandShown = any;
 			player.call(any ? "ShowCommandInterface" : "HideCommandInterface", {});
+		}
+		if (sideShown >= 0 && (anySide ? 1 : 0) != sideShown)
+		{
+			sideShown = anySide ? 1 : 0;
+			player.call(anySide ? "SideCommandBar.FadeIn" : "SideCommandBar.FadeOut", {});
 		}
 	}
 

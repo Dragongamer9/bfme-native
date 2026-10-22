@@ -1123,6 +1123,9 @@ void MeshModelClass::bfme_apply_fx_material(MeshLoadContextClass * context,int f
 		return;
 	MeshLoadContextClass::BfmeFxMaterial & fx = context->BfmeFxMaterials[fxid];
 	const int pass = context->CurPass;
+	if (getenv("BFME_DEBUG_FX"))
+		fprintf(stderr, "[fx] %s pass %d shader %s texture %s alphatest %d blend %d emissive %d\n", Get_Name(), pass, fx.ShaderName.str(),
+			fx.Texture ? fx.Texture->Get_Texture_Name().str() : "-", (int)fx.AlphaTest, (int)fx.AlphaBlend, (int)fx.HasEmissive);
 
 	VertexMaterialClass * vmat = NEW_REF(VertexMaterialClass,());
 	// Simple.fx and friends give an emissive colour: unlit (sky domes, glows); otherwise lit

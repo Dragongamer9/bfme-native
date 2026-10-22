@@ -1913,6 +1913,10 @@ const ModelConditionInfo* W3DModelDrawModuleData::findBestInfo(const ModelCondit
 
 	// bfme-native: pick the animation state independently and combine it with the model state
 	const ModelConditionInfo* anim = m_bfmeAnimStateMap.findBestInfo(m_bfmeAnimStates, bits);
+	// RotWK only plays an animation state whose flags are all set: the closest-match search would
+	// otherwise put a finished building into its construction animation (sunk into the ground)
+	if (anim && !anim->m_conditionsYesVec.empty() && !bits.testForAll(anim->m_conditionsYesVec[0]))
+		anim = nullptr;
 	if (anim == nullptr)
 		return model;
 	const std::pair<Int, Int> key((Int)(model - &m_conditionStates[0]), (Int)(anim - &m_bfmeAnimStates[0]));
