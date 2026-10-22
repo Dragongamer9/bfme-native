@@ -1,0 +1,9 @@
+# Palantir tooltip: hovering a command button opens the help box with the command's name and description
+1  players
+5  reveal
+10 spawn GondorFighterHorde PlyrNeutral 1400 1600 0
+30 select PlyrNeutral GondorFighterHorde
+40 camera 1400 1600 0.5
+50 mousemove 252 596
+80 screenshot
+90 quit
