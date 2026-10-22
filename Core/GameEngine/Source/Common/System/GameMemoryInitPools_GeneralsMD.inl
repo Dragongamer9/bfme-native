@@ -203,6 +203,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "CastleBehavior", 64, 64 },	// bfme-native
 	{ "GateOpenAndCloseBehavior", 64, 64 },	// bfme-native
 	{ "CastleUpgrade", 256, 64 },	// bfme-native
+	{ "InvisibilityUpdate", 1024, 256 },	// bfme-native
 	{ "HordeMemberCollide", 2048, 512 },	// bfme-native
 	{ "GettingBuiltBehavior", 1024, 256 },	// bfme-native
 	{ "TerrainResourceBehavior", 512, 128 },	// bfme-native

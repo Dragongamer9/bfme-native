@@ -648,3 +648,35 @@ protected:
 	virtual Bool isSubObjectsUpgrade() override { return false; }
 };
 
+//-------------------------------------------------------------------------------------------------
+/** InvisibilityUpdate: RotWK stealth and camouflage. While none of the forbidden conditions holds
+	(moving, firing, taking damage, using an ability) the object is stealthed: enemies cannot see or
+	target it unless one of them stands within DetectionRange. AWAY_FROM_TREES counts as always true
+	(no tree test yet), so forest camouflage does not hide anyone. */
+class InvisibilityUpdateModuleData : public UpdateModuleData
+{
+public:
+	InvisibilityUpdateModuleData() : m_updatePeriod(LOGICFRAMES_PER_SECOND), m_startsActive(FALSE), m_detectionRange(0.0f),
+		m_forbidden(0), m_detectedByFriendlies(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	static void parseNugget(INI* ini, void* instance, void* store, const void* userData);
+	UnsignedInt m_updatePeriod;
+	Bool m_startsActive;
+	Real m_detectionRange;
+	UnsignedInt m_forbidden;	///< BfmeStealthForbidden bits
+	Bool m_detectedByFriendlies;
+	std::vector<AsciiString> m_requiredUpgrades;
+	std::vector<AsciiString> m_forbiddenUpgrades;
+};
+
+class InvisibilityUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( InvisibilityUpdate, "InvisibilityUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( InvisibilityUpdate, InvisibilityUpdateModuleData )
+public:
+	InvisibilityUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+private:
+	Bool m_stealthed;
+};
+

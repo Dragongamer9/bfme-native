@@ -20,6 +20,7 @@
 #include "GameLogic/ExperienceLevel.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BfmeModules.h"
+#include "Common/GameUtility.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/Module/HordeContain.h"
@@ -1638,5 +1639,168 @@ void CastleUpgrade::upgradeImplementation()
 		if (o != me && !o->isEffectivelyDead() && o->isKindOf(KINDOF_STRUCTURE) && o->getControllingPlayer() == me->getControllingPlayer() &&
 				!o->hasUpgrade(ut))
 			o->giveUpgrade(ut);
+}
+
+//=================================================================================================
+// InvisibilityUpdate
+//=================================================================================================
+enum
+{
+	BFME_STEALTH_MOVING = 1 << 0,
+	BFME_STEALTH_FIRING = 1 << 1,
+	BFME_STEALTH_DAMAGED = 1 << 2,
+	BFME_STEALTH_ABILITY = 1 << 3,
+	BFME_STEALTH_AWAY_FROM_TREES = 1 << 4,
+};
+
+static void parseStealthForbidden(INI* ini, void*, void* store, const void*)
+{
+	UnsignedInt* bits = (UnsignedInt*)store;
+	for (const char* t = ini->getNextTokenOrNull(); t; t = ini->getNextTokenOrNull())
+	{
+		if (stricmp(t, "MOVING") == 0) *bits |= BFME_STEALTH_MOVING;
+		else if (stricmp(t, "FIRING_ANY") == 0 || stricmp(t, "ATTACKING") == 0 || strncmp(t, "FIRING", 6) == 0) *bits |= BFME_STEALTH_FIRING;
+		else if (stricmp(t, "TAKING_DAMAGE") == 0) *bits |= BFME_STEALTH_DAMAGED;
+		else if (stricmp(t, "USING_ABILITY") == 0) *bits |= BFME_STEALTH_ABILITY;
+		else if (stricmp(t, "AWAY_FROM_TREES") == 0) *bits |= BFME_STEALTH_AWAY_FROM_TREES;
+	}
+}
+
+static void parseStealthOptions(INI* ini, void*, void* store, const void*)
+{
+	for (const char* t = ini->getNextTokenOrNull(); t; t = ini->getNextTokenOrNull())
+		if (stricmp(t, "DETECTED_BY_FRIENDLIES") == 0)
+			*(Bool*)store = TRUE;
+}
+
+void InvisibilityUpdateModuleData::parseNugget(INI* ini, void* instance, void*, const void*)
+{
+	static const FieldParse fp[] =
+	{
+		{ "InvisibilityType",			parseBannerIgnore,			nullptr, 0 },
+		{ "DetectionRange",				INI::parseReal,					nullptr, offsetof( InvisibilityUpdateModuleData, m_detectionRange ) },
+		{ "ForbiddenConditions",	parseStealthForbidden,	nullptr, offsetof( InvisibilityUpdateModuleData, m_forbidden ) },
+		{ "Options",							parseStealthOptions,		nullptr, offsetof( InvisibilityUpdateModuleData, m_detectedByFriendlies ) },
+		{ "BecomeStealthedFX",		parseBannerIgnore,			nullptr, 0 },
+		{ "ExitStealthFX",				parseBannerIgnore,			nullptr, 0 },
+		{ "ForbiddenWeaponConditions", parseBannerIgnore,	nullptr, 0 },
+		{ "HintDetectableConditions", parseBannerIgnore,	nullptr, 0 },
+		{ "IgnoreTreeCheckUpgrades", parseBannerIgnore,		nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	ini->initFromINI(instance, fp);
+}
+
+void InvisibilityUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "InvisibilityNugget",		InvisibilityUpdateModuleData::parseNugget,	nullptr, 0 },
+		{ "UpdatePeriod",					INI::parseDurationUnsignedInt,	nullptr, offsetof( InvisibilityUpdateModuleData, m_updatePeriod ) },
+		{ "StartsActive",					INI::parseBool,									nullptr, offsetof( InvisibilityUpdateModuleData, m_startsActive ) },
+		{ "RequiredUpgrades",			INI::parseAsciiStringVectorAppend, nullptr, offsetof( InvisibilityUpdateModuleData, m_requiredUpgrades ) },
+		{ "ForbiddenUpgrades",		INI::parseAsciiStringVectorAppend, nullptr, offsetof( InvisibilityUpdateModuleData, m_forbiddenUpgrades ) },
+		{ "StealthForbiddenConditions", parseStealthForbidden,	nullptr, offsetof( InvisibilityUpdateModuleData, m_forbidden ) },
+		{ "Broadcast",						parseBannerIgnore,	nullptr, 0 },
+		{ "BroadcastRange",				parseBannerIgnore,	nullptr, 0 },
+		{ "BroadcastObjectFilter",parseBannerIgnore,	nullptr, 0 },
+		{ "UnitSpecificSoundNameToUseAsVoiceMoveToStealthyArea", parseBannerIgnore, nullptr, 0 },
+		{ "UnitSpecificSoundNameToUseAsVoiceEnterStateMoveToStealthyArea", parseBannerIgnore, nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+InvisibilityUpdate::InvisibilityUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_stealthed(FALSE)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND + getObject()->getID() % LOGICFRAMES_PER_SECOND));
+}
+BFME_TRIVIAL_SNAPSHOT(InvisibilityUpdate, UpdateModule)
+
+UpdateSleepTime InvisibilityUpdate::update()
+{
+	const InvisibilityUpdateModuleData* d = getInvisibilityUpdateModuleData();
+	Object* me = getObject();
+	const UpdateSleepTime later = UPDATE_SLEEP(min(max(1u, d->m_updatePeriod), (UnsignedInt)LOGICFRAMES_PER_SECOND / 2));
+	if (me->isEffectivelyDead())
+	{
+		if (m_stealthed)
+		{
+			me->clearStatus(MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED));
+			if (Drawable* dr = me->getDrawable())
+				dr->setStealthLook(STEALTHLOOK_NONE);
+		}
+		return UPDATE_SLEEP_FOREVER;
+	}
+	Bool want = d->m_startsActive || !d->m_requiredUpgrades.empty();
+	for (size_t i = 0; i < d->m_requiredUpgrades.size() && want; ++i)
+		if (!objOrPlayerHasUpgrade(me, d->m_requiredUpgrades[i]))
+			want = FALSE;
+	for (size_t i = 0; i < d->m_forbiddenUpgrades.size() && want; ++i)
+		if (objOrPlayerHasUpgrade(me, d->m_forbiddenUpgrades[i]))
+			want = FALSE;
+	const UnsignedInt now = TheGameLogic->getFrame();
+	AIUpdateInterface* ai = me->getAI();
+	if (want && (d->m_forbidden & BFME_STEALTH_AWAY_FROM_TREES))
+		want = FALSE;
+	if (want && (d->m_forbidden & BFME_STEALTH_MOVING) && ai && ai->isMoving())
+		want = FALSE;
+	if (want && (d->m_forbidden & BFME_STEALTH_FIRING) && ai && ai->isAttacking())
+		want = FALSE;
+	if (want && (d->m_forbidden & BFME_STEALTH_DAMAGED))
+	{
+		BodyModuleInterface* body = me->getBodyModule();
+		const UnsignedInt* last = body ? body->getLastDamageTimestamp() : nullptr;
+		if (last && *last + 2 * LOGICFRAMES_PER_SECOND > now)
+			want = FALSE;
+	}
+	if (want && (d->m_forbidden & BFME_STEALTH_ABILITY))
+		for (BehaviorModule** m = me->getBehaviorModules(); *m && want; ++m)
+		{
+			SpecialPowerUpdateInterface* su = (*m)->getSpecialPowerUpdateInterface();
+			if (su && su->isActive())
+				want = FALSE;
+		}
+	if (me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		want = FALSE;
+
+	// enemies close enough see through it
+	Bool detected = FALSE;
+	if (want)
+	{
+		const Real range = max(d->m_detectionRange, 10.0f);
+		SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, range, FROM_BOUNDINGSPHERE_2D);
+		MemoryPoolObjectHolder hold(iter);
+		for (Object* o = iter->first(); o && !detected; o = iter->next())
+			if (o != me && !o->isEffectivelyDead() && o->getAI() && me->getRelationship(o) == ENEMIES)
+				detected = TRUE;
+	}
+
+	if (want)
+		me->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_STEALTHED));
+	else
+		me->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_STEALTHED));
+	if (want && detected)
+		me->setStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_DETECTED));
+	else
+		me->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_DETECTED));
+	m_stealthed = want;
+
+	if (Drawable* dr = me->getDrawable())
+	{
+		StealthLookType look = STEALTHLOOK_NONE;
+		const Player* viewer = rts::getObservedOrLocalPlayer_Safe();
+		if (want && viewer)
+		{
+			const Bool friendly = me->getControllingPlayer() == viewer || viewer->getRelationship(me->getTeam()) == ALLIES;
+			if (friendly)
+				look = detected ? STEALTHLOOK_VISIBLE_FRIENDLY_DETECTED : STEALTHLOOK_VISIBLE_FRIENDLY;
+			else
+				look = detected ? STEALTHLOOK_VISIBLE_DETECTED : STEALTHLOOK_INVISIBLE;
+		}
+		dr->setStealthLook(look);
+	}
+	return later;
 }
 
