@@ -1,0 +1,9 @@
+# First rendered frames: two soldiers on the flat test map
+1   spawn GondorFighterHorde player1 900 1100 0
+1   spawn IsengardFighterHorde player2 1150 1100 180
+5   camera 1000 1100
+30  screenshot
+60  attack player1 player2
+60  attack player2 player1
+200 screenshot
+201 quit

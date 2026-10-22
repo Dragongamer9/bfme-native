@@ -1,0 +1,4 @@
+# Render a real RotWK map from the default camera
+10  screenshot
+40  screenshot
+41  quit

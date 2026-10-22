@@ -19,7 +19,11 @@ if [[ -z "${BFME_TEST:-}" ]]; then
 fi
 ARGS=(-win)
 EXTRA=(${BFME_ARGS:-})
-if [[ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
+LVP_ICD="${LAVAPIPE_ICD:-/root/deps/mesa-install/share/vulkan/icd.d/lvp_icd.x86_64.json}"
+if [[ -n "${BFME_RENDER:-}" ]]; then
+  # render without a desktop: SDL offscreen window + Mesa lavapipe (software Vulkan, has what DXVK needs)
+  export SDL_VIDEODRIVER=offscreen SDL_AUDIODRIVER=dummy VK_ICD_FILENAMES="$LVP_ICD" VK_DRIVER_FILES="$LVP_ICD"
+elif [[ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
   # no desktop: the engine's -headless mode skips rendering (software Vulkan lacks what DXVK needs)
   ARGS=(-win -headless)
   export SDL_VIDEODRIVER=offscreen SDL_AUDIODRIVER=dummy
