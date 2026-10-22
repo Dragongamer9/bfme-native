@@ -780,7 +780,7 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		for (j=startCellY; j<=endCellY; j++) {
 			for (i=startCellX; i<=endCellX; i++) {
-				Short cur = getClipHeight(i+borderSize,j+borderSize);
+				Int cur = getClipHeight(i+borderSize,j+borderSize);
 				if (cur<minHt) minHt = cur;
 				if (maxHt<cur) maxHt = cur;
 			}
@@ -1833,7 +1833,7 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 
 			for (j=0; j<m_mapDY; j++) {
 				for (i=0; i<m_mapDX; i++) {
-					Short cur = pMap->getHeight(i,j);
+					Int cur = pMap->getHeight(i,j);
 					if (cur<minHt) minHt = cur;
 					if (maxHt<cur) maxHt = cur;
 				}

@@ -147,7 +147,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 
 		for (j=0; j<m_mapDY; j++) {
 			for (i=0; i<m_mapDX; i++) {
-				Short cur = terrainHeightMap->getHeight(i,j);
+				Int cur = terrainHeightMap->getHeight(i,j);
 				if (cur<minHt) minHt = cur;
 				if (maxHt<cur) maxHt = cur;
 			}
