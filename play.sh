@@ -45,7 +45,28 @@ case "${1:-}" in
     exit $? ;;
   setup) [ $# -eq 3 ] || die "usage: ./play.sh setup <RotWK folder> <BFME2 folder>"; setup "$2" "$3"; exit 0 ;;
   maps) python3 "$ROOT/tools/bigls.py" "$DATA" ".map" | grep -oiE "maps\\\\map (mp|wor) [^\\\\]*\\\\" | sed 's/^maps\\//; s/\\$//' | sort -u; exit 0 ;;
-  factions) echo "Men Rohan Elves Imladris Dwarves Isengard Mordor Wild Angmar"; exit 0 ;;
+  factions)	# every playable side in the loaded data (Völker adds 18 to Edain's 9)
+    python3 - "$DATA" <<'PY'
+import sys, struct, glob, os, re
+# read data\ini\playertemplate.ini from the highest-priority archive
+best = None
+for f in sorted(glob.glob(os.path.join(sys.argv[1], '*.big'))):
+    with open(f, 'rb') as fh:
+        h = fh.read(16)
+        if h[:4] not in (b'BIGF', b'BIG4'): continue
+        n = struct.unpack('>I', h[8:12])[0]; hs = struct.unpack('>I', h[12:16])[0]; idx = fh.read(hs); p = 0
+        for _ in range(n):
+            off, sz = struct.unpack('>II', idx[p:p + 8]); e = idx.index(b'\0', p + 8); name = idx[p + 8:e].decode('latin1').lower(); p = e + 1
+            if name == 'data\\ini\\playertemplate.ini':
+                fh.seek(off); best = fh.read(sz).decode('latin1'); break
+    if best: break
+side = None
+for line in (best or '').splitlines():
+    m = re.match(r'\s*Side\s*=\s*(\S+)', line)
+    if m: side = m.group(1)
+    if re.match(r'\s*PlayableSide\s*=\s*Yes', line, re.I) and side: print(side)
+PY
+    exit 0 ;;
 esac
 
 MAP="map mp umbar"; YOU=Men; AI=Mordor

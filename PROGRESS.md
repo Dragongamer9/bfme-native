@@ -162,9 +162,20 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   command pages (InitialVisible, PUSH/POP_VISIBLE_COMMAND_RANGE); command sets up to 36 buttons.
 - AI: AISpecialPowerUpdate (computer units use buffs/heals/killers/area powers), builds on camp
   plots, spreads farms apart.
-- play.sh (build / setup / launch a skirmish), tools/factionsweep.sh (every faction starts).
-Known: Edain free-build fortress bases (fb_fortress_*) are not in the data, so free-build maps
-have no keep; capture of economy/outpost plots (CAPTUREFLAG) not implemented; AI has no heroes.
+- Capture flags (economy plots, outposts) are taken by standing at them uncontested for 3 s;
+  CASTLE_UNPACK_EXPLICIT_OBJECT builds the chosen farm/outpost on them. Captured objects re-run
+  their upgrade modules (faction command sets).
+- Modules: GateOpenAndCloseBehavior (gates never block paths, open for friends), CastleUpgrade,
+  W3DSailModelDraw, ShipSlowDeathBehavior. Self-named animation files no longer recurse forever.
+- AI: AISpecialPowerUpdate (computer units use buffs/heals/killers/area powers), builds on camp
+  plots and economy plots, takes free plots, recruits heroes, spreads farms apart, and no longer
+  pays twice for units and buildings (its economy was half speed).
+- play.sh (build / setup / launch a skirmish; default map Umbar), tools/factionsweep.sh and
+  tools/mapsweep.sh (every faction and every map starts).
+Known: the user's data has no base files for several factions (no fb_fortress_*, rohan_*,
+zwerge_*, lothlorien_* camps/castles...): those starts fall back to camp → free build, which has
+no keep (heroes then come from barracks hero slots). Stealth (InvisibilityUpdate), GeometryUpgrade,
+dominate/defect, wall building are not implemented.
 
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
