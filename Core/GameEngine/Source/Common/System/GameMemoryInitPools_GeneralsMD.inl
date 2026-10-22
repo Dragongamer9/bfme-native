@@ -218,6 +218,11 @@ static PoolSizeRec PoolSizes[] =
 	{ "StancesBehavior", 2048, 512 },	// bfme-native
 	{ "PlayerHealSpecialPower", 128, 32 },	// bfme-native
 	{ "PlayerUpgradeSpecialPower", 128, 32 },	// bfme-native
+	{ "ActivateModuleSpecialPower", 512, 128 },	// bfme-native
+	{ "DominateEnemySpecialPower", 64, 16 },	// bfme-native
+	{ "ArrowStormUpdate", 128, 32 },	// bfme-native
+	{ "ToggleHiddenSpecialAbilityUpdate", 512, 128 },	// bfme-native
+	{ "CommandPointsUpgrade", 128, 32 },	// bfme-native
 	{ "BfmeInertBehavior", 8192, 2048 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
 	{ "LockWeaponCreate", 64, 128 },

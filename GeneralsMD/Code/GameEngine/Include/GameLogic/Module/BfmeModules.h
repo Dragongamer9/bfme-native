@@ -649,6 +649,33 @@ protected:
 };
 
 //-------------------------------------------------------------------------------------------------
+/** CommandPointsUpgrade: once triggered, the object raises its owner's command point limit by
+	CommandPoints (RotWK citadel upgrades). RequiredObject is parsed but not checked. */
+class CommandPointsUpgradeModuleData : public UpgradeModuleData
+{
+public:
+	CommandPointsUpgradeModuleData() : m_commandPoints(0) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Int m_commandPoints;
+	std::vector<AsciiString> m_requiredObject;
+};
+
+class CommandPointsUpgrade : public UpgradeModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CommandPointsUpgrade, "CommandPointsUpgrade" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CommandPointsUpgrade, CommandPointsUpgradeModuleData );
+public:
+	CommandPointsUpgrade( Thing *thing, const ModuleData* moduleData );
+	Int getBonus() const { return isAlreadyUpgraded() ? getCommandPointsUpgradeModuleData()->m_commandPoints : 0; }
+protected:
+	virtual void upgradeImplementation() override {}
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+};
+
+/// bfme-native: extra command points an object's triggered CommandPointsUpgrade modules give
+Int bfmeCommandPointsUpgradeBonus(const Object* obj);
+
+//-------------------------------------------------------------------------------------------------
 /** InvisibilityUpdate: RotWK stealth and camouflage. While none of the forbidden conditions holds
 	(moving, firing, taking damage, using an ability) the object is stealthed: enemies cannot see or
 	target it unless one of them stands within DetectionRange. AWAY_FROM_TREES: no map tree within 60. */
@@ -656,14 +683,14 @@ class InvisibilityUpdateModuleData : public UpdateModuleData
 {
 public:
 	InvisibilityUpdateModuleData() : m_updatePeriod(LOGICFRAMES_PER_SECOND), m_startsActive(FALSE), m_detectionRange(0.0f),
-		m_forbidden(0), m_detectedByFriendlies(FALSE) {}
+		m_forbidden(0), m_options(0) {}
 	static void buildFieldParse(MultiIniFieldParse& p);
 	static void parseNugget(INI* ini, void* instance, void* store, const void* userData);
 	UnsignedInt m_updatePeriod;
 	Bool m_startsActive;
 	Real m_detectionRange;
 	UnsignedInt m_forbidden;	///< BfmeStealthForbidden bits
-	Bool m_detectedByFriendlies;
+	UnsignedInt m_options;	///< 1: DETECTED_BY_FRIENDLIES, 2: UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH
 	std::vector<AsciiString> m_requiredUpgrades;
 	std::vector<AsciiString> m_forbiddenUpgrades;
 };
@@ -675,7 +702,11 @@ class InvisibilityUpdate : public UpdateModule
 public:
 	InvisibilityUpdate( Thing *thing, const ModuleData* moduleData );
 	virtual UpdateSleepTime update() override;
+	/// ToggleHiddenSpecialAbilityUpdate (Elven Cloak): switch the non-innate stealth on or off
+	void toggleHidden();
+	Bool isToggledHidden() const { return m_toggled; }
 private:
 	Bool m_stealthed;
+	Bool m_toggled;
 };
 

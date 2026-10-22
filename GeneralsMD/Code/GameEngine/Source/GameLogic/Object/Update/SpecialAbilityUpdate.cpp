@@ -1157,6 +1157,9 @@ Bool SpecialAbilityUpdate::continuePreparation()
   const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
   const SpecialPowerTemplate *spTemplate = data->m_specialPowerTemplate;
 
+  if( !bfmeContinue() )	// bfme-native
+    return false;
+
   //Check if we are within the abort distance, otherwise abort!
   if( data->m_abilityAbortRange < SPECIAL_ABILITY_HUGE_DISTANCE )
   {

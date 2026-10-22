@@ -512,12 +512,48 @@ void BfmeSkirmishAI::captureSites()
 //-------------------------------------------------------------------------------------------------
 /// heroes from the hero slots of our keep and barracks: one more per game phase, when there is
 /// money left for the army
+//-------------------------------------------------------------------------------------------------
+/** Edain raises the army limit with "economy units" (CPObject, +50 each) bought at the keep. Buy one
+	when the army is close to the limit and money is left over. */
+static void raiseCommandPoints(Player* player)
+{
+	const Int limit = player->bfmeCommandPointLimit();
+	if (limit <= 0 || player->bfmeCommandPointsUsed() + 60 < limit)
+		return;
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != player || !isAlive(o) || !o->isKindOf(KINDOF_STRUCTURE) ||
+				o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			continue;
+		ProductionUpdateInterface* pu = o->getProductionUpdateInterface();
+		const CommandSet* cs = pu ? commandSetOf(o->getCommandSetString()) : nullptr;
+		for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
+		{
+			const CommandButton* b = cs->getCommandButton(i);
+			const ThingTemplate* t = b && b->getCommandType() == GUI_COMMAND_UNIT_BUILD ? b->getThingTemplate() : nullptr;
+			if (t == nullptr || t->isKindOf(KINDOF_STRUCTURE) || t->bfmeGetCommandPointBonus() <= 0)
+				continue;
+			if (t->calcCostToBuild(player) + 600 > (Int)player->getMoney()->countMoney() ||
+					TheBuildAssistant->canMakeUnit(o, t) != CANMAKE_OK)
+				continue;
+			if (pu->queueCreateUnit(t, pu->requestUniqueUnitID()))
+			{
+				if (debugAI())
+					fprintf(stderr, "[skirmishai] %ls buys %s at %s (army %d/%d)\n", player->getPlayerDisplayName().str(),
+						t->getName().str(), o->getTemplate()->getName().str(), player->bfmeCommandPointsUsed(), limit);
+				return;
+			}
+		}
+	}
+}
+
 void BfmeSkirmishAI::recruitHeroes()
 {
 	const UnsignedInt now = TheGameLogic->getFrame();
 	if (now < m_nextHero)
 		return;
 	m_nextHero = now + 20 * LOGICFRAMES_PER_SECOND;
+	raiseCommandPoints(m_player);
 	Int heroes = 0;
 	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
 		if (o->getControllingPlayer() == m_player && isAlive(o) && o->isKindOf(KINDOF_HERO) && !o->isKindOf(KINDOF_STRUCTURE))

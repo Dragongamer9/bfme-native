@@ -1670,7 +1670,9 @@ static void parseStealthOptions(INI* ini, void*, void* store, const void*)
 {
 	for (const char* t = ini->getNextTokenOrNull(); t; t = ini->getNextTokenOrNull())
 		if (stricmp(t, "DETECTED_BY_FRIENDLIES") == 0)
-			*(Bool*)store = TRUE;
+			*(UnsignedInt*)store |= 1;
+		else if (stricmp(t, "UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH") == 0)
+			*(UnsignedInt*)store |= 2;
 }
 
 void InvisibilityUpdateModuleData::parseNugget(INI* ini, void* instance, void*, const void*)
@@ -1680,7 +1682,7 @@ void InvisibilityUpdateModuleData::parseNugget(INI* ini, void* instance, void*, 
 		{ "InvisibilityType",			parseBannerIgnore,			nullptr, 0 },
 		{ "DetectionRange",				INI::parseReal,					nullptr, offsetof( InvisibilityUpdateModuleData, m_detectionRange ) },
 		{ "ForbiddenConditions",	parseStealthForbidden,	nullptr, offsetof( InvisibilityUpdateModuleData, m_forbidden ) },
-		{ "Options",							parseStealthOptions,		nullptr, offsetof( InvisibilityUpdateModuleData, m_detectedByFriendlies ) },
+		{ "Options",							parseStealthOptions,		nullptr, offsetof( InvisibilityUpdateModuleData, m_options ) },
 		{ "BecomeStealthedFX",		parseBannerIgnore,			nullptr, 0 },
 		{ "ExitStealthFX",				parseBannerIgnore,			nullptr, 0 },
 		{ "ForbiddenWeaponConditions", parseBannerIgnore,	nullptr, 0 },
@@ -1712,11 +1714,17 @@ void InvisibilityUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 	p.add(fp);
 }
 
-InvisibilityUpdate::InvisibilityUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_stealthed(FALSE)
+InvisibilityUpdate::InvisibilityUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_stealthed(FALSE), m_toggled(FALSE)
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND + getObject()->getID() % LOGICFRAMES_PER_SECOND));
 }
 BFME_TRIVIAL_SNAPSHOT(InvisibilityUpdate, UpdateModule)
+
+void InvisibilityUpdate::toggleHidden()
+{
+	m_toggled = !m_toggled;
+	setWakeFrame(getObject(), UPDATE_SLEEP(1));
+}
 
 // map trees, for camouflage (AWAY_FROM_TREES): a coarse grid of tree positions
 static std::map<Int, std::vector<Coord2D> > s_bfmeTrees;
@@ -1765,7 +1773,7 @@ UpdateSleepTime InvisibilityUpdate::update()
 		}
 		return UPDATE_SLEEP_FOREVER;
 	}
-	Bool want = d->m_startsActive || !d->m_requiredUpgrades.empty();
+	Bool want = d->m_startsActive || !d->m_requiredUpgrades.empty() || m_toggled;
 	for (size_t i = 0; i < d->m_requiredUpgrades.size() && want; ++i)
 		if (!objOrPlayerHasUpgrade(me, d->m_requiredUpgrades[i]))
 			want = FALSE;
@@ -1790,12 +1798,16 @@ UpdateSleepTime InvisibilityUpdate::update()
 	if (want && (d->m_forbidden & BFME_STEALTH_ABILITY))
 		for (BehaviorModule** m = me->getBehaviorModules(); *m && want; ++m)
 		{
+			static const NameKeyType toggleKey = NAMEKEY("ToggleHiddenSpecialAbilityUpdate");
 			SpecialPowerUpdateInterface* su = (*m)->getSpecialPowerUpdateInterface();
-			if (su && su->isActive())
+			if (su && su->isActive() && (*m)->getModuleNameKey() != toggleKey)
 				want = FALSE;
 		}
 	if (me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		want = FALSE;
+	// a cloak switched on by its ability falls when stealth breaks (moving is fine for a cloak)
+	if (m_toggled && !want && (d->m_options & 2))
+		m_toggled = FALSE;
 
 	// enemies close enough see through it
 	Bool detected = FALSE;
@@ -1836,3 +1848,30 @@ UpdateSleepTime InvisibilityUpdate::update()
 	return later;
 }
 
+//=================================================================================================
+// CommandPointsUpgrade
+//=================================================================================================
+void CommandPointsUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpgradeModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "CommandPoints",	INI::parseInt,					nullptr, offsetof( CommandPointsUpgradeModuleData, m_commandPoints ) },
+		{ "RequiredObject",	INI::parseAsciiStringVector, nullptr, offsetof( CommandPointsUpgradeModuleData, m_requiredObject ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+CommandPointsUpgrade::CommandPointsUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData ) {}
+BFME_TRIVIAL_SNAPSHOT(CommandPointsUpgrade, UpgradeModule)
+
+Int bfmeCommandPointsUpgradeBonus(const Object* obj)
+{
+	static const NameKeyType key = NAMEKEY("CommandPointsUpgrade");
+	Int bonus = 0;
+	for (BehaviorModule** b = obj->getBehaviorModules(); *b; ++b)
+		if ((*b)->getModuleNameKey() == key)
+			bonus += static_cast<CommandPointsUpgrade*>(*b)->getBonus();
+	return bonus;
+}
