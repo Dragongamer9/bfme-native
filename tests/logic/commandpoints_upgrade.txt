@@ -1,0 +1,6 @@
+# CommandPointsUpgrade: a Rhun house bought "Upgrade_Commandpointupgrade" raises the command point limit by 200
+1   spawn RhunWohnhaus player1 800 1100 0
+10  money
+20  upgrade player1 Upgrade_Commandpointupgrade RhunWohnhaus
+30  money
+31  quit

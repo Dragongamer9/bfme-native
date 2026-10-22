@@ -179,10 +179,21 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   pays twice for units and buildings (its economy was half speed).
 - play.sh (build / setup / launch a skirmish; default map Umbar), tools/factionsweep.sh and
   tools/mapsweep.sh (every faction and every map starts).
+- Abilities: ActivateModuleSpecialPower (an ability that fires other special power modules of the
+  unit by tag, at the target or itself: Théoden's "Stunde des Ruhms" and many Edain hero powers) and
+  DominateEnemySpecialPower (Saruman, Wormtongue, Sauron, attack trolls... take enemies near the
+  target, whole hordes at once; temporary conversions return after 20 s).
+  ArrowStormUpdate (Legolas, Nar, Óin... volleys at every enemy around the target) and
+  ToggleHiddenSpecialAbilityUpdate (Elven Cloak, spirit form: switch a unit's stealth on and off).
+  Location-less abilities with a view object no longer crash.
+- Command points: CommandPointsUpgrade (bought upgrades that raise the limit), COMMAND_POINT_BONUS
+  attribute modifiers, and the AI buys Edain's CP "economy units" at its keep when its army is at
+  the limit and it has money left over (before, it stopped at 500 and hoarded gold).
+- play.sh launches at 1280x720 by default (--size WxH, --fullscreen).
 Known: the user's data has no base files for several factions (no fb_fortress_*, rohan_*,
 zwerge_*, lothlorien_* camps/castles...): those starts fall back to camp → free build, which has
-no keep (heroes then come from barracks hero slots). GeometryUpgrade,
-dominate/defect, wall building are not implemented.
+no keep (heroes then come from barracks hero slots). GeometryUpgrade and wall building are not
+implemented.
 
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect

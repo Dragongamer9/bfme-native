@@ -1,0 +1,7 @@
+# ElvenLegolas's ArrowStormUpdate volley on an Isengard horde near the target
+1   spawn ElvenLegolas player1 800 1100 0
+1   spawn IsengardFighterHorde player2 1000 1100 180
+20  power player1 ElvenLegolas SpecialAbilityArrowStorm player2
+40  summary
+400 summary
+401 quit
