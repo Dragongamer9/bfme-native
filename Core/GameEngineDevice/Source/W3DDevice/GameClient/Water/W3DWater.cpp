@@ -1657,6 +1657,8 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 	//USE_PERF_TIMER(Water)
 	if (TheTerrainRenderObject && !TheTerrainRenderObject->getMap())
 		return;	//no map has been loaded yet.
+	if (getenv("BFME_NO_WATER"))
+		return;	// bfme-native: debugging aid
 
 	if (((RTS3DScene *)rinfo.Camera.Get_User_Data())->getCustomPassMode() == SCENE_PASS_ALPHA_MASK ||
 		((SceneClass *)rinfo.Camera.Get_User_Data())->Get_Extra_Pass_Polygon_Mode() == SceneClass::EXTRA_PASS_CLEAR_LINE)

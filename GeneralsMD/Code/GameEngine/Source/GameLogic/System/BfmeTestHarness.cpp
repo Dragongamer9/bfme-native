@@ -434,6 +434,22 @@ void run(const TestCmd& c)
 			TheTacticalView->lookAt(&pos);
 			if (c.args.size() >= 4)
 				TheTacticalView->setZoom((Real)atof(c.args[3].c_str()));
+			if (c.args.size() >= 5)
+				TheTacticalView->setPitch((Real)atof(c.args[4].c_str()));
+		}
+	}
+	else if (op == "view")
+	{
+		if (TheTacticalView)
+		{
+			Coord3D p = TheTacticalView->getPosition();
+			const Coord3D cam = TheTacticalView->get3DCameraPosition();
+			printf("[BFMETEST] camera eye=%.0f,%.0f,%.0f\n", cam.x, cam.y, cam.z);
+			Region3D ext;
+			TheTerrainLogic->getExtent(&ext);
+			printf("[BFMETEST] view pos=%.0f,%.0f,%.0f angle=%.2f pitch=%.2f zoom=%.2f heightAboveGround=%.1f ground=%.1f map=%.0fx%.0f maxZ=%.1f\n",
+				p.x, p.y, p.z, TheTacticalView->getAngle(), TheTacticalView->getPitch(), TheTacticalView->getZoom(),
+				TheTacticalView->getHeightAboveGround(), TheTerrainLogic->getGroundHeight(p.x, p.y), ext.hi.x, ext.hi.y, ext.hi.z);
 		}
 	}
 	else if (op == "money")
