@@ -268,10 +268,13 @@ Bool CastleBehavior::unpack(Bool pay)
 	if (base->empty())
 	{
 		// a castle base missing from the data (Rohan in this Völker build): the faction's camp instead
+		// (and a missing camp the castle: Isengard and Angmar only have castles)
 		std::string alt = e->m_base.str();
-		const size_t k = alt.find("_castle");
+		size_t k = alt.find("_castle");
 		if (k != std::string::npos)
 			base = loadBase(AsciiString((alt.substr(0, k) + "_camp" + alt.substr(k + 7)).c_str()));
+		else if ((k = alt.find("_camp")) != std::string::npos)
+			base = loadBase(AsciiString((alt.substr(0, k) + "_castle" + alt.substr(k + 5)).c_str()));
 	}
 	if (base->empty())
 	{
