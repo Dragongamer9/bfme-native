@@ -1,8 +1,9 @@
-# Skirmish smoke test: start a 1v1 against the computer and watch the first minutes
+# Skirmish smoke test: start a 1v1 against the computer and watch the first two minutes
 1    reveal
-30   screenshot
-900  screenshot
+1    camera 2071 2946 0.6
+200  screenshot
 1800 screenshot
+3600 summary
 3600 screenshot
-3610 players
+3610 dump
 3620 quit
