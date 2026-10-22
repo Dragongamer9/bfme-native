@@ -1,0 +1,9 @@
+# ClearanceTestingSlowDeathBehavior / GiantBirdSlowDeathBehavior: a siege tower and a crebain die slowly
+1   spawn AngmarSiegeTower player1 800 1100 0
+1   spawn DunlandCraban player1 900 1100 0
+10  kill player1 *
+20  objects Angmar
+21  objects Craban
+1450 objects Angmar
+1451 objects Craban
+1452 quit
