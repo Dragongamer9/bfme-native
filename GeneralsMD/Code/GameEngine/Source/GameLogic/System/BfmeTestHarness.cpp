@@ -318,13 +318,14 @@ void run(const TestCmd& c)
 			const Locomotor* loco = ai->getCurLocomotor();
 			Object* v = ai->getCurrentVictim();
 			const Weapon* w = o->getCurrentWeapon();
-			printf("[BFMETEST] state #%u %s loco=%s maxspeed=%.2f moving=%d attacking=%d idle=%d victim=%u weapon=%s range=%.0f pos=%.0f,%.0f waitPath=%d path=%d blocked=%d stuck=%d disabled=%d phys=%d vel=%.2f mass=%.1f\n", o->getID(),
+			printf("[BFMETEST] state #%u %s loco=%s maxspeed=%.2f moving=%d attacking=%d idle=%d victim=%u weapon=%s range=%.0f pos=%.0f,%.0f waitPath=%d path=%d blocked=%d stuck=%d disabled=%d phys=%d vel=%.2f mass=%.1f stealth=%d detected=%d\n", o->getID(),
 				o->getTemplate()->getName().str(), loco ? loco->getTemplateName().str() : "-",
 				loco ? loco->getMaxSpeedForCondition(BODY_PRISTINE) : 0.0f, (int)ai->isMoving(), (int)ai->isAttacking(), (int)ai->isIdle(),
 				v ? v->getID() : 0, w ? w->getName().str() : "-", w ? w->getAttackRange(o) : 0.0f, o->getPosition()->x, o->getPosition()->y,
 				(int)ai->isWaitingForPath(), ai->getPath() != nullptr, ai->getNumFramesBlocked(), (int)ai->isBlockedAndStuck(),
 				(int)o->isDisabled(), o->getPhysics() != nullptr, o->getPhysics() ? o->getPhysics()->getVelocityMagnitude() : 0.0f,
-				o->getPhysics() ? o->getPhysics()->getMass() : 0.0f);
+				o->getPhysics() ? o->getPhysics()->getMass() : 0.0f,
+				(int)o->testStatus(OBJECT_STATUS_STEALTHED), (int)o->testStatus(OBJECT_STATUS_DETECTED));
 		}
 	}
 	else if (op == "power" && c.args.size() >= 5)
