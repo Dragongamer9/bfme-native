@@ -10,6 +10,8 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 #include "GameLogic/ObjectFilter.h"
+#include "GameLogic/WeaponSetFlags.h"
+#include "Common/ModelState.h"
 
 class FXList;
 
@@ -460,4 +462,30 @@ class HordeMemberCollide : public CollideModule
 public:
 	HordeMemberCollide( Thing *thing, const ModuleData* moduleData );
 	virtual void onCollide( Object * /*other*/, const Coord3D * /*loc*/, const Coord3D * /*normal*/ ) override {}
+};
+
+//-------------------------------------------------------------------------------------------------
+/** MonitorConditionUpdate: swaps the object's command set while a weapon set flag (the porter's
+	page toggle, a hero's mode) or a model condition is on, and back when it goes off. */
+class MonitorConditionUpdateModuleData : public UpdateModuleData
+{
+public:
+	static void buildFieldParse(MultiIniFieldParse& p);
+	WeaponSetFlags m_weaponSetFlags;
+	AsciiString m_weaponToggleCommandSet;
+	ModelConditionFlags m_modelConditionFlags;
+	AsciiString m_modelConditionCommandSet;
+};
+
+class MonitorConditionUpdate : public UpdateModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( MonitorConditionUpdate, "MonitorConditionUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( MonitorConditionUpdate, MonitorConditionUpdateModuleData )
+public:
+	MonitorConditionUpdate( Thing *thing, const ModuleData* moduleData );
+	virtual UpdateSleepTime update() override;
+private:
+	Bool m_active;
+	AsciiString m_previous;
+	AsciiString m_applied;
 };

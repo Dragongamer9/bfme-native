@@ -161,6 +161,8 @@ static const BlockParse theTypeTable[] =
 	{ "ModifierList",                   INI::parseModifierListDefinition },	// bfme-native
 	{ "ExperienceLevel",                INI::parseExperienceLevelDefinition },	// bfme-native
 	{ "StanceTemplate",                 INI::parseStanceTemplateDefinition },	// bfme-native
+	{ "ArmyDefinition",                 INI::parseBfmeArmyDefinition },	// bfme-native
+	{ "AIDozerAssignment",              INI::parseBfmeDozerAssignment },	// bfme-native
 	{ "Weather",                        INI::parseWeatherDefinition },
 	{ "WebpageURL",                     INI::parseWebpageURLDefinition },
 	{ "WindowTransition",               INI::parseWindowTransitions },

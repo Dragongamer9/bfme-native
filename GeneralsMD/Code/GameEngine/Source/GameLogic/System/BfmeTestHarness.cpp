@@ -57,6 +57,8 @@
 #include <string>
 #include <vector>
 
+void ToggleQuitMenu();	// QuitMenu.cpp (the APT quit menu when the APT interface is up)
+
 namespace
 {
 struct TestCmd
@@ -264,6 +266,12 @@ void run(const TestCmd& c)
 				ownerName(o), o->getPosition()->x, o->getPosition()->y, body ? body->getHealth() : 0.0f, body ? body->getMaxHealth() : 0.0f,
 				o->isEffectivelyDead() ? " DEAD" : "");
 		}
+	}
+	else if (op == "quitmenu")
+	{
+		// quitmenu : what Esc does in game
+		ToggleQuitMenu();
+		printf("[BFMETEST] quitmenu\n");
 	}
 	else if (op == "conditions" && c.args.size() >= 2)
 	{

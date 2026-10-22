@@ -32,6 +32,7 @@
 #include "GameLogic/AIPlayer.h"
 
 class BuildListInfo;
+class BfmeSkirmishAI;
 class SpecialPowerTemplate;
 
 
@@ -73,6 +74,8 @@ public:	// AIPlayer interface methods.
 	virtual Player *getAiEnemy() override;	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
 
 protected:
+
+	BfmeSkirmishAI* m_bfme;	///< bfme-native: the RotWK skirmish brain (see BfmeSkirmishAI.h)
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) override;

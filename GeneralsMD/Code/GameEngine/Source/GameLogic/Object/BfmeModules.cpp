@@ -14,6 +14,7 @@
 #include "Common/Upgrade.h"
 #include "Common/Xfer.h"
 #include "GameClient/FXList.h"
+#include "GameClient/Drawable.h"
 #include "GameLogic/AttributeModifier.h"
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/ExperienceLevel.h"
@@ -1205,4 +1206,67 @@ UpdateSleepTime DualWeaponBehavior::update()
 		m_close = close;
 	}
 	return later;
+}
+
+//=================================================================================================
+// MonitorConditionUpdate
+//=================================================================================================
+void MonitorConditionUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "WeaponSetFlags",						WeaponSetFlags::parseFromINI,				nullptr, offsetof( MonitorConditionUpdateModuleData, m_weaponSetFlags ) },
+		{ "WeaponToggleCommandSet",		INI::parseAsciiString,							nullptr, offsetof( MonitorConditionUpdateModuleData, m_weaponToggleCommandSet ) },
+		{ "ModelConditionFlags",			ModelConditionFlags::parseFromINI,	nullptr, offsetof( MonitorConditionUpdateModuleData, m_modelConditionFlags ) },
+		{ "ModelConditionCommandSet",	INI::parseAsciiString,							nullptr, offsetof( MonitorConditionUpdateModuleData, m_modelConditionCommandSet ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+MonitorConditionUpdate::MonitorConditionUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_active(FALSE)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(1 + getObject()->getID() % 5));
+}
+
+void MonitorConditionUpdate::crc( Xfer *xfer ) { UpdateModule::crc( xfer ); }
+void MonitorConditionUpdate::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	UpdateModule::xfer( xfer );
+	xfer->xferBool( &m_active );
+	xfer->xferAsciiString( &m_previous );
+	xfer->xferAsciiString( &m_applied );
+}
+void MonitorConditionUpdate::loadPostProcess() { UpdateModule::loadPostProcess(); }
+MonitorConditionUpdate::~MonitorConditionUpdate() {}
+
+UpdateSleepTime MonitorConditionUpdate::update()
+{
+	const MonitorConditionUpdateModuleData* d = getMonitorConditionUpdateModuleData();
+	Object* me = getObject();
+	const Drawable* draw = me->getDrawable();
+	AsciiString wanted;
+	if (d->m_weaponSetFlags.any() && me->getWeaponSetFlags().testForAll(d->m_weaponSetFlags))
+		wanted = d->m_weaponToggleCommandSet;
+	else if (d->m_modelConditionFlags.any() && draw && draw->getModelConditionFlags().testForAll(d->m_modelConditionFlags))
+		wanted = d->m_modelConditionCommandSet;
+	if (wanted.isNotEmpty() && !m_active)
+	{
+		m_previous = me->getCommandSetString();
+		me->setCommandSetStringOverride(wanted);
+		m_applied = wanted;
+		m_active = TRUE;
+	}
+	else if (wanted.isEmpty() && m_active)
+	{
+		// undo only our own change (another monitor may have taken over meanwhile)
+		if (me->getCommandSetString() == m_applied)
+			me->setCommandSetStringOverride(m_previous);
+		m_active = FALSE;
+	}
+	return UPDATE_SLEEP(5);
 }

@@ -265,8 +265,13 @@ Bool canOpenQuitMenu()
 //-------------------------------------------------------------------------------------------------
 /** Toggle visibility of the quit menu */
 //-------------------------------------------------------------------------------------------------
+/// bfme-native: set by the APT interface, which shows RotWK's QuitMenu.apt instead
+Bool (*g_bfmeAptQuitMenuHook)() = nullptr;
+
 void ToggleQuitMenu()
 {
+	if (g_bfmeAptQuitMenuHook && g_bfmeAptQuitMenuHook())
+		return;
 	if (!isVisible && !canOpenQuitMenu())
 		return;
 

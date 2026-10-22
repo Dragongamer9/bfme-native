@@ -513,6 +513,7 @@ void ModuleFactory::init()
 	addModule( ReplaceSelfUpgrade );	// bfme-native
 	addModule( PassiveAreaEffectBehavior );	// bfme-native
 	addModule( LargeGroupBonusUpdate );	// bfme-native
+	addModule( MonitorConditionUpdate );	// bfme-native
 	addModule( HordeMemberCollide );	// bfme-native
 	addModule( GettingBuiltBehavior );	// bfme-native
 	addModule( TerrainResourceBehavior );	// bfme-native
