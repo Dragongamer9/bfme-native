@@ -277,6 +277,7 @@ CBCommandStatus ControlBar::processCommandButton( const CommandButton *commandBu
 				g_bfmeReviveHook(obj, commandButton);
 			break;
 		}
+		case GUI_COMMAND_BFME_CASTLE_UNPACK_EXPLICIT_OBJECT:	// economy plots: build this object on the site
 		case GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT:
 		{
 			if (obj && g_bfmeFoundationConstructHook && !g_bfmeFoundationConstructHook(obj, commandButton->getThingTemplate()))

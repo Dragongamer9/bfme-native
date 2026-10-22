@@ -195,13 +195,13 @@ void BfmeSkirmishAI::think()
 			continue;
 		if (o->isKindOf(KINDOF_DOZER) && o->getAI())
 			dozers.push_back(o);
-		else if (o->isKindOf(KINDOF_BASE_FOUNDATION) && !o->testStatus(OBJECT_STATUS_UNSELECTABLE) && !bfmeFoundationOccupied(o))
+		else if ((o->isKindOf(KINDOF_BASE_FOUNDATION) || o->isKindOf(KINDOF_CAPTUREFLAG)) && !o->testStatus(OBJECT_STATUS_UNSELECTABLE) && !bfmeFoundationOccupied(o))
 		{
 			const CommandSet* cs = commandSetOf(o->getCommandSetString());
 			for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
 			{
 				const CommandButton* b = cs->getCommandButton(i);
-				if (b && b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT)
+				if (b && (b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_CASTLE_UNPACK_EXPLICIT_OBJECT))
 				{
 					dozers.push_back(o);
 					break;
@@ -255,7 +255,7 @@ const ThingTemplate* BfmeSkirmishAI::producerFor(Object* dozer, const ThingTempl
 	for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
 	{
 		const CommandButton* b = cs->getCommandButton(i);
-		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT) &&
+		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT || (b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_CASTLE_UNPACK_EXPLICIT_OBJECT)) &&
 				b->getThingTemplate() && canTrain(b->getThingTemplate(), unit))
 			return b->getThingTemplate();
 	}
@@ -344,10 +344,10 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 	const BfmeArmyDefinition* army = TheBfmeSkirmishAIStore.findArmy(m_player->getSide());
 	Object* dozer = nullptr;
 	for (size_t i = 0; i < dozers.size() && dozer == nullptr; ++i)
-		if (dozers[i]->isKindOf(KINDOF_BASE_FOUNDATION) || (dozers[i]->getAI() && dozers[i]->getAI()->isIdle()))
+		if (dozers[i]->isKindOf(KINDOF_BASE_FOUNDATION) || dozers[i]->isKindOf(KINDOF_CAPTUREFLAG) || (dozers[i]->getAI() && dozers[i]->getAI()->isIdle()))
 			dozer = dozers[i];
 	// camps: a free build plot builds instead of a porter (one building at a time)
-	const Bool plot = dozer && dozer->isKindOf(KINDOF_BASE_FOUNDATION);
+	const Bool plot = dozer && (dozer->isKindOf(KINDOF_BASE_FOUNDATION) || dozer->isKindOf(KINDOF_CAPTUREFLAG));
 	if (dozer == nullptr)
 		return;
 	if (plot)
@@ -373,7 +373,7 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 	for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET && farm == nullptr; ++i)
 	{
 		const CommandButton* b = cs->getCommandButton(i);
-		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT) &&
+		if (b && (b->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT || (b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT || b->getCommandType() == GUI_COMMAND_BFME_CASTLE_UNPACK_EXPLICIT_OBJECT)) &&
 				b->getThingTemplate() && isFarm(b->getThingTemplate()))
 			farm = b->getThingTemplate();
 	}
