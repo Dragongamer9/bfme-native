@@ -65,6 +65,7 @@ private:
 	void buildBase(std::vector<Object*>& dozers);
 	void trainArmy();
 	void recruitHeroes();
+	void captureSites();
 	void attack();
 	Bool placeBuilding(Object* dozer, const ThingTemplate* what);
 	const ThingTemplate* producerFor(Object* dozer, const ThingTemplate* unit) const;
@@ -78,4 +79,5 @@ private:
 	UnsignedInt m_startFrame;
 	Int m_placementTry;
 	UnsignedInt m_nextHero;
+	UnsignedInt m_nextCapture;
 };
