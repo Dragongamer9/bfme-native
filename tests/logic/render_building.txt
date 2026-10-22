@@ -1,0 +1,10 @@
+# Building render check: Gondor barracks, farm and fortress side by side
+1  localplayer SkirmishMen
+5  reveal
+10 spawn GondorBarracks SkirmishMen 1400 1640 0
+10 spawn GondorFarm SkirmishMen 1520 1640 0
+40 camera 1460 1640 0.6
+80 conditions GondorBarracks
+81 conditions GondorFarm
+90 screenshot
+100 quit
