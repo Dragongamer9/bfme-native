@@ -1130,6 +1130,21 @@ TextureClass * WW3DAssetManager::Get_Texture
 	StringClass lower_case_name(filename,true);
 	_strlwr(lower_case_name.Peek_Buffer());
 
+	// bfme-native: RotWK meshes name duplicated materials "gb_bld1.tga.001" (a 3ds max copy suffix);
+	// the texture is "gb_bld1.tga"
+	{
+		const char *buf = lower_case_name.Peek_Buffer();
+		const char *ext = strstr(buf, ".tga.");
+		if (ext == nullptr) ext = strstr(buf, ".dds.");
+		if (ext && (ext - buf) + 4 < 256)
+		{
+			char trimmed[256];
+			memcpy(trimmed, buf, (ext - buf) + 4);
+			trimmed[(ext - buf) + 4] = '\0';
+			lower_case_name = trimmed;
+		}
+	}
+
 	/*
 	** See if the texture has already been loaded.
 	*/
