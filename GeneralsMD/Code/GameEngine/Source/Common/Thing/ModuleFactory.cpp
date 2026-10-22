@@ -529,6 +529,10 @@ void ModuleFactory::init()
 	addModule( StancesBehavior );	// bfme-native
 	addModule( PlayerHealSpecialPower );	// bfme-native
 	addModule( PlayerUpgradeSpecialPower );	// bfme-native
+	addModule( ActivateModuleSpecialPower );	// bfme-native
+	addModule( DominateEnemySpecialPower );	// bfme-native
+	addModule( ArrowStormUpdate );	// bfme-native
+	addModule( ToggleHiddenSpecialAbilityUpdate );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("NotifyTargetsOfImminentProbableCrushingUpdate"), BfmeInertBehavior::getInterfaceMask() );
@@ -542,6 +546,7 @@ void ModuleFactory::init()
 	addModule( CastleBehavior );	// bfme-native
 	addModule( GateOpenAndCloseBehavior );	// bfme-native
 	addModule( CastleUpgrade );	// bfme-native
+	addModule( CommandPointsUpgrade );	// bfme-native
 	addModule( InvisibilityUpdate );	// bfme-native
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("EmotionTrackerUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( ActiveBody::friend_newModuleInstance, ActiveBody::friend_newModuleData, ActiveBody::getModuleType(), AsciiString("RespawnBody"), ActiveBody::getInterfaceMask() );	// bfme-native: TODO hero respawn

@@ -590,7 +590,7 @@ void SpecialPowerModule::createViewObject( const Coord3D *location )
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
 	const SpecialPowerTemplate *powerTemplate = modData->m_specialPowerTemplate;
 
-	if( modData == nullptr  ||  powerTemplate == nullptr )
+	if( modData == nullptr  ||  powerTemplate == nullptr  ||  location == nullptr )	// bfme-native: RotWK abilities trigger without a location
 		return;
 
 	Real visionRange = powerTemplate->getViewObjectRange();

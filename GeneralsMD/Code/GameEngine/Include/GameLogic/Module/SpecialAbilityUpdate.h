@@ -223,6 +223,8 @@ protected:
 	void triggerAbilityEffect();	//After the preparation time has elapsed, this part actually triggers the desired effect of the special ability.
 	/// bfme-native: RotWK subclasses handle the trigger themselves (return TRUE to skip the Generals switch)
 	virtual Bool bfmeTriggerOverride() { return FALSE; }
+	/// bfme-native: a persistent RotWK ability stops repeating when this returns FALSE
+	virtual Bool bfmeContinue() { return TRUE; }
 	/// bfme-native: model conditions held while the ability runs (RotWK SPECIAL_POWER_n animations)
 	virtual ModelConditionFlags bfmeAbilityConditions() const { return ModelConditionFlags(); }
 	ObjectID bfmeGetTargetID() const { return m_targetID; }

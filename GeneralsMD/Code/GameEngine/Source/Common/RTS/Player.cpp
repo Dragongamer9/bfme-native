@@ -99,6 +99,7 @@
 #include "GameLogic/Module/BattlePlanUpdate.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameLogic/VictoryConditions.h"
+#include "GameLogic/AttributeModifier.h"	// bfme-native
 
 #include "GameNetwork/GameInfo.h"
 
@@ -3004,6 +3005,8 @@ Object *Player::bfmeCreateSpellBook(const Coord3D *where)
 	return book;
 }
 
+extern Int bfmeCommandPointsUpgradeBonus(const Object* obj);	// bfme-native: BfmeModules.cpp
+
 Int Player::bfmeCommandPointLimit() const
 {
 	if (TheGlobalData == nullptr || m_playerTemplate == nullptr)
@@ -3023,7 +3026,11 @@ Int Player::bfmeCommandPointLimit() const
 	Int limit = cp[0];
 	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
 		if (o->getControllingPlayer() == this && !o->isEffectivelyDead() && !o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
-			limit += o->getTemplate()->bfmeGetCommandPointBonus();
+		{
+			limit += o->getTemplate()->bfmeGetCommandPointBonus() + bfmeCommandPointsUpgradeBonus(o);
+			if (TheAttributeModifierStore)
+				limit += (Int)TheAttributeModifierStore->getSum(o, ATTRIBUTE_COMMAND_POINT_BONUS);	// Edain CPObject bonus
+		}
 	return min(limit, cp[1]);
 }
 

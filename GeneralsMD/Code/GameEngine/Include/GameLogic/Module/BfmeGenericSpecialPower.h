@@ -86,3 +86,4 @@ public:
 	PlayerUpgradeSpecialPower( Thing *thing, const ModuleData* moduleData );
 	virtual void bfmeOnTrigger( const Coord3D *location ) override;
 };
+
