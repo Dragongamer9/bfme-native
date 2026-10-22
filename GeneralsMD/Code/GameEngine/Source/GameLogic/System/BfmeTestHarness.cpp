@@ -19,6 +19,7 @@
 #include "GameClient/View.h"
 #include "GameClient/Display.h"
 #include "GameClient/InGameUI.h"
+#include "GameClient/Mouse.h"
 #include "GameClient/Drawable.h"
 #include "Common/MessageStream.h"
 #include "GameLogic/Stances.h"
@@ -98,6 +99,8 @@ void loadScript()
 	}
 	fclose(f);
 	std::stable_sort(s_cmds.begin(), s_cmds.end(), [](const TestCmd& x, const TestCmd& y) { return x.frame < y.frame; });
+	// park the (offscreen) mouse mid-screen so it does not edge-scroll the camera during tests
+	if (TheMouse && TheDisplay) TheMouse->setPosition(TheDisplay->getWidth() / 2, TheDisplay->getHeight() / 2);
 	printf("[BFMETEST] loaded %d commands from %s\n", (int)s_cmds.size(), path);
 	fflush(stdout);
 }
@@ -438,6 +441,8 @@ void run(const TestCmd& c)
 				m->appendIntegerArgument((Int)TheGameLogic->getFrame());
 			}
 		};
+		// the device mouse too: it re-sends its position every frame (and edge-scrolls at 0,0)
+		if (TheMouse) TheMouse->setPosition(pos.x, pos.y);
 		raw(GameMessage::MSG_RAW_MOUSE_POSITION);
 		if (op == "click") { raw(GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN); raw(GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP); }
 		else if (op == "rclick") { raw(GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN); raw(GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP); }

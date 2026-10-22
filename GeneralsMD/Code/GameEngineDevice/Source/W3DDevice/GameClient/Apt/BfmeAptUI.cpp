@@ -27,6 +27,7 @@
 #include "GameClient/Image.h"
 #include "GameLogic/Object.h"
 #include "Common/ThingTemplate.h"
+#include "Common/Upgrade.h"
 
 #include <map>
 #include <vector>
@@ -232,6 +233,85 @@ public:
 		}
 	}
 
+	// ---- tooltips (the help box frame is APT, its text is drawn by the game) ----
+	int tipSlot = -1;
+	std::string tipText;
+	int tipLines = 0;
+
+	static std::string fetchLabel(const AsciiString &labels)
+	{
+		// toggle buttons list one label per state: show the first
+		std::string l = labels.str();
+		const size_t sp = l.find_first_of(" \t");
+		if (sp != std::string::npos) l = l.substr(0, sp);
+		if (l.empty() || !TheGameText) return std::string();
+		Bool exists = FALSE;
+		UnicodeString u = TheGameText->fetch(l.c_str(), &exists);
+		if (!exists) return std::string();
+		AsciiString a; a.translate(u);
+		return a.str();
+	}
+
+	std::string tooltipFor(const CommandButton *b)
+	{
+		std::string t = fetchLabel(b->getTextLabel());
+		// "&Soldiers" hotkey markers
+		t.erase(std::remove(t.begin(), t.end(), '&'), t.end());
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		Int cost = 0;
+		if (b->getThingTemplate() && local) cost = b->getThingTemplate()->calcCostToBuild(local);
+		else if (b->getUpgradeTemplate() && local) cost = b->getUpgradeTemplate()->calcCostToBuild(local);
+		if (cost > 0) { char buf[32]; snprintf(buf, sizeof(buf), "  (%d)", cost); t += buf; }
+		const std::string d = fetchLabel(b->getDescriptionLabel());
+		if (!d.empty()) t += (t.empty() ? "" : "\n") + d;
+		return t;
+	}
+
+	void refreshTooltip(Apt::Player &player)
+	{
+		int slot = -1;
+		std::shared_ptr<Apt::Instance> h = player.hovered();
+		for (int i = 0; i < NUM_SLOTS && h; ++i)
+		{
+			if (!slots[i].button || !slots[i].ready) continue;
+			std::shared_ptr<Apt::Instance> content = player.find(slots[i].content);
+			for (Apt::Instance *n = h.get(); n && content; n = n->parent)
+				if (n == content.get()) { slot = i; break; }
+			if (slot >= 0) break;
+		}
+		if (slot == tipSlot) return;
+		tipSlot = slot;
+		if (slot < 0)
+		{
+			player.call("helpBox.Hide", {});
+			return;
+		}
+		tipText = tooltipFor(slots[slot].button);
+		tipLines = 1 + (int)std::count(tipText.begin(), tipText.end(), '\n') + (int)(tipText.size() / 48);
+		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] tooltip slot %d: '%s'\n", slot, tipText.c_str());
+		std::vector<Apt::Value> a = { Apt::Value::number(16.0 * tipLines + 12.0) };
+		player.call("helpBox.Show", a);
+	}
+
+	/// the tooltip text goes over the whole help box (drawn after its frame), inside its "screen" panel
+	void attachTooltipText(Apt::Player &player)
+	{
+		std::shared_ptr<Apt::Instance> box = player.find("helpBox");
+		if (!box || box->afterDraw) return;
+		GameHost *self = this;
+		box->afterDraw = [self](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
+			if (self->tipSlot < 0 || self->tipText.empty()) return;
+			Apt::Instance *b = inst.findChild("box");
+			Apt::Instance *screen = b ? b->findChild("screen") : nullptr;
+			if (!screen) return;
+			const Apt::Matrix m = screen->matrix.then(b->matrix.then(world));
+			float x0, y0, x1, y1;
+			if (!screen->bounds(x0, y0, x1, y1, m) || y1 - y0 < 8) return;
+			Apt::Color c; c.r = 0.92f; c.g = 0.86f; c.b = 0.62f; c.a = cx.mul.a;
+			Apt::renderText(self->tipText, "Arial", 15.0f * world.m22, c, x0 + 8, y0 + 4, x1 - 8, y1 - 4, 0x100 | 0x200);
+		};
+	}
+
 	/// the game draws the button picture into the content's RenderImage clip
 	void attachImage(Apt::Player &player, int i)
 	{
@@ -411,6 +491,8 @@ void draw()
 	}
 	s_host.refresh();
 	s_host.refreshCommands(*s_player);
+	s_host.refreshTooltip(*s_player);
+	s_host.attachTooltipText(*s_player);
 	// the in-palantir video panel is only shown while a movie plays (none yet)
 	if (std::shared_ptr<Apt::Instance> mp = s_player->find("MoviePlayback"))
 		if (!mp->customDraw)
