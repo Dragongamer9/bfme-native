@@ -13,6 +13,7 @@
 #include "GameClient/Display.h"
 #include "GameClient/GameText.h"
 #include "GameLogic/GameLogic.h"
+#include "Common/GameEngine.h"
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -132,7 +133,7 @@ public:
 		{
 			// the quit menu's buttons: Resume, Exit / ExitMission, Restart, Options, Save, Load
 			const std::string what = Apt::lower(c.compare(0, 13, "aptquitmenu::") == 0 ? c.substr(13) + " " + args : args);
-			if (what.find("resume") != std::string::npos) menuClose = true;
+			if (what.find("resume") != std::string::npos || what.find("returntogame") != std::string::npos) menuClose = true;
 			else if (what.find("exit") != std::string::npos) menuQuit = true;
 			return;
 		}
@@ -1010,11 +1011,12 @@ void draw()
 	if (s_host.menuQuit)
 	{
 		s_host.menuQuit = false;
+		// there is no shell yet: leaving the game leaves the program
+		// (GameLogic::quit would only bring this menu back up)
 		if (TheGameLogic)
-		{
 			TheGameLogic->setGamePaused(FALSE);
-			TheGameLogic->quit(TRUE);
-		}
+		if (TheGameEngine)
+			TheGameEngine->setQuitting(TRUE);
 	}
 	if (s_menu)
 	{
