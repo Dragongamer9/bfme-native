@@ -1,0 +1,8 @@
+# Palantir command ring: select a unit, its CommandSet slots 1..6 show on the palantir
+1  players
+5  reveal
+10 spawn GondorFighterHorde PlyrNeutral 1400 1600 0
+30 select PlyrNeutral GondorFighterHorde
+40 camera 1400 1600 0.5
+60 screenshot
+70 quit
