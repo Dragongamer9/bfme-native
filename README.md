@@ -11,6 +11,7 @@ Personal project. It needs your own installed copy of the game; no EA files are 
 ./play.sh setup "/path/to/RotWK" "/path/to/BFME2" # link your game files (Edain + Völker .big files inside RotWK)
 ./play.sh --map "map mp umbar" --you Men --ai Mordor
 ./play.sh maps        # skirmish maps
+./play.sh --size 1920x1080 --fullscreen           # window size (default 1280x720) / fullscreen
 ```
 
 A 1v1 skirmish against a computer opponent. Any of the 27 Edain/Völker sides works for either
