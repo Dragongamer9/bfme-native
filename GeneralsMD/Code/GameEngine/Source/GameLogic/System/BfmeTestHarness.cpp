@@ -637,9 +637,9 @@ void run(const TestCmd& c)
 			if (strstr(o->getTemplate()->getName().str(), c.args[1].c_str()) == nullptr)
 				continue;
 			Player* p = o->getControllingPlayer();
-			printf("[BFMETEST] object #%u %s owner=%s name='%s' pos=%.0f,%.0f dead=%d\n", o->getID(), o->getTemplate()->getName().str(),
+			printf("[BFMETEST] object #%u %s owner=%s name='%s' pos=%.0f,%.0f dead=%d commandset=%s\n", o->getID(), o->getTemplate()->getName().str(),
 				p ? TheNameKeyGenerator->keyToName(p->getPlayerNameKey()).str() : "-", o->getName().str(),
-				o->getPosition()->x, o->getPosition()->y, (int)o->isEffectivelyDead());
+				o->getPosition()->x, o->getPosition()->y, (int)o->isEffectivelyDead(), o->getCommandSetString().str());
 		}
 	}
 	else if (op == "players")
