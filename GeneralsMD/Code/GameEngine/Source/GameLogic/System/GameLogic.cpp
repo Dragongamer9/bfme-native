@@ -638,7 +638,9 @@ static void placeNetworkBuildingsForPlayer(Int slotNum, const GameSlot *pSlot, P
 		// whose FreeBuildPorterEgg hatches into the faction's porters)
 		Bool hasBaseSite = FALSE;
 		for (Object *o = TheGameLogic->getFirstObject(); o && !hasBaseSite; o = o->getNextObject())
-			if (o->isKindOf(KINDOF_BASE_SITE) && ThePartitionManager->getDistanceSquared(o, &pos, FROM_CENTER_2D) < 500.0f * 500.0f)
+			if ((o->isKindOf(KINDOF_BASE_SITE) || strstr(o->getTemplate()->getName().str(), "LagerPlotFlag") ||
+					strstr(o->getTemplate()->getName().str(), "FestungPlotFlag")) &&	// Edain camp/fortress flags hatch into sites
+					ThePartitionManager->getDistanceSquared(o, &pos, FROM_CENTER_2D) < 500.0f * 500.0f)
 				hasBaseSite = TRUE;
 		const UpgradeTemplate *freeBuild = TheUpgradeCenter->findUpgrade("Upgrade_EvilDualEconomyChoice");
 		if (!hasBaseSite && freeBuild)
@@ -4212,6 +4214,7 @@ void GameLogic::update()
 
 	TheWeaponStore->UPDATE();
 	TheAttributeModifierStore->UPDATE();	// bfme-native
+	{ extern void bfmeCastleUpdate(); bfmeCastleUpdate(); }	// bfme-native: plot buildings
 	{ extern void bfmeTestHarnessUpdate(); bfmeTestHarnessUpdate(); }	// bfme-native: BFME_TEST scripts
 	TheLocomotorStore->UPDATE();
 	TheVictoryConditions->UPDATE();

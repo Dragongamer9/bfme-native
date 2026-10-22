@@ -1091,6 +1091,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/BfmeGenericSpecialPower.cpp
     Source/GameLogic/Object/Contain/HordeContain.cpp
     Source/GameLogic/Object/BfmeModules.cpp
+    Source/GameLogic/Object/BfmeCastle.cpp
     Source/GameLogic/Object/Update/WeaponFireSpecialAbilityUpdate.cpp
     Source/GameLogic/Object/Update/ToggleMountedSpecialAbilityUpdate.cpp
     Source/GameLogic/System/BfmeTestHarness.cpp

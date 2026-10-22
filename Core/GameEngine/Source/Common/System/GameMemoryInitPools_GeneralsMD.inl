@@ -200,6 +200,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "MonitorConditionUpdate", 512, 128 },	// bfme-native
 	{ "BannerCarrierUpdate", 1024, 256 },	// bfme-native
 	{ "AISpecialPowerUpdate", 4096, 1024 },	// bfme-native
+	{ "CastleBehavior", 64, 64 },	// bfme-native
 	{ "HordeMemberCollide", 2048, 512 },	// bfme-native
 	{ "GettingBuiltBehavior", 1024, 256 },	// bfme-native
 	{ "TerrainResourceBehavior", 512, 128 },	// bfme-native

@@ -288,8 +288,8 @@ void run(const TestCmd& c)
 			Drawable* d = o->getDrawable();
 			AsciiString flags;
 			if (d) d->getModelConditionFlags().buildDescription(&flags);
-			printf("[BFMETEST] conditions #%u %s drawable=%d hidden=%d opacity=%.2f flags=%s\n", o->getID(), o->getTemplate()->getName().str(),
-				d ? 1 : 0, d ? (int)d->isDrawableEffectivelyHidden() : -1, d ? d->getEffectiveOpacity() : 0.0f, flags.str());
+			printf("[BFMETEST] conditions #%u %s drawable=%d hidden=%d obscured=%d opacity=%.2f flags=%s\n", o->getID(), o->getTemplate()->getName().str(),
+				d ? 1 : 0, d ? (int)d->isDrawableEffectivelyHidden() : -1, d ? (int)d->getFullyObscuredByShroud() : -1, d ? d->getEffectiveOpacity() : 0.0f, flags.str());
 		}
 	}
 	else if (op == "summary")

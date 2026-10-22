@@ -1185,10 +1185,11 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 			static const char *s_skip = getenv("BFME_SKIP_ROBJ");
 			// BFME_DEBUG_SCENE=<logic frame>: list the render objects drawn on that frame
 			static const char *s_sceneAt = getenv("BFME_DEBUG_SCENE");
-			if (s_sceneAt && TheGameLogic && (UnsignedInt)atoi(s_sceneAt) == TheGameLogic->getFrame() && robj->Is_Really_Visible())
+			if (s_sceneAt && TheGameLogic && (UnsignedInt)atoi(s_sceneAt) == TheGameLogic->getFrame())
 			{
 				SphereClass sp = robj->Get_Bounding_Sphere();
-				fprintf(stderr, "[scene] class=%d name=%s r=%.0f c=%.0f,%.0f,%.0f\n", robj->Class_ID(), robj->Get_Name() ? robj->Get_Name() : "?", sp.Radius, sp.Center.X, sp.Center.Y, sp.Center.Z);
+				fprintf(stderr, "[scene] class=%d name=%s r=%.0f c=%.0f,%.0f,%.0f visible=%d notHidden=%d\n", robj->Class_ID(), robj->Get_Name() ? robj->Get_Name() : "?", sp.Radius, sp.Center.X, sp.Center.Y, sp.Center.Z,
+					(int)robj->Is_Really_Visible(), (int)robj->Is_Not_Hidden_At_All());
 			}
 			if (s_skip && robj->Get_Name() && strstr(robj->Get_Name(), s_skip))
 				continue;

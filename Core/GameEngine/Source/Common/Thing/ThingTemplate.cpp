@@ -127,6 +127,44 @@ static void parseKindOfFromINI(INI* ini, void* instance, void *store, const void
 */
 
 // NOTE NOTE NOTE -- s_objectFieldParseTable and s_objectReskinFieldParseTable must be updated in tandem -- see comment above
+// bfme-native: RotWK "AdditionalGeometry = TYPE" adds an extra shape (towers, wings); the Geometry*
+// fields after it describe that shape and must not overwrite the main geometry. The extra shapes
+// themselves are not modelled yet.
+static const void* s_bfmeAdditionalGeometryOwner = nullptr;
+static void bfmeParseAdditionalGeometry(INI* ini, void* instance, void*, const void*)
+{
+	ini->getNextToken();
+	s_bfmeAdditionalGeometryOwner = instance;
+}
+static Bool bfmeSkipAdditional(INI* ini, void* instance)
+{
+	if (instance != s_bfmeAdditionalGeometryOwner)
+		return FALSE;
+	while (ini->getNextTokenOrNull() != nullptr) {}
+	return TRUE;
+}
+static void bfmeParseGeometryType(INI* ini, void* instance, void* store, const void* ud)
+{
+	s_bfmeAdditionalGeometryOwner = nullptr;
+	GeometryInfo::parseGeometryType(ini, instance, store, ud);
+}
+static void bfmeParseGeometryMajorRadius(INI* ini, void* instance, void* store, const void* ud)
+{
+	if (!bfmeSkipAdditional(ini, instance)) GeometryInfo::parseGeometryMajorRadius(ini, instance, store, ud);
+}
+static void bfmeParseGeometryMinorRadius(INI* ini, void* instance, void* store, const void* ud)
+{
+	if (!bfmeSkipAdditional(ini, instance)) GeometryInfo::parseGeometryMinorRadius(ini, instance, store, ud);
+}
+static void bfmeParseGeometryHeight(INI* ini, void* instance, void* store, const void* ud)
+{
+	if (!bfmeSkipAdditional(ini, instance)) GeometryInfo::parseGeometryHeight(ini, instance, store, ud);
+}
+static void bfmeParseGeometryIsSmall(INI* ini, void* instance, void* store, const void* ud)
+{
+	if (!bfmeSkipAdditional(ini, instance)) GeometryInfo::parseGeometryIsSmall(ini, instance, store, ud);
+}
+
 const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 {
 	{ "DisplayName",					INI::parseAndTranslateLabel,					nullptr,								offsetof( ThingTemplate, m_displayName ) },
@@ -249,11 +287,12 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
 	{ "UnitSpecificSounds",		ThingTemplate::parsePerUnitSounds, nullptr, offsetof(ThingTemplate, m_perUnitSounds) },
 	{ "UnitSpecificFX",				ThingTemplate::parsePerUnitFX, nullptr, offsetof(ThingTemplate, m_perUnitFX) },
 	{ "Scale",								INI::parseReal,						nullptr,		offsetof( ThingTemplate, m_assetScale ) },
-	{ "Geometry",							GeometryInfo::parseGeometryType,				nullptr,  offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryMajorRadius",	GeometryInfo::parseGeometryMajorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryMinorRadius",	GeometryInfo::parseGeometryMinorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryHeight",				GeometryInfo::parseGeometryHeight,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryIsSmall",			GeometryInfo::parseGeometryIsSmall,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "Geometry",							bfmeParseGeometryType,				nullptr,  offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryMajorRadius",	bfmeParseGeometryMajorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryMinorRadius",	bfmeParseGeometryMinorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryHeight",				bfmeParseGeometryHeight,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryIsSmall",			bfmeParseGeometryIsSmall,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "AdditionalGeometry",		bfmeParseAdditionalGeometry,	nullptr,		0 },	// bfme-native
 	{ "Shadow",								INI::parseBitString8,		TheShadowNames,		offsetof( ThingTemplate, m_shadowType ) },
 	{ "ShadowSizeX",					INI::parseReal,						nullptr,	offsetof( ThingTemplate, m_shadowSizeX ) },
 	{ "ShadowSizeY",					INI::parseReal,						nullptr,	offsetof( ThingTemplate, m_shadowSizeY ) },
@@ -287,11 +326,12 @@ const FieldParse ThingTemplate::s_objectReskinFieldParseTable[] =
 {
 	{ "Draw",									ThingTemplate::parseModuleName,		(const void*)MODULETYPE_DRAW, offsetof(ThingTemplate, m_drawModuleInfo) },
 
-	{ "Geometry",							GeometryInfo::parseGeometryType,				nullptr,  offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryMajorRadius",	GeometryInfo::parseGeometryMajorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryMinorRadius",	GeometryInfo::parseGeometryMinorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryHeight",				GeometryInfo::parseGeometryHeight,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
-	{ "GeometryIsSmall",			GeometryInfo::parseGeometryIsSmall,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "Geometry",							bfmeParseGeometryType,				nullptr,  offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryMajorRadius",	bfmeParseGeometryMajorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryMinorRadius",	bfmeParseGeometryMinorRadius,	nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryHeight",				bfmeParseGeometryHeight,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "GeometryIsSmall",			bfmeParseGeometryIsSmall,			nullptr,		offsetof( ThingTemplate, m_geometryInfo ) },
+	{ "AdditionalGeometry",		bfmeParseAdditionalGeometry,	nullptr,		0 },	// bfme-native
 	{ "FenceWidth",						INI::parseReal,													nullptr,		offsetof( ThingTemplate, m_fenceWidth ) },
 	{ "FenceXOffset",					INI::parseReal,													nullptr,		offsetof( ThingTemplate, m_fenceXOffset ) },
 
