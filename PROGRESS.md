@@ -166,7 +166,14 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   CASTLE_UNPACK_EXPLICIT_OBJECT builds the chosen farm/outpost on them. Captured objects re-run
   their upgrade modules (faction command sets).
 - Modules: GateOpenAndCloseBehavior (gates never block paths, open for friends), CastleUpgrade,
-  W3DSailModelDraw, ShipSlowDeathBehavior. Self-named animation files no longer recurse forever.
+  InvisibilityUpdate (stealth/camouflage; no tree test, so forest camouflage stays off),
+  W3DSailModelDraw, ShipSlowDeathBehavior. Self-named animation files no longer recurse forever;
+  maps with more terrain blends than our table load (Dagorlad).
+- Völker: all 27 playable sides start (tools/factionsweep.sh); Völker computer players no longer
+  turn human (no skirmish side in the map) and train every unit of their side when they have no
+  ArmyDefinition. Missing camp/castle bases fall back castle↔camp, then to free build.
+- Audio: the user's upload has no BFME2 audio.big/speech/music, so most sounds are missing here;
+  play.sh setup links them from a real BFME2 install. BFME_DEBUG_AUDIO lists played/missing files.
 - AI: AISpecialPowerUpdate (computer units use buffs/heals/killers/area powers), builds on camp
   plots and economy plots, takes free plots, recruits heroes, spreads farms apart, and no longer
   pays twice for units and buildings (its economy was half speed).
@@ -174,7 +181,7 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   tools/mapsweep.sh (every faction and every map starts).
 Known: the user's data has no base files for several factions (no fb_fortress_*, rohan_*,
 zwerge_*, lothlorien_* camps/castles...): those starts fall back to camp → free build, which has
-no keep (heroes then come from barracks hero slots). Stealth (InvisibilityUpdate), GeometryUpgrade,
+no keep (heroes then come from barracks hero slots). GeometryUpgrade,
 dominate/defect, wall building are not implemented.
 
 ## Next
