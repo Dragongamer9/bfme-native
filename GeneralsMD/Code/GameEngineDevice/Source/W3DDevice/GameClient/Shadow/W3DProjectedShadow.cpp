@@ -1936,7 +1936,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 	Char texture_name[ARRAY_SIZE(shadowInfo->m_ShadowName)];
 
 
-	if (!m_dynamicRenderTarget || !robj || !TheGlobalData->m_useShadowDecals)
+	if (!m_dynamicRenderTarget || !robj || !TheGlobalData->m_useShadowDecals || getenv("BFME_NO_DECALS"))
 		return nullptr;	//right now we require hardware render-to-texture support
 
 

@@ -761,7 +761,7 @@ GlobalData::GlobalData()
 	m_extendedShadowFrustumCulling = TRUE;
 	m_naturalSunElevation = TRUE;
 	m_bridgeShadows = TRUE;
-	m_waterReflections = TRUE;
+	m_waterReflections = FALSE;	// bfme-native: the darkening-only overlay is not the BFME look and blackens water on some drivers; opt in via WaterReflections = Yes
 	m_explosionDynamicLights = TRUE;
 	m_vehicleHeadlights = TRUE;
 	m_enablePostProcessing = TRUE;
