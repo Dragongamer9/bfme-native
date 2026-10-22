@@ -357,6 +357,9 @@ void MiniAudioManager::playAudioEvent(AudioRequest *req)
 	AsciiString fileToPlay = event->getFilename();
 	DEBUG_LOG(("MINIAUDIO: playAudioEvent '%s' type=%d file='%s'\n",
 		event->getEventName().str(), info->m_soundType, fileToPlay.str()));
+	static const Bool s_debugAudio = getenv("BFME_DEBUG_AUDIO") != nullptr;	// bfme-native
+	if (s_debugAudio)
+		fprintf(stderr, "[audio] play '%s' file='%s'\n", event->getEventName().str(), fileToPlay.str());
 
 	std::list<PlayingAudio *>::iterator it;
 
@@ -404,6 +407,7 @@ void MiniAudioManager::playAudioEvent(AudioRequest *req)
 	File *file = TheFileSystem->openFile(fileToPlay.str());
 	if (!file) {
 		DEBUG_LOG(("MiniAudio: Failed to open file: %s\n", fileToPlay.str()));
+		if (getenv("BFME_DEBUG_AUDIO")) fprintf(stderr, "[audio] cannot open '%s'\n", fileToPlay.str());
 		releasePlayingAudio(audio);
 		return;
 	}
@@ -411,6 +415,7 @@ void MiniAudioManager::playAudioEvent(AudioRequest *req)
 	FFmpegFile *ffmpegFile = NEW FFmpegFile();
 	if (!ffmpegFile->open(file)) {
 		DEBUG_LOG(("MiniAudio: Failed to open FFmpeg file: %s\n", fileToPlay.str()));
+		if (getenv("BFME_DEBUG_AUDIO")) fprintf(stderr, "[audio] cannot decode '%s'\n", fileToPlay.str());
 		delete ffmpegFile;
 		releasePlayingAudio(audio);
 		return;
