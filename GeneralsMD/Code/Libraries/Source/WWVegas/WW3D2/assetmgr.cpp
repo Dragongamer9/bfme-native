@@ -1066,8 +1066,22 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 	// Try to find the htree
 	HTreeClass * htree = HTreeManager.Get_Tree(name);
 
+	// bfme-native: an animation file whose skeleton name is its own file name (no skeleton inside)
+	// would load itself again and again; give up on the second request for the same name
+	static const char *s_loadingHTree[8];
+	static int s_loadingDepth = 0;
+	for (int k = 0; k < s_loadingDepth && k < 8; ++k)
+		if (htree == nullptr && stricmp(s_loadingHTree[k], name) == 0)
+			return nullptr;
+	struct HTreeLoadGuard
+	{
+		HTreeLoadGuard(const char *n) { if (s_loadingDepth < 8) s_loadingHTree[s_loadingDepth] = n; ++s_loadingDepth; }
+		~HTreeLoadGuard() { --s_loadingDepth; }
+	};
+
 	if (WW3D_Load_On_Demand && htree == nullptr) {
 		// If we didn't find it, try to load on demand
+		HTreeLoadGuard guard(name);
 
 		AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_HTree(name);
 

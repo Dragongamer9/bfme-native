@@ -11,6 +11,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
+#include "Common/Upgrade.h"
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/TerrainVisual.h"
@@ -265,7 +266,27 @@ Bool CastleBehavior::unpack(Bool pay)
 		return FALSE;
 	const std::vector<BfmeBaseEntry>* base = loadBase(e->m_base);
 	if (base->empty())
+	{
+		// a castle base missing from the data (Rohan in this Völker build): the faction's camp instead
+		std::string alt = e->m_base.str();
+		const size_t k = alt.find("_castle");
+		if (k != std::string::npos)
+			base = loadBase(AsciiString((alt.substr(0, k) + "_camp" + alt.substr(k + 7)).c_str()));
+	}
+	if (base->empty())
+	{
+		// no base for this faction in the data: a start site falls back to the free-build start
+		// (the FreeBuildPorterEgg hatches porters once the player has the upgrade)
+		if (m_startSite && !pay)
+		{
+			const UpgradeTemplate* fb = TheUpgradeCenter->findUpgrade("Upgrade_EvilDualEconomyChoice");
+			if (fb && !owner->hasUpgradeComplete(fb))
+				owner->addUpgrade(fb, UPGRADE_STATUS_COMPLETE);
+			m_unpacked = TRUE;
+			fprintf(stderr, "[bfme] no base %s for %s: free build instead\n", e->m_base.str(), owner->getSide().str());
+		}
 		return FALSE;
+	}
 	if (pay)
 	{
 		if ((Int)owner->getMoney()->countMoney() < e->m_cost)
@@ -403,7 +424,7 @@ static void updateCaptures()
 		if (!flag->isKindOf(KINDOF_CAPTUREFLAG) || flag->isEffectivelyDead())
 			continue;
 		CastleBehavior* cb = CastleBehavior::findOn(flag);
-		if (cb && cb->isUnpacked())
+		if ((cb && cb->isUnpacked()) || bfmeFoundationOccupied(flag))
 			continue;
 		// who stands at the flag
 		Player* taker = nullptr;
