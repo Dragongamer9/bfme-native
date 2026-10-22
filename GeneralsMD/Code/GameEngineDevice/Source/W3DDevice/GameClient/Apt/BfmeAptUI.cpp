@@ -20,10 +20,18 @@
 #include "Common/Radar.h"
 #include "GameLogic/TerrainLogic.h"
 #include "GameClient/View.h"
+#include "GameClient/ControlBar.h"
+#include "GameClient/GameClient.h"
+#include "GameClient/InGameUI.h"
+#include "GameClient/Drawable.h"
+#include "GameClient/Image.h"
+#include "GameLogic/Object.h"
+#include "Common/ThingTemplate.h"
 
 #include <map>
 #include <vector>
 
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -45,10 +53,56 @@ public:
 	std::map<std::string, std::string> dynamicText;	///< lower-case id -> text (game-supplied strings)
 	std::vector<std::string> deferred;			///< script calls to make after the current update
 
+	/// palantir command ring: CommandSet slots 1..6
+	struct Slot
+	{
+		std::string frame;		///< MovieClipFrame path (from OnButtonFrameLoaded)
+		std::string content;	///< CommandButton content path
+		bool ready = false;		///< content reported _OnInitialized
+		const CommandButton *button = nullptr;
+		std::string state;
+	};
+	enum { NUM_SLOTS = 6 };
+	Slot slots[NUM_SLOTS];
+	bool commandShown = false;
+	DrawableID source = INVALID_DRAWABLE_ID;
+
+	static std::string arg(const std::string &args, const char *key)
+	{
+		const std::string k = std::string(key) + "=";
+		size_t p = args.find(k);
+		if (p == std::string::npos) return std::string();
+		p += k.size();
+		const size_t e = args.find('&', p);
+		return args.substr(p, e == std::string::npos ? std::string::npos : e - p);
+	}
+
 	void onFSCommand(Apt::Player &, const std::string &cmd, const std::string &args) override
 	{
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] fscommand %s %s\n", cmd.c_str(), args.c_str());
 		const std::string c = Apt::lower(cmd);
+		if (c == "palantircommandui::onbuttonframeloaded")
+		{
+			const int i = atoi(arg(args, "index").c_str());
+			if (i >= 0 && i < NUM_SLOTS)
+			{
+				Slot &sl = slots[i];
+				sl = Slot();
+				sl.frame = arg(args, "name");
+				sl.content = sl.frame + ".Button";
+				deferred.push_back(sl.frame + ".CreateContent(CommandButton,Button)");
+			}
+			return;
+		}
+		for (int i = 0; i < NUM_SLOTS; ++i)
+		{
+			Slot &sl = slots[i];
+			if (sl.content.empty() || c.compare(0, sl.content.size(), Apt::lower(sl.content)) != 0) continue;
+			const std::string what = c.substr(sl.content.size());
+			if (what == "_oninitialized") { sl.ready = true; sl.state.clear(); }
+			else if (what == "_onpress") pressSlot(i);
+			return;
+		}
 		// sub-movies report in; the game decides what is visible
 		if (c == "aptpalantir::onhelpboxloaded") deferred.push_back("helpBox.Hide()");
 		else if (c == "aptpalantir::onplanningmodeuiloaded") deferred.push_back("planningModeUI.Close()");
@@ -58,6 +112,7 @@ public:
 		{
 			deferred.push_back(std::string("SetPalantirFrameState(") + (localIsGood() ? "_good" : "_evil") + ")");
 			deferred.push_back("HideCommandInterface()");
+			commandShown = false;
 		}
 	}
 	Apt::Value onGameCall(Apt::Player &, const std::string &object, const std::string &method, std::vector<Apt::Value> &args) override
@@ -109,6 +164,112 @@ public:
 		const std::string side = Apt::lower(p->getSide().str());
 		return !(side.find("mordor") != std::string::npos || side.find("isengard") != std::string::npos ||
 			side.find("wild") != std::string::npos || side.find("angmar") != std::string::npos);
+	}
+
+	void pressSlot(int i)
+	{
+		const CommandButton *b = slots[i].button;
+		Drawable *d = TheGameClient ? TheGameClient->findDrawableByID(source) : nullptr;
+		if (!b || !TheControlBar) return;
+		const Bool multi = TheInGameUI && TheInGameUI->getSelectCount() > 1;
+		const CBCommandStatus st = TheControlBar->bfmeExecuteCommand(b, d, multi);
+		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] command %s -> %d\n", b->getName().str(), (int)st);
+	}
+
+	/// the first selected object of ours drives the command ring
+	void refreshCommands(Apt::Player &player)
+	{
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		Drawable *d = nullptr;
+		if (TheInGameUI && local)
+		{
+			const DrawableList *sel = TheInGameUI->getAllSelectedDrawables();
+			for (Drawable *x : *sel)
+				if (x && x->getObject() && x->getObject()->getControllingPlayer() == local) { d = x; break; }
+		}
+		Object *obj = d ? d->getObject() : nullptr;
+		source = d ? d->getID() : INVALID_DRAWABLE_ID;
+		const CommandSet *cs = (obj && TheControlBar) ? TheControlBar->findCommandSet(obj->getCommandSetString()) : nullptr;
+		static DrawableID s_lastSource = INVALID_DRAWABLE_ID;
+		if (source != s_lastSource && getenv("BFME_DEBUG_APT"))
+		{
+			s_lastSource = source;
+			fprintf(stderr, "[aptui] selection %s commandset '%s' -> %s\n", obj ? obj->getTemplate()->getName().str() : "-",
+				obj ? obj->getCommandSetString().str() : "", cs ? "found" : "none");
+		}
+		bool any = false;
+		for (int i = 0; i < NUM_SLOTS; ++i)
+		{
+			Slot &sl = slots[i];
+			sl.button = cs ? cs->getCommandButton(i) : nullptr;
+			std::string state = "_unused";
+			if (sl.button)
+			{
+				const CommandAvailability av = TheControlBar->getCommandAvailability(sl.button, obj, nullptr);
+				if (av == COMMAND_HIDDEN) sl.button = nullptr;
+				else
+				{
+					any = true;
+					state = (av == COMMAND_AVAILABLE || av == COMMAND_ACTIVE) ? "_up" : (av == COMMAND_CANT_AFFORD ? "_cantAfford" : "_disabled");
+				}
+			}
+			if (getenv("BFME_DEBUG_APT") && state != sl.state)
+				fprintf(stderr, "[aptui] slot %d %s ready=%d state %s\n", i, sl.button ? sl.button->getName().str() : "-", (int)sl.ready, state.c_str());
+			if (sl.ready && state != sl.state)
+			{
+				// keep _over/_down animations: only push the base state when it changes
+				sl.state = state;
+				std::vector<Apt::Value> a = { Apt::Value::string(state) };
+				player.call(sl.content + ".SetState", a);
+			}
+			if (sl.ready)
+				attachImage(player, i);
+		}
+		if (any != commandShown)
+		{
+			commandShown = any;
+			player.call(any ? "ShowCommandInterface" : "HideCommandInterface", {});
+		}
+	}
+
+	/// the game draws the button picture into the content's RenderImage clip
+	void attachImage(Apt::Player &player, int i)
+	{
+		std::shared_ptr<Apt::Instance> content = player.find(slots[i].content);
+		if (!content) return;
+		static Apt::Character *s_renderImage = nullptr;
+		if (!s_renderImage)
+		{
+			Apt::File *lib = Apt::library().load("libInGameUI");
+			s_renderImage = lib ? lib->exported("RenderImage") : nullptr;
+			if (!s_renderImage) return;
+		}
+		std::vector<Apt::Instance *> stack = { content.get() };
+		while (!stack.empty())
+		{
+			Apt::Instance *n = stack.back(); stack.pop_back();
+			if (n->character == s_renderImage)
+			{
+				if (!n->customDraw)
+				{
+					GameHost *self = this;
+					n->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
+						const CommandButton *b = self->slots[i].button;
+						const Image *img = b ? b->getButtonImage() : nullptr;
+						float x0, y0, x1, y1;
+						const bool hasBounds = inst.bounds(x0, y0, x1, y1, world);
+						if (getenv("BFME_DEBUG_APT_IMG"))
+							fprintf(stderr, "[aptui] image slot %d %s img=%s rect=(%.0f,%.0f)-(%.0f,%.0f) a=%.2f\n", i, b ? b->getName().str() : "-",
+								img ? img->getName().str() : "null", hasBounds ? x0 : -1, hasBounds ? y0 : -1, x1, y1, cx.mul.a);
+						if (!img || !TheDisplay || !hasBounds) return;
+						Apt::renderFlush();
+						TheDisplay->drawImage(img, (Int)x0, (Int)y0, (Int)x1, (Int)y1, GameMakeColor(255, 255, 255, (UnsignedByte)(255 * (cx.mul.a < 1 ? cx.mul.a : 1))));
+					};
+				}
+				return;
+			}
+			for (auto &kv : n->children) if (kv.second) stack.push_back(kv.second.get());
+		}
 	}
 
 	/// per-frame game values shown by the palantir
@@ -249,6 +410,7 @@ void draw()
 		if (ms > 250) ms = 250;
 	}
 	s_host.refresh();
+	s_host.refreshCommands(*s_player);
 	// the in-palantir video panel is only shown while a movie plays (none yet)
 	if (std::shared_ptr<Apt::Instance> mp = s_player->find("MoviePlayback"))
 		if (!mp->customDraw)
@@ -272,7 +434,7 @@ void draw()
 	s_host.deferred.clear();
 	static int s_frames = 0;
 	if (++s_frames == 30 && getenv("BFME_APT_DUMP")) dumpFunctions(*s_player->root(), 0);
-	if (s_frames == 30 && getenv("BFME_APT_TREE")) dumpTree(*s_player->root(), 0, Apt::Matrix());
+	if (getenv("BFME_APT_TREE") && s_frames == std::max(1, atoi(getenv("BFME_APT_TREE")))) dumpTree(*s_player->root(), 0, Apt::Matrix());
 	s_player->render(viewMatrix());
 }
 

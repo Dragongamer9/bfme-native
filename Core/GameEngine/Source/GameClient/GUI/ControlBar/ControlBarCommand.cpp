@@ -1318,7 +1318,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 					if ( w->getStatus() == RELOADING_CLIP)
 					{
 						Int percent = w->getPercentReadyToFire() * 100;
-						GadgetButtonDrawInverseClock( applyToWin, percent, m_buildUpClockColor );
+						if( applyToWin ) GadgetButtonDrawInverseClock( applyToWin, percent, m_buildUpClockColor );
 					}
 					return COMMAND_NOT_READY;
 				}
@@ -1417,7 +1417,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			{
 				Int percent =  mod->getPercentReady() * 100;
 
-				GadgetButtonDrawInverseClock( applyToWin, percent, m_buildUpClockColor );
+				if( applyToWin ) GadgetButtonDrawInverseClock( applyToWin, percent, m_buildUpClockColor );
 				return COMMAND_NOT_READY;
 			}
 			else if( SpecialAbilityUpdate *spUpdate = obj->findSpecialAbilityUpdate( command->getSpecialPowerTemplate()->getSpecialPowerType() ) )

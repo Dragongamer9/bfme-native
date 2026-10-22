@@ -441,7 +441,12 @@ static Value callMethod(Context &ctx, const Value &objv, const std::string &name
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[apt] no method %s on %s\n", name.c_str(), objv.toString().c_str());
 		return Value();
 	}
-	if (getenv("BFME_DEBUG_APT_CALLS")) fprintf(stderr, "[apt] -> %s.%s\n", objv.toString().c_str(), name.c_str());
+	if (getenv("BFME_DEBUG_APT_CALLS"))
+	{
+		std::string a;
+		for (const Value &v : args) a += (a.empty() ? "" : ", ") + v.toString();
+		fprintf(stderr, "[apt] -> %s.%s(%s)\n", objv.toString().c_str(), name.c_str(), a.c_str());
+	}
 	return ctx.player.callFunction(fn.o, o, args, ctx.depth + 1);
 }
 

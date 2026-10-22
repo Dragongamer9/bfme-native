@@ -521,8 +521,9 @@ void run(const TestCmd& c)
 		{
 			Player* p = ThePlayerList->getNthPlayer(i);
 			AsciiString n = TheNameKeyGenerator->keyToName(p->getPlayerNameKey());
-			printf("[BFMETEST] player %d name='%s' template=%s\n", i, n.str(),
-				p->getPlayerTemplate() ? p->getPlayerTemplate()->getName().str() : "-");
+			printf("[BFMETEST] player %d name='%s' template=%s side=%s%s\n", i, n.str(),
+				p->getPlayerTemplate() ? p->getPlayerTemplate()->getName().str() : "-", p->getSide().str(),
+				p == ThePlayerList->getLocalPlayer() ? " (local)" : "");
 		}
 	}
 	else if (op == "quit")
