@@ -1,0 +1,9 @@
+1    reveal
+200  select player0 GondorCampBaseKeep
+205  command player0 GondorCampBaseKeep Command_PurchaseGondorAnorien
+300  select player0 GondorCampBaseKeep
+340  camera 2560 508 0.9 0.35
+400  click 268 686
+450  mousemove 1005 180
+490  screenshot
+500  quit
