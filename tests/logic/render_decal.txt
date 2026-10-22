@@ -1,0 +1,8 @@
+# Dynamic decals (DynamicDecal FX nugget): ground marks of a giant stomp and an oil spill
+1  localplayer SkirmishMen
+5  reveal
+10 fx FX_GiantStomp 1400 1640
+10 fx FX_OilSpill 1520 1640
+40 camera 1460 1640 0.6
+70 screenshot
+80 quit
