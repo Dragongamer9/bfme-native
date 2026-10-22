@@ -207,12 +207,17 @@ public:
 	// bfme-native: BFME2/RotWK FX shader materials (W3D_CHUNK 0x50..0x53)
 	struct BfmeFxMaterial
 	{
-		BfmeFxMaterial() : Texture(nullptr), AlphaTest(false), Ambient(0.8f,0.8f,0.8f), Diffuse(1.0f,1.0f,1.0f) {}
+		BfmeFxMaterial() : Texture(nullptr), AlphaTest(false), AlphaBlend(false), DepthWrite(true), HasEmissive(false),
+			Ambient(0.8f,0.8f,0.8f), Diffuse(1.0f,1.0f,1.0f), Emissive(0.0f,0.0f,0.0f) {}
 		StringClass ShaderName;
 		TextureClass * Texture;
 		bool AlphaTest;
+		bool AlphaBlend;
+		bool DepthWrite;
+		bool HasEmissive;
 		Vector3 Ambient;
 		Vector3 Diffuse;
+		Vector3 Emissive;
 	};
 	std::vector < BfmeFxMaterial >							BfmeFxMaterials;
 private:
@@ -1072,12 +1077,15 @@ static void bfme_read_fx_property(ChunkLoadClass & cload, MeshLoadContextClass::
 			cload.Read(v,sizeof(v));
 			if (stricmp(name,"AmbientColor") == 0) mat.Ambient.Set(v[0],v[1],v[2]);
 			else if (stricmp(name,"DiffuseColor") == 0) mat.Diffuse.Set(v[0],v[1],v[2]);
+			else if (stricmp(name,"ColorEmissive") == 0 || stricmp(name,"EmissiveColor") == 0) { mat.Emissive.Set(v[0],v[1],v[2]); mat.HasEmissive = true; }
 			break;
 		}
 		case 7: {	// bool
 			unsigned char b = 0;
 			cload.Read(&b,1);
 			if (stricmp(name,"AlphaTestEnable") == 0) mat.AlphaTest = (b != 0);
+			else if (stricmp(name,"AlphaBlendingEnable") == 0) mat.AlphaBlend = (b != 0);
+			else if (stricmp(name,"DepthWriteEnable") == 0) mat.DepthWrite = (b != 0);
 			break;
 		}
 		default:
@@ -1117,19 +1125,24 @@ void MeshModelClass::bfme_apply_fx_material(MeshLoadContextClass * context,int f
 	const int pass = context->CurPass;
 
 	VertexMaterialClass * vmat = NEW_REF(VertexMaterialClass,());
-	vmat->Set_Lighting(true);
+	// Simple.fx and friends give an emissive colour: unlit (sky domes, glows); otherwise lit
+	vmat->Set_Lighting(!fx.HasEmissive);
 	vmat->Set_Ambient(fx.Ambient);
-	vmat->Set_Diffuse(fx.Diffuse);
+	vmat->Set_Diffuse(fx.HasEmissive ? fx.Emissive : fx.Diffuse);
 	vmat->Set_Specular(0.0f,0.0f,0.0f);
-	vmat->Set_Emissive(0.0f,0.0f,0.0f);
+	vmat->Set_Emissive(fx.HasEmissive ? fx.Emissive : Vector3(0.0f,0.0f,0.0f));
 	vmat->Set_Opacity(1.0f);
 	context->Add_Vertex_Material(vmat);
 	DefMatDesc->Set_Single_Material(vmat,pass);
 	vmat->Release_Ref();
 
-	ShaderClass shader = ShaderClass::_PresetOpaqueShader;
+	ShaderClass shader = fx.AlphaBlend ? ShaderClass::_PresetAlphaShader : ShaderClass::_PresetOpaqueShader;
 	if (fx.AlphaTest)
 		shader.Set_Alpha_Test(ShaderClass::ALPHATEST_ENABLE);
+	if (!fx.DepthWrite)
+		shader.Set_Depth_Mask(ShaderClass::DEPTH_WRITE_DISABLE);
+	if (fx.AlphaBlend && !fx.AlphaTest && pass == 0)
+		Set_Flag(SORT,true);
 	DefMatDesc->Set_Single_Shader(shader,pass);
 
 	if (fx.Texture)

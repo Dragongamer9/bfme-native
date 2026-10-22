@@ -77,6 +77,8 @@ public:
 
 	int			 		Load_Anim(ChunkLoadClass & cload);
 	HAnimClass *		Get_Anim(const char * name);
+	int					bfme_Load_Motion_Channel_Anim(const unsigned char *data, uint32 len);	// bfme-native
+	int					bfme_Load_Compressed_Anim_Original(ChunkLoadClass & cload);	// bfme-native
 	HAnimClass *		Peek_Anim(const char * name);
 	bool					Add_Anim(HAnimClass *new_anim);
 	void			 		Free_All_Anims();
