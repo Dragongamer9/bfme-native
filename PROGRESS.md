@@ -80,6 +80,22 @@ scripts in `tests/logic/`). Working now:
 - parser fix: `AddEmotion = OVERRIDE ... End` sub-blocks inside not-yet-ported modules were cutting
   the rest of ~1,900 module lines out of horde and hero objects
 
+## Session 4 — the game renders (2026-10-22)
+Rendering under SDL offscreen + Mesa lavapipe, screenshots in `docs/screens/`.
+- Base BFME2 art fetched from the user's PC (terrain, textures0-4, w3d) as `zz_bfme2_*`.
+- RotWK weather (rain via the snow system: IsSnowing, SnowBoxHeight/Spacing/Speed).
+- Terrain draw window centred with 16-bit heights; 128px tiles (225 texture classes).
+- W3D: FX shader materials (0x50-0x53: DiffuseTexture/Texture_0, emissive, alpha),
+  generated blob decal shadows (shadow/shadowI).
+- Animations: BFME motion channels (0x284, time-coded and 4/8-bit adaptive delta) rebuilt
+  as raw anims, file-only anim names, bone-name binding across skeletons.
+- Strings: data/lotr.str. Water: StandingWaterAreas / RiverAreas chunks -> water triggers.
+- Fixes: quit crash (cameo movie window), screenshot after final composite, reflection
+  overlay off by default.
+- Harness: `reveal`, `spawn ... @dx @dy` (relative to the view), `camera X Y zoom pitch`.
+Known: sky above the horizon is black (reflection-only dome), pale squares under Uruk-hai,
+TriggerAreas chunk format still unknown (empty on Fords of Isen).
+
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
 2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
