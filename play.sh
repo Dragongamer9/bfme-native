@@ -28,9 +28,14 @@ setup() {
   # RotWK reads its own archives (mods first: their names start with '_'), then BFME2's art
   for f in "$rotwk"/*.big "$rotwk"/apt/*.big; do [ -e "$f" ] && ln -sfn "$f" "$DATA/$(basename "$f")"; done
   [ -d "$rotwk/lang" ] && ln -sfn "$rotwk/lang" "$DATA/lang"
-  for n in terrain textures0 textures1 textures2 textures3 textures4 w3d; do
+  # BFME2's art, sounds, voices and music (RotWK's own audio.big only holds its new sounds)
+  for n in terrain textures0 textures1 textures2 textures3 textures4 w3d audio music speech; do
     [ -f "$bfme2/$n.big" ] && ln -sfn "$bfme2/$n.big" "$DATA/zz_bfme2_$n.big"
   done
+  for f in "$bfme2"/lang/*/*.big "$bfme2"/lang/*.big; do
+    [ -f "$f" ] && ln -sfn "$f" "$DATA/zz_bfme2_lang_$(basename "$f")"
+  done
+  [ -f "$bfme2/audio.big" ] || echo "warning: no audio.big in $bfme2 - BFME2's sounds will be missing"
   for f in "$bfme2"/apt/aptui_playerstatus.big "$bfme2"/apt/aptui_scorescreen.big; do
     [ -f "$f" ] && ln -sfn "$f" "$DATA/zz_bfme2_$(basename "$f")"
   done
