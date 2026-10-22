@@ -449,11 +449,15 @@ void run(const TestCmd& c)
 		Player *a = findPlayer(c.args[1]);
 		Int n = 0;
 		if (TheInGameUI) TheInGameUI->deselectAllDrawables();
+		// the logic keeps its own selection (commands act on it): tell it, like SelectionTranslator
+		GameMessage *group = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
+		group->appendBooleanArgument(TRUE);
 		for (Object *o = TheGameLogic->getFirstObject(); o && a; o = o->getNextObject())
 		{
 			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getDrawable() == nullptr) continue;
 			if (o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0) continue;
 			TheInGameUI->selectDrawable(o->getDrawable());
+			group->appendObjectIDArgument(o->getID());
 			++n;
 		}
 		printf("[BFMETEST] select %s %s -> %d\n", c.args[1].c_str(), c.args[2].c_str(), n);
