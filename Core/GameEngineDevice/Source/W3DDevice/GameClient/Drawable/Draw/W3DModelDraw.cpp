@@ -3690,12 +3690,16 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		// create a new render object and set into drawable
 		if (newState->m_modelName.isEmpty())
 		{
+			if (getenv("BFME_DEBUG_MODELS"))
+				fprintf(stderr, "[model] %s -> (no model for state)\n", draw->getTemplate()->getName().str());
 			m_renderObject = nullptr;
 		}
 		else
 		{
 			m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(newState->m_modelName.str(), draw->getScale(), m_hexColor);
 			DEBUG_ASSERTCRASH(m_renderObject, ("*** ASSET ERROR: Model %s not found!",newState->m_modelName.str()));
+			if (getenv("BFME_DEBUG_MODELS"))
+				fprintf(stderr, "[model] %s -> '%s' %s\n", draw->getTemplate()->getName().str(), newState->m_modelName.str(), m_renderObject ? "ok" : "NOT FOUND");
 		}
 
 		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()"));

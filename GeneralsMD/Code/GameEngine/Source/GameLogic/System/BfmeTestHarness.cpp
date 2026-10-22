@@ -136,9 +136,15 @@ void run(const TestCmd& c)
 		Int count = c.args.size() >= 7 ? atoi(c.args[6].c_str()) : 1;
 		for (Int i = 0; i < count; ++i)
 		{
+			// X/Y may be "@<offset>" = relative to where the tactical view looks (e.g. @0, @-80)
+			Coord3D viewPos; viewPos.zero();
+			if (TheTacticalView) viewPos = TheTacticalView->getPosition();
+			auto coord = [](const std::string& a, Real base) -> Real {
+				return (!a.empty() && a[0] == '@') ? base + (Real)atof(a.c_str() + 1) : (Real)atof(a.c_str());
+			};
 			Coord3D pos;
-			pos.x = (Real)atof(c.args[3].c_str()) + 30.0f * i;
-			pos.y = (Real)atof(c.args[4].c_str());
+			pos.x = coord(c.args[3], viewPos.x) + 30.0f * i;
+			pos.y = coord(c.args[4], viewPos.y);
 			pos.z = TheTerrainLogic->getGroundHeight(pos.x, pos.y);
 			Object* o = TheThingFactory->newObject(t, p->getDefaultTeam());
 			if (o)
