@@ -1003,6 +1003,9 @@ void SpecialPowerModule::bfmeOnTrigger( const Coord3D *location )
 	if (d->m_attributeModifier.isNotEmpty() && TheAttributeModifierStore)
 	{
 		const AttributeModifierList* list = TheAttributeModifierStore->findList(d->m_attributeModifier);
+		static const Bool dbg = getenv("BFME_DEBUG_ABILITY") != nullptr;
+		if (dbg)
+			printf("[ability] #%u modifier %s%s range %.0f\n", me->getID(), d->m_attributeModifier.str(), list ? "" : " (unknown)", d->m_attributeModifierRange);
 		if (list)
 		{
 			const Coord3D* center = location ? location : me->getPosition();
@@ -1020,6 +1023,8 @@ void SpecialPowerModule::bfmeOnTrigger( const Coord3D *location )
 						continue;
 					TheAttributeModifierStore->apply(o, list, me->getID());
 					FXList::doFXObj(d->m_attributeModifierFX, o);
+					if (dbg)
+						printf("[ability]   -> #%u %s\n", o->getID(), o->getTemplate()->getName().str());
 				}
 			}
 		}

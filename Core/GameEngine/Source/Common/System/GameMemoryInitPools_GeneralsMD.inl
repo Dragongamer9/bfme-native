@@ -222,6 +222,8 @@ static PoolSizeRec PoolSizes[] =
 	{ "DominateEnemySpecialPower", 64, 16 },	// bfme-native
 	{ "ArrowStormUpdate", 128, 32 },	// bfme-native
 	{ "ToggleHiddenSpecialAbilityUpdate", 512, 128 },	// bfme-native
+	{ "LevelGrantSpecialPower", 128, 32 },	// bfme-native
+	{ "TeleportSpecialAbilityUpdate", 128, 32 },	// bfme-native
 	{ "CommandPointsUpgrade", 128, 32 },	// bfme-native
 	{ "BfmeInertBehavior", 8192, 2048 },	// bfme-native
 	{ "LocomotorSetUpgrade", 512, 128 },
@@ -518,6 +520,8 @@ static PoolSizeRec PoolSizes[] =
 	{ "TerrainScorchFXNugget", 48, 32 },
 	{ "ParticleSystemFXNugget", 832, 32 },
 	{ "FXListAtBonePosFXNugget", 32, 32 },
+	{ "BuffFXNugget", 512, 64 },	// bfme-native
+	{ "DynamicDecalFXNugget", 512, 64 },	// bfme-native
 	{ "Squad", 256, 32 },
 	{ "BuildListInfo", 400, 64 },
 

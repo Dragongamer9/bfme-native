@@ -88,6 +88,8 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
 
+void bfmeUpdateBuffs();	// bfme-native: FXList.cpp
+
 #define DRAWABLE_HASH_SIZE	8192
 
 /// The GameClient singleton instance
@@ -651,6 +653,8 @@ void GameClient::update()
 			}
 		}
 
+
+		bfmeUpdateBuffs();	// bfme-native: BuffNugget models follow their objects
 
 		// call the update for all client drawables
 		const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();

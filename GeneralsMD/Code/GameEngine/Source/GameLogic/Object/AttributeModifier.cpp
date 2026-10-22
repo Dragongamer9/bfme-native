@@ -12,6 +12,9 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Object.h"
 
+extern const void* g_bfmeBuffSource;	// FXList.cpp (BuffNugget)
+void bfmeEndBuffsFrom(const Object* obj, const void* source);
+
 AttributeModifierStore* TheAttributeModifierStore = nullptr;
 
 const char *const TheAttributeModifierTypeNames[] =
@@ -197,8 +200,10 @@ void AttributeModifierStore::onGain(Object* obj, const AttributeModifierList* li
 	}
 	if (list->m_modelConditionsClear.any() || list->m_modelConditionsSet.any())
 		obj->clearAndSetModelConditionFlags(list->m_modelConditionsClear, list->m_modelConditionsSet);
+	g_bfmeBuffSource = list;	// buffs these FX start last as long as the modifier
 	for (Int i = 0; i < 3; ++i)
 		FXList::doFXObj(list->m_fx[i], obj);
+	g_bfmeBuffSource = nullptr;
 	if (list->m_upgradeName.isNotEmpty() && TheUpgradeCenter)
 	{
 		const UpgradeTemplate* ut = TheUpgradeCenter->findUpgrade(list->m_upgradeName);
@@ -223,6 +228,7 @@ void AttributeModifierStore::onLose(Object* obj, const AttributeModifierList* li
 		obj->clearModelConditionFlags(list->m_modelConditionsSet);
 	for (Int i = 0; i < 3; ++i)
 		FXList::doFXObj(list->m_endFX[i], obj);
+	bfmeEndBuffsFrom(obj, list);
 }
 
 void AttributeModifierStore::apply(Object* obj, const AttributeModifierList* list, ObjectID source, UnsignedInt duration, Bool permanent)

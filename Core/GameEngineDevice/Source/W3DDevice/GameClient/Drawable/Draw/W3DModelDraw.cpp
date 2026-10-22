@@ -1240,6 +1240,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ModelName", W3DModelDrawModuleData::parseBfmeFloorModel, nullptr, 0 },
 		{ "HideIfModelConditions", W3DModelDrawModuleData::parseBfmeHideIf, nullptr, 0 },
 		{ "StaticModelLODMode", parseBfmeIgnoreField, nullptr, 0 },
+		{ "PreDraw", parseBfmeIgnoreField, nullptr, 0 },	// W3DBuffDraw
 		{ "WeatherTexture", parseBfmeIgnoreField, nullptr, 0 },
 		{ "ForceToBack", parseBfmeIgnoreField, nullptr, 0 },
 		{ nullptr, nullptr, nullptr, 0 }

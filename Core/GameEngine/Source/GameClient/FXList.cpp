@@ -31,6 +31,8 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/FXList.h"
+#include "GameClient/Shadow.h"	// bfme-native
+#include "GameClient/Color.h"	// bfme-native
 
 #include "Common/DrawModule.h"
 #include "Common/GameAudio.h"
@@ -771,6 +773,322 @@ private:
 };
 EMPTY_DTOR(FXListAtBonePosFXNugget)
 
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK BuffNugget -- a model (the Buff*Template object's W3DBuffDraw) drawn on the
+// object for BuffLifeTime: leadership rings, heal glows, curse marks... One buff of each BuffType
+// per object; a buff started by an attribute modifier's FX ends when the modifier does.
+//-------------------------------------------------------------------------------------------------
+const void* g_bfmeBuffSource = nullptr;	///< the attribute modifier list whose FX is playing (AttributeModifier.cpp)
+namespace
+{
+	struct BfmeBuff
+	{
+		ObjectID obj;
+		AsciiString type;
+		DrawableID draw;
+		UnsignedInt expire;	///< logic frame, 0 = while the source lasts
+		const void* source;
+	};
+	std::vector<BfmeBuff> s_bfmeBuffs;
+
+	void bfmeKillBuff(BfmeBuff& b)
+	{
+		if (TheGameClient)
+			if (Drawable* d = TheGameClient->findDrawableByID(b.draw))
+				TheGameClient->destroyDrawable(d);
+		b.draw = INVALID_DRAWABLE_ID;
+	}
+}
+
+void bfmeUpdateDecals();
+void bfmeUpdateBuffs()
+{
+	bfmeUpdateDecals();
+	if (s_bfmeBuffs.empty() || TheGameLogic == nullptr)
+		return;
+	const UnsignedInt now = TheGameLogic->getFrame();
+	for (size_t i = 0; i < s_bfmeBuffs.size(); )
+	{
+		BfmeBuff& b = s_bfmeBuffs[i];
+		const Object* o = TheGameLogic->findObjectByID(b.obj);
+		Drawable* d = TheGameClient ? TheGameClient->findDrawableByID(b.draw) : nullptr;
+		if (o == nullptr || o->isEffectivelyDead() || d == nullptr || (b.expire && now >= b.expire))
+		{
+			bfmeKillBuff(b);
+			s_bfmeBuffs[i] = s_bfmeBuffs.back();
+			s_bfmeBuffs.pop_back();
+			continue;
+		}
+		d->setPosition(o->getPosition());
+		d->setOrientation(o->getOrientation());
+		Drawable* od = const_cast<Object*>(o)->getDrawable();
+		d->setDrawableHidden(od == nullptr || od->isDrawableEffectivelyHidden() || !od->isVisible());
+		++i;
+	}
+}
+
+void bfmeEndBuffsFrom(const Object* obj, const void* source)
+{
+	for (size_t i = 0; i < s_bfmeBuffs.size(); ++i)
+		if (s_bfmeBuffs[i].obj == obj->getID() && s_bfmeBuffs[i].source == source)
+			s_bfmeBuffs[i].expire = 1;	// removed on the next client update
+}
+
+class BuffFXNugget : public FXNugget
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BuffFXNugget, "BuffFXNugget")
+public:
+	BuffFXNugget() : m_lifeTime(0.0f), m_complex(FALSE) {}
+
+	virtual void doFXPos(const Coord3D*, const Matrix3D*, const Real, const Coord3D*, const Real) const override {}
+
+	virtual void doFXObj(const Object* primary, const Object* /*secondary*/) const override
+	{
+		if (primary == nullptr || primary->isKindOf(KINDOF_HORDE) || TheThingFactory == nullptr || TheGameClient == nullptr || TheGameLogic == nullptr)
+			return;
+		const AsciiString* name = &m_infantry;
+		if (m_thing.isNotEmpty()) name = &m_thing;
+		if (primary->isKindOf(KINDOF_SHIP) && m_ship.isNotEmpty()) name = &m_ship;
+		else if (primary->isKindOf(KINDOF_TROLL_BUFF_NUGGET) && m_troll.isNotEmpty()) name = &m_troll;
+		else if (primary->isKindOf(KINDOF_MONSTER) && m_monster.isNotEmpty()) name = &m_monster;
+		else if (primary->isKindOf(KINDOF_CAVALRY) && m_cavalry.isNotEmpty()) name = &m_cavalry;
+		else if (primary->isKindOf(KINDOF_ORC) && m_orc.isNotEmpty()) name = &m_orc;
+		const ThingTemplate* tt = name->isNotEmpty() ? TheThingFactory->findTemplate(*name) : nullptr;
+		static const Bool dbg = getenv("BFME_DEBUG_BUFF") != nullptr;
+		if (dbg)
+			printf("[buff] %s on #%u %s: %s%s\n", m_type.str(), primary->getID(), primary->getTemplate()->getName().str(), name->str(), tt ? "" : " (no template)");
+		if (tt == nullptr)
+			return;
+		const UnsignedInt now = TheGameLogic->getFrame();
+		const Real frames = m_lifeTime * LOGICFRAMES_PER_SECOND / 1000.0f;
+		const UnsignedInt expire = (frames <= 0.0f || frames > 1.0e7f) ? 0 : now + (UnsignedInt)frames + 1;
+		for (size_t i = 0; i < s_bfmeBuffs.size(); ++i)
+		{
+			BfmeBuff& b = s_bfmeBuffs[i];
+			if (b.obj == primary->getID() && b.type.compareNoCase(m_type) == 0)
+			{
+				b.expire = expire;	// refresh
+				if (expire == 0)
+					b.source = g_bfmeBuffSource;
+				return;
+			}
+		}
+		Drawable* d = TheThingFactory->newDrawable(tt);
+		if (d == nullptr)
+			return;
+		d->setPosition(primary->getPosition());
+		d->setOrientation(primary->getOrientation());
+		BfmeBuff b;
+		b.obj = primary->getID();
+		b.type = m_type;
+		b.draw = d->getID();
+		b.expire = (expire == 0 && g_bfmeBuffSource == nullptr) ? now + 10 * LOGICFRAMES_PER_SECOND : expire;
+		b.source = g_bfmeBuffSource;
+		s_bfmeBuffs.push_back(b);
+	}
+
+	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
+	{
+		static const FieldParse myFieldParse[] =
+		{
+			{ "BuffType",							INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_type ) },
+			{ "BuffThingTemplate",		INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_thing ) },
+			{ "BuffInfantryTemplate",	INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_infantry ) },
+			{ "BuffOrcTemplate",			INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_orc ) },
+			{ "BuffCavalryTemplate",	INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_cavalry ) },
+			{ "BuffTrollTemplate",		INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_troll ) },
+			{ "BuffShipTemplate",			INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_ship ) },
+			{ "BuffMonsterTemplate",	INI::parseAsciiString,	nullptr, offsetof( BuffFXNugget, m_monster ) },
+			{ "IsComplexBuff",				INI::parseBool,					nullptr, offsetof( BuffFXNugget, m_complex ) },
+			{ "BuffLifeTime",					INI::parseReal,					nullptr, offsetof( BuffFXNugget, m_lifeTime ) },
+			{ nullptr, nullptr, nullptr, 0 }
+		};
+		BuffFXNugget* nugget = newInstance( BuffFXNugget );
+		ini->initFromINI(nugget, myFieldParse);
+		((FXList*)instance)->addFXNugget(nugget);
+		static const Bool dbg = getenv("BFME_DEBUG_BUFF") != nullptr;
+		static Int s_n = 0;
+		if (dbg && s_n++ < 3)
+			printf("[buff] parsed %s %s\n", nugget->m_type.str(), nugget->m_infantry.str());
+	}
+
+private:
+	AsciiString m_type, m_thing, m_infantry, m_orc, m_cavalry, m_troll, m_ship, m_monster;
+	Real m_lifeTime;	///< ms
+	Bool m_complex;
+};
+EMPTY_DTOR(BuffFXNugget)
+
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK DynamicDecal -- a terrain decal (scorch, puddle, cloud shadow) whose opacity
+// rises from OpacityStart to OpacityPeak over OpacityFadeTimeOne, holds for OpacityPeakTime, falls to
+// OpacityEnd over OpacityFadeTimeTwo; it appears after StartingDelay and lasts Lifetime.
+//-------------------------------------------------------------------------------------------------
+namespace
+{
+	struct BfmeDecalSpec
+	{
+		AsciiString name;
+		Real size;
+		RGBColor color;
+		Int opStart, opPeak, opEnd;
+		UnsignedInt fade1, peakTime, fade2, delay, lifetime;	// logic frames
+		Coord3D offset;
+		Bool additive;
+	};
+	struct BfmeDecal
+	{
+		const BfmeDecalSpec* spec;
+		Coord3D pos;
+		UnsignedInt start;	///< logic frame it appears
+		Shadow* shadow;
+	};
+	std::vector<BfmeDecal> s_bfmeDecals;
+	UnsignedInt s_bfmeDecalFrame = 0;
+}
+
+void bfmeUpdateDecals()
+{
+	if (s_bfmeDecals.empty() || TheGameLogic == nullptr)
+		return;
+	const UnsignedInt now = TheGameLogic->getFrame();
+	if (now < s_bfmeDecalFrame)
+	{
+		s_bfmeDecals.clear();	// a new game: the old decals went with the old map
+		s_bfmeDecalFrame = now;
+		return;
+	}
+	s_bfmeDecalFrame = now;
+	for (size_t i = 0; i < s_bfmeDecals.size(); )
+	{
+		BfmeDecal& d = s_bfmeDecals[i];
+		const BfmeDecalSpec* sp = d.spec;
+		if (now < d.start)
+		{
+			++i;
+			continue;
+		}
+		const UnsignedInt t = now - d.start;
+		if (t >= sp->lifetime)
+		{
+			if (d.shadow)
+				d.shadow->release();
+			s_bfmeDecals[i] = s_bfmeDecals.back();
+			s_bfmeDecals.pop_back();
+			continue;
+		}
+		if (d.shadow == nullptr && TheProjectedShadowManager)
+		{
+			Shadow::ShadowTypeInfo info;
+			strlcpy(info.m_ShadowName, sp->name.str(), ARRAY_SIZE(info.m_ShadowName));
+			info.m_type = sp->additive ? SHADOW_ADDITIVE_DECAL : SHADOW_ALPHA_DECAL;
+			info.m_sizeX = sp->size;
+			info.m_sizeY = sp->size;
+			d.shadow = TheProjectedShadowManager->addDecal(&info);
+			if (d.shadow == nullptr)
+			{
+				s_bfmeDecals[i] = s_bfmeDecals.back();
+				s_bfmeDecals.pop_back();
+				continue;
+			}
+			d.shadow->setPosition(d.pos.x, d.pos.y, d.pos.z);
+			d.shadow->setColor(GameMakeColor(REAL_TO_INT(sp->color.red * 255), REAL_TO_INT(sp->color.green * 255), REAL_TO_INT(sp->color.blue * 255), 255));
+		}
+		Real op;
+		if (t < sp->fade1)
+			op = sp->opStart + (sp->opPeak - sp->opStart) * (Real)t / (Real)sp->fade1;
+		else if (t < sp->fade1 + sp->peakTime)
+			op = (Real)sp->opPeak;
+		else if (t < sp->fade1 + sp->peakTime + sp->fade2)
+			op = sp->opPeak + (sp->opEnd - sp->opPeak) * (Real)(t - sp->fade1 - sp->peakTime) / (Real)sp->fade2;
+		else
+			op = (Real)sp->opEnd;
+		if (d.shadow)
+			d.shadow->setOpacity(max(0, min(255, REAL_TO_INT(op))));
+		++i;
+	}
+}
+
+class DynamicDecalFXNugget : public FXNugget
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DynamicDecalFXNugget, "DynamicDecalFXNugget")
+public:
+	DynamicDecalFXNugget() : m_size(50.0f), m_opStart(0), m_opPeak(255), m_opEnd(0), m_fade1(0), m_peakTime(0), m_fade2(0),
+		m_delay(0), m_lifetime(0), m_additive(FALSE)
+	{
+		m_color.red = m_color.green = m_color.blue = 1.0f;
+		m_offset.zero();
+	}
+
+	virtual void doFXPos(const Coord3D *primary, const Matrix3D* /*primaryMtx*/, const Real, const Coord3D*, const Real) const override
+	{
+		if (primary == nullptr || m_name.isEmpty() || TheGameLogic == nullptr || s_bfmeDecals.size() > 200)
+			return;
+		m_spec.name = m_name;
+		m_spec.size = m_size;
+		m_spec.color = m_color;
+		m_spec.opStart = m_opStart; m_spec.opPeak = m_opPeak; m_spec.opEnd = m_opEnd;
+		const Real f = LOGICFRAMES_PER_SECOND / 1000.0f;
+		m_spec.fade1 = max(1u, (UnsignedInt)(m_fade1 * f));
+		m_spec.peakTime = (UnsignedInt)(m_peakTime * f);
+		m_spec.fade2 = max(1u, (UnsignedInt)(m_fade2 * f));
+		m_spec.delay = (UnsignedInt)(m_delay * f);
+		m_spec.lifetime = max(1u, (UnsignedInt)(m_lifetime * f));
+		m_spec.additive = m_additive;
+		BfmeDecal d;
+		d.spec = &m_spec;
+		d.pos = *primary;
+		d.pos.x += m_offset.x;
+		d.pos.y += m_offset.y;
+		d.start = TheGameLogic->getFrame() + m_spec.delay;
+		d.shadow = nullptr;
+		s_bfmeDecals.push_back(d);
+	}
+
+	static void parseShader(INI* ini, void*, void* store, const void*)
+	{
+		const char* t = ini->getNextToken();
+		*(Bool*)store = stricmp(t, "ADDITIVE") == 0;
+	}
+
+	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
+	{
+		static const FieldParse myFieldParse[] =
+		{
+			{ "DecalName",					INI::parseAsciiString,		nullptr, offsetof( DynamicDecalFXNugget, m_name ) },
+			{ "Size",								INI::parseReal,						nullptr, offsetof( DynamicDecalFXNugget, m_size ) },
+			{ "Color",							INI::parseRGBColor,				nullptr, offsetof( DynamicDecalFXNugget, m_color ) },
+			{ "OpacityStart",				INI::parseInt,						nullptr, offsetof( DynamicDecalFXNugget, m_opStart ) },
+			{ "OpacityPeak",				INI::parseInt,						nullptr, offsetof( DynamicDecalFXNugget, m_opPeak ) },
+			{ "OpacityEnd",					INI::parseInt,						nullptr, offsetof( DynamicDecalFXNugget, m_opEnd ) },
+			{ "OpacityFadeTimeOne",	INI::parseUnsignedInt,		nullptr, offsetof( DynamicDecalFXNugget, m_fade1 ) },
+			{ "OpacityPeakTime",		INI::parseUnsignedInt,		nullptr, offsetof( DynamicDecalFXNugget, m_peakTime ) },
+			{ "OpacityFadeTimeTwo",	INI::parseUnsignedInt,		nullptr, offsetof( DynamicDecalFXNugget, m_fade2 ) },
+			{ "StartingDelay",			INI::parseUnsignedInt,		nullptr, offsetof( DynamicDecalFXNugget, m_delay ) },
+			{ "Lifetime",						INI::parseUnsignedInt,		nullptr, offsetof( DynamicDecalFXNugget, m_lifetime ) },
+			{ "Offset",							INI::parseCoord3D,				nullptr, offsetof( DynamicDecalFXNugget, m_offset ) },
+			{ "Shader",							parseShader,							nullptr, offsetof( DynamicDecalFXNugget, m_additive ) },
+			{ nullptr, nullptr, nullptr, 0 }
+		};
+		DynamicDecalFXNugget* nugget = newInstance( DynamicDecalFXNugget );
+		ini->initFromINI(nugget, myFieldParse);
+		((FXList*)instance)->addFXNugget(nugget);
+	}
+
+private:
+	AsciiString m_name;
+	Real m_size;
+	RGBColor m_color;
+	Int m_opStart, m_opPeak, m_opEnd;
+	UnsignedInt m_fade1, m_peakTime, m_fade2, m_delay, m_lifetime;	///< ms
+	Coord3D m_offset;
+	Bool m_additive;
+	mutable BfmeDecalSpec m_spec;	///< frame-converted copy the live decals point at
+};
+EMPTY_DTOR(DynamicDecalFXNugget)
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -786,6 +1104,8 @@ static const FieldParse TheFXListFieldParse[] =
 	{ "TerrainScorch",							TerrainScorchFXNugget::parse, nullptr, 0},
 	{ "ParticleSystem",							ParticleSystemFXNugget::parse, nullptr, 0},
 	{ "FXListAtBonePos",						FXListAtBonePosFXNugget::parse, nullptr, 0},
+	{ "BuffNugget",									BuffFXNugget::parse, nullptr, 0},	// bfme-native
+	{ "DynamicDecal",								DynamicDecalFXNugget::parse, nullptr, 0},	// bfme-native
 	{ nullptr, nullptr, nullptr, 0 }
 };
 
@@ -829,6 +1149,9 @@ void FXList::doFXObj(const Object* primary, const Object* secondary) const
 {
 	const Int playerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
+	static const Bool dbg = getenv("BFME_DEBUG_BUFF") != nullptr;
+	if (dbg && primary)
+		printf("[fx] on #%u: %d nuggets, shroud %d\n", primary->getID(), (int)m_nuggets.size(), (int)primary->getShroudedStatus(playerIndex));
 	if (primary && primary->getShroudedStatus(playerIndex) > OBJECTSHROUD_PARTIAL_CLEAR)
 		return;	//the primary object is fogged or shrouded so don't bother with the effect.
 

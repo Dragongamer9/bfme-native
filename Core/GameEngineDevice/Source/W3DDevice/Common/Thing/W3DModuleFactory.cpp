@@ -70,6 +70,8 @@ void W3DModuleFactory::init()
 	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
 		W3DModelDraw::getModuleType(), AsciiString("W3DFloorDraw"), W3DModelDraw::getInterfaceMask() );
 	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
+		W3DModelDraw::getModuleType(), AsciiString("W3DBuffDraw"), W3DModelDraw::getInterfaceMask() );	// bfme-native: buff models (BuffNugget)
+	addModuleInternal( W3DModelDraw::friend_newModuleInstance, W3DModelDraw::friend_newModuleData,
 		W3DModelDraw::getModuleType(), AsciiString("W3DSailModelDraw"), W3DModelDraw::getInterfaceMask() );	// sails do not billow yet
 	addModule( W3DLaserDraw );
 	addModule( W3DOverlordTankDraw );
