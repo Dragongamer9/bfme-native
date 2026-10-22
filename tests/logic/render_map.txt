@@ -1,3 +1,4 @@
+5 reveal
 10 view
 30 screenshot
 90 screenshot

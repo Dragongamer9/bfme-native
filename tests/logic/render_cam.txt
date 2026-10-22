@@ -1,8 +1,8 @@
+5 reveal
 10 view
-20 camera 1500 1500 1 0.9
+20 camera 1500 1500
 25 view
 40 screenshot
-50 camera 1500 1500 3 0
-55 view
+50 camera 2200 1400
 70 screenshot
 90 quit
