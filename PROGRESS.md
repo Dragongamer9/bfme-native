@@ -121,6 +121,31 @@ timeline player, builtins (MovieClip, Array, String, Math, Color, Mouse, setInte
   sciencepoints; 'players' marks the local player; the mouse is parked mid-screen.
 - Tests: tests/logic/render_apt*.txt (map arg: Maps/FordsIsen.map).
 
+## Session 6 — playable skirmish (2026-10-22)
+- Spells: spell books join AI groups (no AI module), RotWK power types may target any spot or
+  object; spell column recharge clocks. Hero abilities from the ring (Boromir's horn).
+- Heroes no longer die on spawn: LifetimeUpdate WaitForWakeUp/DeathType; RotWK bodies
+  (DelayedDeathBody, ...) map to ActiveBody/StructureBody; AvailableAtStart defaults to yes.
+- ModelConditionSpecialAbilityUpdate (SPECIAL_POWER_n abilities); ring _notReady + clocks.
+- Skirmish: `-skirmish <map> <side> <side>` (tools/gdbskirmish.sh); GameData
+  VictoryCondition*ObjectFilter + grace period; DefaultStartingCash; Edain free build
+  (Upgrade_EvilDualEconomyChoice) when the start has no base site -> porter eggs hatch.
+- ObjectCreationUpgrade (ThingToSpawn/Offset/Delay/GrantUpgrade/RemoveUpgrade), SpawnBehavior
+  upgrade triggers, re-entrant upgrade grants, ObjectFilter "ANY -X".
+- Locomotor TurnTime (RotWK has no TurnRate: wheeled units could not turn).
+- Rendering: AnimationStates only apply when all their flags are set — finished buildings were
+  stuck in their sunk construction animation; build-up animation follows construction %;
+  "tex.tga.001" names.
+- UI: side command bar (slots 7-18) with porter build menus; quit menu (QuitMenu.apt) on Esc /
+  Options; BfmeSkirmishAI: a computer opponent driven by SkirmishAIData.ini (AIDozerAssignment,
+  ArmyDefinition): builds farms and producers, trains by army percentages, attacks in waves.
+- MonitorConditionUpdate (command set pages/modes).
+- Tools: bseinfo.py, mapobjects.py, modfields.py, fieldparse.py (find RotWK INI fields in
+  game.dat), w3dchunks.py. Debug: BFME_DEBUG_{DEATH,VICTORY,AICMD,MESH,FX,SKIRMISH_AI},
+  BFME_DEBUG_SCENE=<frame>, harness conditions/quitmenu.
+Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.bse) not unpacked;
+123 RotWK module types still missing (tools/modfields.py, /tmp list in session notes).
+
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
 2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
