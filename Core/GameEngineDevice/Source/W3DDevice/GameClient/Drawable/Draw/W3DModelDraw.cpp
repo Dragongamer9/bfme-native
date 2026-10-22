@@ -2434,6 +2434,23 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 	// update whether or not we should be animating.
 	setPauseAnimation( !getDrawable()->getShouldAnimate(getW3DModelDrawModuleData()->m_animationsRequirePower) );
 
+	// bfme-native: a RotWK building under construction plays its MANUAL build-up animation by the
+	// construction percentage (Gb_Brrck_A rises out of the ground)
+	if (m_curState && m_curState->m_mode == RenderObjClass::ANIM_MODE_MANUAL && m_renderObject &&
+			m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD && getDrawable()->getObject())
+	{
+		const Real pct = getDrawable()->getObject()->getConstructionPercent();
+		if (pct >= 0.0f && pct < 100.0f)
+		{
+			HLodClass *hlod = (HLodClass*)m_renderObject;
+			float frame = 0.0f, mult = 1.0f;
+			int numFrames = 0, mode = 0;
+			HAnimClass *anim = hlod->Peek_Animation_And_Info(frame, numFrames, mode, mult);
+			if (anim && numFrames > 1)
+				hlod->Set_Animation(anim, (numFrames - 1) * pct / 100.0f, RenderObjClass::ANIM_MODE_MANUAL);
+		}
+	}
+
 	Matrix3D scaledTransform;
 	if (getDrawable()->getInstanceScale() != 1.0f)
 	{
