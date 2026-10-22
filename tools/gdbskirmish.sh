@@ -12,4 +12,4 @@ export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA" BFME_TEST="$SCRIPT
 export SDL_VIDEODRIVER=offscreen SDL_AUDIODRIVER=dummy VK_ICD_FILENAMES="$ICD" VK_DRIVER_FILES="$ICD"
 export LD_LIBRARY_PATH="$B/_deps/dxvk-src/lib:$B/_deps/sdl3-build:$B/_deps/sdl3_image-build:${LD_LIBRARY_PATH:-}"
 cd "$DATA"
-timeout 1200 gdb -q -batch -ex "handle SIGPIPE nostop" -ex run -ex "bt 25" --args "$B/GeneralsMD/GeneralsXZH" -win -skirmish "$MAP" "${BFME_F1:-Men}" "${BFME_F2:-Mordor}" -noshellmap -quickstart 2>&1 | grep -aE "${BFME_GREP:-^#|signal|SIGSEGV|\[BFMETEST\]|\[bfme\]|err:}" | head -${BFME_HEAD:-60}
+timeout ${BFME_TIMEOUT:-1200} gdb -q -batch -ex "handle SIGPIPE nostop" -ex run -ex "bt 25" --args "$B/GeneralsMD/GeneralsXZH" -win -skirmish "$MAP" "${BFME_F1:-Men}" "${BFME_F2:-Mordor}" -noshellmap -quickstart 2>&1 | grep -aE "${BFME_GREP:-^#|signal|SIGSEGV|\[BFMETEST\]|\[bfme\]|err:}" | head -${BFME_HEAD:-60}

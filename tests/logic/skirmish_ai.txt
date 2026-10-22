@@ -1,0 +1,12 @@
+# Skirmish AI: the computer builds its base, trains an army and attacks
+1     reveal
+1     camera 1601 894 0.7
+2400  money
+5400  screenshot
+7200  money
+7200  summary
+9000  camera 2071 2946 0.7
+9001  screenshot
+10800 money
+10800 summary
+10810 quit

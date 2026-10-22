@@ -1,0 +1,7 @@
+# Esc opens RotWK's quit menu over the game (paused); its Resume button closes it
+1  localplayer SkirmishMen
+5  reveal
+40 camera 1420 1600 0.5
+60 quitmenu
+90 screenshot
+100 quit
