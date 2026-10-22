@@ -1245,11 +1245,15 @@ bool GameLogic::onDoSpecialPowerAtLocation(MAYBE_UNUSED GameMessage *msg, AIGrou
 	// check for possible specific source, ignoring selection.
 	ObjectID sourceID = msg->getArgument( argumentIndex++ )->objectID;
 	Object* source = findObjectByID( sourceID );
+	if (getenv("BFME_DEBUG_POWERS"))
+		fprintf(stderr, "[power] at location id=%u (%.0f,%.0f) source=%s\n", specialPowerID, targetCoord.x, targetCoord.y, source ? source->getTemplate()->getName().str() : "selection");
 	if (source != nullptr)
 	{
 #if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
 		Player *msgPlayer = getMessagePlayer(msg);
+		if (getenv("BFME_DEBUG_POWERS"))
+			fprintf(stderr, "[power] msg player %ls source owner %ls\n", msgPlayer ? msgPlayer->getPlayerDisplayName().str() : L"-", source->getControllingPlayer() ? source->getControllingPlayer()->getPlayerDisplayName().str() : L"-");
 		if ( source->getControllingPlayer() != msgPlayer )
 		{
 			DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",

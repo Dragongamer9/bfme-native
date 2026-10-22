@@ -1702,6 +1702,9 @@ GameMessage::Type CommandTranslator::handleGuiCommand( const CommandButton *comm
 				currentlyValid = TheInGameUI->canSelectedObjectsDoSpecialPower( command, obj, pos, InGameUI::SELECTION_ANY, command->getOptions(), unit );
 			else
 				currentlyValid = false;
+			if (getenv("BFME_DEBUG_POWERS") && type == DO_COMMAND)
+				fprintf(stderr, "[power] shortcut %s type %d source %s valid %d\n", command->getName().str(), (int)command->getSpecialPowerTemplate()->getSpecialPowerType(),
+					unit ? unit->getTemplate()->getName().str() : "-", (int)currentlyValid);
 			break;
 		}
 		case GUI_COMMAND_SPECIAL_POWER:

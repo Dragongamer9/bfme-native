@@ -576,9 +576,9 @@ void CommandButton::parseCommand( INI* ini, void *instance, void *store, const v
 			GUICommandType *command = (GUICommandType *)store;
 			*command = (GUICommandType)i;
 			// bfme-native: a spell book button fires a special power of the player's spell book
-			// object, exactly like SPECIAL_POWER does for a selected unit
+			// object whatever is selected -- the Generals "shortcut" special power path
 			if( *command == GUI_COMMAND_BFME_SPELL_BOOK )
-				*command = GUI_COMMAND_SPECIAL_POWER;
+				*command = GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT;
 			return;
 
 		}

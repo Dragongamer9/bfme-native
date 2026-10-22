@@ -1614,6 +1614,10 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 #endif
 			}
 		}
+
+		// bfme-native: RotWK powers (spells, hero abilities) may be aimed anywhere on the map
+		if( (Int)spTemplate->getSpecialPowerType() >= (Int)BFME_SPECIAL_FIRST )
+			return isPointOnMap( loc );
 	}
 	return false;
 }

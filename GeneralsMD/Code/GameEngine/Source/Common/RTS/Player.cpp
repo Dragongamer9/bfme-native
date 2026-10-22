@@ -1242,9 +1242,11 @@ static void doFindSpecialPowerSourceObject( Object *obj, void *userData )
 		//We already found the best case scenario, so no need to iterate any more.
 		return;
 	}
+	// bfme-native: spell books have an InactiveBody ("effectively dead") but cast the spells
+	const Bool spellBook = obj->getTemplate()->getName().endsWithNoCase( "SpellBook" ) && !obj->isDestroyed();
 	if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
 			!obj->testStatus( OBJECT_STATUS_SOLD ) &&
-			!obj->isEffectivelyDead() )
+			( spellBook || !obj->isEffectivelyDead() ) )
 	{
 		if( info->spType == SPECIAL_INVALID && obj->hasAnySpecialPower() )
 		{
