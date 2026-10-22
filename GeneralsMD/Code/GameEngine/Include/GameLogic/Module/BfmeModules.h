@@ -625,3 +625,26 @@ private:
 	UnsignedInt m_closeAt;
 };
 
+//-------------------------------------------------------------------------------------------------
+/** CastleUpgrade: an upgrade bought at the keep is handed to the castle's other buildings (walls,
+	gates, towers) around it. */
+class CastleUpgradeModuleData : public UpgradeModuleData
+{
+public:
+	CastleUpgradeModuleData() : m_radius(600.0f) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_upgrade;
+	Real m_radius;
+};
+
+class CastleUpgrade : public UpgradeModule
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( CastleUpgrade, "CastleUpgrade" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( CastleUpgrade, CastleUpgradeModuleData );
+public:
+	CastleUpgrade( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+};
+

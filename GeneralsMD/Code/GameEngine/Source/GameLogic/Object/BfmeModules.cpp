@@ -1607,3 +1607,36 @@ UpdateSleepTime GateOpenAndCloseBehavior::update()
 	return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 2);
 }
 
+//=================================================================================================
+// CastleUpgrade
+//=================================================================================================
+void CastleUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpgradeModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "Upgrade",						INI::parseAsciiString,	nullptr, offsetof( CastleUpgradeModuleData, m_upgrade ) },
+		{ "WallUpgradeRadius",	INI::parseReal,					nullptr, offsetof( CastleUpgradeModuleData, m_radius ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+CastleUpgrade::CastleUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData ) {}
+BFME_TRIVIAL_SNAPSHOT(CastleUpgrade, UpgradeModule)
+
+void CastleUpgrade::upgradeImplementation()
+{
+	const CastleUpgradeModuleData* d = getCastleUpgradeModuleData();
+	Object* me = getObject();
+	const UpgradeTemplate* ut = TheUpgradeCenter ? TheUpgradeCenter->findUpgrade(d->m_upgrade) : nullptr;
+	if (ut == nullptr || ut->getUpgradeType() != UPGRADE_TYPE_OBJECT)
+		return;
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, d->m_radius, FROM_CENTER_2D);
+	MemoryPoolObjectHolder hold(iter);
+	for (Object* o = iter->first(); o; o = iter->next())
+		if (o != me && !o->isEffectivelyDead() && o->isKindOf(KINDOF_STRUCTURE) && o->getControllingPlayer() == me->getControllingPlayer() &&
+				!o->hasUpgrade(ut))
+			o->giveUpgrade(ut);
+}
+
