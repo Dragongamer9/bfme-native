@@ -1,0 +1,7 @@
+# Stealth: Mordor's Hasharin hide while idle, and show themselves when they fight
+1   spawn EvilmenHasharin1 player1 800 1100 0
+1   spawn GondorFighterHorde player2 1500 1100 180
+120 state
+130 move player2 830 1100
+600 state
+601 quit
