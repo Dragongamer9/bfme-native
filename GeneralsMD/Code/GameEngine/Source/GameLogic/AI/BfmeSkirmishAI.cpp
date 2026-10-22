@@ -1,6 +1,7 @@
 // bfme-native: see BfmeSkirmishAI.h
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/Upgrade.h"
 #include "Common/BuildAssistant.h"
 #include "Common/INI.h"
 #include "Common/Money.h"
@@ -175,12 +176,18 @@ BfmeSkirmishAI::BfmeSkirmishAI(Player* player) :
 const BfmeArmyDefinition* BfmeSkirmishAI::armyDefinition() const
 {
 	const BfmeArmyDefinition* army = TheBfmeSkirmishAIStore.findArmy(m_player->getSide());
-	if (army || TheControlBar == nullptr)
+	if (TheControlBar == nullptr)
 		return army;
 	if (!m_fallbackBuilt)
 	{
+		// the side's ArmyDefinition first, then every other unit the side can train at a lower weight:
+		// Völker subfactions (Dol Amroth, Anórien...) train their own units, which the definition lacks
 		m_fallbackBuilt = TRUE;
 		m_fallback.m_side = m_player->getSide();
+		if (army)
+			m_fallback = *army;
+		m_fallback.m_side = m_player->getSide();
+		const size_t defined = m_fallback.m_members.size();
 		for (const CommandButton* b = TheControlBar->getCommandButtons(); b; b = b->getNext())
 		{
 			const ThingTemplate* t = b->getThingTemplate();
@@ -194,12 +201,12 @@ const BfmeArmyDefinition* BfmeSkirmishAI::armyDefinition() const
 				continue;
 			BfmeArmyMember m;
 			m.m_unit = t->getName();
-			m.m_percent[0] = m.m_percent[1] = m.m_percent[2] = 10.0f;
+			m.m_percent[0] = m.m_percent[1] = m.m_percent[2] = defined ? 3.0f : 10.0f;
 			m_fallback.m_members.push_back(m);
 		}
 		if (debugAI())
-			fprintf(stderr, "[skirmishai] %ls (%s) has no ArmyDefinition: %d trainable unit types\n", m_player->getPlayerDisplayName().str(),
-				m_player->getSide().str(), (int)m_fallback.m_members.size());
+			fprintf(stderr, "[skirmishai] %ls (%s) army: %d defined + %d more trainable unit types\n", m_player->getPlayerDisplayName().str(),
+				m_player->getSide().str(), (int)defined, (int)(m_fallback.m_members.size() - defined));
 	}
 	return &m_fallback;
 }
@@ -234,6 +241,20 @@ void BfmeSkirmishAI::think()
 			continue;
 		if (o->isKindOf(KINDOF_DOZER) && o->getAI())
 			dozers.push_back(o);
+		else if (debugAI() && o->isKindOf(KINDOF_BASE_FOUNDATION) && TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND == 90 && TheGameLogic->getFrame() % LOGICFRAMES_PER_SECOND < THINK_INTERVAL &&
+				TRUE)
+		{
+			const CommandSet* dcs = commandSetOf(o->getCommandSetString());
+			Int n = 0;
+			for (Int i = 0; dcs && i < MAX_COMMANDS_PER_SET; ++i)
+				if (const CommandButton* b = dcs->getCommandButton(i))
+					if (b->getCommandType() == GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT)
+						++n;
+			fprintf(stderr, "[skirmishai] plot %s #%u: unselectable %d occupied %d set %s found %d constructs %d\n", o->getTemplate()->getName().str(), o->getID(),
+				(int)o->testStatus(OBJECT_STATUS_UNSELECTABLE), (int)bfmeFoundationOccupied(o), o->getCommandSetString().str(), dcs != nullptr, n);
+		}
+		if (o->isKindOf(KINDOF_DOZER) && o->getAI())
+			;
 		else if ((o->isKindOf(KINDOF_BASE_FOUNDATION) || o->isKindOf(KINDOF_CAPTUREFLAG)) && !o->testStatus(OBJECT_STATUS_UNSELECTABLE) && !bfmeFoundationOccupied(o))
 		{
 			const CommandSet* cs = commandSetOf(o->getCommandSetString());
@@ -385,20 +406,21 @@ Bool BfmeSkirmishAI::placeBuilding(Object* dozer, const ThingTemplate* what)
 void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 {
 	const BfmeArmyDefinition* army = armyDefinition();
-	Object* dozer = nullptr;
-	for (size_t i = 0; i < dozers.size() && dozer == nullptr; ++i)
-		if (dozers[i]->isKindOf(KINDOF_BASE_FOUNDATION) || dozers[i]->isKindOf(KINDOF_CAPTUREFLAG) || (dozers[i]->getAI() && dozers[i]->getAI()->isIdle()))
-			dozer = dozers[i];
-	// camps: a free build plot builds instead of a porter (one building at a time)
-	const Bool plot = dozer && (dozer->isKindOf(KINDOF_BASE_FOUNDATION) || dozer->isKindOf(KINDOF_CAPTUREFLAG));
-	if (dozer == nullptr)
-		return;
-	if (plot)
+	// camps: free build plots build instead of porters (one building at a time)
+	Bool constructing = FALSE;
+	for (Object* o = TheGameLogic->getFirstObject(); o && !constructing; o = o->getNextObject())
+		if (o->getControllingPlayer() == m_player && isAlive(o) && o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			constructing = TRUE;
+	// try every builder until one has something useful to build (a defence plot only raises towers)
+	Int tried = 0;
+	for (size_t di = 0; di < dozers.size() && tried < 4; ++di)
 	{
-		for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
-			if (o->getControllingPlayer() == m_player && isAlive(o) && o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
-				return;
-	}
+	Object* dozer = dozers[di];
+	const Bool plot = dozer->isKindOf(KINDOF_BASE_FOUNDATION) || dozer->isKindOf(KINDOF_CAPTUREFLAG);
+	if (!plot && !(dozer->getAI() && dozer->getAI()->isIdle()))
+		continue;
+	if (plot && constructing)
+		continue;
 
 	// what we own (sites under construction included)
 	Int farms = 0;
@@ -451,6 +473,13 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 	}
 	if (farm && farms < (army ? army->m_minFarms : 4))
 		wanted.push_back(farm);
+	if (wanted.empty())
+		continue;
+	++tried;	// only builders with something to build count against the per-think limit
+	if (debugAI() && TheGameLogic->getFrame() % (30 * LOGICFRAMES_PER_SECOND) < THINK_INTERVAL)
+		fprintf(stderr, "[skirmishai] %ls builder %s (%s): farm %s, wants %d (first %s), money %d\n", m_player->getPlayerDisplayName().str(),
+			dozer->getTemplate()->getName().str(), dozer->getCommandSetString().str(), farm ? farm->getName().str() : "-", (int)wanted.size(),
+			wanted.empty() ? "-" : wanted[0]->getName().str(), (int)m_player->getMoney()->countMoney());
 
 	for (size_t i = 0; i < wanted.size(); ++i)
 	{
@@ -466,6 +495,7 @@ void BfmeSkirmishAI::buildBase(std::vector<Object*>& dozers)
 		}
 		if (placeBuilding(dozer, wanted[i]))
 			return;
+	}
 	}
 }
 
@@ -547,6 +577,54 @@ static void raiseCommandPoints(Player* player)
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+/** Research: once in a while buy one upgrade a building offers (forge upgrades, keep upgrades, the
+	Völker subfaction choice at the keep first), keeping some money for the army. */
+static void buyUpgrades(Player* player)
+{
+	std::vector<std::pair<Object*, const UpgradeTemplate*> > options;
+	Bool keepFirst = FALSE;
+	const Int money = (Int)player->getMoney()->countMoney();
+	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
+	{
+		if (o->getControllingPlayer() != player || !isAlive(o) || !o->isKindOf(KINDOF_STRUCTURE) ||
+				o->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			continue;
+		ProductionUpdateInterface* pu = o->getProductionUpdateInterface();
+		const CommandSet* cs = pu && pu->getProductionCount() == 0 ? commandSetOf(o->getCommandSetString()) : nullptr;
+		for (Int i = 0; cs && i < MAX_COMMANDS_PER_SET; ++i)
+		{
+			const CommandButton* b = cs->getCommandButton(i);
+			if (b == nullptr || (b->getCommandType() != GUI_COMMAND_PLAYER_UPGRADE && b->getCommandType() != GUI_COMMAND_OBJECT_UPGRADE))
+				continue;
+			const UpgradeTemplate* ut = b->getUpgradeTemplate();
+			if (ut == nullptr || TheControlBar->getCommandAvailability(b, o, nullptr) != COMMAND_AVAILABLE)
+				continue;
+			if (ut->getUpgradeType() == UPGRADE_TYPE_PLAYER ? player->hasUpgradeComplete(ut) || player->hasUpgradeInProduction(ut)
+					: o->hasUpgrade(ut) || !o->affectedByUpgrade(ut))
+				continue;
+			if (!TheUpgradeCenter->canAffordUpgrade(player, ut, FALSE) || ut->calcCostToBuild(player) + 400 > money ||
+					!o->canProduceUpgrade(ut) || pu->canQueueUpgrade(ut) == CANMAKE_QUEUE_FULL)
+				continue;
+			const Bool keep = o->isKindOf(KINDOF_COMMANDCENTER);
+			if (keep && !keepFirst)
+			{
+				options.clear();
+				keepFirst = TRUE;
+			}
+			if (keep || !keepFirst)
+				options.push_back(std::make_pair(o, ut));
+		}
+	}
+	if (options.empty())
+		return;
+	const size_t pick = (size_t)GameLogicRandomValue(0, (Int)options.size() - 1);
+	ProductionUpdateInterface* pu = options[pick].first->getProductionUpdateInterface();
+	if (pu && pu->queueUpgrade(options[pick].second) && debugAI())
+		fprintf(stderr, "[skirmishai] %ls researches %s at %s\n", player->getPlayerDisplayName().str(),
+			options[pick].second->getUpgradeName().str(), options[pick].first->getTemplate()->getName().str());
+}
+
 void BfmeSkirmishAI::recruitHeroes()
 {
 	const UnsignedInt now = TheGameLogic->getFrame();
@@ -554,6 +632,7 @@ void BfmeSkirmishAI::recruitHeroes()
 		return;
 	m_nextHero = now + 20 * LOGICFRAMES_PER_SECOND;
 	raiseCommandPoints(m_player);
+	buyUpgrades(m_player);
 	Int heroes = 0;
 	for (Object* o = TheGameLogic->getFirstObject(); o; o = o->getNextObject())
 		if (o->getControllingPlayer() == m_player && isAlive(o) && o->isKindOf(KINDOF_HERO) && !o->isKindOf(KINDOF_STRUCTURE))
