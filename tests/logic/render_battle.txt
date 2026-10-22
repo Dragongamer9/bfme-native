@@ -1,0 +1,22 @@
+# A small battle on Fords of Isen with the new hero abilities: Theoden's "Stunde des Ruhms" (buff
+# rings), Legolas' arrow storm, Saruman's domination
+1   localplayer SkirmishMen
+5   reveal
+10  spawn GondorFighterHorde SkirmishMen 1400 1600 0
+10  spawn GondorFighterHorde SkirmishMen 1400 1660 0
+10  spawn RohanTheoden_mod SkirmishMen 1370 1630 0
+10  spawn ElvenLegolas SkirmishMen 1340 1600 0
+10  spawn IsengardFighterHorde SkirmishIsengard 1560 1600 180
+10  spawn IsengardFighterHorde SkirmishIsengard 1560 1680 180
+10  spawn IsengardSaruman_Mod SkirmishIsengard 1620 1640 180
+20  xp SkirmishMen RohanTheoden_mod 100000
+20  xp SkirmishMen ElvenLegolas 100000
+40  attack SkirmishMen SkirmishIsengard
+40  attack SkirmishIsengard SkirmishMen
+70  power SkirmishMen RohanTheoden_mod SpecialAbilityStundedesRuhms none
+80  power SkirmishMen ElvenLegolas SpecialAbilityArrowStorm SkirmishIsengard
+140 camera 1480 1630 0.45
+150 screenshot
+220 camera 1480 1630 0.45
+230 screenshot
+240 quit
