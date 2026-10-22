@@ -242,6 +242,12 @@ char const * GameFileClass::Set_Name( char const *filename )
 			m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 			if( m_fileExists == FALSE )
 			{
+				// a few compiled textures are TGAs (decals such as exstomp.tga)
+				snprintf(m_filePath, ARRAY_SIZE(m_filePath), "Art/CompiledTextures/%s/%s", prefix, filename);
+				m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+			}
+			if( m_fileExists == FALSE )
+			{
 				snprintf(m_filePath, ARRAY_SIZE(m_filePath), "Art/Terrain/%s", filename);
 				m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 			}

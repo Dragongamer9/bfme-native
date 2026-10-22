@@ -208,3 +208,53 @@ public:
 protected:
 	virtual Bool bfmeTriggerOverride() override;
 };
+
+//-------------------------------------------------------------------------------------------------
+/** LevelGrantSpecialPower: gives Experience to everything within RadiusEffect of the target that
+	passes AcceptanceFilter (hero "King's favour" style powers). */
+class LevelGrantSpecialPowerModuleData : public SpecialAbilityUpdateModuleData
+{
+public:
+	LevelGrantSpecialPowerModuleData() : m_experience(0), m_radius(0.0f), m_levelFX(nullptr), m_unusedInt(0), m_unusedDuration(0) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	Int m_experience;
+	Real m_radius;
+	ObjectFilter m_filter;
+	const FXList* m_levelFX;
+	Int m_unusedInt;
+	UnsignedInt m_unusedDuration;
+};
+
+class LevelGrantSpecialPower : public SpecialAbilityUpdate
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LevelGrantSpecialPower, "LevelGrantSpecialPower" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( LevelGrantSpecialPower, LevelGrantSpecialPowerModuleData )
+public:
+	LevelGrantSpecialPower( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual Bool bfmeTriggerOverride() override;
+};
+
+//-------------------------------------------------------------------------------------------------
+/** TeleportSpecialAbilityUpdate: the unit vanishes and reappears at the target point (at most
+	MaxDistance away), firing DestinationWeaponName there. */
+class TeleportSpecialAbilityUpdateModuleData : public SpecialAbilityUpdateModuleData
+{
+public:
+	TeleportSpecialAbilityUpdateModuleData() : m_maxDistance(0.0f), m_unusedInt(0), m_unusedDuration(0) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+	AsciiString m_destinationWeapon;
+	Real m_maxDistance;
+	Int m_unusedInt;
+	UnsignedInt m_unusedDuration;
+};
+
+class TeleportSpecialAbilityUpdate : public SpecialAbilityUpdate
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( TeleportSpecialAbilityUpdate, "TeleportSpecialAbilityUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( TeleportSpecialAbilityUpdate, TeleportSpecialAbilityUpdateModuleData )
+public:
+	TeleportSpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData );
+protected:
+	virtual Bool bfmeTriggerOverride() override;
+};

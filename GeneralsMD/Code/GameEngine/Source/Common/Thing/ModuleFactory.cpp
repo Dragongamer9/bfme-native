@@ -533,6 +533,8 @@ void ModuleFactory::init()
 	addModule( DominateEnemySpecialPower );	// bfme-native
 	addModule( ArrowStormUpdate );	// bfme-native
 	addModule( ToggleHiddenSpecialAbilityUpdate );	// bfme-native
+	addModule( LevelGrantSpecialPower );	// bfme-native
+	addModule( TeleportSpecialAbilityUpdate );	// bfme-native
 	// bfme-native: parsed, no behaviour yet (see docs/SCOPE.md)
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("LargeGroupAudioUpdate"), BfmeInertBehavior::getInterfaceMask() );
 	addModuleInternal( BfmeInertBehavior::friend_newModuleInstance, BfmeInertBehavior::friend_newModuleData, BfmeInertBehavior::getModuleType(), AsciiString("NotifyTargetsOfImminentProbableCrushingUpdate"), BfmeInertBehavior::getInterfaceMask() );

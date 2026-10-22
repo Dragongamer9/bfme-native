@@ -15,6 +15,10 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Module/HordeContain.h"
 #include "GameLogic/Module/BfmeModules.h"
+#include "GameLogic/ExperienceTracker.h"
+#include "GameLogic/AI.h"
+#include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/TerrainLogic.h"
 
 void WeaponFireSpecialAbilityUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
@@ -592,6 +596,149 @@ void ToggleHiddenSpecialAbilityUpdate::xfer( Xfer *xfer )
 }
 
 void ToggleHiddenSpecialAbilityUpdate::loadPostProcess()
+{
+	SpecialAbilityUpdate::loadPostProcess();
+}
+
+//=================================================================================================
+// LevelGrantSpecialPower
+//=================================================================================================
+void LevelGrantSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	SpecialAbilityUpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "Experience",									INI::parseInt,									nullptr, offsetof( LevelGrantSpecialPowerModuleData, m_experience ) },
+		{ "RadiusEffect",								INI::parseReal,									nullptr, offsetof( LevelGrantSpecialPowerModuleData, m_radius ) },
+		{ "AcceptanceFilter",						ObjectFilter::parseFromINI,			nullptr, offsetof( LevelGrantSpecialPowerModuleData, m_filter ) },
+		{ "LevelFX",										INI::parseFXList,								nullptr, offsetof( LevelGrantSpecialPowerModuleData, m_levelFX ) },
+		{ "UnpackingVariation",					INI::parseInt,									nullptr, offsetof( LevelGrantSpecialPowerModuleData, m_unusedInt ) },
+		{ "FreezeAfterTriggerDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( LevelGrantSpecialPowerModuleData, m_unusedDuration ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+LevelGrantSpecialPower::LevelGrantSpecialPower( Thing *thing, const ModuleData* moduleData ) : SpecialAbilityUpdate( thing, moduleData )
+{
+}
+
+LevelGrantSpecialPower::~LevelGrantSpecialPower()
+{
+}
+
+Bool LevelGrantSpecialPower::bfmeTriggerOverride()
+{
+	const LevelGrantSpecialPowerModuleData* d = getLevelGrantSpecialPowerModuleData();
+	Object* me = getObject();
+	const Object* targetObj = bfmeHasTarget() ? TheGameLogic->findObjectByID(bfmeGetTargetID()) : nullptr;
+	Coord3D at = targetObj ? *targetObj->getPosition() : (bfmeHasTarget() ? *bfmeGetTargetPos() : *me->getPosition());
+	Int n = 0;
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(&at, max(d->m_radius, 1.0f), FROM_CENTER_2D);
+	MemoryPoolObjectHolder hold(iter);
+	for (Object* o = iter->first(); o; o = iter->next())
+	{
+		if (o->isEffectivelyDead() || (!d->m_filter.isEmpty() && !d->m_filter.matches(o, me)))
+			continue;
+		ExperienceTracker* xp = o->getExperienceTracker();
+		if (xp == nullptr || !xp->isTrainable())
+			continue;
+		const Int before = (Int)o->getVeterancyLevel();
+		xp->addExperiencePoints(d->m_experience, FALSE);
+		if ((Int)o->getVeterancyLevel() != before && d->m_levelFX)
+			FXList::doFXObj(d->m_levelFX, o);
+		++n;
+	}
+	if (getenv("BFME_DEBUG_ABILITY"))
+		printf("[ability] #%u %s grants %d xp to %d\n", me->getID(), me->getTemplate()->getName().str(), d->m_experience, n);
+	return TRUE;
+}
+
+void LevelGrantSpecialPower::crc( Xfer *xfer )
+{
+	SpecialAbilityUpdate::crc( xfer );
+}
+
+void LevelGrantSpecialPower::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	SpecialAbilityUpdate::xfer( xfer );
+}
+
+void LevelGrantSpecialPower::loadPostProcess()
+{
+	SpecialAbilityUpdate::loadPostProcess();
+}
+
+//=================================================================================================
+// TeleportSpecialAbilityUpdate
+//=================================================================================================
+void TeleportSpecialAbilityUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	SpecialAbilityUpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "DestinationWeaponName",	INI::parseAsciiString,					nullptr, offsetof( TeleportSpecialAbilityUpdateModuleData, m_destinationWeapon ) },
+		{ "MaxDistance",						INI::parseReal,									nullptr, offsetof( TeleportSpecialAbilityUpdateModuleData, m_maxDistance ) },
+		{ "UnpackingVariation",			INI::parseInt,									nullptr, offsetof( TeleportSpecialAbilityUpdateModuleData, m_unusedInt ) },
+		{ "BusyForDuration",				INI::parseDurationUnsignedInt,	nullptr, offsetof( TeleportSpecialAbilityUpdateModuleData, m_unusedDuration ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+TeleportSpecialAbilityUpdate::TeleportSpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialAbilityUpdate( thing, moduleData )
+{
+}
+
+TeleportSpecialAbilityUpdate::~TeleportSpecialAbilityUpdate()
+{
+}
+
+Bool TeleportSpecialAbilityUpdate::bfmeTriggerOverride()
+{
+	const TeleportSpecialAbilityUpdateModuleData* d = getTeleportSpecialAbilityUpdateModuleData();
+	Object* me = getObject();
+	if (!bfmeHasTarget())
+		return TRUE;
+	const Object* targetObj = TheGameLogic->findObjectByID(bfmeGetTargetID());
+	Coord3D to = targetObj ? *targetObj->getPosition() : *bfmeGetTargetPos();
+	const Coord3D* from = me->getPosition();
+	Real dx = to.x - from->x, dy = to.y - from->y;
+	const Real dist = sqrtf(dx * dx + dy * dy);
+	if (d->m_maxDistance > 0.0f && dist > d->m_maxDistance)
+	{
+		to.x = from->x + dx * d->m_maxDistance / dist;
+		to.y = from->y + dy * d->m_maxDistance / dist;
+	}
+	to.z = TheTerrainLogic ? TheTerrainLogic->getGroundHeight(to.x, to.y) : to.z;
+	if (AIUpdateInterface* ai = me->getAI())
+		ai->aiIdle(CMD_FROM_AI);
+	me->setPosition(&to);
+	if (d->m_destinationWeapon.isNotEmpty())
+		if (const WeaponTemplate* wt = TheWeaponStore->findWeaponTemplate(d->m_destinationWeapon))
+			TheWeaponStore->createAndFireTempWeapon(wt, me, &to);
+	if (getenv("BFME_DEBUG_ABILITY"))
+		printf("[ability] #%u %s teleports to %.0f,%.0f\n", me->getID(), me->getTemplate()->getName().str(), to.x, to.y);
+	return TRUE;
+}
+
+void TeleportSpecialAbilityUpdate::crc( Xfer *xfer )
+{
+	SpecialAbilityUpdate::crc( xfer );
+}
+
+void TeleportSpecialAbilityUpdate::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	SpecialAbilityUpdate::xfer( xfer );
+}
+
+void TeleportSpecialAbilityUpdate::loadPostProcess()
 {
 	SpecialAbilityUpdate::loadPostProcess();
 }

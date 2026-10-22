@@ -13,6 +13,7 @@
 //
 // Output lines start with "[BFMETEST]".
 #include "PreRTS.h"
+#include "GameClient/FXList.h"
 #include "GameClient/ControlBar.h"
 
 #include "Common/GameEngine.h"
@@ -356,7 +357,7 @@ void run(const TestCmd& c)
 			Real bestD = 0.0f;
 			for (Object* t = TheGameLogic->getFirstObject(); t; t = t->getNextObject())
 			{
-				if (b == nullptr || t->getControllingPlayer() != b || t->isEffectivelyDead() || t->isKindOf(KINDOF_HORDE))
+				if (b == nullptr || t == o || t->getControllingPlayer() != b || t->isEffectivelyDead() || t->isKindOf(KINDOF_HORDE))
 					continue;
 				Real dx = t->getPosition()->x - o->getPosition()->x, dy = t->getPosition()->y - o->getPosition()->y;
 				if (best == nullptr || dx * dx + dy * dy < bestD)
@@ -371,6 +372,17 @@ void run(const TestCmd& c)
 				m->doSpecialPower(0);
 			printf("[BFMETEST] power: #%u used %s on #%u\n", o->getID(), c.args[3].c_str(), best ? best->getID() : 0);
 		}
+	}
+	else if (op == "fx" && c.args.size() >= 4)
+	{
+		// fx FXLIST X Y : play an FX list at a point
+		const FXList* fx = TheFXListStore->findFXList(c.args[1].c_str());
+		Coord3D p;
+		p.x = (Real)atof(c.args[2].c_str());
+		p.y = (Real)atof(c.args[3].c_str());
+		p.z = TheTerrainLogic ? TheTerrainLogic->getGroundHeight(p.x, p.y) : 0.0f;
+		FXList::doFXPos(fx, &p);
+		printf("[BFMETEST] fx %s%s at %.0f,%.0f\n", c.args[1].c_str(), fx ? "" : " (unknown)", p.x, p.y);
 	}
 	else if (op == "kill" && c.args.size() >= 3)
 	{
