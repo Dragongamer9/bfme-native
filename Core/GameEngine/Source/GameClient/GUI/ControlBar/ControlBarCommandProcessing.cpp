@@ -156,11 +156,39 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 	if( commandButton == nullptr )
 		return CBC_COMMAND_NOT_USED;
 
+	return processCommandButton( commandButton, control );
+}
+
+//-------------------------------------------------------------------------------------------------
+/** bfme-native: run a command button for the palantir (APT) interface, which has no WND gadget.
+	* 'source' drives the context (the first selected drawable), like m_currentSelectedDrawable. */
+//-------------------------------------------------------------------------------------------------
+CBCommandStatus ControlBar::bfmeExecuteCommand( const CommandButton *commandButton, Drawable *source, Bool multiSelect )
+{
+	if( commandButton == nullptr )
+		return CBC_COMMAND_NOT_USED;
+	m_currentSelectedDrawable = source;
+	m_currContext = multiSelect ? CB_CONTEXT_MULTI_SELECT : CB_CONTEXT_COMMAND;
+	if( !multiSelect && ( source == nullptr || source->getObject() == nullptr ) &&
+			commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE &&
+			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT &&
+			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT &&
+			commandButton->getCommandType() != GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE )
+		return CBC_COMMAND_NOT_USED;
+	return processCommandButton( commandButton, nullptr );
+}
+
+//-------------------------------------------------------------------------------------------------
+/** The body of processCommandUI. 'control' may be null (palantir): queue/contain lookups that need
+	* the gadget then find nothing. */
+//-------------------------------------------------------------------------------------------------
+CBCommandStatus ControlBar::processCommandButton( const CommandButton *commandButton, GameWindow *control )
+{
 	// if the button is flashing, tell it to stop flashing
 	commandButton->setFlashCount(0);
 	setFlash( FALSE );
 
-	if( commandButton->getCommandType() != GUI_COMMAND_EXIT_CONTAINER )
+	if( control && commandButton->getCommandType() != GUI_COMMAND_EXIT_CONTAINER )
 	{
 		GadgetButtonSetEnabledImage( control, commandButton->getButtonImage() );
 	}
@@ -460,7 +488,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			// find out which index (i) in the queue represents the button clicked
 			for( i = 0; i < MAX_BUILD_QUEUE_BUTTONS; i++ )
-				if( m_queueData[ i ].control == control )
+				if( control && m_queueData[ i ].control == control )
 					break;
 
 			// sanity, control not found
@@ -584,7 +612,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			// find out which index (i) in the queue represents the button clicked
 			for( i = 0; i < MAX_BUILD_QUEUE_BUTTONS; i++ )
-				if( m_queueData[ i ].control == control )
+				if( control && m_queueData[ i ].control == control )
 					break;
 
 			// sanity, control not found
@@ -680,7 +708,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			//
 			for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
 			{
-				if (m_containData[i].control == control)
+				if (control && m_containData[i].control == control)
 				{
 					objID = m_containData[ i ].objectID;
 					break;

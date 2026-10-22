@@ -280,5 +280,8 @@ void ImageCollection::load( Int textureSize )
 
 	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, nullptr );
 
+	// bfme-native: RotWK keeps its interface pictures (command buttons, portraits, spell book ...) here
+	ini.loadDirectory("Data\\INI\\MappedImages\\AptImages", INI_LOAD_OVERWRITE, nullptr );
+
 
 }

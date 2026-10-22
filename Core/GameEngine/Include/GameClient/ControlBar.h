@@ -937,7 +937,9 @@ protected:
 	static void populateInvDataCallback( Object *obj, void *userData );
 
 	// the following methods are for updating the currently showing context
+public:	// bfme-native: the palantir asks too
 	CommandAvailability getCommandAvailability( const CommandButton *command, Object *obj, GameWindow *win, GameWindow *applyToWin = nullptr, Bool forceDisabledEvaluation = FALSE ) const;
+protected:
 	void updateContextMultiSelect();
 	void updateContextPurchaseScience();
 	void updateContextCommand();
@@ -956,6 +958,10 @@ protected:
 
 	// the following methods do command processing for GUI selections
 	CBCommandStatus processCommandUI( GameWindow *control, GadgetGameMessage gadgetMessage );
+	CBCommandStatus processCommandButton( const CommandButton *commandButton, GameWindow *control );	///< bfme-native: body of processCommandUI
+public:
+	CBCommandStatus bfmeExecuteCommand( const CommandButton *commandButton, Drawable *source, Bool multiSelect );	///< bfme-native: palantir buttons
+protected:
 	CBCommandStatus processCommandTransitionUI( GameWindow *control, GadgetGameMessage gadgetMessage );
 
 	// methods to help out with each context
