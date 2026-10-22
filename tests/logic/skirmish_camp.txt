@@ -1,0 +1,7 @@
+# Edain camp start (Umbar): the camp flag at each start unpacks into the faction's camp
+1    reveal
+200  objects Keep
+201  conditions GondorCampBaseKeep
+260  camera 2560 508 0.9 0.35
+300  screenshot
+320  quit
