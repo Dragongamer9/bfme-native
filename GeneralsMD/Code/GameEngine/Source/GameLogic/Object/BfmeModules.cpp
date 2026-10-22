@@ -1361,3 +1361,177 @@ UpdateSleepTime BannerCarrierUpdate::update()
 	return UPDATE_SLEEP(delay);
 }
 
+//=================================================================================================
+// AISpecialPowerUpdate: computer players use their units' abilities
+//=================================================================================================
+void AISpecialPowerUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "CommandButtonName",				INI::parseAsciiString,	nullptr, offsetof( AISpecialPowerUpdateModuleData, m_commandButtonName ) },
+		{ "SpecialPowerAIType",				INI::parseAsciiString,	nullptr, offsetof( AISpecialPowerUpdateModuleData, m_aiType ) },
+		{ "SpecialPowerRadius",				INI::parseReal,					nullptr, offsetof( AISpecialPowerUpdateModuleData, m_radius ) },
+		{ "SpecialPowerRange",				INI::parseReal,					nullptr, offsetof( AISpecialPowerUpdateModuleData, m_range ) },
+		{ "RandomizeTargetLocation",	INI::parseBool,					nullptr, offsetof( AISpecialPowerUpdateModuleData, m_randomize ) },
+		{ "SpellMakesAStructure",			parseBannerIgnore,			nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+enum AIPowerKind
+{
+	AIPOWER_NONE,					///< stances, toggles, building capture, spell book: not handled here
+	AIPOWER_SELF_BUFF,		///< use in a fight
+	AIPOWER_HEAL,					///< use when we or friends nearby are hurt
+	AIPOWER_KILL_UNIT,		///< an enemy unit as target
+	AIPOWER_KILL_STRUCTURE,
+	AIPOWER_AREA,					///< a spot among the enemies
+};
+
+static Int classifyAIPower(const AsciiString& t)
+{
+	const char* s = t.str();
+	if (strstr(s, "STANCE") || strstr(s, "TOGGLE") || strstr(s, "CAPTURE") || strstr(s, "SPELLBOOK") || strstr(s, "TRAINARCHERS"))
+		return AIPOWER_NONE;
+	if (strstr(s, "HEAL"))
+		return strstr(s, "ATTACK_HEAL") ? AIPOWER_AREA : AIPOWER_HEAL;
+	if (strstr(s, "STRUCTURES"))
+		return AIPOWER_KILL_STRUCTURE;
+	if (strstr(s, "KILLER") || strstr(s, "DOMINATE") || strstr(s, "MORGUL_BLADE") || strstr(s, "SOUL_FREEZE") || strstr(s, "GOBLIN_POISON"))
+		return AIPOWER_KILL_UNIT;
+	if (strstr(s, "AOE_ATTACK") || strstr(s, "SUMMON") || strstr(s, "WIZARD_BLAST") || strstr(s, "ARROWWIND") || strstr(s, "CHARGE") || strstr(s, "CALLOFTHEDEEP"))
+		return AIPOWER_AREA;
+	if (strstr(s, "BUFF") || strstr(s, "GIVEXP") || strstr(s, "ELENDIL") || strstr(s, "MOUNTED") || strstr(s, "AOE_AND_BUFF") || strstr(s, "DEBUFF"))
+		return AIPOWER_SELF_BUFF;
+	return AIPOWER_SELF_BUFF;
+}
+
+AISpecialPowerUpdate::AISpecialPowerUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ), m_kind(-1)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(LOGICFRAMES_PER_SECOND + getObject()->getID() % LOGICFRAMES_PER_SECOND));
+}
+BFME_TRIVIAL_SNAPSHOT(AISpecialPowerUpdate, UpdateModule)
+
+UpdateSleepTime AISpecialPowerUpdate::update()
+{
+	const AISpecialPowerUpdateModuleData* d = getAISpecialPowerUpdateModuleData();
+	const UpdateSleepTime later = UPDATE_SLEEP(LOGICFRAMES_PER_SECOND);
+	Object* me = getObject();
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	if (m_kind < 0)
+		m_kind = classifyAIPower(d->m_aiType);
+	if (m_kind == AIPOWER_NONE)
+		return UPDATE_SLEEP_FOREVER;
+	Player* p = me->getControllingPlayer();
+	if (p == nullptr || p->getPlayerType() != PLAYER_COMPUTER)
+		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND * 5);
+	if (me->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) || me->isDisabled())
+		return later;
+
+	const CommandButton* b = TheControlBar ? TheControlBar->findCommandButton(d->m_commandButtonName) : nullptr;
+	const SpecialPowerTemplate* sp = b ? b->getSpecialPowerTemplate() : nullptr;
+	SpecialPowerModuleInterface* spm = sp ? me->getSpecialPowerModule(sp) : nullptr;
+	if (spm == nullptr)
+		return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND * 5);	// may come with a level or an upgrade
+	if (!spm->isReady())
+		return later;
+	for (BehaviorModule** m = me->getBehaviorModules(); *m; ++m)
+	{
+		SpecialPowerUpdateInterface* su = (*m)->getSpecialPowerUpdateInterface();
+		if (su && su->isActive())
+			return later;
+	}
+	// level-gated buttons stay locked until the unit has the science/level
+	if (b->getScienceVec().size() > 0 && !p->hasScience(b->getScienceVec()[0]))
+		return later;
+
+	const Real scan = d->m_range > 0.0f ? d->m_range + 50.0f : (d->m_radius > 0.0f ? d->m_radius * 1.5f : 150.0f);
+	AIUpdateInterface* ai = me->getAI();
+	Object* victim = ai ? ai->getCurrentVictim() : nullptr;
+	Object* closest = nullptr;
+	Real closestD = 0.0f;
+	Int enemies = 0;
+	Bool hurtFriend = FALSE;
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, scan, FROM_CENTER_2D);
+	MemoryPoolObjectHolder hold(iter);
+	for (Object* o = iter->first(); o; o = iter->next())
+	{
+		if (o->isEffectivelyDead() || o->isKindOf(KINDOF_HORDE) || o->isKindOf(KINDOF_UNATTACKABLE))
+			continue;
+		const Relationship r = me->getRelationship(o);
+		if (r == ALLIES)
+		{
+			BodyModuleInterface* body = o->getBodyModule();
+			if (body && o->isKindOf(KINDOF_CAN_ATTACK) && body->getHealth() < body->getMaxHealth() * 0.6f)
+				hurtFriend = TRUE;
+			continue;
+		}
+		if (r != ENEMIES || o->getControllingPlayer() == nullptr)
+			continue;
+		const Bool structure = o->isKindOf(KINDOF_STRUCTURE);
+		if ((m_kind == AIPOWER_KILL_STRUCTURE) != structure)
+			continue;
+		if (!structure && !o->isKindOf(KINDOF_CAN_ATTACK))
+			continue;
+		++enemies;
+		const Real dd = ThePartitionManager->getDistanceSquared(me, o, FROM_CENTER_2D);
+		if (closest == nullptr || dd < closestD)
+		{
+			closest = o;
+			closestD = dd;
+		}
+	}
+	// prefer what we are already fighting
+	Object* target = closest;
+	if (victim && !victim->isEffectivelyDead() && me->getRelationship(victim) == ENEMIES &&
+			(m_kind != AIPOWER_KILL_STRUCTURE) == !victim->isKindOf(KINDOF_STRUCTURE) &&
+			ThePartitionManager->getDistanceSquared(me, victim, FROM_CENTER_2D) <= scan * scan)
+	{
+		HordeContain* h = victim->isKindOf(KINDOF_HORDE) ? HordeContain::findOn(victim) : nullptr;
+		Object* t = h ? h->getMemberClosestTo(me->getPosition()) : victim;
+		if (t)
+			target = t;
+	}
+
+	Bool use = FALSE;
+	switch (m_kind)
+	{
+		case AIPOWER_SELF_BUFF:			use = enemies >= 2 || (enemies >= 1 && ai && ai->isAttacking()); break;
+		case AIPOWER_HEAL:					use = hurtFriend; break;
+		case AIPOWER_KILL_UNIT:
+		case AIPOWER_KILL_STRUCTURE:	use = target != nullptr; break;
+		case AIPOWER_AREA:					use = target != nullptr && enemies >= 2; break;
+	}
+	if (!use)
+		return later;
+
+	const UnsignedInt aim = b->getOptions() & (NEED_TARGET_ENEMY_OBJECT | NEED_TARGET_ALLY_OBJECT | NEED_TARGET_NEUTRAL_OBJECT | NEED_TARGET_POS);
+	if (aim & NEED_TARGET_ENEMY_OBJECT)
+	{
+		if (target == nullptr)
+			return later;
+		spm->doSpecialPowerAtObject(target, 0);
+	}
+	else if (aim & (NEED_TARGET_ALLY_OBJECT | NEED_TARGET_NEUTRAL_OBJECT))
+		spm->doSpecialPowerAtObject(me, 0);
+	else if (aim & NEED_TARGET_POS)
+	{
+		Coord3D pos = target ? *target->getPosition() : *me->getPosition();
+		if (d->m_randomize && d->m_radius > 0.0f)
+		{
+			pos.x += GameLogicRandomValueReal(-d->m_radius, d->m_radius) * 0.3f;
+			pos.y += GameLogicRandomValueReal(-d->m_radius, d->m_radius) * 0.3f;
+		}
+		spm->doSpecialPowerAtLocation(&pos, 0.0f, 0);
+	}
+	else
+		spm->doSpecialPower(0);
+	if (getenv("BFME_DEBUG_ABILITY"))
+		printf("[ability] AI #%u %s used %s (%s) target #%u enemies %d\n", me->getID(), me->getTemplate()->getName().str(),
+			d->m_commandButtonName.str(), d->m_aiType.str(), target ? target->getID() : 0, enemies);
+	return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND * 2);
+}
+

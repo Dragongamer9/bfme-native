@@ -667,6 +667,8 @@ Bool DataChunkInput::parse( void *userData )
 			break;
 		}
 
+		if (getenv("BFME_DEBUG_CHUNKS"))
+			fprintf(stderr, "[chunk] %s/%s v%d size %d\n", parentLabel.str(), label.str(), (int)ver, (int)getChunkDataSize());
 		// find a registered parser for this chunk
 		for( parser=m_parserList; parser; parser=parser->next )
 		{

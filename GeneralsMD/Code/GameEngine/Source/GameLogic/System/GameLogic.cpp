@@ -1509,7 +1509,25 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			Dict d;
 			d.clear();
 			AsciiString playerName;
-			playerName.format("player%d", i);
+			// bfme-native: RotWK names the player at start position N "Player_N" -- the map's own
+			// Player_N side (scripts, teams, pre-placed objects) becomes that player
+			playerName.format("Player_%d", (slot->getStartPos() >= 0 ? slot->getStartPos() : i) + 1);
+			ScriptList* mapScripts = nullptr;
+			{
+				Int mapSide = -1;
+				if (TheSidesList->findSideInfo(playerName, &mapSide) && mapSide >= 0)
+				{
+					mapScripts = TheSidesList->getSideInfo(mapSide)->getScriptList();
+					TheSidesList->getSideInfo(mapSide)->setScriptList(nullptr);
+					TheSidesList->removeSide(mapSide);
+				}
+				for (Int k = 0; mapScripts == nullptr && k < TheSidesList->getNumSkirmishSides(); ++k)
+				{
+					SidesInfo* si = TheSidesList->getSkirmishSideInfo(k);
+					if (si->getDict()->getAsciiString(TheKey_playerName) == playerName && si->getScriptList())
+						mapScripts = si->getScriptList()->duplicate();
+				}
+			}
 			d.setAsciiString(TheKey_playerName, playerName);
 			d.setBool(TheKey_playerIsHuman, slot->isHuman());
 			d.setUnicodeString(TheKey_playerDisplayName, slot->getName());
@@ -1541,7 +1559,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 				DEBUG_LOG(("Player %d is team %d", j, teamSlot->getTeamNumber()));
 
 				AsciiString teamPlayerName;
-				teamPlayerName.format("player%d", j);
+				teamPlayerName.format("Player_%d", (teamSlot->getStartPos() >= 0 ? teamSlot->getStartPos() : j) + 1);	// bfme-native
 				// if our team is None, or our team is not equal to their team,
 				// then their our enemy
 				Bool isEnemy = FALSE;
@@ -1614,6 +1632,12 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 				localSlot = i;
 			}
 			TheSidesList->addSide(&d);
+			if (mapScripts)
+			{
+				SidesInfo* added = TheSidesList->getSideInfo(TheSidesList->getNumSides() - 1);
+				deleteInstance(added->getScriptList());
+				added->setScriptList(mapScripts);
+			}
 
 			AsciiString playerTeamName;
 			playerTeamName.set("team");
@@ -2011,6 +2035,14 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 	{
 		Int progressCount = LOAD_PROGRESS_LOOP_ALL_THE_FREAKN_OBJECTS;
 		Int timer = timeGetTime();
+		if (getenv("BFME_DEBUG_MAPOBJ"))
+		{
+			Int n = 0, noTmpl = 0;
+			for (MapObject *m = MapObject::getFirstMapObject(); m; m = m->getNext(), ++n)
+				if (m->getThingTemplate() == nullptr)
+					++noTmpl;
+			fprintf(stderr, "[bfme] map objects: %d (%d without template)\n", n, noTmpl);
+		}
 		for (MapObject *pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 		{
 

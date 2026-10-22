@@ -417,7 +417,7 @@ static Bool bfmeSetupSkirmish()
 	ai.setStartPos(1);
 	TheSkirmishGameInfo->setSlot(1, ai);
 	TheSkirmishGameInfo->setStartingCash(TheGlobalData->m_defaultStartingCash);	// RotWK: GameData DefaultStartingCash
-	TheSkirmishGameInfo->setSeed(1);
+	TheSkirmishGameInfo->setSeed(getenv("BFME_TEST") ? 1 : (UnsignedInt)time(nullptr));	// tests stay repeatable
 	TheSkirmishGameInfo->setMap(TheGlobalData->m_initialFile);
 	TheSkirmishGameInfo->setMapCRC(0);
 	TheSkirmishGameInfo->setMapSize(0);

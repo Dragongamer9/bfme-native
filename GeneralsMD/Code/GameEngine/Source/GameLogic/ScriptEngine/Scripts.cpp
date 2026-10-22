@@ -883,6 +883,27 @@ void ScriptGroup::WriteGroupDataChunk(DataChunkOutput &chunkWriter, ScriptGroup 
 *	Input: DataChunkInput
 *
 */
+// bfme-native: RotWK script groups nest; a nested group becomes a group of the same list
+static ScriptList *s_bfmeGroupList = nullptr;
+
+static Bool bfmeParseNestedGroup(DataChunkInput &file, DataChunkInfo *info, void *userData)
+{
+	ScriptGroup *parent = (ScriptGroup *)userData;
+	ScriptGroup *pGroup = newInstance(ScriptGroup);
+	pGroup->setName(file.readAsciiString());
+	pGroup->setActive(file.readByte() && parent->isActive());
+	if (info->version >= K_SCRIPT_GROUP_DATA_VERSION_2)
+		pGroup->setSubroutine(file.readByte());
+	if (s_bfmeGroupList)
+		s_bfmeGroupList->addGroup(pGroup, AT_END);
+	file.registerParser( "Script", info->label, Script::ParseScriptFromGroupDataChunk );
+	file.registerParser( "ScriptGroup", info->label, bfmeParseNestedGroup );
+	Bool ok = file.parse(pGroup);
+	if (s_bfmeGroupList == nullptr)
+		deleteInstance(pGroup);
+	return ok;
+}
+
 Bool ScriptGroup::ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	ScriptList *pList = (ScriptList *)userData;
@@ -890,12 +911,17 @@ Bool ScriptGroup::ParseGroupDataChunk(DataChunkInput &file, DataChunkInfo *info,
 
 	pGroup->m_groupName = file.readAsciiString();
 	pGroup->m_isGroupActive = file.readByte();
-	if (info->version == K_SCRIPT_GROUP_DATA_VERSION_2) {
+	if (info->version >= K_SCRIPT_GROUP_DATA_VERSION_2) {	// bfme-native: RotWK groups are v3
 		pGroup->m_isGroupSubroutine= file.readByte();
 	}
 	pList->addGroup(pGroup, AT_END);
 	file.registerParser( "Script", info->label, Script::ParseScriptFromGroupDataChunk );
-	return file.parse(pGroup);
+	file.registerParser( "ScriptGroup", info->label, bfmeParseNestedGroup );	// bfme-native
+	ScriptList *outer = s_bfmeGroupList;
+	s_bfmeGroupList = pList;
+	Bool ok = file.parse(pGroup);
+	s_bfmeGroupList = outer;
+	return ok;
 
 }
 
@@ -1267,6 +1293,18 @@ Script *Script::ParseScript(DataChunkInput &file, unsigned short version)
 	if (version>=K_SCRIPT_DATA_VERSION_2) {
 		pScript->m_delayEvaluationSeconds = file.readInt();
 	}
+	// bfme-native: RotWK script v3 adds an evaluation block (two flags, an int, a flag, a string;
+	// game.dat 0x007b4066) and v4 the game modes the script runs in ("ALL", ...; 0x007b636c)
+	if (version >= 3) {
+		file.readByte();
+		file.readByte();
+		file.readInt();
+		file.readByte();
+		file.readAsciiString();
+	}
+	if (version >= 4) {
+		file.readAsciiString();
+	}
 	file.registerParser( "OrCondition", "Script", OrCondition::ParseOrConditionDataChunk );
 	file.registerParser( "ScriptAction",  "Script", ScriptAction::ParseActionDataChunk );
 	file.registerParser( "ScriptActionFalse",  "Script", ScriptAction::ParseActionFalseDataChunk );
@@ -1547,15 +1585,17 @@ Condition *Condition::duplicate() const
 	Condition *pNew = newInstance(Condition)(m_conditionType);
 	Int i;
 	for (i=0; i<m_numParms && i<pNew->m_numParms; i++) {
-		*pNew->m_parms[i] = *m_parms[i];
+		if (pNew->m_parms[i] && m_parms[i])	// bfme-native
+			*pNew->m_parms[i] = *m_parms[i];
 	}
 	Condition *pLink = m_nextAndCondition;
 	Condition *pCur = pNew;
 	while (pLink) {
 		pCur->m_nextAndCondition = newInstance(Condition)(pLink->getConditionType());
 		pCur = pCur->m_nextAndCondition;
-		for (i=0; i<pLink->m_numParms; i++) {
-			*pCur->m_parms[i] = *pLink->m_parms[i];
+		for (i=0; i<pLink->m_numParms && i<pCur->m_numParms; i++) {	// bfme-native: RotWK conditions differ from the templates
+			if (pCur->m_parms[i] && pLink->m_parms[i])
+				*pCur->m_parms[i] = *pLink->m_parms[i];
 		}
 		pLink = pLink->m_nextAndCondition;
 	}
@@ -1568,6 +1608,8 @@ Condition *Condition::duplicateAndQualify(const AsciiString& qualifier,
 	Condition *pNew = newInstance(Condition)(m_conditionType);
 	Int i;
 	for (i=0; i<m_numParms && i<pNew->m_numParms; i++) {
+		if (pNew->m_parms[i] == nullptr || m_parms[i] == nullptr)
+			continue;	// bfme-native
 		*pNew->m_parms[i] = *m_parms[i];
 		pNew->m_parms[i]->qualify(qualifier, playerTemplateName, newPlayerName);
 	}
@@ -1576,7 +1618,9 @@ Condition *Condition::duplicateAndQualify(const AsciiString& qualifier,
 	while (pLink) {
 		pCur->m_nextAndCondition = newInstance(Condition)(pLink->getConditionType());
 		pCur = pCur->m_nextAndCondition;
-		for (i=0; i<pLink->m_numParms; i++) {
+		for (i=0; i<pLink->m_numParms && i<pCur->m_numParms; i++) {	// bfme-native
+			if (pCur->m_parms[i] == nullptr || pLink->m_parms[i] == nullptr)
+				continue;
 			*pCur->m_parms[i] = *pLink->m_parms[i];
 			pCur->m_parms[i]->qualify(qualifier, playerTemplateName, newPlayerName);
 		}

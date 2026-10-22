@@ -876,7 +876,8 @@ void Player::initFromDict(const Dict* d)
 	{
 		setPlayerType(PLAYER_COMPUTER, skirmish);
 	}
-	if (skirmish) {
+	// bfme-native: a RotWK skirmish player (Player_N) keeps the map's own scripts and teams
+	if (skirmish && !m_playerName.startsWith("Player_")) {
 		// Copy and qualify scripts, and teams.
 
 		AsciiString mySide = getSide();
@@ -910,8 +911,10 @@ void Player::initFromDict(const Dict* d)
 			m_playerName = qualTemplatePlayerName;
 			AsciiString qualifier;
 			qualifier.format("%d", m_mpStartIndex);
-			ScriptList *scripts = TheSidesList->getSkirmishSideInfo(skirmishNdx)->getScriptList()->duplicateAndQualify(
-						qualifier, qualTemplatePlayerName, pname);
+			// bfme-native: RotWK maps may carry a skirmish side without a script list
+			ScriptList *skirmishScripts = TheSidesList->getSkirmishSideInfo(skirmishNdx)->getScriptList();
+			ScriptList *scripts = skirmishScripts ? skirmishScripts->duplicateAndQualify(qualifier, qualTemplatePlayerName, pname)
+				: newInstance(ScriptList);
 
 			deleteInstance(TheSidesList->getSideInfo(getPlayerIndex())->getScriptList());
 			TheSidesList->getSideInfo(getPlayerIndex())->setScriptList(scripts);
