@@ -30,12 +30,16 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#define DEFINE_DEATH_NAMES	// bfme-native
+
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/LifetimeUpdate.h"
 #include "GameLogic/Object.h"
 
+
+const char *const *bfmeDeathNames() { return TheDeathNames; }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -54,6 +58,12 @@ LifetimeUpdate::LifetimeUpdate( Thing *thing, const ModuleData* moduleData ) : U
 	}
 
 	setWakeFrame(getObject(), UPDATE_SLEEP(delay));
+	// bfme-native: RotWK heroes carry a dormant LifetimeUpdate that a power or upgrade starts later
+	if (d->m_waitForWakeUp)
+	{
+		m_dieFrame = 0;
+		setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -85,7 +95,7 @@ UnsignedInt LifetimeUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt ma
 UpdateSleepTime LifetimeUpdate::update()
 {
 	// Kill (NOT destroy) if time is up
-	getObject()->kill();
+	getObject()->kill( DAMAGE_UNRESISTABLE, getLifetimeUpdateModuleData()->m_deathType );
 	return UPDATE_SLEEP_FOREVER;
 }
 

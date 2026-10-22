@@ -28,7 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"
+#include <execinfo.h>	// bfme-native: BFME_DEBUG_DEATH=2	// This must go first in EVERY cpp file in the GameEngine
 #include <cmath>	// For isnan() on Linux
 #define DEFINE_WEAPONCONDITIONMAP
 #include "Common/BitFlagsIO.h"
@@ -4739,6 +4740,18 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 /// Object level events that need to happen upon game death
 void Object::onDie( DamageInfo *damageInfo )
 {
+	if (getenv("BFME_DEBUG_DEATH"))
+	{
+		const Object *src = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
+		fprintf(stderr, "[death] %s #%u frame %u: damage type %d death type %d amount %.0f from %s\n", getTemplate()->getName().str(), getID(),
+			TheGameLogic->getFrame(), (int)damageInfo->in.m_damageType, (int)damageInfo->in.m_deathType, damageInfo->in.m_amount,
+			src ? src->getTemplate()->getName().str() : "-");
+		if (getenv("BFME_DEBUG_DEATH")[0] == '2')
+		{
+			void *bt[24];
+			backtrace_symbols_fd(bt, backtrace(bt, 24), 2);
+		}
+	}
 
 	checkAndDetonateBoobyTrap(nullptr);// Already dying, so no need to handle death case of explosion
 

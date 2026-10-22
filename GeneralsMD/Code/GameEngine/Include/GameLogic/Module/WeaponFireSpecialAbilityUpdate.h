@@ -61,4 +61,33 @@ public:
 
 protected:
 	virtual Bool bfmeTriggerOverride() override;
+};//-------------------------------------------------------------------------------------------------
+/** ModelConditionSpecialAbilityUpdate: a RotWK ability that only plays an animation (SPECIAL_POWER_n with
+	UNPACKING/PREPARING/PACKING); its effect comes from the SpecialPowerModule (AttributeModifier, TriggerFX). */
+class ModelConditionSpecialAbilityUpdateModuleData : public SpecialAbilityUpdateModuleData
+{
+public:
+	ModelConditionSpecialAbilityUpdateModuleData() : m_whichSpecialPower(1), m_unusedInt(0), m_unusedReal(0), m_unusedBool(FALSE) {}
+	static void buildFieldParse(MultiIniFieldParse& p);
+
+	Int m_whichSpecialPower;
+	Int m_unusedInt;
+	Real m_unusedReal;
+	Bool m_unusedBool;
+	AsciiString m_unusedString;
 };
+
+class ModelConditionSpecialAbilityUpdate : public SpecialAbilityUpdate
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ModelConditionSpecialAbilityUpdate, "ModelConditionSpecialAbilityUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ModelConditionSpecialAbilityUpdate, ModelConditionSpecialAbilityUpdateModuleData )
+
+public:
+	ModelConditionSpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData );
+
+protected:
+	virtual Bool bfmeTriggerOverride() override { return TRUE; }
+	virtual ModelConditionFlags bfmeAbilityConditions() const override;
+};
+
+

@@ -158,7 +158,7 @@ void run(const TestCmd& c)
 			{
 				o->setPosition(&pos);
 				o->setOrientation(angle);
-				printf("[BFMETEST] spawned %s #%u for %s at %.0f %.0f\n", t->getName().str(), o->getID(), c.args[2].c_str(), pos.x, pos.y);
+				printf("[BFMETEST] spawned %s #%u for %s at %.0f %.0f health %.0f/%.0f\n", t->getName().str(), o->getID(), c.args[2].c_str(), pos.x, pos.y, o->getBodyModule() ? o->getBodyModule()->getHealth() : -1.0f, o->getBodyModule() ? o->getBodyModule()->getMaxHealth() : -1.0f);
 			}
 		}
 	}
@@ -460,8 +460,13 @@ void run(const TestCmd& c)
 		group->appendBooleanArgument(TRUE);
 		for (Object *o = TheGameLogic->getFirstObject(); o && a; o = o->getNextObject())
 		{
-			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getDrawable() == nullptr) continue;
 			if (o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0) continue;
+			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getDrawable() == nullptr)
+			{
+				printf("[BFMETEST] select skips #%u: owner %s dead %d drawable %d health %.0f\n", o->getID(), o->getControllingPlayer() == a ? "ok" : "other",
+					(int)o->isEffectivelyDead(), o->getDrawable() ? 1 : 0, o->getBodyModule() ? o->getBodyModule()->getHealth() : -1.0f);
+				continue;
+			}
 			TheInGameUI->selectDrawable(o->getDrawable());
 			group->appendObjectIDArgument(o->getID());
 			++n;

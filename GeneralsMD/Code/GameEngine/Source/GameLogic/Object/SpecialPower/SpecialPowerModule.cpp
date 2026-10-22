@@ -88,7 +88,7 @@ SpecialPowerModuleData::SpecialPowerModuleData()
 	m_affectGood = TRUE;
 	m_affectEvil = TRUE;
 	m_affectAllies = TRUE;
-	m_availableAtStart = FALSE;
+	m_availableAtStart = TRUE;	// bfme-native: RotWK powers are ready when they appear unless AvailableAtStart = No
 	m_adjustVictim = FALSE;
 	m_useDistanceFromCommandCenter = FALSE;
 	m_distanceFromCommandCenter = 0.0f;
@@ -459,7 +459,7 @@ Bool SpecialPowerModule::startsReady() const
 #endif
 
 	const SpecialPowerModuleData* modData = getSpecialPowerModuleData();
-	return modData->m_startsReady;
+	return modData->m_startsReady || modData->m_availableAtStart;	// bfme-native
 }
 
 //-------------------------------------------------------------------------------------------------

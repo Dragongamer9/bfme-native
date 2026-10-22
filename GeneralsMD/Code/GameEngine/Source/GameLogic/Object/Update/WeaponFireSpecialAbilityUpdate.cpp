@@ -137,3 +137,60 @@ void HeroModeSpecialAbilityUpdate::loadPostProcess()
 {
 	SpecialAbilityUpdate::loadPostProcess();
 }
+
+//-------------------------------------------------------------------------------------------------
+// bfme-native: ModelConditionSpecialAbilityUpdate
+//-------------------------------------------------------------------------------------------------
+void ModelConditionSpecialAbilityUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	SpecialAbilityUpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "WhichSpecialPower",					INI::parseInt,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_whichSpecialPower ) },
+		// TODO: terror pulses, ring bearer rules
+		{ "MustFinishAbility",					INI::parseBool,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedBool ) },
+		{ "GenerateTerror",							INI::parseBool,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedBool ) },
+		{ "EmotionPulseRadius",					INI::parseReal,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedReal ) },
+		{ "ObjectFilter",								INI::parseAsciiString,	nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedString ) },
+		{ "UnpackingVariation",					INI::parseInt,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedInt ) },
+		{ "DisableWhenWearingTheRing",	INI::parseBool,				nullptr, offsetof( ModelConditionSpecialAbilityUpdateModuleData, m_unusedBool ) },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+ModelConditionSpecialAbilityUpdate::ModelConditionSpecialAbilityUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialAbilityUpdate( thing, moduleData )
+{
+}
+
+ModelConditionSpecialAbilityUpdate::~ModelConditionSpecialAbilityUpdate()
+{
+}
+
+ModelConditionFlags ModelConditionSpecialAbilityUpdate::bfmeAbilityConditions() const
+{
+	static const ModelConditionFlagType s_power[] = { MODELCONDITION_SPECIAL_POWER_1, MODELCONDITION_SPECIAL_POWER_2, MODELCONDITION_SPECIAL_POWER_3 };
+	Int n = getModelConditionSpecialAbilityUpdateModuleData()->m_whichSpecialPower;
+	n = n < 1 ? 1 : (n > 3 ? 3 : n);
+	ModelConditionFlags f;
+	f.set( s_power[n - 1] );
+	return f;
+}
+
+void ModelConditionSpecialAbilityUpdate::crc( Xfer *xfer )
+{
+	SpecialAbilityUpdate::crc( xfer );
+}
+
+void ModelConditionSpecialAbilityUpdate::xfer( Xfer *xfer )
+{
+	XferVersion cv = 1;
+	XferVersion v = cv;
+	xfer->xferVersion( &v, cv );
+	SpecialAbilityUpdate::xfer( xfer );
+}
+
+void ModelConditionSpecialAbilityUpdate::loadPostProcess()
+{
+	SpecialAbilityUpdate::loadPostProcess();
+}
