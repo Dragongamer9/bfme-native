@@ -2886,5 +2886,6 @@ void BaseHeightMapRenderObjClass::loadPostProcess()
 //=============================================================================
 Bool BaseHeightMapRenderObjClass::useCloud()
 {
+	if (getenv("BFME_NO_CLOUDS")) return false;
 	return TheGlobalData->m_useCloudMap && TheGlobalData->m_timeOfDay != TIME_OF_DAY_NIGHT;
 }

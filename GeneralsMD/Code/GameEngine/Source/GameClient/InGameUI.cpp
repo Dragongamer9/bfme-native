@@ -4341,8 +4341,8 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 		return;
 	}
 	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
-	WinInstanceData *winData = window->winGetInstanceData();
-	winData->setVideoBuffer(m_cameoVideoBuffer);
+	if (window)
+		window->winGetInstanceData()->setVideoBuffer(m_cameoVideoBuffer);
 //	window->winHide(FALSE);
 }
 
@@ -4354,8 +4354,8 @@ void InGameUI::stopCameoMovie()
 	//GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:CameoMovieWindow" ));
 	GameWindow *window = TheWindowManager->winGetWindowFromId(nullptr,TheNameKeyGenerator->nameToKey( "ControlBar.wnd:RightHUD" ));
 //	window->winHide(FALSE);
-	WinInstanceData *winData = window->winGetInstanceData();
-	winData->setVideoBuffer(nullptr);
+	if (window)
+		window->winGetInstanceData()->setVideoBuffer(nullptr);
 
 	delete m_cameoVideoBuffer;
 	m_cameoVideoBuffer = nullptr;

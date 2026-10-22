@@ -455,6 +455,8 @@ void FlatHeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector
 
 void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 {
+	if (getenv("BFME_NO_TERRAIN")) return;
+	if (getenv("BFME_DEBUG_TERRAIN")) { static int n=0; if (n++<3) fprintf(stderr,"[terrain] %s render\n", __FUNCTION__); }
 	//USE_PERF_TIMER(Terrain_Render)
 
 	Int devicePasses;

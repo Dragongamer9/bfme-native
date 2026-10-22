@@ -2133,6 +2133,9 @@ void DX8Wrapper::Begin_Scene()
 #endif
 }
 
+// bfme-native: called after the pillarbox blit, right before Present (screenshots)
+void (*g_bfmePrePresentHook)() = nullptr;
+
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
 	DX8_THREAD_ASSERT();
@@ -2149,6 +2152,9 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 #ifdef _WIN32
 	DX8WebBrowser::Render(0);
 #endif
+
+	if (g_bfmePrePresentHook)
+		g_bfmePrePresentHook();
 
 	if (flip_frames) {
 		DX8_Assert();

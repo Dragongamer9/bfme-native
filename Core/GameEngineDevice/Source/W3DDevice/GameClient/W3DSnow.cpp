@@ -324,7 +324,7 @@ flush_particles:
 
 void W3DSnowManager::render(RenderInfoClass &rinfo)
 {
-	if (!TheWeatherSetting->m_snowEnabled || !m_isVisible)
+	if (!TheWeatherSetting->m_snowEnabled || !TheWeatherSetting->m_isSnowing || !m_isVisible)
 		return;
 
 	Int usePointSprites = DX8Wrapper::Get_Current_Caps()->Support_PointSprites() && TheWeatherSetting->m_usePointSprites;
