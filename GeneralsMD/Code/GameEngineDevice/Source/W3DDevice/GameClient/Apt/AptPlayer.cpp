@@ -1072,6 +1072,16 @@ void Player::renderInstance(Instance &inst, const Matrix &parent, const ColorTra
 	const ColorTransform cx = inst.color.then(pcx);
 	if (cx.mul.a <= 0.001f && cx.add.a <= 0.001f) return;
 	if (inst.customDraw) { inst.customDraw(inst, world, cx); return; }
+	if (inst.afterDraw)
+	{
+		// draw normally, then the game's overlay
+		auto hook = inst.afterDraw;
+		inst.afterDraw = nullptr;
+		renderInstance(inst, parent, pcx);
+		inst.afterDraw = hook;
+		hook(inst, world, cx);
+		return;
+	}
 	switch (inst.character->type)
 	{
 	case CHAR_SHAPE: drawShape(inst, world, cx); return;
@@ -1148,7 +1158,16 @@ void Player::drawShape(Instance &inst, const Matrix &m, const ColorTransform &cx
 		{
 			uv.resize(n * 2);
 			for (size_t i = 0; i < n; ++i) e.texMatrix.apply(e.verts[2 * i], e.verts[2 * i + 1], uv[2 * i], uv[2 * i + 1]);	// texture pixels
-			renderTriangles(f, e.image, xy.data(), uv.data(), (int)(n / 3), col, true);
+			// the image id is a character of this movie; an imported image lives in its exporting movie
+			// (e.g. InGameHelpBox draws PalantirExport's helpBoxTop.tga)
+			File *texFile = f;
+			int image = e.image;
+			if (image >= 0 && (size_t)image < f->characters.size())
+			{
+				Character *ic = f->characters[image];
+				if (ic && ic->type == CHAR_IMAGE && ic->file && ic->file != f) { texFile = ic->file; image = ic->id; }
+			}
+			renderTriangles(texFile, image, xy.data(), uv.data(), (int)(n / 3), col, true);
 		}
 		else
 			renderTriangles(f, -1, xy.data(), nullptr, (int)(n / 3), col, false);

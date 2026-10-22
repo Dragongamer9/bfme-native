@@ -127,6 +127,8 @@ struct Instance : public std::enable_shared_from_this<Instance>
 
 	// game hook: draw something else in place of this shape
 	std::function<void(Instance &self, const Matrix &world, const ColorTransform &cx)> customDraw;
+	/// game hook: draw something on top of this instance after it rendered normally
+	std::function<void(Instance &self, const Matrix &world, const ColorTransform &cx)> afterDraw;
 
 	bool isSprite() const { return character && (character->type == CHAR_SPRITE || character->type == CHAR_MOVIE); }
 	int totalFrames() const { return isSprite() ? (int)character->frames.size() : 1; }
@@ -201,6 +203,8 @@ public:
 	bool mouse(float x, float y, bool down, const Matrix &view);
 
 	std::shared_ptr<Instance> root() { return m_root; }
+	/// the button (or clip with mouse handlers) under the cursor
+	std::shared_ptr<Instance> hovered() { return m_hover.lock(); }
 	File *file() { return m_file; }
 	ObjRef global() { return m_global; }
 
