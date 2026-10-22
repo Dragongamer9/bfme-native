@@ -20,6 +20,8 @@
 #include "GameLogic/ExperienceLevel.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BfmeModules.h"
+#include "GameLogic/AIPathfind.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/Module/HordeContain.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/CreateModule.h"
@@ -1533,5 +1535,75 @@ UpdateSleepTime AISpecialPowerUpdate::update()
 		printf("[ability] AI #%u %s used %s (%s) target #%u enemies %d\n", me->getID(), me->getTemplate()->getName().str(),
 			d->m_commandButtonName.str(), d->m_aiType.str(), target ? target->getID() : 0, enemies);
 	return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND * 2);
+}
+
+//=================================================================================================
+// GateOpenAndCloseBehavior
+//=================================================================================================
+void GateOpenAndCloseBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+	UpdateModuleData::buildFieldParse(p);
+	static const FieldParse fp[] =
+	{
+		{ "ResetTimeInMilliseconds",			INI::parseDurationUnsignedInt,	nullptr, offsetof( GateOpenAndCloseBehaviorModuleData, m_resetTime ) },
+		{ "OpenByDefault",								INI::parseBool,									nullptr, offsetof( GateOpenAndCloseBehaviorModuleData, m_openByDefault ) },
+		{ "PercentOpenForPathing",				parseBannerIgnore,							nullptr, 0 },
+		{ "SoundOpeningGateLoop",					parseBannerIgnore,							nullptr, 0 },
+		{ "SoundClosingGateLoop",					parseBannerIgnore,							nullptr, 0 },
+		{ "SoundFinishedOpeningGate",			parseBannerIgnore,							nullptr, 0 },
+		{ "SoundFinishedClosingGate",			parseBannerIgnore,							nullptr, 0 },
+		{ "TimeBeforePlayingOpenSound",		parseBannerIgnore,							nullptr, 0 },
+		{ "TimeBeforePlayingClosedSound",	parseBannerIgnore,							nullptr, 0 },
+		{ "RepelCollidingUnits",					parseBannerIgnore,							nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
+	};
+	p.add(fp);
+}
+
+GateOpenAndCloseBehavior::GateOpenAndCloseBehavior( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
+	m_removedFromPathing(FALSE), m_open(FALSE), m_closeAt(0)
+{
+	setWakeFrame(getObject(), UPDATE_SLEEP(1));
+}
+BFME_TRIVIAL_SNAPSHOT(GateOpenAndCloseBehavior, UpdateModule)
+
+UpdateSleepTime GateOpenAndCloseBehavior::update()
+{
+	Object* me = getObject();
+	if (me->isEffectivelyDead())
+		return UPDATE_SLEEP_FOREVER;
+	if (!m_removedFromPathing)
+	{
+		TheAI->pathfinder()->removeObjectFromPathfindMap(me);
+		m_removedFromPathing = TRUE;
+	}
+	const GateOpenAndCloseBehaviorModuleData* d = getGateOpenAndCloseBehaviorModuleData();
+	const UnsignedInt now = TheGameLogic->getFrame();
+	Bool friendNear = d->m_openByDefault;
+	if (!friendNear)
+	{
+		SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me, me->getGeometryInfo().getBoundingCircleRadius() + 60.0f, FROM_CENTER_2D);
+		MemoryPoolObjectHolder hold(iter);
+		for (Object* o = iter->first(); o && !friendNear; o = iter->next())
+			if (o != me && !o->isEffectivelyDead() && o->getAI() && !o->isKindOf(KINDOF_STRUCTURE) && me->getRelationship(o) == ALLIES)
+				friendNear = TRUE;
+	}
+	if (friendNear)
+	{
+		m_closeAt = now + max(1u, d->m_resetTime);
+		if (!m_open)
+		{
+			m_open = TRUE;
+			me->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_DOOR_1_CLOSING),
+				MAKE_MODELCONDITION_MASK(MODELCONDITION_DOOR_1_OPENING));
+		}
+	}
+	else if (m_open && now >= m_closeAt)
+	{
+		m_open = FALSE;
+		me->clearAndSetModelConditionFlags(MAKE_MODELCONDITION_MASK2(MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_WAITING_OPEN),
+			MAKE_MODELCONDITION_MASK(MODELCONDITION_DOOR_1_CLOSING));
+	}
+	return UPDATE_SLEEP(LOGICFRAMES_PER_SECOND / 2);
 }
 
