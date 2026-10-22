@@ -193,6 +193,17 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 		}
 
 	}
+	if (getenv("BFME_DUMP_ATLAS"))
+	{
+		FILE *f = fopen(getenv("BFME_DUMP_ATLAS"), "wb");
+		if (f)
+		{
+			unsigned int hdr[3] = { surface_desc.Width, surface_desc.Height, (unsigned int)locked_rect.Pitch };
+			fwrite(hdr, sizeof(hdr), 1, f);
+			fwrite(locked_rect.pBits, locked_rect.Pitch, surface_desc.Height, f);
+			fclose(f);
+		}
+	}
 	surface_level->UnlockRect();
 	surface_level->Release();
 	DX8_ErrorCode(D3DXFilterTexture(Peek_D3D_Texture(), nullptr, 0, D3DX_FILTER_BOX));

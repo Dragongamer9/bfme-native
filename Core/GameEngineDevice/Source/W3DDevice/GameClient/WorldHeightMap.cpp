@@ -1712,6 +1712,7 @@ Int WorldHeightMap::updateTileTexturePositions(Int *edgeHeight)
 				if (found) break;
 			}
 			if (!found) {
+				fprintf(stderr, "WARNING: terrain texture class '%s' does not fit the terrain atlas\n", m_textureClasses[texClass].name.str());
 				m_textureClasses[texClass].positionInTexture.x = 0;
 				m_textureClasses[texClass].positionInTexture.y = 0;
 				continue;
@@ -1811,6 +1812,21 @@ Int WorldHeightMap::updateTileTexturePositions(Int *edgeHeight)
 void WorldHeightMap::getUVForNdx(Int tileNdx, float *minU, float *minV, float *maxU, float*maxV)
 {
 	Short baseNdx = tileNdx>>2;
+	if (getenv("BFME_DEBUG_TILES") && m_terrainTex)
+	{
+		static unsigned char s_seen[NUM_SOURCE_TILES*2];
+		if (baseNdx >= 0 && baseNdx < NUM_SOURCE_TILES*2 && !s_seen[baseNdx])
+		{
+			s_seen[baseNdx] = 1;
+			const char *cls = "?";
+			for (Int c = 0; c < m_numTextureClasses; ++c)
+				if (baseNdx >= m_textureClasses[c].firstTile && baseNdx < m_textureClasses[c].firstTile + m_textureClasses[c].numTiles) { cls = m_textureClasses[c].name.str(); break; }
+			if (m_sourceTiles[baseNdx] == nullptr)
+				fprintf(stderr, "[tiles] tile %d (class %s) has no source tile (numBitmapTiles=%d)\n", (int)baseNdx, cls, m_numBitmapTiles);
+			else
+				fprintf(stderr, "[tiles] tile %d (class %s) at %d,%d\n", (int)baseNdx, cls, m_sourceTiles[baseNdx]->m_tileLocationInTexture.x, m_sourceTiles[baseNdx]->m_tileLocationInTexture.y);
+		}
+	}
 	if (m_sourceTiles[baseNdx] == nullptr) {
 		// Missing texture.
 		*minU = *minV = *maxU = *maxV = 0.0f;

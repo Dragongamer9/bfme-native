@@ -289,6 +289,8 @@ protected:
 	WW3DErrorType read_vertex_materials(ChunkLoadClass & cload,MeshLoadContextClass * context);
 	WW3DErrorType read_textures(ChunkLoadClass & cload,MeshLoadContextClass * context);
 	WW3DErrorType read_material_pass(ChunkLoadClass & cload,MeshLoadContextClass * context);
+	WW3DErrorType bfme_read_fx_materials(ChunkLoadClass & cload,MeshLoadContextClass * context);	// bfme-native
+	void bfme_apply_fx_material(MeshLoadContextClass * context,int fxid);	// bfme-native
 	WW3DErrorType read_vertex_material_ids(ChunkLoadClass & cload,MeshLoadContextClass * context);
 	WW3DErrorType read_shader_ids(ChunkLoadClass & cload,MeshLoadContextClass * context);
 	WW3DErrorType read_scg(ChunkLoadClass & cload,MeshLoadContextClass * context);
