@@ -146,6 +146,26 @@ timeline player, builtins (MovieClip, Array, String, Math, Color, Mouse, setInte
 Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.bse) not unpacked;
 123 RotWK module types still missing (tools/modfields.py, /tmp list in session notes).
 
+## Session 7 — camps, heroes and the Völker maps (2026-10-22)
+- Victory/defeat banner (GuiFX ShowEndGame). Building floors (W3DFloorDraw, HideIfModelConditions).
+- Hordes: banner carriers at rank 2 (BannerCarriersAllowed/Position) bring fallen soldiers back out
+  of melee (BannerCarrierUpdate timings); ReplenishNearbyHorde buildings refill hordes.
+- Map scripts: RotWK Script v3/v4 and nested ScriptGroups parse (Völker maps loaded with no
+  objects before); conditions with extra parameters duplicate safely. tools/mapscripts.py dumps them.
+- Skirmish players are Player_N (start position N) and take over the map's Player_N side.
+- Camps and castles: CastleBehavior claims the site on a start position, unpacks the faction base
+  from bases/<name>/<name>.bse (start site free, later sites paid via CASTLE_UNPACK); build plots
+  (FOUNDATION_CONSTRUCT) raise their building by themselves and return when it falls. OCL
+  Required/ForbiddenUpgrades. AdditionalGeometry no longer clobbers the main geometry (keeps were
+  zero-sized and stayed shrouded).
+- Heroes: REVIVE slots on keeps/barracks recruit or revive the side's BuildableHeroesMP heroes;
+  command pages (InitialVisible, PUSH/POP_VISIBLE_COMMAND_RANGE); command sets up to 36 buttons.
+- AI: AISpecialPowerUpdate (computer units use buffs/heals/killers/area powers), builds on camp
+  plots, spreads farms apart.
+- play.sh (build / setup / launch a skirmish), tools/factionsweep.sh (every faction starts).
+Known: Edain free-build fortress bases (fb_fortress_*) are not in the data, so free-build maps
+have no keep; capture of economy/outpost plots (CAPTUREFLAG) not implemented; AI has no heroes.
+
 ## Next
 1. Read the skip report: rank unimplemented modules/fields by how much of Edain they affect
 2. W3DScriptedModelDraw (model/animation states) so units render - needs a GPU test
