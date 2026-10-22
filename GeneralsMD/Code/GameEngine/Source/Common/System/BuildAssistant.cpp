@@ -1287,6 +1287,9 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD || commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
 				commandButton->getThingTemplate() && commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
 			foundCommand = commandButton;
+		// bfme-native: RotWK hero slots (REVIVE) recruit the side's heroes
+		else if( commandButton && commandButton->getCommandType() == GUI_COMMAND_BFME_REVIVE && whatToBuild->isKindOf(KINDOF_HERO) )
+			foundCommand = commandButton;
 
 	}
 	if( foundCommand == nullptr )
@@ -1294,7 +1297,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 
 	// make sure that the player can actually make this unit by checking prereqs and such
 	Player *player = builder->getControllingPlayer();
-	if( player->canBuild( foundCommand->getThingTemplate() ) == FALSE )
+	if( player->canBuild( whatToBuild ) == FALSE )	// bfme-native: REVIVE slots carry no template
 		return FALSE;
 
 	// all is well

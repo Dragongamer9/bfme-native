@@ -166,6 +166,9 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 // bfme-native: castle unpacking and plot building live in GameLogic (BfmeCastle.cpp)
 Bool (*g_bfmeCastleUnpackHook)(Object*) = nullptr;
 Bool (*g_bfmeFoundationConstructHook)(Object*, const ThingTemplate*) = nullptr;
+Int (*g_bfmeReviveAvailabilityHook)(const CommandButton*, Object*) = nullptr;
+Bool (*g_bfmeReviveHook)(Object*, const CommandButton*) = nullptr;
+const Image* (*g_bfmeReviveImageHook)(Object*, const CommandButton*) = nullptr;
 
 CBCommandStatus ControlBar::bfmeExecuteCommand( const CommandButton *commandButton, Drawable *source, Bool multiSelect )
 {
@@ -266,6 +269,12 @@ CBCommandStatus ControlBar::processCommandButton( const CommandButton *commandBu
 				TheEva->setShouldPlay(EVA_InsufficientFunds);
 				TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
 			}
+			break;
+		}
+		case GUI_COMMAND_BFME_REVIVE:
+		{
+			if (obj && g_bfmeReviveHook)
+				g_bfmeReviveHook(obj, commandButton);
 			break;
 		}
 		case GUI_COMMAND_BFME_FOUNDATION_CONSTRUCT:

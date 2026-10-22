@@ -13,6 +13,7 @@
 //
 // Output lines start with "[BFMETEST]".
 #include "PreRTS.h"
+#include "GameClient/ControlBar.h"
 
 #include "Common/GameEngine.h"
 #include "Common/Money.h"
@@ -596,6 +597,24 @@ void run(const TestCmd& c)
 				printf("[BFMETEST] money frame=%u %s %u commandpoints=%d/%d\n", TheGameLogic->getFrame(), n.str(), pl->getMoney()->countMoney(),
 					pl->bfmeCommandPointsUsed(), pl->bfmeCommandPointLimit());
 		}
+	}
+	else if (op == "command" && c.args.size() >= 4)
+	{
+		// command PLAYER TEMPLATE BUTTON : press a command button for the first such object (as the UI does)
+		Player* a = findPlayer(c.args[1]);
+		const CommandButton* b = TheControlBar ? TheControlBar->findCommandButton(c.args[3].c_str()) : nullptr;
+		for (Object* o = TheGameLogic->getFirstObject(); o && b; o = o->getNextObject())
+		{
+			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0)
+				continue;
+			if (o->getStatusBits().test(OBJECT_STATUS_UNSELECTABLE))
+				continue;
+			const CBCommandStatus st = TheControlBar->bfmeExecuteCommand(b, o->getDrawable(), FALSE);
+			printf("[BFMETEST] command %s on #%u -> %d\n", c.args[3].c_str(), o->getID(), (int)st);
+			break;
+		}
+		if (b == nullptr)
+			printf("[BFMETEST] command: no button %s\n", c.args[3].c_str());
 	}
 	else if (op == "objects" && c.args.size() >= 2)
 	{

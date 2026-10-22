@@ -50,6 +50,8 @@
 extern Bool (*g_bfmeAptMouseHook)(Int kind, Int x, Int y);
 extern Bool (*g_bfmeAptQuitMenuHook)();
 
+extern const Image* (*g_bfmeReviveImageHook)(Object*, const CommandButton*);	// bfme-native: BfmeCastle.cpp
+
 namespace BfmeApt
 {
 
@@ -80,6 +82,7 @@ public:
 	int sideShown = -1;					///< side command bar faded in
 	std::string sideStates[NUM_SLOTS];	///< _show/_hide pushed to each side bar frame
 	DrawableID source = INVALID_DRAWABLE_ID;
+	int pageStart = 0;					///< first command of the shown page (PUSH_VISIBLE_COMMAND_RANGE)
 
 	static std::string arg(const std::string &args, const char *key)
 	{
@@ -567,6 +570,14 @@ public:
 		const CommandButton *b = slots[i].button;
 		Drawable *d = TheGameClient ? TheGameClient->findDrawableByID(source) : nullptr;
 		if (!b || !TheControlBar) return;
+		// RotWK command pages: the rest of the set (heroes, tasks) and back
+		if (b->getCommandType() == GUI_COMMAND_BFME_PUSH_VISIBLE_COMMAND_RANGE || b->getCommandType() == GUI_COMMAND_BFME_POP_VISIBLE_COMMAND_RANGE)
+		{
+			Object *o = d ? d->getObject() : nullptr;
+			const CommandSet *cs = o ? TheControlBar->findCommandSet(o->getCommandSetString()) : nullptr;
+			pageStart = (b->getCommandType() == GUI_COMMAND_BFME_PUSH_VISIBLE_COMMAND_RANGE && cs) ? cs->m_bfmeInitialVisible : 0;
+			return;
+		}
 		const Bool multi = TheInGameUI && TheInGameUI->getSelectCount() > 1;
 		const CBCommandStatus st = TheControlBar->bfmeExecuteCommand(b, d, multi);
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] command %s -> %d\n", b->getName().str(), (int)st);
@@ -584,6 +595,8 @@ public:
 				if (x && x->getObject() && x->getObject()->getControllingPlayer() == local) { d = x; break; }
 		}
 		Object *obj = d ? d->getObject() : nullptr;
+		if ((d ? d->getID() : INVALID_DRAWABLE_ID) != source)
+			pageStart = 0;
 		source = d ? d->getID() : INVALID_DRAWABLE_ID;
 		const CommandSet *cs = (obj && TheControlBar) ? TheControlBar->findCommandSet(obj->getCommandSetString()) : nullptr;
 		static DrawableID s_lastSource = INVALID_DRAWABLE_ID;
@@ -597,7 +610,10 @@ public:
 		for (int i = 0; i < NUM_SLOTS; ++i)
 		{
 			Slot &sl = slots[i];
-			sl.button = cs ? cs->getCommandButton(i) : nullptr;
+			// page 0 ends at InitialVisible; a pushed page shows the rest of the set
+			const int idx = pageStart + i;
+			const bool onPage = pageStart > 0 || cs == nullptr || cs->m_bfmeInitialVisible <= 0 || idx < cs->m_bfmeInitialVisible;
+			sl.button = (cs && onPage && idx < MAX_COMMANDS_PER_SET) ? cs->getCommandButton(idx) : nullptr;
 			std::string state = "_unused";
 			if (sl.button)
 			{
@@ -768,6 +784,12 @@ public:
 					n->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
 						const CommandButton *b = self->slots[i].button;
 						const Image *img = b ? b->getButtonImage() : nullptr;
+						if (b && b->getCommandType() == GUI_COMMAND_BFME_REVIVE)
+						{
+							Drawable *src = TheGameClient ? TheGameClient->findDrawableByID(self->source) : nullptr;
+							if (g_bfmeReviveImageHook && src && src->getObject())
+								img = g_bfmeReviveImageHook(src->getObject(), b);
+						}
 						float x0, y0, x1, y1;
 						const bool hasBounds = inst.bounds(x0, y0, x1, y1, world);
 						if (getenv("BFME_DEBUG_APT_IMG"))

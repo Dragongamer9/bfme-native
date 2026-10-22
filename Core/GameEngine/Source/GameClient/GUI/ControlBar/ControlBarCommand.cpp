@@ -1030,6 +1030,13 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	if (obj == nullptr)
 		return COMMAND_HIDDEN;	// probably better than crashing....
 
+	// bfme-native: hero slots on keeps (GameLogic BfmeCastle.cpp)
+	if (command->getCommandType() == GUI_COMMAND_BFME_REVIVE)
+	{
+		extern Int (*g_bfmeReviveAvailabilityHook)(const CommandButton*, Object*);
+		return g_bfmeReviveAvailabilityHook ? (CommandAvailability)g_bfmeReviveAvailabilityHook(command, obj) : COMMAND_HIDDEN;
+	}
+
 	Player *player = obj->getControllingPlayer();
 
 	if (obj->testScriptStatusBit(OBJECT_STATUS_SCRIPT_DISABLED) || obj->testScriptStatusBit(OBJECT_STATUS_SCRIPT_UNPOWERED))
