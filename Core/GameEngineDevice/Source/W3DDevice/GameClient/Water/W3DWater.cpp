@@ -2159,9 +2159,12 @@ void WaterRenderObjClass::renderWater()
 		if (pTrig->isWaterArea()) {
 			if (pTrig->getNumPoints()>2) {
 				if (pTrig->isRiver()) {
-					drawRiverWater(pTrig);
+					if (!getenv("BFME_NO_RIVERS"))
+						drawRiverWater(pTrig);
 					continue;
 				}
+				if (getenv("BFME_NO_STANDING_WATER"))
+					continue;
 				Int k;
 				for (k=1; k<pTrig->getNumPoints()-1; k=k+2) {
 					ICoord3D pt3 = *pTrig->getPoint(0);
