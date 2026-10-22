@@ -200,6 +200,9 @@ UpdateSleepTime SpawnBehavior::update()
 	}
 
 	const SpawnBehaviorModuleData* md = getSpawnBehaviorModuleData();
+	// bfme-native: a spawner with TriggeredBy starts once its upgrade arrives
+	if ( bfmeWaitingForUpgrade() )
+		return UPDATE_SLEEP_FOREVER;
 	if ( ! m_initialBurstTimesInited )
 	{
 		m_initialBurstTimesInited = TRUE;
@@ -1060,6 +1063,21 @@ void SpawnBehavior::revealSlaves()
 }
 
 
+//-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK spawners gated by upgrades
+//-------------------------------------------------------------------------------------------------
+Bool SpawnBehavior::bfmeWaitingForUpgrade() const
+{
+	UpgradeMaskType activation, conflicting;
+	getUpgradeActivationMasks( activation, conflicting );
+	return activation.any() && !isAlreadyUpgraded();
+}
+
+void SpawnBehavior::upgradeImplementation()
+{
+	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
+}
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
@@ -1087,7 +1105,7 @@ void SpawnBehavior::xfer( Xfer *xfer )
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 2;
 #else
-	XferVersion currentVersion = 3;
+	XferVersion currentVersion = 4;	// bfme-native: 4 adds the upgrade mux
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -1155,6 +1173,10 @@ void SpawnBehavior::xfer( Xfer *xfer )
 
 	// self tasking spawn count
 	xfer->xferUnsignedInt( &m_selfTaskingSpawnCount );
+
+	// bfme-native: upgrade gate
+	if (version >= 4)
+		upgradeMuxXfer( xfer );
 
 }
 

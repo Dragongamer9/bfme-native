@@ -38,6 +38,7 @@ const Int SPAWN_UPDATE_RATE = LOGICFRAMES_PER_SECOND/2; ///< This is a low prior
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/DamageModule.h"
+#include "GameLogic/Module/UpgradeModule.h"	// bfme-native
 
 //-------------------------------------------------------------------------------------------------
 class ThingTemplate;
@@ -60,6 +61,7 @@ public:
 	DamageTypeFlags m_damageTypesToPropagateToSlaves;
 	std::vector<AsciiString> m_spawnTemplateNameData;
 	DieMuxData m_dieMuxData;
+	UpgradeMuxData m_upgradeMuxData;			///< bfme-native: RotWK spawners can wait for upgrades (TriggeredBy)
 
 	SpawnBehaviorModuleData()
 	{
@@ -97,6 +99,7 @@ public:
 		};
     p.add(dataFieldParse);
 		p.add(DieMuxData::getFieldParse(), offsetof( SpawnBehaviorModuleData, m_dieMuxData ));
+		p.add(UpgradeMuxData::getFieldParse(), offsetof( SpawnBehaviorModuleData, m_upgradeMuxData ));
 	}
 };
 
@@ -130,7 +133,8 @@ public:
 class SpawnBehavior : public UpdateModule,
 											public SpawnBehaviorInterface,
 											public DieModuleInterface,
-											public DamageModuleInterface
+											public DamageModuleInterface,
+											public UpgradeMux	// bfme-native
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SpawnBehavior, "SpawnBehavior" )
@@ -142,7 +146,8 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module methods
-	static Int getInterfaceMask() { return (MODULEINTERFACE_UPDATE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE); }
+	static Int getInterfaceMask() { return (MODULEINTERFACE_UPDATE) | (MODULEINTERFACE_DIE) | (MODULEINTERFACE_DAMAGE) | (MODULEINTERFACE_UPGRADE); }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 	virtual void onDelete() override;
 	virtual UpdateModuleInterface *getUpdate() override { return this; }
 	virtual DieModuleInterface *getDie() override { return this; }
@@ -187,6 +192,29 @@ public:
 
 	void computeAggregateStates();
 //	void notifySelfTasking( Bool isSelfTasking );
+
+protected:
+
+	// bfme-native: UpgradeMux -- a spawner with TriggeredBy waits for its upgrade
+	virtual void upgradeImplementation() override;
+	virtual Bool isSubObjectsUpgrade() override { return false; }
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
+	{
+		getSpawnBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
+	}
+	virtual void performUpgradeFX() override
+	{
+		getSpawnBehaviorModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
+	}
+	virtual void processUpgradeRemoval() override
+	{
+		getSpawnBehaviorModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
+	}
+	virtual Bool requiresAllActivationUpgrades() const override
+	{
+		return getSpawnBehaviorModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
+	}
+	Bool bfmeWaitingForUpgrade() const;
 
 private:
 

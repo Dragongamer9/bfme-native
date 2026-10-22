@@ -47,6 +47,8 @@
 #include "GameClient/MessageBox.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"
+#include "GameLogic/Object.h"
+#include "Common/ThingTemplate.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/ScriptActions.h"
 #include "GameLogic/VictoryConditions.h"
@@ -178,6 +180,11 @@ Bool VictoryConditions::multipleAlliancesExist()
 void VictoryConditions::update()
 {
 	if (!TheRecorder->isMultiplayer() || (m_localSlotNum < 0 && !m_isObserver))
+		return;
+
+	// bfme-native: RotWK checks victory only after a short grace period, so start objects that hatch
+	// into the real ones (Edain's porter eggs, hordes filling up) don't count as a lost player
+	if (!TheGlobalData->m_bfmeVictoryUnitFilter.isEmpty() && TheGameLogic->getFrame() < 5 * LOGICFRAMES_PER_SECOND)
 		return;
 
 	// Check for a single winning alliance
@@ -322,10 +329,35 @@ Bool VictoryConditions::hasBeenDefeated(Player *player)
 }
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: an object that keeps its player in the game
+static void bfmeCountsForVictory(Object *obj, void *userData)
+{
+	Bool *alive = (Bool *)userData;
+	if (*alive || obj->isEffectivelyDead() || obj->isDestroyed())
+		return;
+	if (obj->isKindOf(KINDOF_PROJECTILE) || obj->isKindOf(KINDOF_MINE))
+		return;
+	if (obj->isKindOf(KINDOF_STRUCTURE))
+		*alive = TheGlobalData->m_bfmeVictoryStructureFilter.matches(obj, nullptr);
+	else
+		*alive = TheGlobalData->m_bfmeVictoryUnitFilter.matches(obj, nullptr);
+	if (getenv("BFME_DEBUG_VICTORY"))
+		fprintf(stderr, "[victory] %s %s -> %d\n", obj->getControllingPlayer() ? obj->getControllingPlayer()->getSide().str() : "-", obj->getTemplate()->getName().str(), (int)*alive);
+}
+
 Bool VictoryConditions::hasSinglePlayerBeenDefeated(Player *player)
 {
 	if (!player)
 		return false;
+
+	// bfme-native: RotWK counts the structures and units its GameData filters accept; a player
+	// with neither is out (Edain's free-build start has no buildings for its first seconds)
+	if (!TheGlobalData->m_bfmeVictoryStructureFilter.isEmpty() || !TheGlobalData->m_bfmeVictoryUnitFilter.isEmpty())
+	{
+		Bool alive = FALSE;
+		player->iterateObjects(bfmeCountsForVictory, &alive);
+		return !alive;
+	}
 
 	KindOfMaskType mask;
 	mask.set(KINDOF_MP_COUNT_FOR_VICTORY);

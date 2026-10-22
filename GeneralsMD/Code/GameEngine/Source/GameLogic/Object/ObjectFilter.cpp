@@ -43,7 +43,10 @@ Bool ObjectFilter::matchCommon(const ThingTemplate* tmpl, const KindOfMaskType& 
 	{
 		case MODE_NONE:	// "NONE +A +B": must have every listed kind
 			return m_includeKinds.any() && kinds.testForAll(m_includeKinds);
-		case MODE_ANY:	// "ANY +A +B": at least one listed kind
+		case MODE_ANY:	// "ANY +A +B": at least one listed kind; "ANY -A [+Name]" (no kinds included,
+										// something excluded): anything not excluded. "ANY +Name1 +Name2" alone: only those names.
+			if (!m_includeKinds.any() && (m_excludeKinds.any() || !m_excludeNames.empty()))
+				return TRUE;
 			return m_includeKinds.any() && kinds.anyIntersectionWith(m_includeKinds);
 		default:
 			return TRUE;

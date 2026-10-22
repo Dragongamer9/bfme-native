@@ -634,6 +634,16 @@ static void placeNetworkBuildingsForPlayer(Int slotNum, const GameSlot *pSlot, P
 			if (unit)
 				pPlayer->onUnitCreated(nullptr, unit);
 		}
+		// a start without a castle or camp site: Edain's free-build start (Upgrade_EvilDualEconomyChoice,
+		// whose FreeBuildPorterEgg hatches into the faction's porters)
+		Bool hasBaseSite = FALSE;
+		for (Object *o = TheGameLogic->getFirstObject(); o && !hasBaseSite; o = o->getNextObject())
+			if (o->isKindOf(KINDOF_BASE_SITE) && ThePartitionManager->getDistanceSquared(o, &pos, FROM_CENTER_2D) < 500.0f * 500.0f)
+				hasBaseSite = TRUE;
+		const UpgradeTemplate *freeBuild = TheUpgradeCenter->findUpgrade("Upgrade_EvilDualEconomyChoice");
+		if (!hasBaseSite && freeBuild)
+			pPlayer->addUpgrade(freeBuild, UPGRADE_STATUS_COMPLETE);
+		fprintf(stderr, "[bfme] start %d: %s\n", startPos + 1, hasBaseSite ? "base site" : (freeBuild ? "free build" : "no base"));
 		return;
 	}
 
