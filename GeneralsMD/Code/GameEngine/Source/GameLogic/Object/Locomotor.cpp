@@ -519,6 +519,15 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 }
 
 //-------------------------------------------------------------------------------------------------
+// bfme-native: RotWK gives "TurnTime" (milliseconds for a full turn) instead of a turn rate
+static void parseBfmeTurnTime( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
+{
+	const Real msec = INI::scanReal(ini->getNextToken());
+	const Real frames = msec * LOGICFRAMES_PER_SECOND / 1000.0f;
+	*(Real *)store = frames >= 1.0f ? (2.0f * PI) / frames : BIGNUM;
+}
+
+//-------------------------------------------------------------------------------------------------
 const FieldParse* LocomotorTemplate::getFieldParse() const
 {
 	static const FieldParse TheFieldParse[] =
@@ -528,6 +537,8 @@ const FieldParse* LocomotorTemplate::getFieldParse() const
 		{ "SpeedDamaged", INI::parseVelocityReal, nullptr, offsetof( LocomotorTemplate, m_maxSpeedDamaged ) },
 		{ "TurnRate", INI::parseAngularVelocityReal, nullptr, offsetof(LocomotorTemplate, m_maxTurnRate) },
 		{ "TurnRateDamaged", INI::parseAngularVelocityReal, nullptr, offsetof( LocomotorTemplate, m_maxTurnRateDamaged ) },
+		{ "TurnTime", parseBfmeTurnTime, nullptr, offsetof(LocomotorTemplate, m_maxTurnRate) },	// bfme-native
+		{ "TurnTimeDamaged", parseBfmeTurnTime, nullptr, offsetof( LocomotorTemplate, m_maxTurnRateDamaged ) },	// bfme-native
 		{ "Acceleration", INI::parseAccelerationReal, nullptr, offsetof(LocomotorTemplate, m_acceleration) },
 		{ "AccelerationDamaged", INI::parseAccelerationReal, nullptr, offsetof( LocomotorTemplate, m_accelerationDamaged ) },
 		{ "Lift", INI::parseAccelerationReal, nullptr, offsetof(LocomotorTemplate, m_lift) },
