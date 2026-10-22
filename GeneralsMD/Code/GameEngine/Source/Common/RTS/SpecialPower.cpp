@@ -322,6 +322,7 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 
 	{ "ReloadTime",								INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
 	{ "RequiredScience",					INI::parseScience,								nullptr, offsetof( SpecialPowerTemplate, m_requiredScience ) },
+	{ "RequiredSciences",					SpecialPowerTemplate::bfmeParseRequiredSciences,	nullptr, offsetof( SpecialPowerTemplate, m_requiredScience ) },	// bfme-native: first one
 	{ "InitiateSound",						INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
 	{ "InitiateAtLocationSound",	INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateAtLocationSound ) },
 	{ "PublicTimer",							INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_publicTimer ) },
@@ -336,6 +337,20 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 	{ nullptr,	nullptr, nullptr,	0 }
 
 };
+
+//-------------------------------------------------------------------------------------------------
+/** bfme-native: "RequiredSciences = A B" (RotWK). The power needs the first one. */
+//-------------------------------------------------------------------------------------------------
+void SpecialPowerTemplate::bfmeParseRequiredSciences( INI *ini, void *instance, void *store, const void *userData )
+{
+	const char *token = ini->getNextTokenOrNull();
+	if( token == nullptr )
+		return;
+	ScienceType st = TheScienceStore ? TheScienceStore->getScienceFromInternalName( AsciiString( token ) ) : SCIENCE_INVALID;
+	*(ScienceType *)store = st;
+	while( ini->getNextTokenOrNull() != nullptr ) {}
+}
+
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

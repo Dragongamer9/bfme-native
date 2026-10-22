@@ -275,6 +275,9 @@ public:
   Bool canBuildMoreOfType( const ThingTemplate *whatToBuild ) const;
 	Int bfmeCommandPointsUsed() const;		///< bfme-native: RotWK command points taken by our units
 	Int bfmeCommandPointLimit() const;		///< bfme-native: 0 = unlimited
+	/// bfme-native: the player's spell book -- a hidden object holding the purchasable powers (SpellBook / SpellBookMp)
+	Object *bfmeGetSpellBook() const;
+	Object *bfmeCreateSpellBook(const Coord3D *where);
 
 	/// Difficulty level for this player.
 	GameDifficulty getPlayerDifficulty() const;

@@ -973,7 +973,22 @@ bool Player::hitTest(Instance &inst, const Matrix &parent, float x, float y, Ins
 				tris.push_back(2 * vi + 1 < c.hitVerts.size() ? c.hitVerts[2 * vi] : 0);
 				tris.push_back(2 * vi + 1 < c.hitVerts.size() ? c.hitVerts[2 * vi + 1] : 0);
 			}
-		if (pointInTris(tris, lx, ly)) { if (!button) button = &inst; return true; }
+		bool in = pointInTris(tris, lx, ly);
+		if (getenv("BFME_DEBUG_APT_HIT")) fprintf(stderr, "[apt] hit? %s local %.1f,%.1f tris %zu -> %d\n", inst.targetPath().c_str(), lx, ly, c.hitTris.size() / 3, (int)in);
+		if (!in && c.hitTris.empty())
+		{
+			// no hit polygon: the records drawn for the hit state (Flash's hit frame), else the up state
+			bool anyHitRecord = false;
+			for (size_t i = 0; i < inst.recordStates.size(); ++i) if (inst.recordStates[i] & 8) anyHitRecord = true;
+			const unsigned char want = anyHitRecord ? 8 : 1;
+			for (auto &kv : inst.children)
+			{
+				if (!kv.second || (size_t)kv.first >= inst.recordStates.size() || !(inst.recordStates[kv.first] & want)) continue;
+				Instance *dummy = nullptr;
+				if (hitTest(*kv.second, world, x, y, dummy)) { in = true; break; }
+			}
+		}
+		if (in) { if (!button) button = &inst; return true; }
 		return false;
 	}
 	default:
@@ -1002,10 +1017,11 @@ bool Player::mouse(float sx, float sy, bool down, const Matrix &view)
 	Instance *btn = nullptr;
 	const bool hit = hitTest(*m_root, Matrix(), x, y, btn);
 	std::shared_ptr<Instance> over = btn ? btn->shared_from_this() : nullptr;
+	if (getenv("BFME_DEBUG_APT_MOUSE") && (down || over))
+		fprintf(stderr, "[apt] mouse %.0f,%.0f hit=%d over=%s down=%d\n", x, y, (int)hit, over ? over->targetPath().c_str() : "-", (int)down);
 	std::shared_ptr<Instance> hover = m_hover.lock(), pressed = m_pressed.lock();
-	static bool s_wasDown = false;
-	const bool press = down && !s_wasDown, release = !down && s_wasDown;
-	s_wasDown = down;
+	const bool press = down && !m_wasDown, release = !down && m_wasDown;
+	m_wasDown = down;
 
 	auto runButton = [&](const std::shared_ptr<Instance> &b, unsigned char cond, unsigned clipEvent) {
 		if (!b) return;

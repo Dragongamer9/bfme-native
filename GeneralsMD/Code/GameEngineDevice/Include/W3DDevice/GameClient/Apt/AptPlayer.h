@@ -263,6 +263,7 @@ private:
 	unsigned m_accum = 0;
 	unsigned m_tick = 1;
 	std::weak_ptr<Instance> m_pressed, m_hover;
+	bool m_wasDown = false;
 	std::vector<const unsigned char *> m_initActionsDone;
 	void initInstance(const std::shared_ptr<Instance> &inst);
 	void removeInstance(Instance &parent, int depth);

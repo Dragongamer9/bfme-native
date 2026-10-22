@@ -610,6 +610,9 @@ static void placeNetworkBuildingsForPlayer(Int slotNum, const GameSlot *pSlot, P
 
 	AsciiString buildingTemplateName = pTemplate->getStartingBuilding();
 
+	// bfme-native: every RotWK side owns a hidden spell book object with its purchasable powers
+	pPlayer->bfmeCreateSpellBook(&pos);
+
 	if (buildingTemplateName.isEmpty())
 	{
 		// bfme-native: RotWK/Edain sides start without a building -- the units go to the start

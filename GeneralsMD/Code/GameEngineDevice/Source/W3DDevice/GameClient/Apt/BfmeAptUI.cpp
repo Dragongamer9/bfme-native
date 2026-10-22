@@ -30,6 +30,9 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Upgrade.h"
+#include "Common/PlayerTemplate.h"
+#include "Common/Science.h"
+#include "Common/SpecialPower.h"
 
 #include <map>
 #include <vector>
@@ -116,6 +119,29 @@ public:
 			heroBarShown = false;
 			heroCount = -1;
 		}
+		else if (c == "aptpalantir::onbttnspellstore") { storeToggle = true; return; }
+		else if (c.compare(0, 15, "aptspellstore::") == 0)
+		{
+			const std::string what = c.substr(15);
+			if (what == "close" || what == "onclosed" || what == "onbttnclose" || what == "onbttnexit" || what == "onbttnaccept") storeClose = true;
+			else if (what == "onbttnspell")
+			{
+				// spell buttons report their clip name: "Spell<N>"
+				// "OnBttnSpell" + the button's index or clip name ("Spell<N>")
+				const size_t sp = args.find("Spell");
+				const size_t dg = args.find_first_of("0123456789");
+				const int n = sp != std::string::npos ? atoi(args.c_str() + sp + 5) - 1 : (dg != std::string::npos ? atoi(args.c_str() + dg) - 1 : -1);
+				if (n >= 0 && n < NUM_STORE) pressStore(n);
+			}
+			return;
+		}
+		else if (c == "onaptingamespellbookloaded") { spellStates.assign(NUM_SPELLS, std::string()); spellBookReady = true; return; }
+		else if (c == "onaptingamespellbookbuttonpressed")
+		{
+			const int n = atoi(args.c_str()) - 1;
+			if (n >= 0 && n < NUM_SPELLS) pressSpell(n);
+			return;
+		}
 		else if (c == "_level0.factionframeui_onbttnheroselect")
 		{
 			// args: the button's name, "HeroN"
@@ -132,6 +158,9 @@ public:
 		else if (c == "aptpalantir::oninitialized")
 		{
 			deferred.push_back(std::string("SetPalantirFrameState(") + (localIsGood() ? "_good" : "_evil") + ")");
+			// the power (spell store) button: Arwen's evenstar for good sides, the One Ring for evil
+			deferred.push_back(std::string("PalantirButtons.Buttons.PlayerMagic.gotoAndPlay(") + (localIsGood() ? "_evenstar" : "_ring") + ")");
+			magicEnabled = -1;
 			deferred.push_back("HideCommandInterface()");
 			commandShown = false;
 		}
@@ -151,6 +180,8 @@ public:
 		const std::string n = Apt::lower(name);
 		if (n == "ingame") return Apt::Value::boolean(true);
 		if (n == "minlod" || n == "palantirminlod") return Apt::Value::boolean(false);
+		// menus ask whether they may take input ("AptSpellStore::InputEnabled", "AptObjectivesMenu::InputEnabled" ...)
+		if (n.size() > 14 && n.compare(n.size() - 14, 14, "::inputenabled") == 0) return Apt::Value::boolean(true);
 		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] extern get %s\n", name.c_str());
 		return Apt::Value();
 	}
@@ -272,6 +303,214 @@ public:
 					Apt::renderFlush();
 					TheDisplay->drawImage(pic, (Int)x0, (Int)y0, (Int)x1, (Int)y1, GameMakeColor(255, 255, 255, (UnsignedByte)(255 * (cx.mul.a < 1 ? cx.mul.a : 1))));
 				};
+			}
+		}
+	}
+
+	// ---- spell book (InGameSpellBook.apt: Spell1..Spell24) driven by the player's spell book object ----
+	enum { NUM_SPELLS = 24 };
+	bool spellBookReady = false;
+	std::vector<std::string> spellStates;
+	const CommandButton *spells[NUM_SPELLS] = {};
+
+	void pressSpell(int i)
+	{
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		Object *book = local ? local->bfmeGetSpellBook() : nullptr;
+		if (!book || !spells[i] || !TheControlBar) return;
+		const CBCommandStatus st = TheControlBar->bfmeExecuteCommand(spells[i], book->getDrawable(), FALSE);
+		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] spell %s -> %d\n", spells[i]->getName().str(), (int)st);
+	}
+
+	int magicEnabled = -1, magicProgress = -1, spellBookShown = -1;
+
+	void refreshSpells(Apt::Player &player)
+	{
+		if (!spellBookReady) return;
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		Object *book = local ? local->bfmeGetSpellBook() : nullptr;
+		// palantir power button: opens the spell store when there is a spell book
+		const int enable = book ? 1 : 0;
+		if (enable != magicEnabled)
+		{
+			magicEnabled = enable;
+			player.call("EnablePlayerMagicButton", { Apt::Value::boolean(enable != 0) });
+		}
+		if (local)
+		{
+			const Int lo = local->getSkillPointsLevelDown(), hi = local->getSkillPointsLevelUp();
+			int pct = hi > lo ? (int)(100.0 * (local->getSkillPoints() - lo) / (hi - lo)) : 100;
+			pct = pct < 1 ? 1 : (pct > 100 ? 100 : pct);
+			if (pct != magicProgress)
+			{
+				magicProgress = pct;
+				player.call("SetPlayerMagicProgress", { Apt::Value::number(pct) });
+			}
+		}
+		const CommandSet *cs = (book && TheControlBar) ? TheControlBar->findCommandSet(book->getCommandSetString()) : nullptr;
+		static const Object *s_lastBook = nullptr;
+		if (book != s_lastBook && getenv("BFME_DEBUG_APT"))
+		{
+			s_lastBook = book;
+			fprintf(stderr, "[aptui] spell book %s commandset '%s' %s\n", book ? book->getTemplate()->getName().str() : "-", book ? book->getCommandSetString().str() : "", cs ? "found" : "none");
+			for (int i = 0; cs && i < NUM_SPELLS; ++i)
+				if (const CommandButton *b = cs->getCommandButton(i))
+					fprintf(stderr, "[aptui]   slot %d %s type %d avail %d\n", i + 1, b->getName().str(), (int)b->getCommandType(), (int)TheControlBar->getCommandAvailability(b, book, nullptr));
+		}
+		int anySpell = 0;
+		for (int i = 0; i < NUM_SPELLS; ++i)
+		{
+			const CommandButton *b = cs ? cs->getCommandButton(i) : nullptr;
+			std::string state = "_unused";
+			// a spell shows once its science is bought
+			if (b && b->getSpecialPowerTemplate() && b->getSpecialPowerTemplate()->getRequiredScience() != SCIENCE_INVALID &&
+					!local->hasScience(b->getSpecialPowerTemplate()->getRequiredScience()))
+				b = nullptr;
+			if (b)
+			{
+				const CommandAvailability av = TheControlBar->getCommandAvailability(b, book, nullptr);
+				switch (av)
+				{
+				case COMMAND_HIDDEN: b = nullptr; break;
+				case COMMAND_AVAILABLE: case COMMAND_ACTIVE: state = "_up"; break;
+				case COMMAND_NOT_READY: state = "_notReady"; break;
+				default: state = "_disabled"; break;
+				}
+			}
+			spells[i] = b;
+			if (b) ++anySpell;
+			if (state != spellStates[i])
+			{
+				if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] spell %d %s %s\n", i + 1, b ? b->getName().str() : "-", state.c_str());
+				spellStates[i] = state;
+				std::vector<Apt::Value> a = { Apt::Value::number(i + 1), Apt::Value::string(state) };
+				player.call("SpellBookUI.SetButtonState", a);
+			}
+			if (!b) continue;
+			char path[48];
+			snprintf(path, sizeof(path), "SpellBookUI.Spell%d", i + 1);
+			std::shared_ptr<Apt::Instance> sp = player.find(path);
+			for (const char *layer : { "~Enabled", "~Disabled" })
+			{
+				Apt::Instance *img = sp ? sp->findChild(layer) : nullptr;
+				if (!img || img->customDraw) continue;
+				GameHost *self = this;
+				const bool grey = layer[1] == 'D';
+				img->customDraw = [self, i, grey](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
+					const CommandButton *cb = self->spells[i];
+					const Image *pic = cb ? cb->getButtonImage() : nullptr;
+					float x0, y0, x1, y1;
+					if (!pic || !TheDisplay || !inst.bounds(x0, y0, x1, y1, world)) return;
+					Apt::renderFlush();
+					const UnsignedByte a = (UnsignedByte)(255 * (cx.mul.a < 1 ? cx.mul.a : 1));
+					TheDisplay->drawImage(pic, (Int)x0, (Int)y0, (Int)x1, (Int)y1, grey ? GameMakeColor(110, 110, 110, a) : GameMakeColor(255, 255, 255, a));
+				};
+			}
+		}
+		// the column of bought spells slides in once there is one
+		const int show = anySpell > 0 ? 1 : 0;
+		if (show != spellBookShown)
+		{
+			spellBookShown = show;
+			player.call("SpellBookUI.SetState", { Apt::Value::string(show ? "_show" : "_hide") });
+			// the shown column has fresh button clips: send every state again next frame
+			spellStates.assign(NUM_SPELLS, std::string());
+		}
+	}
+
+	// ---- spell store (SpellStore.apt overlay: purchase spells with spell points) ----
+	enum { NUM_STORE = 32 };
+	bool storeToggle = false, storeClose = false;
+	std::vector<std::string> storeStates;
+	const CommandButton *storeButtons[NUM_STORE] = {};
+
+	const CommandSet *storeCommandSet()
+	{
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		const PlayerTemplate *pt = local ? local->getPlayerTemplate() : nullptr;
+		if (!pt || !TheControlBar) return nullptr;
+		const CommandSet *cs = TheControlBar->findCommandSet(pt->getBfmePurchaseScienceCommandSetMP());
+		return cs;
+	}
+
+	void pressStore(int i)
+	{
+		const CommandButton *b = storeButtons[i];
+		if (!b || !TheControlBar) return;
+		const CBCommandStatus st = TheControlBar->bfmeExecuteCommand(b, nullptr, FALSE);
+		if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] purchase %s -> %d\n", b->getName().str(), (int)st);
+	}
+
+	/// the state each spell button of the store shows
+	void refreshStore(Apt::Player &store)
+	{
+		Player *local = ThePlayerList ? ThePlayerList->getLocalPlayer() : nullptr;
+		const CommandSet *cs = storeCommandSet();
+		char buf[32];
+		snprintf(buf, sizeof(buf), "%d", local ? (int)local->getSciencePurchasePoints() : 0);
+		dynamicText["spellstorespellpoints"] = buf;
+		// the store's own backdrop is a flat placeholder: dim the battlefield instead
+		if (std::shared_ptr<Apt::Instance> bg = store.find("SpellStoreBackground"))
+			if (!bg->customDraw)
+				bg->customDraw = [](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
+					float x0, y0, x1, y1;
+					if (!inst.bounds(x0, y0, x1, y1, world) || !TheDisplay) return;
+					Apt::renderFlush();
+					TheDisplay->drawFillRect((Int)x0, (Int)y0, (Int)(x1 - x0), (Int)(y1 - y0), GameMakeColor(0, 0, 0, (UnsignedByte)(150 * (cx.mul.a < 1 ? cx.mul.a : 1))));
+				};
+		if (storeStates.size() != NUM_STORE) storeStates.assign(NUM_STORE, std::string());
+		for (int i = 0; i < NUM_STORE; ++i)
+		{
+			const CommandButton *b = cs ? cs->getCommandButton(i) : nullptr;
+			std::string state = "_unused";
+			if (b && local && !b->getScienceVec().empty())
+			{
+				const ScienceType st = b->getScienceVec()[0];
+				if (local->hasScience(st)) state = "_already_purchased";
+				else if (local->isCapableOfPurchasingScience(st)) state = "_active";
+				else state = "_disabled";
+			}
+			else b = nullptr;
+			storeButtons[i] = b;
+			{
+				char key[32];
+				snprintf(key, sizeof(key), "spell%dcost", i + 1);
+				const Int cost = (b && TheScienceStore && !b->getScienceVec().empty()) ? TheScienceStore->getSciencePurchaseCost(b->getScienceVec()[0]) : 0;
+				snprintf(buf, sizeof(buf), "%d", (int)cost);
+				dynamicText[key] = cost > 0 && state != "_already_purchased" ? std::string(buf) : std::string();
+			}
+			if (state != storeStates[i])
+			{
+				// a fresh purchase plays its own animation once
+				const std::string shown = (storeStates[i] == "_active" && state == "_already_purchased") ? "_purchased" : state;
+				storeStates[i] = state;
+				std::vector<Apt::Value> a = { Apt::Value::number(i + 1), Apt::Value::string(shown) };
+				store.call("SetSpellButtonState", a);
+				if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] store %d %s %s\n", i + 1, b ? b->getName().str() : "-", shown.c_str());
+			}
+			if (!b) continue;
+			// button picture into its ~Enabled / ~Disabled render clips
+			char path[64];
+			snprintf(path, sizeof(path), "SpellStore.Buttons.Spell%d", i + 1);
+			std::shared_ptr<Apt::Instance> sp = store.find(path);
+			std::vector<Apt::Instance *> stack;
+			if (sp) stack.push_back(sp.get());
+			while (!stack.empty())
+			{
+				Apt::Instance *n = stack.back(); stack.pop_back();
+				if ((n->name == "~Enabled" || n->name == "~Disabled") && !n->customDraw)
+				{
+					GameHost *self = this;
+					n->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &cx) {
+						const CommandButton *cb = self->storeButtons[i];
+						const Image *pic = cb ? cb->getButtonImage() : nullptr;
+						float x0, y0, x1, y1;
+						if (!pic || !TheDisplay || !inst.bounds(x0, y0, x1, y1, world)) return;
+						Apt::renderFlush();
+						TheDisplay->drawImage(pic, (Int)x0, (Int)y0, (Int)x1, (Int)y1, GameMakeColor(255, 255, 255, (UnsignedByte)(255 * (cx.mul.a < 1 ? cx.mul.a : 1))));
+					};
+				}
+				for (auto &kv : n->children) if (kv.second) stack.push_back(kv.second.get());
 			}
 		}
 	}
@@ -483,12 +722,13 @@ public:
 		else snprintf(buf, sizeof(buf), "%d", used);
 		dynamicText["palantircommandpoints"] = buf;
 		dynamicText["palantirresourcemultiplier"] = "";
-		snprintf(buf, sizeof(buf), "%d", 1);
+		snprintf(buf, sizeof(buf), "%d", (int)p->getRankLevel());
 		dynamicText["playerrank"] = buf;
 	}
 };
 
 static GameHost s_host;
+static Apt::Player *s_store = nullptr;
 static Int s_radarRect[4] = { 0, 0, 0, 0 };
 static bool s_draggingRadar = false;
 static bool s_tried = false;
@@ -611,6 +851,7 @@ void draw()
 	s_host.refreshCommands(*s_player);
 	s_host.refreshTooltip(*s_player);
 	s_host.refreshHeroes(*s_player);
+	s_host.refreshSpells(*s_player);
 	s_host.attachTooltipText(*s_player);
 	// the in-palantir video panel is only shown while a movie plays (none yet)
 	if (std::shared_ptr<Apt::Instance> mp = s_player->find("MoviePlayback"))
@@ -636,7 +877,39 @@ void draw()
 	static int s_frames = 0;
 	if (++s_frames == 30 && getenv("BFME_APT_DUMP")) dumpFunctions(*s_player->root(), 0);
 	if (getenv("BFME_APT_TREE") && s_frames == std::max(1, atoi(getenv("BFME_APT_TREE")))) dumpTree(*s_player->root(), 0, Apt::Matrix());
+	// spell store overlay
+	if (s_host.storeToggle)
+	{
+		s_host.storeToggle = false;
+		if (s_store) s_host.storeClose = true;
+		else
+		{
+			s_store = new Apt::Player();
+			s_store->setHost(&s_host);
+			s_store->global()->set("InGame", Apt::Value::boolean(true));
+			if (!s_store->load("SpellStore")) { delete s_store; s_store = nullptr; }
+			else
+			{
+				s_host.storeStates.clear();
+				std::vector<Apt::Value> a = { Apt::Value::string("_multiplayer") };
+				s_store->call("SetLayout", a);
+				s_store->call("SpellStore.Buttons.gotoAndPlay", { Apt::Value::string("_show") });
+			}
+		}
+	}
+	if (s_host.storeClose)
+	{
+		s_host.storeClose = false;
+		delete s_store;
+		s_store = nullptr;
+	}
 	s_player->render(viewMatrix());
+	if (s_store)
+	{
+		s_host.refreshStore(*s_store);
+		s_store->update(ms);
+		s_store->render(viewMatrix());
+	}
 }
 
 /// minimap click: centre the tactical view on that spot
@@ -668,6 +941,9 @@ static Bool mouseHook(Int kind, Int x, Int y)
 	static bool s_left = false;
 	if (kind == 1) s_left = true;
 	else if (kind == 2) s_left = false;
+	// the spell store sits on top and takes the mouse when open
+	if (s_store && s_store->mouse((float)x, (float)y, s_left, viewMatrix()))
+		return TRUE;
 	bool used = s_player->mouse((float)x, (float)y, s_left, viewMatrix());
 	if (getenv("BFME_DEBUG_APT_MOUSE")) fprintf(stderr, "[aptui] mouse kind=%d %d,%d -> %d\n", (int)kind, (int)x, (int)y, (int)used);
 	if ((kind == 1 || (kind == 0 && s_left && s_draggingRadar)) && radarClick(x, y))
@@ -692,6 +968,8 @@ void install()
 
 void shutdown()
 {
+	delete s_store;
+	s_store = nullptr;
 	delete s_player;
 	s_player = nullptr;
 	s_tried = false;
