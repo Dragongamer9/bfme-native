@@ -18,6 +18,8 @@
 #include "Common/PlayerList.h"
 #include "Common/Money.h"
 #include "Common/Radar.h"
+#include "GameLogic/TerrainLogic.h"
+#include "GameClient/View.h"
 
 #include <map>
 #include <vector>
@@ -28,8 +30,12 @@
 #include <cstring>
 #include <string>
 
+extern Bool (*g_bfmeAptMouseHook)(Int kind, Int x, Int y);
+
 namespace BfmeApt
 {
+
+void shutdown();
 
 static Apt::Player *s_player = nullptr;
 
@@ -124,6 +130,8 @@ public:
 };
 
 static GameHost s_host;
+static Int s_radarRect[4] = { 0, 0, 0, 0 };
+static bool s_draggingRadar = false;
 static bool s_tried = false;
 static std::chrono::steady_clock::time_point s_last;
 
@@ -204,10 +212,16 @@ static void dumpFunctions(Apt::Instance &inst, int depth)
 void draw()
 {
 	if (getenv("BFME_NO_APT")) return;
+	const bool inGame = TheGameLogic && TheGameLogic->isInGame() && !TheGameLogic->isInShellGame();
+	if (!inGame)
+	{
+		if (s_player) shutdown();
+		return;
+	}
 	if (!s_tried)
 	{
 		const char *movie = getenv("BFME_APT");
-		if (!movie) return;	// opt-in until the game bridge is complete
+		if (!movie) movie = "Palantir";
 		s_tried = true;
 		s_player = new Apt::Player();
 		s_player->setHost(&s_host);
@@ -246,7 +260,8 @@ void draw()
 				float x0, y0, x1, y1;
 				if (!self.bounds(x0, y0, x1, y1, world) || !TheRadar) return;
 				Apt::renderFlush();
-				TheRadar->draw((Int)x0, (Int)y0, (Int)(x1 - x0), (Int)(y1 - y0));
+				s_radarRect[0] = (Int)x0; s_radarRect[1] = (Int)y0; s_radarRect[2] = (Int)(x1 - x0); s_radarRect[3] = (Int)(y1 - y0);
+				TheRadar->draw(s_radarRect[0], s_radarRect[1], s_radarRect[2], s_radarRect[3]);
 			};
 	s_player->update(ms);
 	for (size_t i = 0; i < s_host.deferred.size() && i < 64; ++i)
@@ -261,10 +276,54 @@ void draw()
 	s_player->render(viewMatrix());
 }
 
+/// minimap click: centre the tactical view on that spot
+static bool radarClick(Int x, Int y)
+{
+	const Int rx = s_radarRect[0], ry = s_radarRect[1], rw = s_radarRect[2], rh = s_radarRect[3];
+	if (rw <= 0 || rh <= 0 || x < rx || y < ry || x >= rx + rw || y >= ry + rh || !TheTerrainLogic || !TheTacticalView) return false;
+	Region3D ext;
+	TheTerrainLogic->getExtent(&ext);
+	const Real mw = ext.width(), mh = ext.height();
+	if (mw <= 0 || mh <= 0) return false;
+	// same aspect fit as Radar::findDrawPositions
+	Real dw = (Real)rw, dh = (Real)rh;
+	if (mw / rw >= mh / rh) dh = rw * mh / mw; else dw = rh * mw / mh;
+	const Real ulx = rx + (rw - dw) / 2, uly = ry + (rh - dh) / 2;
+	const Real u = (x - ulx) / dw, v = (y - uly) / dh;
+	if (u < 0 || u > 1 || v < 0 || v > 1) return true;	// letterbox: still the minimap
+	Coord3D world;
+	world.x = ext.lo.x + u * mw;
+	world.y = ext.lo.y + (1.0f - v) * mh;	// radar rows run north to south
+	world.z = 0;
+	TheTacticalView->lookAt(&world);
+	return true;
+}
+
+static Bool mouseHook(Int kind, Int x, Int y)
+{
+	if (!s_player) return FALSE;
+	static bool s_left = false;
+	if (kind == 1) s_left = true;
+	else if (kind == 2) s_left = false;
+	bool used = s_player->mouse((float)x, (float)y, s_left, viewMatrix());
+	if ((kind == 1 || (kind == 0 && s_left && s_draggingRadar)) && radarClick(x, y))
+	{
+		s_draggingRadar = true;
+		used = true;
+	}
+	if (kind == 2) s_draggingRadar = false;
+	return used ? TRUE : FALSE;
+}
+
 bool mouse(int x, int y, bool down)
 {
 	if (!s_player) return false;
 	return s_player->mouse((float)x, (float)y, down, viewMatrix());
+}
+
+void install()
+{
+	g_bfmeAptMouseHook = &mouseHook;
 }
 
 void shutdown()

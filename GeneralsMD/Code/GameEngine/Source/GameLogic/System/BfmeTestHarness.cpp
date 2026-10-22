@@ -18,6 +18,9 @@
 #include "Common/Money.h"
 #include "GameClient/View.h"
 #include "GameClient/Display.h"
+#include "GameClient/InGameUI.h"
+#include "GameClient/Drawable.h"
+#include "Common/MessageStream.h"
 #include "GameLogic/Stances.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "Common/BuildAssistant.h"
@@ -419,6 +422,41 @@ void run(const TestCmd& c)
 			const Bool ok = sb->setStance(c.args[3] == "none" ? AsciiString::TheEmptyString : AsciiString(c.args[3].c_str()));
 			printf("[BFMETEST] stance #%u %s -> %s ok=%d\n", o->getID(), c.args[2].c_str(), c.args[3].c_str(), (int)ok);
 		}
+	}
+	else if ((op == "click" || op == "rclick" || op == "mousemove") && c.args.size() >= 3)
+	{
+		// click X Y / rclick X Y / mousemove X Y : raw mouse input in screen pixels (goes through the UI)
+		ICoord2D pos;
+		pos.x = atoi(c.args[1].c_str());
+		pos.y = atoi(c.args[2].c_str());
+		auto raw = [&](GameMessage::Type t) {
+			GameMessage *m = TheMessageStream->appendMessage(t);
+			m->appendPixelArgument(pos);
+			if (t != GameMessage::MSG_RAW_MOUSE_POSITION)
+			{
+				m->appendIntegerArgument(0);
+				m->appendIntegerArgument((Int)TheGameLogic->getFrame());
+			}
+		};
+		raw(GameMessage::MSG_RAW_MOUSE_POSITION);
+		if (op == "click") { raw(GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN); raw(GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP); }
+		else if (op == "rclick") { raw(GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN); raw(GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP); }
+		printf("[BFMETEST] %s %d %d\n", op.c_str(), pos.x, pos.y);
+	}
+	else if (op == "select" && c.args.size() >= 3)
+	{
+		// select PLAYER TEMPLATE : select the player's units of that template (local selection)
+		Player *a = findPlayer(c.args[1]);
+		Int n = 0;
+		if (TheInGameUI) TheInGameUI->deselectAllDrawables();
+		for (Object *o = TheGameLogic->getFirstObject(); o && a; o = o->getNextObject())
+		{
+			if (o->getControllingPlayer() != a || o->isEffectivelyDead() || o->getDrawable() == nullptr) continue;
+			if (o->getTemplate()->getName().compareNoCase(c.args[2].c_str()) != 0) continue;
+			TheInGameUI->selectDrawable(o->getDrawable());
+			++n;
+		}
+		printf("[BFMETEST] select %s %s -> %d\n", c.args[1].c_str(), c.args[2].c_str(), n);
 	}
 	else if (op == "screenshot")
 	{
