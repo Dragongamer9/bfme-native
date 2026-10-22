@@ -1146,7 +1146,7 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 		robj=terrainObject;
 		rinfo.light_environment = nullptr;		// Terrain is self lit.
 		rinfo.Camera.Set_User_Data(this);	//pass the scene to terrain via user data.
-		if (m_customPassMode == SCENE_PASS_DEFAULT && m_shroudMaterialPass)
+		if (m_customPassMode == SCENE_PASS_DEFAULT && m_shroudMaterialPass && !getenv("BFME_NO_SHROUD"))
 		{
 			rinfo.Push_Material_Pass(m_shroudMaterialPass);
 			robj->Render(rinfo);

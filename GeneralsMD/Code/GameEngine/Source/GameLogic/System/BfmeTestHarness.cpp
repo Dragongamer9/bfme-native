@@ -41,6 +41,7 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/TerrainLogic.h"
+#include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
 #include <algorithm>
@@ -437,6 +438,13 @@ void run(const TestCmd& c)
 			if (c.args.size() >= 5)
 				TheTacticalView->setPitch((Real)atof(c.args[4].c_str()));
 		}
+	}
+	else if (op == "reveal")
+	{
+		// reveal [playerIndex] : permanently reveal the whole map (default: local player)
+		Int idx = c.args.size() >= 2 ? atoi(c.args[1].c_str()) : ThePlayerList->getLocalPlayer()->getPlayerIndex();
+		ThePartitionManager->revealMapForPlayerPermanently(idx);
+		printf("[BFMETEST] reveal player=%d\n", idx);
 	}
 	else if (op == "view")
 	{

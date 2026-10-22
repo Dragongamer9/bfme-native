@@ -1703,11 +1703,11 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *c
 		minHt = m_map->getMaxHeightValue();
 		for (j=0; j<m_y; j+=4) {
 			for (i=0; i<m_x; i+=4) {
-				Short cur = m_map->getDisplayHeight(i,j);
+				Int cur = m_map->getDisplayHeight(i,j);
 				if (cur<minHt) minHt = cur;
 			}
 		}
-		intersectionZ = (float)minHt;
+		intersectionZ = (float)minHt * MAP_HEIGHT_SCALE;	// bfme-native: raw height -> world units
 	//	float aspect = camera->Get_Aspect_Ratio();
 
 		Vector2 min,max;
@@ -2039,6 +2039,23 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
 	}
 
+	if (getenv("BFME_DEBUG_TERRAIN"))
+	{
+		static int n2 = 0;
+		if (n2++ < 4)
+		{
+			Vector3 cp = rinfo.Camera.Get_Position();
+			fprintf(stderr, "[terrain] passes=%d st=%d vbTiles=%dx%d hidden=%d inv=%d disableTex=%d x=%d y=%d cam=%.0f,%.0f,%.0f\n", devicePasses, (int)st,
+				m_numVBTilesX, m_numVBTilesY, (int)Is_Hidden(), (int)ShaderClass::Is_Backface_Culling_Inverted(), (int)m_disableTextures, m_x, m_y, cp.X, cp.Y, cp.Z);
+			if (m_numVBTilesX > 0)
+			{
+				DX8VertexBufferClass::WriteLockClass lk(getVertexBufferTile(0, 0));
+				VERTEX_FORMAT *vb = (VERTEX_FORMAT *)lk.Get_Vertex_Array();
+				for (int k = 0; k < 3 && vb; ++k)
+					fprintf(stderr, "[terrain]   v%d = %.1f,%.1f,%.1f diffuse=%08x uv=%.3f,%.3f\n", k, vb[k].x, vb[k].y, vb[k].z, (unsigned)vb[k].diffuse, vb[k].u1, vb[k].v1);
+			}
+		}
+	}
 	Int pass;
 	// GeneralsX @bugfix fbraz3 08/10/2026 A water mirror leaves the ground out (Reforged pattern)
  	for (pass=0; pass<devicePasses && !ShaderClass::Is_Backface_Culling_Inverted(); pass++) {
