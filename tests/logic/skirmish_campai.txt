@@ -1,0 +1,6 @@
+# Camp AI on Umbar: the computer's Mordor camp after six minutes
+1     reveal
+10800 camera 506 2639 0.9 0.35
+10801 objects MordorCastleKeep
+10840 screenshot
+10860 quit

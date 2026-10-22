@@ -1,0 +1,8 @@
+# Economy plot: units take the plot near the camp, then a farm is built on it
+1    reveal
+100  move player0 2124 560
+1500 objects WirtschaftPlotFlag_Real
+1510 command player0 WirtschaftPlotFlag_Real Command_UnpackExplicitGondorFarm
+1520 objects GondorFarm
+2400 conditions GondorFarm_Extern
+2405 quit

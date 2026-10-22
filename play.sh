@@ -4,7 +4,7 @@
 #   ./play.sh build                                 one-time: compile the engine (cmake + ninja)
 #   ./play.sh setup <RotWK folder> <BFME2 folder>   one-time: link the game files into a data folder
 #   ./play.sh [options]                             start a skirmish: you vs one computer player
-#       --map NAME      map folder name, e.g. "map mp argonath" (default) - see ./play.sh maps
+#       --map NAME      map folder name, e.g. "map mp umbar" (default: Edain camps) - see ./play.sh maps
 #       --you SIDE      your faction (default Men)    - see ./play.sh factions
 #       --ai SIDE       the computer's faction (default Mordor)
 #       --data DIR      data folder (default ~/.local/share/bfme-native/data or $BFME_DATA)
@@ -48,7 +48,7 @@ case "${1:-}" in
   factions) echo "Men Rohan Elves Imladris Dwarves Isengard Mordor Wild Angmar"; exit 0 ;;
 esac
 
-MAP="map mp argonath"; YOU=Men; AI=Mordor
+MAP="map mp umbar"; YOU=Men; AI=Mordor
 while [ $# -gt 0 ]; do
   case "$1" in
     --map) MAP="$2"; shift 2 ;;
