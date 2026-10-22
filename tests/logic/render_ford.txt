@@ -1,0 +1,4 @@
+5 reveal
+48 camera 900 1130 0.4
+50 screenshot
+60 quit
