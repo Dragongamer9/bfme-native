@@ -1,0 +1,4 @@
+# Skirmish start: what each player owns after ten seconds
+1   reveal
+300 dump
+310 quit
