@@ -166,6 +166,10 @@ WindowTranslator::~WindowTranslator()
 /** Window translator that monitors raw input messages on the stream and
 	* acts on anything relevant to the windowing system */
 //=============================================================================
+/// bfme-native: APT interface input (set by the device layer). kind: 0 move, 1/2 left down/up,
+/// 3/4 right down/up. Returns TRUE when the interface is under the cursor (input used).
+Bool (*g_bfmeAptMouseHook)(Int kind, Int x, Int y) = nullptr;
+
 GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage *msg)
 {
 	GameMessageDisposition disp = KEEP_MESSAGE;
@@ -242,6 +246,23 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			if( TheWindowManager )
 				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos, nullptr );
 
+			if( g_bfmeAptMouseHook )
+			{
+				Int kind = 0;
+				switch( msg->getType() )
+				{
+					case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
+					case GameMessage::MSG_RAW_MOUSE_LEFT_DOUBLE_CLICK: kind = 1; break;
+					case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP: kind = 2; break;
+					case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
+					case GameMessage::MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK: kind = 3; break;
+					case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP: kind = 4; break;
+					default: kind = 0; break;
+				}
+				if( g_bfmeAptMouseHook( kind, mousePos.x, mousePos.y ) && kind != 0 )
+					returnCode = WIN_INPUT_USED;
+			}
+
 			if( TheShell && TheShell->isShellActive() )
 				returnCode = WIN_INPUT_USED;
 
@@ -267,6 +288,8 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
 			if( TheWindowManager )
 				returnCode = TheWindowManager->winProcessMouseEvent( gwm, &mousePos, &delta );
+			if( g_bfmeAptMouseHook )
+				g_bfmeAptMouseHook( 0, mousePos.x, mousePos.y );
 
 			if( TheShell && TheShell->isShellActive() )
 				returnCode = WIN_INPUT_USED;

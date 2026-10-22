@@ -335,12 +335,13 @@ static void loadText( char *filename, GameWindow *listboxText )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-namespace BfmeApt { void draw(); }
+namespace BfmeApt { void draw(); void install(); }
 extern void (*g_bfmeAptDrawHook)();
 
 void W3DInGameUI::init()
 {
 	g_bfmeAptDrawHook = &BfmeApt::draw;
+	BfmeApt::install();
 
 	// extending functionality
 	InGameUI::init();
