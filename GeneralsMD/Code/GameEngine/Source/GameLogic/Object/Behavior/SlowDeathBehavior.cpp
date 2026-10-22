@@ -31,6 +31,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
+#include "GameLogic/TerrainLogic.h"	// bfme-native
 #include "Common/GameLOD.h"
 #include "Common/INI.h"
 #include "Common/RandomValue.h"
@@ -422,6 +423,14 @@ UpdateSleepTime SlowDeathBehavior::update()
 
 			// Here we want to make sure we die if we collide with a tree on the way down
 			PhysicsBehavior *phys = obj->getPhysics();
+			// bfme-native: a dead flyer (fell beast, crebain) that nothing pulls down falls by itself
+			if ((m_flags & (1<<BOUNCED)) == 0 && TheTerrainLogic && (phys == nullptr || fabs(phys->getVelocity()->z) < 0.01f))
+			{
+				Coord3D p = *obj->getPosition();
+				const Real ground = TheTerrainLogic->getGroundHeight(p.x, p.y);
+				p.z = max(ground, p.z - 3.0f);
+				obj->setPosition(&p);
+			}
 			if ( phys )
 			{
 				ObjectID treeID = phys->getLastCollidee();
