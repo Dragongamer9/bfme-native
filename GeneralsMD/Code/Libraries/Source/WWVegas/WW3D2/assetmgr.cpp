@@ -88,6 +88,8 @@
 
 #include "htreemgr.h"
 #include "hanimmgr.h"
+#include <map>
+#include <string>
 #include "texture.h"
 #include "font3d.h"
 #include "render2dsentence.h"		// for FontCharsClass
@@ -965,6 +967,38 @@ AssetIterator * WW3DAssetManager::Create_Font3DData_Iterator()
  * HISTORY:                                                                                    *
  *   12/21/97   GTH : Created.                                                                 *
  *=============================================================================================*/
+HAnimClass *	WW3DAssetManager::bfme_Get_HAnim_By_File(const char * name)
+{
+	static std::map<std::string, std::string> s_alias;	// lower-case short name -> full anim name
+	std::string key(name);
+	for (char &ch : key) ch = (char)tolower((unsigned char)ch);
+	std::map<std::string, std::string>::iterator found = s_alias.find(key);
+	if (found != s_alias.end())
+		return found->second.empty() ? nullptr : HAnimManager.Get_Anim(found->second.c_str());
+
+	char filename[ MAX_PATH ];
+	snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", name);
+	Load_3D_Assets( filename );
+
+	std::string full;
+	HAnimManagerIterator it(HAnimManager);
+	for (it.First(); !it.Is_Done(); it.Next()) {
+		HAnimClass *a = it.Get_Current_Anim();
+		const char *an = a ? a->Get_Name() : nullptr;
+		const char *dot = an ? strchr(an, '.') : nullptr;
+		if (dot && stricmp(dot + 1, name) == 0) {
+			full = an;
+			break;
+		}
+	}
+	s_alias[key] = full;
+	if (full.empty()) {
+		AssetStatusClass::Peek_Instance()->Report_Missing_HAnim(name);
+		return nullptr;
+	}
+	return HAnimManager.Get_Anim(full.c_str());
+}
+
 HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 {
 	WWPROFILE( "WW3DAssetManager::Get_HAnim" );
@@ -985,9 +1019,9 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 			if (animname != nullptr) {
 				snprintf( filename, ARRAY_SIZE(filename), "%s.w3d", animname+1);
 			} else {
-				WWDEBUG_SAY(( "Animation %s has no . in the name", name ));
-				WWASSERT( 0 );
-				return nullptr;
+				// bfme-native: RotWK names animations by file only ("IUUrukAHI_IDLA"); the anim inside
+				// is registered as "<hierarchy>.<anim>". Load the file and resolve the full name.
+				return bfme_Get_HAnim_By_File(name);
 			}
 
 			// If we can't find it, try the parent directory

@@ -83,7 +83,7 @@ static TextureClass *bfmeMakeBlobShadow(bool inverted)
 					float d = sqrtf(dx * dx + dy * dy);
 					float k = d >= 1.0f ? 0.0f : (1.0f - d * d);	// 1 at centre, 0 at the rim
 					unsigned int shade = (unsigned int)(255.0f - 160.0f * k);	// darkest ~95 in the middle
-					if (inverted) shade = 255 - shade;
+					(void)inverted;	// BFME's ShadowI (infantry) is the same dark blob; decals blend multiplicatively
 					unsigned int alpha = (unsigned int)(255.0f * k);
 					row[x] = (alpha << 24) | (shade << 16) | (shade << 8) | shade;
 				}

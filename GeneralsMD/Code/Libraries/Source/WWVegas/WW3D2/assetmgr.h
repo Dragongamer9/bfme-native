@@ -249,6 +249,7 @@ public:
 	*/
 	virtual AssetIterator *			Create_HAnim_Iterator();
 	virtual HAnimClass *				Get_HAnim(const char * name);
+	HAnimClass *			bfme_Get_HAnim_By_File(const char * name);	// bfme-native
 	virtual bool						Add_Anim (HAnimClass *new_anim) { return HAnimManager.Add_Anim (new_anim); }
 
 	/*
