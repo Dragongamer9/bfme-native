@@ -33,6 +33,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/Science.h"
 #include "Common/SpecialPower.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
 
 #include <map>
 #include <vector>
@@ -138,7 +139,7 @@ public:
 		else if (c == "onaptingamespellbookloaded") { spellStates.assign(NUM_SPELLS, std::string()); spellBookReady = true; return; }
 		else if (c == "onaptingamespellbookbuttonpressed")
 		{
-			const int n = atoi(args.c_str()) - 1;
+			const int n = atoi(args.c_str());	// the button's 0-based index (Spell<n+1>)
 			if (n >= 0 && n < NUM_SPELLS) pressSpell(n);
 			return;
 		}
@@ -312,6 +313,7 @@ public:
 	bool spellBookReady = false;
 	std::vector<std::string> spellStates;
 	const CommandButton *spells[NUM_SPELLS] = {};
+	int spellReady[NUM_SPELLS] = {};	// recharge percent of each shown spell
 
 	void pressSpell(int i)
 	{
@@ -379,6 +381,10 @@ public:
 			}
 			spells[i] = b;
 			if (b) ++anySpell;
+			spellReady[i] = 100;
+			if (b && state == "_notReady")
+				if (SpecialPowerModuleInterface *mod = book->getSpecialPowerModule(b->getSpecialPowerTemplate()))
+					spellReady[i] = (int)(mod->getPercentReady() * 100);
 			if (state != spellStates[i])
 			{
 				if (getenv("BFME_DEBUG_APT")) fprintf(stderr, "[aptui] spell %d %s %s\n", i + 1, b ? b->getName().str() : "-", state.c_str());
@@ -390,6 +396,19 @@ public:
 			char path[48];
 			snprintf(path, sizeof(path), "SpellBookUI.Spell%d", i + 1);
 			std::shared_ptr<Apt::Instance> sp = player.find(path);
+			// recharge clock: the game draws the remaining time over the "Timer" clip
+			if (Apt::Instance *timer = sp ? sp->findChild("Timer") : nullptr)
+				if (!timer->customDraw)
+				{
+					GameHost *self = this;
+					timer->customDraw = [self, i](Apt::Instance &inst, const Apt::Matrix &world, const Apt::ColorTransform &) {
+						float x0, y0, x1, y1;
+						const int pct = self->spellReady[i];
+						if (pct >= 100 || !TheDisplay || !inst.bounds(x0, y0, x1, y1, world)) return;
+						Apt::renderFlush();
+						TheDisplay->drawRemainingRectClock((Int)x0, (Int)y0, (Int)(x1 - x0), (Int)(y1 - y0), pct, GameMakeColor(0, 0, 0, 190));
+					};
+				}
 			for (const char *layer : { "~Enabled", "~Disabled" })
 			{
 				Apt::Instance *img = sp ? sp->findChild(layer) : nullptr;

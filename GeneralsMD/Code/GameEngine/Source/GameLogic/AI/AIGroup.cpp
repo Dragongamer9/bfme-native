@@ -188,6 +188,7 @@ void AIGroup::add( Object *obj )
 	KindOfMaskType validNonAIKindofs;
 	validNonAIKindofs.set(KINDOF_STRUCTURE);
 	validNonAIKindofs.set(KINDOF_ALWAYS_SELECTABLE);
+	validNonAIKindofs.set(KINDOF_SPELL_BOOK);	// bfme-native: the spell book casts the player's spells
 	if( ai == nullptr && !obj->isAnyKindOf( validNonAIKindofs ) )
 	{
 		return;
@@ -2736,6 +2737,9 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
          // M Lorenzen... 8/23/03
 
     const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
+		if (getenv("BFME_DEBUG_POWERS"))
+			fprintf(stderr, "[power] group member %s template %s science %d has %d\n", object->getTemplate()->getName().str(), spTemplate ? spTemplate->getName().str() : "-",
+				spTemplate ? (int)spTemplate->getRequiredScience() : -2, spTemplate ? (int)object->getControllingPlayer()->hasScience(spTemplate->getRequiredScience()) : -1);
 		if( spTemplate )
 		{
 			// Have to justify the execution in case someone changed their button
@@ -2746,6 +2750,9 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
 			}
 
 			SpecialPowerModuleInterface *mod = object->getSpecialPowerModule( spTemplate );
+			if (getenv("BFME_DEBUG_POWERS"))
+				fprintf(stderr, "[power] group %s %s module %d can %d disabled %d\n", object->getTemplate()->getName().str(), spTemplate->getName().str(), mod ? 1 : 0,
+					mod ? (int)TheActionManager->canDoSpecialPowerAtLocation( object, location, CMD_FROM_PLAYER, spTemplate, objectInWay, commandOptions ) : -1, (int)object->isDisabled());
 			if( mod )
 			{
 				if( TheActionManager->canDoSpecialPowerAtLocation( object, location, CMD_FROM_PLAYER, spTemplate, objectInWay, commandOptions ) )
