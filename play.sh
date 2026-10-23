@@ -45,6 +45,14 @@ setup() {
 
 case "${1:-}" in
   build)
+    # the engine is the bfme-rotwk branch of this repository: fetch it next to the toolkit once
+    if [ ! -f "$ROOT/engine/GeneralsX/CMakeLists.txt" ]; then
+      for t in git cmake ninja; do command -v $t >/dev/null || die "$t is not installed (needed to build)"; done
+      git clone --depth 1 -b bfme-rotwk https://github.com/Dragongamer9/bfme-native.git "$ROOT/engine/GeneralsX" ||
+        die "could not download the engine (branch bfme-rotwk)"
+    fi
+    for t in cmake ninja; do command -v $t >/dev/null || die "$t is not installed (needed to build)"; done
+    command -v c++ >/dev/null || command -v g++ >/dev/null || command -v clang++ >/dev/null || die "no C++ compiler installed"
     cmake -S "$ROOT/engine/GeneralsX" -B "$ROOT/engine/GeneralsX/build/lin" -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DRTS_BUILD_GENERALS=OFF -DRTS_BUILD_GENERALS_TOOLS=OFF -DRTS_BUILD_ZEROHOUR_TOOLS=OFF \
       -DRTS_BUILD_CORE_TOOLS=OFF -DRTS_BUILD_CORE_EXTRAS=OFF && ninja -C "$ROOT/engine/GeneralsX/build/lin" GeneralsXZH
