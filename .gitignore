@@ -5,3 +5,4 @@ tests/out/
 tests/*.obj
 tests/*.exe
 __pycache__/
+dist/

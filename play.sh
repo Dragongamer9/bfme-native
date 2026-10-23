@@ -20,6 +20,33 @@ DATA="${BFME_DATA:-$HOME/.local/share/bfme-native/data}"
 EXE="$ROOT/engine/GeneralsX/build/lin/GeneralsMD/GeneralsXZH"
 
 die() { echo "play.sh: $*" >&2; exit 1; }
+# a prebuilt release ships the engine in bin/ and its libraries in lib/ (tools/make_release.sh)
+RELEASE=; [ -x "$ROOT/bin/GeneralsXZH" ] && { RELEASE=1; EXE="$ROOT/bin/GeneralsXZH"; }
+
+# release: use the system's libraries where it has them (GPU drivers must see their own), the bundled
+# ones for the rest; the bundled glibc / libstdc++ only when the system's are older than the build's
+run_release() {
+  local L="$ROOT/lib" RT="${XDG_CACHE_HOME:-$HOME/.cache}/bfme-native/lib" LDC
+  LDC="$(command -v ldconfig || echo /sbin/ldconfig)"
+  local cache; cache="$("$LDC" -p 2>/dev/null)"
+  rm -rf "$RT"; mkdir -p "$RT"
+  for f in "$L"/sys/*; do
+    local so; so="$(basename "$f")"
+    grep -qE "^[[:space:]]*${so//+/\\+} \\(.*x86-64" <<<"$cache" || ln -s "$f" "$RT/$so"
+  done
+  local LP="$L:$RT" need_cxx syscxx need_glibc sys_glibc
+  need_cxx="$(cat "$L/cxx/REQUIRED")"
+  syscxx="$(awk '/libstdc\+\+\.so\.6 .*x86-64/{print $NF; exit}' <<<"$cache")"
+  if [ -z "$syscxx" ] || ! grep -aq "$need_cxx" "$syscxx"; then LP="$L:$L/cxx:$RT"; fi
+  need_glibc="$(sed 's/GLIBC_//' "$L/glibc/REQUIRED")"
+  sys_glibc="$(ldd --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+$')"
+  if [ -n "$sys_glibc" ] && [ "$(printf '%s\n' "$sys_glibc" "$need_glibc" | sort -V | head -1)" = "$need_glibc" ]; then
+    export LD_LIBRARY_PATH="$LP${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+    exec "$EXE" "$@"
+  fi
+  echo "play.sh: system glibc ${sys_glibc:-?} is older than $need_glibc - using the bundled one" >&2
+  exec "$L/glibc/ld-linux-x86-64.so.2" --library-path "$LP:$L/glibc" "$EXE" "$@"
+}
 
 setup() {
   local rotwk="$(cd "$1" && pwd)" bfme2="$(cd "$2" && pwd)"
@@ -45,6 +72,7 @@ setup() {
 
 case "${1:-}" in
   build)
+    [ -n "$RELEASE" ] && { echo "this is a prebuilt release: nothing to build"; exit 0; }
     # the engine is the bfme-rotwk branch of this repository: fetch it next to the toolkit once
     if [ ! -f "$ROOT/engine/GeneralsX/CMakeLists.txt" ]; then
       for t in git cmake ninja; do command -v $t >/dev/null || die "$t is not installed (needed to build)"; done
@@ -95,11 +123,12 @@ while [ $# -gt 0 ]; do
     *) die "unknown option $1 (see the top of play.sh)" ;;
   esac
 done
-[ -x "$EXE" ] || die "engine not built: run ./play.sh build"
+[ -x "$EXE" ] || die "engine not built: run ./play.sh build (or download a prebuilt release)"
 [ -f "$DATA/ini.big" ] || die "no game data in $DATA - run ./play.sh setup first"
 MAP="${MAP%.map}"; MAP="${MAP#Maps/}"
 B="$ROOT/engine/GeneralsX/build/lin"
 export CNC_GENERALS_ZH_PATH="$DATA" CNC_GENERALS_PATH="$DATA"
 export LD_LIBRARY_PATH="$B/_deps/dxvk-src/lib:$B/_deps/sdl3-build:$B/_deps/sdl3_image-build:${LD_LIBRARY_PATH:-}"
 cd "$DATA"
+[ -n "$RELEASE" ] && run_release $MODE -xres "${SIZE%x*}" -yres "${SIZE#*x}" -skirmish "Maps/$MAP.map" "$YOU" "$AI" -noshellmap -quickstart
 exec "$EXE" $MODE -xres "${SIZE%x*}" -yres "${SIZE#*x}" -skirmish "Maps/$MAP.map" "$YOU" "$AI" -noshellmap -quickstart
