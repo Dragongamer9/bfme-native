@@ -2,7 +2,8 @@
 # Play RotWK + Edain + Völker natively.
 #
 #   ./play.sh build                                 one-time: compile the engine (cmake + ninja)
-#   ./play.sh setup <RotWK folder> <BFME2 folder>   one-time: link the game files into a data folder
+#   ./play.sh setup [<RotWK folder> <BFME2 folder>] one-time: link the game files into a data folder
+#                                                   (no folders: finds a Beacon install)
 #   ./play.sh [options]                             start a skirmish: you vs one computer player
 #       --map NAME      map folder name, e.g. "map mp umbar" (default: Edain camps) - see ./play.sh maps
 #       --you SIDE      your faction (default Men)    - see ./play.sh factions
@@ -50,10 +51,11 @@ run_release() {
 
 setup() {
   local rotwk="$(cd "$1" && pwd)" bfme2="$(cd "$2" && pwd)" f n lc
+  # (a [g] in a name makes bash match it as a pattern, so nocaseglob applies)
   # installs differ in capitals (INI.big, W3D.big...): match names case-insensitively and link
   # them lowercase, so archives keep the order the game expects (mods' '_' names first)
   shopt -s nullglob nocaseglob
-  [ -n "$(echo "$rotwk"/ini.big)" ] || die "$rotwk has no ini.big - is it the RotWK folder?"
+  [ -n "$(echo "$rotwk"/ini.bi[g])" ] || die "$rotwk has no ini.big - is it the RotWK folder?"
   [ -n "$(echo "$rotwk"/*edain*.big)" ] || echo "warning: no Edain .big files in $rotwk - the game starts as plain RotWK"
   mkdir -p "$DATA/Maps" "$DATA/lang"
   find "$DATA" -maxdepth 2 -type l -delete
@@ -63,11 +65,11 @@ setup() {
   for f in "$rotwk"/lang/*.big; do ln -sfn "$f" "$DATA/lang/$(lc "$(basename "$f")")"; done
   # BFME2's art, sounds, voices and music (RotWK's own audio.big only holds its new sounds)
   for n in terrain textures0 textures1 textures2 textures3 textures4 w3d audio music speech; do
-    for f in "$bfme2"/$n.big; do ln -sfn "$f" "$DATA/zz_bfme2_$n.big"; done
+    for f in "$bfme2"/$n.bi[g]; do ln -sfn "$f" "$DATA/zz_bfme2_$n.big"; done
   done
   for f in "$bfme2"/lang/*/*.big "$bfme2"/lang/*.big; do ln -sfn "$f" "$DATA/zz_bfme2_lang_$(lc "$(basename "$f")")"; done
-  [ -n "$(echo "$bfme2"/audio.big)" ] || echo "warning: no audio.big in $bfme2 - BFME2's sounds will be missing"
-  for f in "$bfme2"/apt/playerstatus.big "$bfme2"/apt/scorescreen.big "$bfme2"/apt/aptui_playerstatus.big "$bfme2"/apt/aptui_scorescreen.big; do
+  [ -n "$(echo "$bfme2"/audio.bi[g])" ] || echo "warning: no audio.big in $bfme2 - BFME2's sounds will be missing"
+  for f in "$bfme2"/apt/playerstatus.bi[g] "$bfme2"/apt/scorescreen.bi[g] "$bfme2"/apt/aptui_playerstatus.bi[g] "$bfme2"/apt/aptui_scorescreen.bi[g]; do
     n="$(lc "$(basename "$f")")"; ln -sfn "$f" "$DATA/zz_bfme2_aptui_${n#aptui_}"
   done
   shopt -u nullglob nocaseglob
@@ -89,7 +91,20 @@ case "${1:-}" in
       -DRTS_BUILD_GENERALS=OFF -DRTS_BUILD_GENERALS_TOOLS=OFF -DRTS_BUILD_ZEROHOUR_TOOLS=OFF \
       -DRTS_BUILD_CORE_TOOLS=OFF -DRTS_BUILD_CORE_EXTRAS=OFF && ninja -C "$ROOT/engine/GeneralsX/build/lin" GeneralsXZH
     exit $? ;;
-  setup) [ $# -eq 3 ] || die "usage: ./play.sh setup <RotWK folder> <BFME2 folder>"; setup "$2" "$3"; exit 0 ;;
+  setup)
+    if [ $# -eq 1 ]; then	# no folders given: look where game launchers install (Beacon first)
+      r=; b=
+      for d in "${XDG_DATA_HOME:-$HOME/.local/share}/beacon/games" "$HOME/Games" "$HOME/.local/share/Steam/steamapps/common"; do
+        [ -d "$d" ] || continue
+        [ -z "$r" ] && r="$(find "$d" -maxdepth 4 -iname ini.big -path '*[Ww]itch*' -printf '%h\n' 2>/dev/null | head -1)"
+        [ -z "$r" ] && r="$(find "$d" -maxdepth 4 -iname ini.big -ipath '*rotwk*' -printf '%h\n' 2>/dev/null | head -1)"
+        [ -z "$b" ] && b="$(find "$d" -maxdepth 4 -iname ini.big -printf '%h\n' 2>/dev/null | grep -iv 'witch\|rotwk' | grep -i 'bfme2\|middle-earth ii\|middle earth ii\|bfme 2' | head -1)"
+      done
+      [ -n "$r" ] && [ -n "$b" ] || die "could not find the games; run ./play.sh setup <RotWK folder> <BFME2 folder>"
+      echo "found RotWK: $r"; echo "found BFME2: $b"
+      set -- setup "$r" "$b"
+    fi
+    [ $# -eq 3 ] || die "usage: ./play.sh setup [<RotWK folder> <BFME2 folder>]"; setup "$2" "$3"; exit 0 ;;
   maps) python3 "$ROOT/tools/bigls.py" "$DATA" ".map" | grep -oiE "maps\\\\map (mp|wor) [^\\\\]*\\\\" | sed 's/^maps\\//; s/\\$//' | sort -u; exit 0 ;;
   factions)	# every playable side in the loaded data (Völker adds 18 to Edain's 9)
     python3 - "$DATA" <<'PY'
