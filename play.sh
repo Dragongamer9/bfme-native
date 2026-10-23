@@ -49,24 +49,28 @@ run_release() {
 }
 
 setup() {
-  local rotwk="$(cd "$1" && pwd)" bfme2="$(cd "$2" && pwd)"
-  [ -f "$rotwk/ini.big" ] || die "$rotwk has no ini.big - is it the RotWK folder?"
-  ls "$rotwk"/*edain* >/dev/null 2>&1 || echo "warning: no Edain .big files in $rotwk"
-  mkdir -p "$DATA/Maps"
-  # RotWK reads its own archives (mods first: their names start with '_'), then BFME2's art
-  for f in "$rotwk"/*.big "$rotwk"/apt/*.big; do [ -e "$f" ] && ln -sfn "$f" "$DATA/$(basename "$f")"; done
-  [ -d "$rotwk/lang" ] && ln -sfn "$rotwk/lang" "$DATA/lang"
+  local rotwk="$(cd "$1" && pwd)" bfme2="$(cd "$2" && pwd)" f n lc
+  # installs differ in capitals (INI.big, W3D.big...): match names case-insensitively and link
+  # them lowercase, so archives keep the order the game expects (mods' '_' names first)
+  shopt -s nullglob nocaseglob
+  [ -n "$(echo "$rotwk"/ini.big)" ] || die "$rotwk has no ini.big - is it the RotWK folder?"
+  [ -n "$(echo "$rotwk"/*edain*.big)" ] || echo "warning: no Edain .big files in $rotwk - the game starts as plain RotWK"
+  mkdir -p "$DATA/Maps" "$DATA/lang"
+  find "$DATA" -maxdepth 2 -type l -delete
+  lc() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
+  for f in "$rotwk"/*.big; do ln -sfn "$f" "$DATA/$(lc "$(basename "$f")")"; done
+  for f in "$rotwk"/apt/*.big; do ln -sfn "$f" "$DATA/aptui_$(lc "$(basename "$f")")"; done
+  for f in "$rotwk"/lang/*.big; do ln -sfn "$f" "$DATA/lang/$(lc "$(basename "$f")")"; done
   # BFME2's art, sounds, voices and music (RotWK's own audio.big only holds its new sounds)
   for n in terrain textures0 textures1 textures2 textures3 textures4 w3d audio music speech; do
-    [ -f "$bfme2/$n.big" ] && ln -sfn "$bfme2/$n.big" "$DATA/zz_bfme2_$n.big"
+    for f in "$bfme2"/$n.big; do ln -sfn "$f" "$DATA/zz_bfme2_$n.big"; done
   done
-  for f in "$bfme2"/lang/*/*.big "$bfme2"/lang/*.big; do
-    [ -f "$f" ] && ln -sfn "$f" "$DATA/zz_bfme2_lang_$(basename "$f")"
+  for f in "$bfme2"/lang/*/*.big "$bfme2"/lang/*.big; do ln -sfn "$f" "$DATA/zz_bfme2_lang_$(lc "$(basename "$f")")"; done
+  [ -n "$(echo "$bfme2"/audio.big)" ] || echo "warning: no audio.big in $bfme2 - BFME2's sounds will be missing"
+  for f in "$bfme2"/apt/playerstatus.big "$bfme2"/apt/scorescreen.big "$bfme2"/apt/aptui_playerstatus.big "$bfme2"/apt/aptui_scorescreen.big; do
+    n="$(lc "$(basename "$f")")"; ln -sfn "$f" "$DATA/zz_bfme2_aptui_${n#aptui_}"
   done
-  [ -f "$bfme2/audio.big" ] || echo "warning: no audio.big in $bfme2 - BFME2's sounds will be missing"
-  for f in "$bfme2"/apt/aptui_playerstatus.big "$bfme2"/apt/aptui_scorescreen.big; do
-    [ -f "$f" ] && ln -sfn "$f" "$DATA/zz_bfme2_$(basename "$f")"
-  done
+  shopt -u nullglob nocaseglob
   echo "data folder ready: $DATA ($(ls "$DATA"/*.big | wc -l) archives)"
 }
 
