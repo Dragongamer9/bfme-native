@@ -63,6 +63,7 @@ setup() {
   for f in "$rotwk"/*.big; do ln -sfn "$f" "$DATA/$(lc "$(basename "$f")")"; done
   for f in "$rotwk"/apt/*.big; do ln -sfn "$f" "$DATA/aptui_$(lc "$(basename "$f")")"; done
   for f in "$rotwk"/lang/*.big; do ln -sfn "$f" "$DATA/lang/$(lc "$(basename "$f")")"; done
+  for f in "$rotwk"/dat[a]; do [ -d "$f" ] && ln -sfn "$f" "$DATA/data"; done	# loose files: cursors, movies
   # BFME2's art, sounds, voices and music (RotWK's own audio.big only holds its new sounds)
   for n in terrain textures0 textures1 textures2 textures3 textures4 w3d audio music speech; do
     for f in "$bfme2"/$n.bi[g]; do ln -sfn "$f" "$DATA/zz_bfme2_$n.big"; done

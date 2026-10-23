@@ -21,6 +21,14 @@ own=("$B"/_deps/sdl3-build/libSDL3.so.0 "$B"/_deps/sdl3_image-build/libSDL3_imag
 for f in "$B"/_deps/dxvk-src/lib/*.so.0; do own+=("$f"); done
 for f in "${own[@]}"; do strip -o "$OUT/lib/$(basename "$f")" "$f"; done
 
+# no build-machine paths: the engine finds its libraries next to it ($ORIGIN), and every library is
+# also there under its plain name (the engine dlopens libdxvk_d3d8.so)
+patchelf --set-rpath '$ORIGIN/../lib' "$OUT/bin/GeneralsXZH"
+for f in "$OUT"/lib/*.so*; do
+  patchelf --set-rpath '$ORIGIN' "$f"
+  case "$f" in *.so.0) ln -sfn "$(basename "$f")" "${f%.0}" ;; esac
+done
+
 export LD_LIBRARY_PATH="$B/_deps/dxvk-src/lib:$B/_deps/sdl3-build:$B/_deps/sdl3_image-build:$B"
 glibc_re='^(ld-linux-x86-64\.so\.2|libc\.so\.6|libm\.so\.6|libresolv\.so\.2|libpthread\.so\.0|libdl\.so\.2|librt\.so\.1|libutil\.so\.1)$'
 # the dependency closure of the engine and its own libraries, plus what DXVK loads at run time
