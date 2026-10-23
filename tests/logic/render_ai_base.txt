@@ -1,0 +1,5 @@
+# The computer playing Men (Dol Amroth) on Umbar, its camp after three minutes
+1 reveal
+5390 camera 520 2690 0.75
+5400 screenshot
+5405 quit
