@@ -200,7 +200,8 @@ Known: sky black above the horizon; castle/camp sites (CastleBehavior + bases/*.
   upgrades), trains its subfaction's units, tries every build plot (a defence plot first in the list
   stalled Men camps), buys CP units at the limit, learns spell book powers and casts them on the
   battle (heals on its hurt units). A template override loop in the data no longer overflows the
-  stack (the AI crashed recruiting heroes around minute 8). tools/factionsweep.sh BFME_SWAP=1 lets the AI play each side.
+  stack (the AI crashed recruiting heroes around minute 8). tools/factionsweep.sh BFME_SWAP=1 lets the AI play each side: all 27 sides start, build and
+  run 2 minutes cleanly as the computer opponent on Umbar; all 28 logic tests pass.
 - Slow deaths for siege engines, walls and giant birds (ClearanceTesting/GiantBird variants).
 Known: the user's data has no base files for several factions (no fb_fortress_*, rohan_*,
 zwerge_*, lothlorien_* camps/castles...): those starts fall back to camp → free build, which has
