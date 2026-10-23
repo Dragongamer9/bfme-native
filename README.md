@@ -7,6 +7,7 @@ Personal project. It needs your own installed copy of the game; no EA files are 
 ## Playing
 
 ```bash
+git clone -b main https://github.com/Dragongamer9/bfme-native && cd bfme-native
 ./play.sh build                                   # compile the engine (once; needs cmake, ninja, a C++20 compiler)
 ./play.sh setup "/path/to/RotWK" "/path/to/BFME2" # link your game files (Edain + Völker .big files inside RotWK)
 ./play.sh --map "map mp umbar" --you Men --ai Mordor
